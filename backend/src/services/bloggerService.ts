@@ -7,7 +7,8 @@ export async function publishMatchToBlogger(
   playerBlackName: string,
   pgnMoves: string[],
   aiResult: AIAnalysisResult,
-  variantName: string = 'Cờ Tướng Kỳ Biến'
+  variantName: string = 'Cờ Tướng Kỳ Biến',
+  variantCode: string = 'kb'
 ): Promise<string | null> {
   const { blogId, clientId, clientSecret, refreshToken } = config.blogger;
 
@@ -41,7 +42,7 @@ export async function publishMatchToBlogger(
     const postTitle = `[${variantName}] ${playerWhiteName} vs ${playerBlackName} - Trận Huyết Chiến Sa Trường`;
 
     const htmlContent = `
-<script src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.4.0"></script>
+<script src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.5.0"></script>
 <div class="kybien-match-post" data-match-id="${matchId}">
   <!-- Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ -->
   <p class="kybien-post-summary-text" style="font-weight: 600; color: #e5b36a; font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; background: rgba(229,179,106,0.08); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #f1c40f;">
@@ -53,9 +54,9 @@ export async function publishMatchToBlogger(
     
     <!-- CỘT BÊN TRÁI: BÀN CỜ CỐ ĐỊNH (STICKY BOARD) -->
     <div class="sticky-board-col" style="flex: 1 1 480px; max-width: 520px; position: sticky; top: 20px; background: linear-gradient(145deg, #271a10, #180f08); padding: 18px; border-radius: 14px; border: 2px solid #5a3d22; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center;">
-      <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; margin-bottom: 12px; font-size: 1.2rem; letter-spacing: 1px;">⚔️ BÀN CỜ TƯƠNG TÁC XEM LẠI</h3>
+      <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; margin-bottom: 12px; font-size: 1.2rem; letter-spacing: 1px;">⚔️ BÀN CỜ TƯƠNG TÁC XEM LẠI (${variantName})</h3>
       
-      <div id="kybien-board-viewer" class="kybien-viewer-container" data-moves='${JSON.stringify(pgnMoves)}'>
+      <div id="kybien-board-viewer" class="kybien-viewer-container" data-variant="${variantCode}" data-moves='${JSON.stringify(pgnMoves)}'>
         <div id="chess-board-canvas" style="width: 100%; max-width: 500px; height: 520px; margin: 0 auto; background: #f0d9b5; border-radius: 8px;"></div>
         
         <div class="viewer-controls" style="text-align: center; margin-top: 14px; display: flex; justify-content: center; gap: 8px;">
@@ -90,7 +91,7 @@ export async function publishMatchToBlogger(
 </div>
 `;
 
-    // 3. Gọi Blogger API v3 POST bài viết trực tiếp (không để dạng nháp)
+    // 3. Gọi Blogger API v3 POST bài viết
     const blogUrl = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/`;
     const postResponse = await fetch(blogUrl, {
       method: 'POST',
