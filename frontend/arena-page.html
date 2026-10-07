@@ -443,6 +443,11 @@
             </select>
           </label>
 
+          <label id="lbl-test-mode" style="display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--ac); margin-top:6px;">
+            <input type="checkbox" id="chk_test_mode" onchange="ui()" style="width:16px; height:16px; cursor:pointer;">
+            🧪 Chế độ thử nghiệm (Dùng miễn phí tất cả Bí Pháp)
+          </label>
+
           <label>Kiểu bàn cờ
             <select id="vw" onchange="draw()">
               <option value="2">2D Phẳng</option>
@@ -1224,9 +1229,10 @@ function say(t,c,sc){
   l.insertBefore(d,l.firstChild);while(l.children.length>60)l.removeChild(l.lastChild);
 }
 
-const test=()=>false,free=v=>false,handOf=v=>hands[v],pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
+const test=()=>false,free=v=>{const el=$('chk_test_mode');return el?el.checked:false},handOf=v=>hands[v],pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
 
 function newGame(onlineVariant, onlinePieces){
+  if ($('log')) $('log').innerHTML = '';
   const variant = onlineVariant || $('mode_variant').value;
   B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};eatenPieces={r:[],b:[]};
   moveHistoryStack=[];LASTMV=null;FX=[];bagPos=null;cardUsedThisTurn=false;
@@ -1757,7 +1763,7 @@ function triggerAIMove(){
       // XỬ LÝ TUYỆT MỆNH CỔ (KHI ĂN MÃ VÒNG CỔ)
       if (v && v.t === 'n' && v.p && v.p['KNIGHT_2'] && o.t !== 'k') {
         o.dead = true;
-        say(`💣 [TUYỆT MỆNH CỔ NỔ LOGIC] Quân ${TN[o.t]} ăn Mã Bùa đã đồng thọ thương tử!`, '#ff4757', 'log-sp');
+        say(`💣 [TUYỆT MỆNH CỔ] Quân ${TN[o.t]} ăn Mã Bùa đã đồng thọ thương tử!`, '#ff4757', 'log-sp');
       }
 
       B[o.r][o.c] = null;
@@ -2045,13 +2051,19 @@ function onClick(r,c){
         return;
       }
 
-      // TRỪ ĐIỂM NGAY KHI BẤM QUÂN
-      merit[v] -= card.cost;
-      cardList.splice(pend, 1);
+      // TRỪ ĐIỂM VÀ TRỪ BÀI (TRỪ CHẾ ĐỘ THỬ THIỆM MIỄN PHÍ)
+      if (!free(v)) {
+        merit[v] -= card.cost;
+        cardList.splice(pend, 1);
+      }
       cardUsedThisTurn = true;
 
       // XỬ LÝ THEO LOẠI THẺ (NỘI TẠI vs MỘT LƯỢT vs TỨC THÌ)
-      if (card.id === 'KING_2') { // Cấp Cứu Cần Vương (Tức thì)
+      if (card.id === 'KNIGHT_2') {
+        p.p = p.p || {};
+        p.p[card.id] = true;
+        say(`💣 [${turn==='r'?'Phe Đỏ':'Phe Đen'}] Thi triển Bí Pháp [Tuyệt Mệnh Cổ] lên Mã thành công! (Chỉ người hạ cổ mới nhìn thấy bẫy này)`, '#f1c40f', 'log-sp');
+      } else if (card.id === 'KING_2') { // Cấp Cứu Cần Vương (Tức thì)
         const candidates = P[turn].filter(item => !item.dead && item.t === 'a');
         if (candidates.length > 0) {
           const targetAdv = candidates[0];
@@ -2081,7 +2093,9 @@ function onClick(r,c){
 
       pend = null; sel = null; VM = [];
       SoundSystem.playCardSpell();
-      say(`[${turn==='r'?'Phe Đỏ':'Phe Đen'}] Thi triển Bí Pháp [${card.name}] thành công!`, '#f1c40f', 'log-sp');
+      if (card.id !== 'KNIGHT_2') {
+        say(`[${turn==='r'?'Phe Đỏ':'Phe Đen'}] Thi triển Bí Pháp [${card.name}] thành công!`, '#f1c40f', 'log-sp');
+      }
       ui(); draw();
       return;
     } else if (card) {
@@ -2127,7 +2141,7 @@ function onClick(r,c){
       // XỬ LÝ TUYỆT MỆNH CỔ (KHI ĂN MÃ VÒNG CỔ)
       if (v && v.t === 'n' && v.p && v.p['KNIGHT_2'] && sel.t !== 'k') {
         sel.dead = true;
-        say(`💣 [TUYỆT MỆNH CỔ NỔ LOGIC] Quân ${TN[sel.t]} ăn Mã Bùa đã đồng thọ thương tử!`, '#ff4757', 'log-sp');
+        say(`💣 [TUYỆT MỆNH CỔ] Quân ${TN[sel.t]} ăn Mã Bùa đã đồng thọ thương tử!`, '#ff4757', 'log-sp');
       }
 
       B[sel.r][sel.c]=null;B[r][c]=sel;sel.r=r;sel.c=c;
