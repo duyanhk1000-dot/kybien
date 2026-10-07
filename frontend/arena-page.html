@@ -1179,8 +1179,8 @@ function valid(o,r2,c2,customBf){
     case'p':
       const f = red ? -1 : 1;
       if (dr === f && !dc) return true;
-      if ((p.back || p.PAWN_2) && dr === -f && !dc) return true;
-      if ((p.PAWN_1 || (red ? r1 <= 4 : r1 >= 5)) && !dr && ac === 1) return true;
+      if ((p.back || p.PAWN_2 || p['PAWN_2'] || bf === 'PAWN_2') && dr === -f && !dc) return true;
+      if ((p.PAWN_1 || p['PAWN_1'] || bf === 'PAWN_1' || (red ? r1 <= 4 : r1 >= 5)) && !dr && ac === 1) return true;
       return false;
   }
   return false;
@@ -1229,7 +1229,7 @@ function say(t,c,sc){
   l.insertBefore(d,l.firstChild);while(l.children.length>60)l.removeChild(l.lastChild);
 }
 
-const test=()=>false,free=v=>{const el=$('chk_test_mode');return el?el.checked:false},handOf=v=>hands[v],pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
+const test=()=>false,free=v=>{const el=$('chk_test_mode');return el?el.checked:false},handOf=v=>(free(v)?CARDS.map(c=>({...c})):hands[v]),pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
 
 function newGame(onlineVariant, onlinePieces){
   if ($('log')) $('log').innerHTML = '';
