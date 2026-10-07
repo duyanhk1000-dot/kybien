@@ -1108,6 +1108,11 @@ let checkHistory={};
 let moveHistoryStack=[];
 let eatenPieces={r:[],b:[]};
 const aiCol='b',opp=c=>c==='r'?'b':'r';
+const MERIT_FX = [];
+const MERIT_REWARD = { p: 1, a: 2, e: 2, n: 3, c: 3, r: 5, k: 0 };
+function spawnMeritFX(r, c, pts) {
+  MERIT_FX.push({ r, c, pts, time: 0, maxTime: 40 });
+}
 
 function getStandardPieceType(r, c) {
   if (r === 0 || r === 9) {
@@ -1678,10 +1683,9 @@ function triggerAIMove(){
       if (bagPos && bagPos.r === r && bagPos.c === c) {
         const newCard = pick(1)[0];
         if (newCard && hands.b.length < 5) hands.b.push(newCard);
-        merit.b = Math.min(10, merit.b + 2);
         bagPos = null;
         SoundSystem.playCardSpell();
-        say(`[NHẶT TÚI KỲ MƯU] [Máy AI] di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới +2 Công Trạng!`, '#f1c40f', 'log-sp');
+        say(`[NHẶT TÚI KỲ MƯU] [Máy AI] di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới!`, '#f1c40f', 'log-sp');
         ui();
       }
 
@@ -1712,6 +1716,13 @@ function triggerAIMove(){
       if(v) {
         v.dead = true;
         eatenPieces[aiCol].push(v);
+        const capType = v.tru || v.t;
+        const earned = MERIT_REWARD[capType] || 0;
+        if (earned > 0) {
+          merit[aiCol] = Math.min(10, merit[aiCol] + earned);
+          spawnMeritFX(r, c, earned);
+          say(`+${earned} Công Trạng cho [Máy AI] khi ăn quân ${TN[capType]}!`, '#2ecc71', 'log-sp');
+        }
         SoundSystem.playCapture();
       } else {
         SoundSystem.playMove();
@@ -1892,6 +1903,28 @@ function draw(){
     x.restore();
   }
 
+  // VẼ HIỆU ỨNG HIỂN THỊ CỘNG ĐIỂM CÔNG TRẠNG BAY LÊN
+  for (let i = MERIT_FX.length - 1; i >= 0; i--) {
+    const fx = MERIT_FX[i];
+    fx.time++;
+    const X = PX(fx.c), Y = PY(fx.r);
+    const progress = fx.time / fx.maxTime;
+    const offsetY = progress * 35;
+    const alpha = 1 - progress;
+
+    x.save();
+    x.font = 'bold 16px "Be Vietnam Pro", sans-serif';
+    x.fillStyle = `rgba(46, 204, 113, ${alpha})`;
+    x.textAlign = 'center';
+    x.textBaseline = 'middle';
+    x.shadowColor = 'rgba(0, 0, 0, 0.7)';
+    x.shadowBlur = 4;
+    x.fillText(`+${fx.pts} Công Trạng`, X, Y - PR - 12 - offsetY);
+    x.restore();
+
+    if (fx.time >= fx.maxTime) MERIT_FX.splice(i, 1);
+  }
+
   // VỜI HỌA TỰ ĐỘNG CHẠY HÀO QUANG VÀ CHUYỂN ĐỘNG CHO ANIMATION
   requestAnimationFrame(draw);
 }
@@ -1994,10 +2027,9 @@ function onClick(r,c){
       if (bagPos && bagPos.r === r && bagPos.c === c) {
         const newCard = pick(1)[0];
         if (newCard && hands[turn].length < 5) hands[turn].push(newCard);
-        merit[turn] = Math.min(10, merit[turn] + 2);
         bagPos = null;
         SoundSystem.playCardSpell();
-        say(`[NHẶT TÚI KỲ MƯU] ${turn==='r'?'[Phe Đỏ]':'[Phe Đen]'} di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới +2 Công Trạng!`, '#f1c40f', 'log-sp');
+        say(`[NHẶT TÚI KỲ MƯU] ${turn==='r'?'[Phe Đỏ]':'[Phe Đen]'} di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới!`, '#f1c40f', 'log-sp');
         ui();
       }
 
@@ -2027,6 +2059,13 @@ function onClick(r,c){
       if(v) {
         v.dead=true;
         eatenPieces[turn].push(v);
+        const capType = v.tru || v.t;
+        const earned = MERIT_REWARD[capType] || 0;
+        if (earned > 0) {
+          merit[turn] = Math.min(10, merit[turn] + earned);
+          spawnMeritFX(r, c, earned);
+          say(`+${earned} Công Trạng cho ${turn==='r'?'[Phe Đỏ]':'[Phe Đen]'} khi ăn quân ${TN[capType]}!`, '#2ecc71', 'log-sp');
+        }
       }
       
       if (sel.hd) {
