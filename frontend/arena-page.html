@@ -970,22 +970,106 @@ async function handleGameAction() {
   }
 }
 
+function saveMoveSnapshot() {
+  const serializePiece = p => p ? { ...p, p: { ...p.p } } : null;
+  const B_copy = B.map(row => row.map(serializePiece));
+  const P_copy = {
+    r: P.r.map(serializePiece),
+    b: P.b.map(serializePiece)
+  };
+  const K_copy = {
+    r: serializePiece(K.r),
+    b: serializePiece(K.b)
+  };
+  moveHistoryStack.push({
+    B: B_copy,
+    P: P_copy,
+    K: K_copy,
+    turn,
+    merit: { ...merit },
+    hands: { r: [...hands.r], b: [...hands.b] },
+    eatenPieces: { r: [...eatenPieces.r], b: [...eatenPieces.b] },
+    bagPos: bagPos ? { ...bagPos } : null,
+    plies,
+    cardUsedThisTurn
+  });
+  if (moveHistoryStack.length > 40) moveHistoryStack.shift();
+}
+
 function undoAction() {
   if (isOnlineMatch) return alert('Không thể đi lại trong chế độ đấu Online!');
-  if (moveHistoryStack && moveHistoryStack.length > 0) {
-    const lastState = moveHistoryStack.pop();
+  if (over || busy) return;
+  if (!free(turn) && merit[turn] < 2) {
+    say('❌ Không đủ Công trạng để Đi Lại! (Cần 2đ Công trạng)', '#ff4757');
+    return;
+  }
+  if (!moveHistoryStack || moveHistoryStack.length === 0) {
+    say('Chưa có lịch sử nước đi để lùi lại!', '#ff6b6b');
+    return;
+  }
+
+  const stepsToPop = (ai && moveHistoryStack.length >= 2) ? 2 : 1;
+  let lastState = null;
+  for (let i = 0; i < stepsToPop; i++) {
+    lastState = moveHistoryStack.pop();
+  }
+
+  if (lastState) {
+    if (!free(turn)) merit[turn] -= 2;
     B = lastState.B;
+    P = lastState.P;
+    K = lastState.K;
     turn = lastState.turn;
+    merit = lastState.merit;
+    hands = lastState.hands;
+    eatenPieces = lastState.eatenPieces;
+    bagPos = lastState.bagPos;
     plies = lastState.plies;
+    cardUsedThisTurn = lastState.cardUsedThisTurn;
     sel = null; VM = [];
     stat(); ui(); draw();
-    say('↩️ Đã thực hiện đi lại nước cờ.', '#a8947d');
+    say(`↩️ [ĐI LẠI] Đã lùi lại nước cờ (-2đ Công trạng).`, '#e67e22', 'log-sp');
   }
 }
 
 function hintAction() {
   if (over || (ai && turn !== 'r')) return;
-  say('💡 Gợi ý: Hãy kiểm tra các nước đi kiểm soát trung lộ hoặc ăn quân đối thủ.', '#f1c40f');
+  if (!free(turn) && merit[turn] < 1) {
+    say('❌ Không đủ Công trạng để lấy Gợi Ý! (Cần 1đ Công trạng)', '#ff4757');
+    return;
+  }
+
+  const moves = allMoves(turn);
+  if (!moves || moves.length === 0) return;
+
+  let bestMove = null;
+  let bestScore = -Infinity;
+
+  for (const m of moves) {
+    const o = m[0], r = m[1], c = m[2], target = B[r][c];
+    const origR = o.r, origC = o.c;
+
+    B[origR][origC] = null; B[r][c] = o; o.r = r; o.c = c;
+    if (target) target.dead = true;
+
+    const score = alphaBetaSearch(2, -Infinity, Infinity, false, opp(turn), turn);
+
+    B[r][c] = target; B[origR][origC] = o; o.r = origR; o.c = origC;
+    if (target) target.dead = false;
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMove = { piece: o, fromR: origR, fromC: origC, toR: r, toC: c };
+    }
+  }
+
+  if (bestMove) {
+    if (!free(turn)) merit[turn] -= 1;
+    sel = bestMove.piece;
+    VM = [[bestMove.toR, bestMove.toC]];
+    ui(); draw();
+    say(`💡 [GỢI Ý COMPASS] Khuyên dùng: Quân ${TN[bestMove.piece.t]} tại (${bestMove.fromR}, ${bestMove.fromC}) di chuyển tới (${bestMove.toR}, ${bestMove.toC})! (-1đ Công trạng)`, '#f1c40f', 'log-sp');
+  }
 }
 
 function flipBoardAction() {
@@ -1320,6 +1404,27 @@ function newGame(onlineVariant, onlinePieces){
   checkHistory={};
   ai=$('mode').value==='ai' && !isOnlineMatch;
 
+let timerInterval = null;
+function startTurnTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (over || busy || !LIM) return;
+    tleft -= 1000;
+    if (tleft <= 0) {
+      tleft = 0;
+      renderClk();
+      over = true;
+      const loser = turn;
+      const winner = opp(turn);
+      showGameOverModal('timeout', winner, loser);
+      say(`⏱️ [HẾT GIỜ] ${turn === 'r' ? 'Phe Đỏ' : 'Phe Đen'} quá thời gian cho phép và bị xử thua!`, '#ff4757', 'log-sp');
+      if (timerInterval) clearInterval(timerInterval);
+      return;
+    }
+    renderClk();
+  }, 1000);
+}
+
   if (!isOnlineMatch) {
     const botLvlName = ['Tay Mơ', 'Ông Đồ', 'Pháo Đầu', 'Cao Thủ', 'Địa Ngục Vương'][+$('lv').value];
     $('nb').innerText=ai ? `Đen (Bot AI: ${botLvlName})` : 'Đen';
@@ -1327,6 +1432,7 @@ function newGame(onlineVariant, onlinePieces){
   }
   say(`Khai cuộc: ${VARIANT_NAMES[variant] || 'Cờ Tướng'}.`, '#a8947d');
   syncTrayLayout();
+  startTurnTimer();
   stat();ui();draw();
 }
 
@@ -2108,6 +2214,7 @@ function onClick(r,c){
   if(sel){
     if(p===sel){sel=null;VM=[];draw();return}
     if(hit){
+      saveMoveSnapshot();
       const fromPos = `${sel.r},${sel.c}`;
       const toPos = `${r},${c}`;
       
