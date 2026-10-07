@@ -25,7 +25,7 @@
     if (!token) {
       container.innerHTML = `
         <div class="kybien-auth-buttons">
-          <a href="/p/sanh-au-co.html" class="btn-login">Đăng Nhập / Đăng Ký</a>
+          <a href="/p/arena.html" class="btn-login">Đăng Nhập / Đăng Ký</a>
         </div>
       `;
       return;
