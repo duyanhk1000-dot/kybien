@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { config } from './config/index.js';
 import authRoutes from './routes/authRoutes.js';
+import matchRoutes from './routes/matchRoutes.js';
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/matches', matchRoutes);
 
 // Global Error Handler
 app.use((err: any, req: Request, res: Response, next: any) => {

@@ -1,6 +1,6 @@
 /**
  * Kỳ Biến Platform Client Script (kybien-client.js)
- * Dành riêng cho kybien.blogspot.com
+ * Dành riêng cho kybien.blogspot.com & Replay Viewer
  */
 
 (function () {
@@ -63,37 +63,214 @@
     }
   }
 
-  // Window global viewer controller cho các bài đăng Blogger
+  // Window global viewer controller cho các bài đăng Blogger (Interactive Xiangqi Board)
   window.KybienViewer = {
     currentStep: 0,
     moves: [],
+    canvas: null,
+    ctx: null,
+
+    pieceNames: {
+      k: { r: '帥', b: '將' },
+      a: { r: '仕', b: '士' },
+      b: { r: '相', b: '象' },
+      n: { r: '馬', b: '馬' },
+      r: { r: '車', b: '車' },
+      c: { r: '砲', b: '砲' },
+      p: { r: '兵', b: '卒' }
+    },
+
     init: function () {
       const viewerElem = document.getElementById('kybien-board-viewer');
       if (!viewerElem) return;
       try {
         this.moves = JSON.parse(viewerElem.getAttribute('data-moves') || '[]');
         console.log('[Kỳ Biến Replay Viewer] Đã tải ván cờ với', this.moves.length, 'nước đi.');
+        
+        const canvasContainer = document.getElementById('chess-board-canvas');
+        if (canvasContainer) {
+          canvasContainer.innerHTML = '<canvas id="kybien-replay-canvas" width="500" height="550" style="width:100%; height:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.3);"></canvas><div id="kybien-step-info" style="text-align:center; margin-top:6px; font-weight:bold; color:#8b0000; font-family:sans-serif;">Nước: 0 / ' + this.moves.length + '</div>';
+          this.canvas = document.getElementById('kybien-replay-canvas');
+          if (this.canvas) this.ctx = this.canvas.getContext('2d');
+        }
+        this.render();
       } catch (e) {
-        console.error(e);
+        console.error('[Kỳ Biến Viewer Error]', e);
       }
     },
+
+    getInitialBoard: function() {
+      const board = Array(10).fill(null).map(() => Array(9).fill(null));
+      const bk = ['r','n','b','a','k','a','b','n','r'];
+      for (let c = 0; c < 9; c++) {
+        board[0][c] = { t: bk[c], col: 'b' };
+        board[9][c] = { t: bk[c], col: 'r' };
+      }
+      board[2][1] = { t: 'c', col: 'b' }; board[2][7] = { t: 'c', col: 'b' };
+      board[7][1] = { t: 'c', col: 'r' }; board[7][7] = { t: 'c', col: 'r' };
+      for (let c = 0; c < 9; c += 2) {
+        board[3][c] = { t: 'p', col: 'b' };
+        board[6][c] = { t: 'p', col: 'r' };
+      }
+      return board;
+    },
+
+    computeBoardAtStep: function(step) {
+      const board = this.getInitialBoard();
+      let lastMove = null;
+
+      for (let i = 0; i < step && i < this.moves.length; i++) {
+        const mStr = this.moves[i];
+        if (!mStr) continue;
+        const parts = mStr.split('-');
+        if (parts.length === 2) {
+          const from = parts[0].split(',').map(Number);
+          const to = parts[1].split(',').map(Number);
+          if (from.length === 2 && to.length === 2 && !isNaN(from[0]) && !isNaN(to[0])) {
+            const p = board[from[0]][from[1]];
+            board[from[0]][from[1]] = null;
+            board[to[0]][to[1]] = p;
+            lastMove = { from, to };
+          }
+        }
+      }
+      return { board, lastMove };
+    },
+
+    render: function () {
+      if (!this.ctx || !this.canvas) return;
+      const ctx = this.ctx;
+      const W = this.canvas.width;
+      const H = this.canvas.height;
+      const OX = 45, OY = 45, CS = 51;
+
+      const { board, lastMove } = this.computeBoardAtStep(this.currentStep);
+
+      // Background
+      ctx.fillStyle = '#f0d9b5';
+      ctx.fillRect(0, 0, W, H);
+
+      // Border frame
+      ctx.strokeStyle = '#5a3d22';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(10, 10, W - 20, H - 20);
+
+      // Grid lines
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#5a3d22';
+
+      // Horizontal lines
+      for (let r = 0; r < 10; r++) {
+        ctx.beginPath();
+        ctx.moveTo(OX, OY + r * CS);
+        ctx.lineTo(OX + 8 * CS, OY + r * CS);
+        ctx.stroke();
+      }
+
+      // Vertical lines
+      for (let c = 0; c < 9; c++) {
+        ctx.beginPath();
+        ctx.moveTo(OX + c * CS, OY);
+        ctx.lineTo(OX + c * CS, OY + 4 * CS);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(OX + c * CS, OY + 5 * CS);
+        ctx.lineTo(OX + c * CS, OY + 9 * CS);
+        ctx.stroke();
+      }
+
+      // River side lines
+      ctx.beginPath();
+      ctx.moveTo(OX, OY + 4 * CS);
+      ctx.lineTo(OX, OY + 5 * CS);
+      ctx.moveTo(OX + 8 * CS, OY + 4 * CS);
+      ctx.lineTo(OX + 8 * CS, OY + 5 * CS);
+      ctx.stroke();
+
+      // River text
+      ctx.fillStyle = '#8b4513';
+      ctx.font = 'bold 22px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('楚 河', OX + 2 * CS, OY + 4.5 * CS);
+      ctx.fillText('漢 界', OX + 6 * CS, OY + 4.5 * CS);
+
+      // Palaces (Cung Tướng)
+      ctx.beginPath();
+      ctx.moveTo(OX + 3 * CS, OY); ctx.lineTo(OX + 5 * CS, OY + 2 * CS);
+      ctx.moveTo(OX + 5 * CS, OY); ctx.lineTo(OX + 3 * CS, OY + 2 * CS);
+      ctx.moveTo(OX + 3 * CS, OY + 7 * CS); ctx.lineTo(OX + 5 * CS, OY + 9 * CS);
+      ctx.moveTo(OX + 5 * CS, OY + 7 * CS); ctx.lineTo(OX + 3 * CS, OY + 9 * CS);
+      ctx.stroke();
+
+      // Highlight Last Move
+      if (lastMove) {
+        ctx.fillStyle = 'rgba(241, 196, 15, 0.4)';
+        ctx.fillRect(OX + lastMove.from[1] * CS - 20, OY + lastMove.from[0] * CS - 20, 40, 40);
+        ctx.fillStyle = 'rgba(46, 204, 113, 0.4)';
+        ctx.fillRect(OX + lastMove.to[1] * CS - 20, OY + lastMove.to[0] * CS - 20, 40, 40);
+      }
+
+      // Draw Pieces
+      for (let r = 0; r < 10; r++) {
+        for (let c = 0; c < 9; c++) {
+          const p = board[r][c];
+          if (!p) continue;
+          const x = OX + c * CS;
+          const y = OY + r * CS;
+          const rad = 20;
+
+          // Circle background
+          ctx.beginPath();
+          ctx.arc(x, y, rad, 0, Math.PI * 2);
+          ctx.fillStyle = '#fffdfa';
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = p.col === 'r' ? '#c62828' : '#222';
+          ctx.stroke();
+
+          // Inner ring
+          ctx.beginPath();
+          ctx.arc(x, y, rad - 3, 0, Math.PI * 2);
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Piece Label
+          const char = (this.pieceNames[p.t] && this.pieceNames[p.t][p.col]) || p.t;
+          ctx.fillStyle = p.col === 'r' ? '#c62828' : '#222';
+          ctx.font = 'bold 20px serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(char, x, y + 1);
+        }
+      }
+
+      // Step Info Update
+      const stepInfo = document.getElementById('kybien-step-info');
+      if (stepInfo) {
+        stepInfo.innerText = `Nước: ${this.currentStep} / ${this.moves.length}`;
+      }
+    },
+
     nextMove: function () {
       if (this.currentStep < this.moves.length) {
         this.currentStep++;
-        console.log('Xem nước:', this.currentStep, this.moves[this.currentStep - 1]);
+        this.render();
       }
     },
     prevMove: function () {
       if (this.currentStep > 0) {
         this.currentStep--;
-        console.log('Xem nước:', this.currentStep);
+        this.render();
       }
     },
     firstMove: function () {
       this.currentStep = 0;
+      this.render();
     },
     lastMove: function () {
       this.currentStep = this.moves.length;
+      this.render();
     },
   };
 

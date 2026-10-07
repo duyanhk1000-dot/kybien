@@ -1,6 +1,8 @@
 import { Server, Socket } from 'socket.io';
 import { verifyToken } from '../utils/jwt.js';
 import { matchmakingManager } from '../services/matchmakingService.js';
+import { analyzeMatchWithGemini } from '../services/aiService.js';
+import { publishMatchToBlogger } from '../services/bloggerService.js';
 
 export function setupGameSocket(io: Server): void {
   io.use((socket: Socket, next) => {
@@ -211,6 +213,32 @@ export function setupGameSocket(io: Server): void {
     // 6. Kết thúc ván cờ
     socket.on('game_over', async (data: { roomId: string; winnerId: number | null; reason: string }) => {
       const { roomId, winnerId, reason } = data;
+      const room = matchmakingManager.getRoom(roomId);
+
+      if (room && room.moves && room.moves.length >= 50) {
+        const whiteName = room.playerWhite.username || 'Đỏ';
+        const blackName = room.playerBlack?.username || 'Đen';
+        let winnerName = 'Hòa';
+        let loserName = 'Hòa';
+
+        if (winnerId === room.playerWhite.userId) {
+          winnerName = whiteName;
+          loserName = blackName;
+        } else if (room.playerBlack && winnerId === room.playerBlack.userId) {
+          winnerName = blackName;
+          loserName = whiteName;
+        }
+
+        // Tự động kích hoạt AI sinh bài viết Sa Trường & Đăng bài Blogger cho Trận Hay (>50 nước)
+        analyzeMatchWithGemini(room.moves, winnerName, loserName, reason || 'Chiếu Bí')
+          .then((aiResult) => {
+            if (aiResult) {
+              return publishMatchToBlogger(`match_${Date.now()}`, whiteName, blackName, room.moves, aiResult);
+            }
+          })
+          .catch((err) => console.error('[Socket AI Blog Post Error]', err));
+      }
+
       const finished = await matchmakingManager.finishGame(roomId, winnerId, reason);
 
       if (finished) {
