@@ -1293,10 +1293,27 @@ function safe(o,r,c){
   return ok;
 }
 
+let checkCount = { r: 0, b: 0 };
+
 function legalMoves(o,customBf){
   if (o.dead || o.st > 0) return [];
   const bf = customBf || (o.oneTurnCard ? o.oneTurnCard.id : null);
-  const out=[],ps=(r,c)=>{if(r<0||r>9||c<0||c>8)return;if(valid(o,r,c,bf)&&safe(o,r,c))out.push([r,c])};
+  const out=[];
+  const isTooManyChecks = (checkCount[o.col] || 0) >= 3;
+
+  const ps=(r,c)=>{
+    if(r<0||r>9||c<0||c>8)return;
+    if(valid(o,r,c,bf)&&safe(o,r,c)) {
+      if (isTooManyChecks) {
+        const target = B[r][c], origR = o.r, origC = o.c;
+        B[origR][origC] = null; B[r][c] = o; o.r = r; o.c = c; if (target) target.dead = true;
+        const stillCheck = inCheck(opp(o.col));
+        B[r][c] = target; B[origR][origC] = o; o.r = origR; o.c = origC; if (target) target.dead = false;
+        if (stillCheck) return;
+      }
+      out.push([r,c]);
+    }
+  };
   const pieceType = o.hd ? o.t : (o.tru || o.t);
   if(pieceType==='r'||pieceType==='c'){for(let i=0;i<10;i++)ps(i,o.c);for(let j=0;j<9;j++)ps(o.r,j)}
   else for(const[d,e]of OFF[pieceType])ps(o.r+d,o.c+e);
@@ -1518,6 +1535,26 @@ function updateBagLogic() {
 }
 
 function checkGameEnd(currentTurn) {
+  const kCurrent = K[currentTurn];
+  const kOpp = K[opp(currentTurn)];
+
+  if (!kCurrent || kCurrent.dead) {
+    over = true;
+    const winner = opp(currentTurn);
+    say(`💥 TƯỚNG BỊ BẮT! ${winner === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} giành chiến thắng!`, '#f1c40f', 'log-sp');
+    showGameOverModal('checkmate', winner, currentTurn);
+    setGameControlsLocked(false);
+    return true;
+  }
+  if (!kOpp || kOpp.dead) {
+    over = true;
+    const winner = currentTurn;
+    say(`💥 TƯỚNG BỊ BẮT! ${winner === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} giành chiến thắng!`, '#f1c40f', 'log-sp');
+    showGameOverModal('checkmate', winner, opp(currentTurn));
+    setGameControlsLocked(false);
+    return true;
+  }
+
   const moves = allMoves(currentTurn);
   const ck = inCheck(currentTurn);
 
@@ -1542,7 +1579,6 @@ function endTurnLocalOnly() {
   const prev=turn;
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
   
-  // Dọn dẹp thẻ Một Lượt của phe vừa đi
   for (const o of P[prev]) {
     if (!o.dead && o.oneTurnCard) {
       o.oneTurnCard = null;
@@ -1557,8 +1593,14 @@ function endTurnLocalOnly() {
   const ended = checkGameEnd(turn);
   if (!ended) {
     const ck=inCheck(turn);
-    if(ck){SoundSystem.playCheck();say('CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
-    else stat();
+    if(ck){
+      checkCount[opp(turn)] = (checkCount[opp(turn)] || 0) + 1;
+      SoundSystem.playCheck();
+      say('CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp');
+    } else {
+      checkCount[opp(turn)] = 0;
+      stat();
+    }
   }
 
   busy=false;ui();draw();
@@ -1568,7 +1610,6 @@ function endTurn(){
   const prev=turn;
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
 
-  // Dọn dẹp thẻ Một Lượt của phe vừa đi
   for (const o of P[prev]) {
     if (!o.dead && o.oneTurnCard) {
       o.oneTurnCard = null;
@@ -1583,8 +1624,14 @@ function endTurn(){
   const ended = checkGameEnd(turn);
   if (!ended) {
     const ck=inCheck(turn);
-    if(ck){SoundSystem.playCheck();say('CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
-    else stat();
+    if(ck){
+      checkCount[opp(turn)] = (checkCount[opp(turn)] || 0) + 1;
+      SoundSystem.playCheck();
+      say('CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp');
+    } else {
+      checkCount[opp(turn)] = 0;
+      stat();
+    }
   }
 
   busy=false;
