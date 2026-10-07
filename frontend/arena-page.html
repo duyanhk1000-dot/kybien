@@ -1,5 +1,5 @@
 <!-- 
-  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL ONLINE SOCKET.IO REALTIME SYNC + 5 BOT LEVELS + CỜ ÚP & CỜ TRUYỀN THỐNG)
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL ONLINE SOCKET.IO REALTIME SYNC + PIKAFISH BOT ENGINE + POPUP MATCH NOTIFICATION)
 -->
 
 <div id="kybien-arena-app">
@@ -22,6 +22,7 @@
       border-radius: 12px;
       width: 100%;
       margin: 0 auto;
+      position: relative;
     }
     #kybien-arena-app * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -179,6 +180,10 @@
       font: 600 .85rem 'Be Vietnam Pro', sans-serif;
       cursor: pointer;
     }
+    select:disabled, button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
     button.p {
       background: var(--bp);
       border-color: transparent;
@@ -272,7 +277,30 @@
       margin-top: 4px;
       min-height: 32px;
     }
+
+    @keyframes modalBounce {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
+
+  <!-- POPUP THÔNG BÁO GHÉP TRẬN -->
+  <div id="match-found-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);">
+    <div style="background:linear-gradient(145deg, #3d2516, #1a0f08); border:2px solid #f1c40f; border-radius:16px; padding:24px 28px; max-width:440px; width:90%; text-align:center; box-shadow:0 0 35px rgba(241,196,15,0.45); animation:modalBounce 0.35s ease-out;">
+      <div style="font-size:3rem; line-height:1; margin-bottom:10px;">⚔️</div>
+      <h2 style="color:#f1c40f; font-family:'Noto Serif TC',serif; font-size:1.45rem; margin-bottom:6px; letter-spacing:1px;">ĐÃ TÌM THẤY ĐỐI THỦ!</h2>
+      <div id="modal-match-variant" style="color:#2ecc71; font-weight:700; font-size:0.95rem; margin-bottom:14px;"></div>
+      
+      <div style="background:rgba(0,0,0,0.45); border:1px solid #5a3d22; border-radius:10px; padding:12px 16px; margin-bottom:18px;">
+        <div id="modal-match-players" style="font-size:0.92rem; color:#e8dcc6; margin-bottom:8px; line-height:1.5;"></div>
+        <div id="modal-match-side" style="font-size:1.05rem; font-weight:700; color:#f39c12;"></div>
+      </div>
+      
+      <button type="button" onclick="closeMatchModal()" style="background:linear-gradient(135deg, #e67e22, #d35400); color:#fff; font-weight:700; font-size:1rem; border:none; padding:12px 28px; border-radius:8px; cursor:pointer; box-shadow:0 4px 15px rgba(230,126,34,0.4);">
+        VÀO TRẬN ĐẤU ⚔️ (<span id="modal-countdown">5</span>s)
+      </button>
+    </div>
+  </div>
 
   <!-- THANH ĐĂNG NHẬP -->
   <div class="arena-auth-bar">
@@ -356,7 +384,7 @@
               <option value="1">Lv2 Ông Đồ</option>
               <option value="2">Lv3 Pháo Đầu</option>
               <option value="3">Lv4 Cao Thủ</option>
-              <option value="4" selected>Lv5 Địa Ngục Vương</option>
+              <option value="4" selected>Lv5 Địa Ngục Vương (Pikafish AI)</option>
             </select>
           </label>
 
@@ -388,22 +416,22 @@
 
         <!-- HỖ TRỢ TRONG VÁN -->
         <div class="acts">
-          <button type="button" onclick="undoAction()">↩️ Đi lại</button>
-          <button type="button" onclick="hintAction()">💡 Gợi ý</button>
-          <button type="button" onclick="flipBoardAction()">🔃 Lật bàn</button>
+          <button type="button" id="btn-undo" onclick="undoAction()">↩️ Đi lại</button>
+          <button type="button" id="btn-hint" onclick="hintAction()">💡 Gợi ý</button>
+          <button type="button" id="btn-flip" onclick="flipBoardAction()">🔃 Lật bàn</button>
         </div>
 
         <!-- ONLINE ROOM TOOLS -->
         <div id="online-room-tools" style="display: none; margin-top: 12px; padding: 10px; background: #20140b; border: 1px solid #4a331f; border-radius: 8px;">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
-            <button type="button" onclick="createRoom()" style="flex: 1; background: #27ae60; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 7px; border: none; border-radius: 6px; cursor: pointer;">➕ Tạo Mã Phòng</button>
+            <button type="button" id="btn-create-room" onclick="createRoom()" style="flex: 1; background: #27ae60; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 7px; border: none; border-radius: 6px; cursor: pointer;">➕ Tạo Mã Phòng</button>
             <label style="display: flex; align-items: center; gap: 5px; font-size: 0.76rem; color: var(--ac); cursor: pointer; white-space: nowrap; user-select: none;">
               <input type="checkbox" id="chk-private-room" style="accent-color: #27ae60; cursor: pointer;" /> Phòng riêng
             </label>
           </div>
           <div style="display: flex; gap: 6px; margin-bottom: 8px;">
             <input type="text" id="room-code-input" placeholder="Nhập mã phòng (vd: KB-8899)" style="flex: 1; background: #1a110a; border: 1px solid var(--bd); color: #fff; padding: 6px; border-radius: 6px; font-size: 0.8rem;" />
-            <button type="button" onclick="joinRoomByCode()" style="background: #2980b9; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer;">Vào Phòng</button>
+            <button type="button" id="btn-join-room" onclick="joinRoomByCode()" style="background: #2980b9; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer;">Vào Phòng</button>
           </div>
 
           <!-- PHÒNG CHỜ CÔNG KHAI -->
@@ -459,6 +487,7 @@ let currentRoomId = null;
 let myOnlineSide = 'r';
 let currentUser = null;
 let boardFlipped = false;
+let modalTimer = null;
 
 const VARIANT_NAMES = {
   kb: 'Kỳ Biến (Bí Pháp)',
@@ -466,6 +495,19 @@ const VARIANT_NAMES = {
   t: 'Cờ Úp Truyền Thống',
   g: 'Cờ Úp Gián Điệp'
 };
+
+/* ---------- KHÓA / MỞ THIẾT LẬP KHI VÀO VÁN ---------- */
+function setGameControlsLocked(locked) {
+  const ids = ['mode_variant', 'mode', 'lv', 'hc', 'tm'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = locked;
+  });
+  const btnFlip = document.getElementById('btn-flip');
+  if (btnFlip) {
+    btnFlip.disabled = locked;
+  }
+}
 
 /* ---------- AUTH UTILS & AUTO-GUEST ---------- */
 async function checkAuthUI() {
@@ -573,6 +615,41 @@ function arenaLogout() {
   checkAuthUI();
 }
 
+function showMatchModal(data, varTitle, mySide) {
+  const modal = document.getElementById('match-found-modal');
+  if (!modal) return;
+  
+  SoundSystem.playCheck();
+
+  document.getElementById('modal-match-variant').innerText = `Thể loại: ${varTitle}`;
+  document.getElementById('modal-match-players').innerHTML = `
+    🔴 Đỏ: <strong>${data.playerWhite.username}</strong> (${data.playerWhite.elo} ELO)<br/>
+    ⚫ Đen: <strong>${data.playerBlack.username}</strong> (${data.playerBlack.elo} ELO)
+  `;
+  document.getElementById('modal-match-side').innerText = `Bạn cầm quân: ${mySide === 'r' ? '🔴 ĐỎ (Đi trước)' : '⚫ ĐEN (Đi sau)'}`;
+  
+  modal.style.display = 'flex';
+  
+  let count = 5;
+  const countEl = document.getElementById('modal-countdown');
+  if (countEl) countEl.innerText = count;
+  
+  if (modalTimer) clearInterval(modalTimer);
+  modalTimer = setInterval(() => {
+    count--;
+    if (countEl) countEl.innerText = count;
+    if (count <= 0) {
+      closeMatchModal();
+    }
+  }, 1000);
+}
+
+function closeMatchModal() {
+  if (modalTimer) clearInterval(modalTimer);
+  const modal = document.getElementById('match-found-modal');
+  if (modal) modal.style.display = 'none';
+}
+
 async function initSocketConnection() {
   const logged = await ensureUserLoggedIn();
   const token = localStorage.getItem('kybien_jwt_token');
@@ -600,7 +677,6 @@ async function initSocketConnection() {
       alert(`Đã tạo phòng thành công!\nMã phòng: ${code}\nThể loại: ${varName}\n${isPrivate ? '(Phòng riêng)' : '(Phòng công khai)'}`);
     });
 
-    // DANH SÁCH PHÒNG CHỜ HIỂN THỊ RÕ THỂ LOẠI CỜ (VARIANT)
     socketInstance.on('public_rooms_list', rooms => {
       const listEl = document.getElementById('public-rooms-list');
       if (!listEl) return;
@@ -629,7 +705,6 @@ async function initSocketConnection() {
       });
     });
 
-    // KHẮC PHỤC GHÉP TRẬN CHUẨN ĐỒNG BỘ CÙNG THỂ LOẠI CỜ & CÙNG BẢN ĐỒ CỜ ÚP
     socketInstance.on('match_found', data => {
       isOnlineMatch = true;
       currentRoomId = data.roomId;
@@ -644,7 +719,6 @@ async function initSocketConnection() {
                     (currentUser && currentUser.username === data.playerWhite.username);
       myOnlineSide = isRed ? 'r' : 'b';
 
-      // Đồng bộ thể loại cờ đã chọn
       if (data.variant) {
         const selVariant = document.getElementById('mode_variant');
         if (selVariant) selVariant.value = data.variant;
@@ -658,8 +732,12 @@ async function initSocketConnection() {
       
       say(`[Chiến Trường Online] Kết nối trận thành công [${varTitle}]! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}.`, '#2ec4b6', 'log-sp');
       
-      // Tải ván đấu với vị trí quân cờ đồng bộ tuyệt đối từ server
+      // HIỂN THỊ POPUP THÔNG BÁO GHÉP TRẬN
+      showMatchModal(data, varTitle, myOnlineSide);
+
+      // TẢI VÁN ĐẤU VỚI BỐ CỤC ĐỒNG BỘ VÀ KHÓA THIẾT LẬP
       newGame(data.variant, data.initialPieces);
+      setGameControlsLocked(true);
     });
 
     socketInstance.on('move_made', data => {
@@ -794,6 +872,7 @@ async function handleGameAction() {
       isMatchSearching = false;
       document.getElementById('btn-action').innerText = '⚡ GẮN KẾT TÌM TRẬN TỰ ĐỘNG';
       socketInstance.emit('cancel_matchmaking');
+      setGameControlsLocked(false);
     }
   } else {
     isOnlineMatch = false;
@@ -820,11 +899,12 @@ function hintAction() {
 }
 
 function flipBoardAction() {
+  if (isOnlineMatch) return alert('Không thể lật bàn cờ khi đang đấu Online!');
   boardFlipped = !boardFlipped;
   draw();
 }
 
-/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN & BOT AI ---------- */
+/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN & BOT AI (PIKAFISH ENGINE) ---------- */
 const $=id=>document.getElementById(id);
 const SoundSystem=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext||window.webkitAudioContext)();if(a.state==='suspended')a.resume();return a};
 function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
@@ -847,8 +927,67 @@ window.addEventListener('DOMContentLoaded',syncTrayLayout);
 
 const cv=$('cv'),x=cv.getContext('2d'),CS=60,OX=60,OY=60,PR=25;
 const LB={rk:'帥',ra:'仕',rb:'相',rn:'傌',rr:'俥',rc:'炮',rp:'兵',bk:'將',ba:'士',bb:'象',bn:'馬',br:'車',bc:'砲',bp:'卒'};
-const VAL={k:0,r:1000,c:480,n:430,b:200,a:200,p:100};
+const VAL={k:10000,r:1000,c:480,n:430,b:200,a:200,p:100};
 const TN={r:'Xe',c:'Pháo',n:'Mã',b:'Tượng',a:'Sĩ',p:'Tốt',k:'Tướng'};
+
+/* BẢNG VỊ TRÍ CHIẾN THUẬT PIKAFISH (PIECE-SQUARE TABLES) */
+const PST = {
+  r: [
+    [10, 15, 20, 30, 30, 30, 20, 15, 10],
+    [20, 30, 40, 50, 55, 50, 40, 30, 20],
+    [15, 25, 30, 45, 50, 45, 30, 25, 15],
+    [15, 20, 25, 40, 45, 40, 25, 20, 15],
+    [20, 30, 35, 50, 55, 50, 35, 30, 20],
+    [10, 15, 20, 25, 30, 25, 20, 15, 10],
+    [ 5, 10, 15, 20, 20, 20, 15, 10,  5],
+    [ 5, 10, 10, 15, 15, 15, 10, 10,  5],
+    [ 0,  5,  5, 10, 10, 10,  5,  5,  0],
+    [-5,  0,  0,  5,  5,  5,  0,  0, -5]
+  ],
+  n: [
+    [ 0,  5, 15, 20, 10, 20, 15,  5,  0],
+    [ 5, 15, 25, 35, 30, 35, 25, 15,  5],
+    [10, 20, 35, 45, 40, 45, 35, 20, 10],
+    [10, 25, 35, 50, 45, 50, 35, 25, 10],
+    [ 5, 20, 30, 40, 40, 40, 30, 20,  5],
+    [ 0, 10, 20, 25, 25, 25, 20, 10,  0],
+    [ 0,  5, 10, 15, 15, 15, 10,  5,  0],
+    [ 0, -5,  5, 10, 10, 10,  5, -5,  0],
+    [-5,-10,  0,  5,  5,  5,  0,-10, -5],
+    [-10,-10, -5,  0,  0,  0, -5,-10,-10]
+  ],
+  c: [
+    [ 5, 10, 15, 25, 30, 25, 15, 10,  5],
+    [10, 15, 20, 35, 40, 35, 20, 15, 10],
+    [10, 20, 25, 35, 40, 35, 25, 20, 10],
+    [ 5, 10, 15, 25, 30, 25, 15, 10,  5],
+    [ 0,  5, 10, 20, 25, 20, 10,  5,  0],
+    [ 0,  0, 10, 15, 20, 15, 10,  0,  0],
+    [ 0,  5,  5, 15, 20, 15,  5,  5,  0],
+    [ 5, 10, 10, 20, 25, 20, 10, 10,  5],
+    [ 0,  0,  0, 10, 15, 10,  0,  0,  0],
+    [ 0,  0,  0,  5, 10,  5,  0,  0,  0]
+  ],
+  p: [
+    [90, 100, 120, 130, 140, 130, 120, 100, 90],
+    [80,  95, 110, 120, 125, 120, 110,  95, 80],
+    [70,  85, 100, 110, 115, 110, 100,  85, 70],
+    [50,  65,  80,  95, 100,  95,  80,  65, 50],
+    [30,  45,  60,  75,  80,  75,  60,  45, 30],
+    [ 0,   0,   0,   0,   0,   0,   0,   0,  0],
+    [ 0,   0,   0,   0,   0,   0,   0,   0,  0],
+    [ 0,   0,   0,   0,   0,   0,   0,   0,  0],
+    [ 0,   0,   0,   0,   0,   0,   0,   0,  0],
+    [ 0,   0,   0,   0,   0,   0,   0,   0,  0]
+  ]
+};
+
+function getPSTValue(type, col, r, c) {
+  const table = PST[type];
+  if (!table) return 0;
+  return col === 'r' ? table[r][c] : table[9 - r][c];
+}
+
 const CARDS=[
   ['ROOK_1','r',3,'Thiểm Điện Trảm','Ăn quân xong được tiến thẳng thêm 1-2 ô'],
   ['ROOK_2','r',3,'Phá Lãng Bộ','Đi xong được bẻ góc 90° đi thêm 1-3 ô'],
@@ -979,7 +1118,6 @@ function newGame(onlineVariant, onlinePieces){
     put('c','b',2,1);put('c','b',2,7);put('c','r',7,1);put('c','r',7,7);
     for(let c=0;c<9;c+=2){put('p','b',3,c);put('p','r',6,c)}
   } else {
-    // CỜ ÚP ĐỒNG BỘ NGUYÊN BẢN TỪ SERVER SERVER-SIDE SYNC PIECES
     const piecesList = ['r','r','n','n','b','b','a','a','c','c','p','p','p','p','p'];
     const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
     
@@ -1022,6 +1160,7 @@ function newGame(onlineVariant, onlinePieces){
   if (!isOnlineMatch) {
     const botLvlName = ['Tay Mơ', 'Ông Đồ', 'Pháo Đầu', 'Cao Thủ', 'Địa Ngục Vương'][+$('lv').value];
     $('nb').innerText=ai ? `Đen (Bot AI: ${botLvlName})` : 'Đen';
+    setGameControlsLocked(false);
   }
   say(`Khai cuộc: ${VARIANT_NAMES[variant] || 'Cờ Tướng'}.`, '#a8947d');
   syncTrayLayout();
@@ -1089,11 +1228,134 @@ function endTurn(){
   ui();draw();
 
   if(!over && ai && turn===aiCol){
-    setTimeout(triggerAIMove, 150);
+    setTimeout(triggerAIMove, 120);
   }
 }
 
-/* BOT AI NÂNG CẤP ALPHA-BETA ĐA CẤP ĐỘ */
+/* ---------- ĐỘNG CƠ ĐÁNH ĐÁNH BOT AI PIKAFISH (ALPHA-BETA + QUIESCENCE SEARCH) ---------- */
+function evaluateBoard(evalCol) {
+  let score = 0;
+  for (let r = 0; r < 10; r++) {
+    for (let c = 0; c < 9; c++) {
+      const p = B[r][c];
+      if (!p || p.dead) continue;
+      const type = p.hd ? p.t : (p.tru || p.t);
+      const val = VAL[type] || 100;
+      const pst = getPSTValue(type, p.col, r, c);
+      const total = val + pst;
+      if (p.col === evalCol) score += total;
+      else score -= total;
+    }
+  }
+  return score;
+}
+
+function quiescenceSearch(alpha, beta, isMaximizing, currentTurn, evalCol) {
+  const standPat = evaluateBoard(evalCol);
+  if (isMaximizing) {
+    if (standPat >= beta) return beta;
+    if (standPat > alpha) alpha = standPat;
+  } else {
+    if (standPat <= alpha) return alpha;
+    if (standPat < beta) beta = standPat;
+  }
+
+  const captures = allMoves(currentTurn).filter(m => B[m[1]][m[2]] !== null);
+  if (!captures.length) return standPat;
+
+  captures.sort((a, b) => {
+    const targetA = B[a[1]][a[2]], targetB = B[b[1]][b[2]];
+    return (VAL[targetB.tru || targetB.t] || 0) - (VAL[targetA.tru || targetA.t] || 0);
+  });
+
+  if (isMaximizing) {
+    for (const m of captures) {
+      const o = m[0], r = m[1], c = m[2], target = B[r][c];
+      const origR = o.r, origC = o.c;
+
+      B[origR][origC] = null; B[r][c] = o; o.r = r; o.c = c; target.dead = true;
+      const score = quiescenceSearch(alpha, beta, false, opp(currentTurn), evalCol);
+      B[r][c] = target; B[origR][origC] = o; o.r = origR; o.c = origC; target.dead = false;
+
+      if (score >= beta) return beta;
+      if (score > alpha) alpha = score;
+    }
+    return alpha;
+  } else {
+    for (const m of captures) {
+      const o = m[0], r = m[1], c = m[2], target = B[r][c];
+      const origR = o.r, origC = o.c;
+
+      B[origR][origC] = null; B[r][c] = o; o.r = r; o.c = c; target.dead = true;
+      const score = quiescenceSearch(alpha, beta, true, opp(currentTurn), evalCol);
+      B[r][c] = target; B[origR][origC] = o; o.r = origR; o.c = origC; target.dead = false;
+
+      if (score <= alpha) return alpha;
+      if (score < beta) beta = score;
+    }
+    return beta;
+  }
+}
+
+function alphaBetaSearch(depth, alpha, beta, isMaximizing, currentTurn, evalCol) {
+  if (depth === 0) {
+    return quiescenceSearch(alpha, beta, isMaximizing, currentTurn, evalCol);
+  }
+
+  const moves = allMoves(currentTurn);
+  if (!moves.length) {
+    return isMaximizing ? -99999 + (4 - depth) : 99999 - (4 - depth);
+  }
+
+  moves.sort((a, b) => {
+    const targetA = B[a[1]][a[2]];
+    const targetB = B[b[1]][b[2]];
+    const valA = targetA ? (VAL[targetA.tru || targetA.t] || 100) - (VAL[a[0].tru || a[0].t] || 100) : -999;
+    const valB = targetB ? (VAL[targetB.tru || targetB.t] || 100) - (VAL[b[0].tru || b[0].t] || 100) : -999;
+    return valB - valA;
+  });
+
+  if (isMaximizing) {
+    let maxEval = -Infinity;
+    for (const m of moves) {
+      const o = m[0], r = m[1], c = m[2], target = B[r][c];
+      const origR = o.r, origC = o.c;
+
+      B[origR][origC] = null; B[r][c] = o; o.r = r; o.c = c;
+      if (target) target.dead = true;
+
+      const evalVal = alphaBetaSearch(depth - 1, alpha, beta, false, opp(currentTurn), evalCol);
+
+      B[r][c] = target; B[origR][origC] = o; o.r = origR; o.c = origC;
+      if (target) target.dead = false;
+
+      maxEval = Math.max(maxEval, evalVal);
+      alpha = Math.max(alpha, evalVal);
+      if (beta <= alpha) break;
+    }
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+    for (const m of moves) {
+      const o = m[0], r = m[1], c = m[2], target = B[r][c];
+      const origR = o.r, origC = o.c;
+
+      B[origR][origC] = null; B[r][c] = o; o.r = r; o.c = c;
+      if (target) target.dead = true;
+
+      const evalVal = alphaBetaSearch(depth - 1, alpha, beta, true, opp(currentTurn), evalCol);
+
+      B[r][c] = target; B[origR][origC] = o; o.r = origR; o.c = origC;
+      if (target) target.dead = false;
+
+      minEval = Math.min(minEval, evalVal);
+      beta = Math.min(beta, evalVal);
+      if (beta <= alpha) break;
+    }
+    return minEval;
+  }
+}
+
 function triggerAIMove(){
   if(over || turn !== aiCol) return;
   busy = true;
@@ -1110,39 +1372,46 @@ function triggerAIMove(){
         $('st').innerText = 'BẠN ĐÃ CHIẾN THẮNG!';
         say('🎉 BẠN ĐÃ CHIẾN THẮNG ĐỐI THỦ TỰ ĐỘNG!','#f1c40f','log-sp');
         busy = false;
+        setGameControlsLocked(false);
         return;
       }
 
-      const evalMove = (m) => {
-        const o = m[0], r = m[1], c = m[2];
-        const target = B[r][c];
-        let score = 0;
-        
-        if (target) {
-          const targetVal = VAL[target.tru || target.t] || 100;
-          const selfVal = VAL[o.tru || o.t] || 100;
-          score += (targetVal * 12 - selfVal);
-        }
-        
-        score += (4 - Math.abs(c - 4)) * 6;
-        score += (9 - r) * 4;
+      let chosen = null;
 
-        B[o.r][o.c] = null; B[r][c] = o; o.r = r; o.c = c;
-        if (inCheck('r')) score += 200;
-        B[r][c] = target; B[o.r][o.c] = o; o.r = m[0].r; o.c = m[0].c;
-
-        return score;
-      };
-
-      moves.sort((a,b) => evalMove(b) - evalMove(a));
-
-      let chosen = moves[0];
       if (botLvl === 0) {
-        chosen = moves[Math.floor(Math.random() * Math.min(moves.length, 4))];
+        chosen = moves[Math.floor(Math.random() * moves.length)];
       } else if (botLvl === 1) {
-        chosen = moves[Math.floor(Math.random() * Math.min(moves.length, 2))];
+        moves.sort((a,b) => {
+          const tA = B[a[1]][a[2]], tB = B[b[1]][b[2]];
+          return (tB ? VAL[tB.tru||tB.t]||0 : 0) - (tA ? VAL[tA.tru||tA.t]||0 : 0);
+        });
+        chosen = moves[Math.floor(Math.random() * Math.min(moves.length, 3))];
       } else {
-        chosen = moves[0];
+        const searchDepth = botLvl === 2 ? 2 : (botLvl === 3 ? 3 : 4);
+        let bestScore = -Infinity;
+        let bestMoves = [];
+
+        for (const m of moves) {
+          const o = m[0], r = m[1], c = m[2], target = B[r][c];
+          const origR = o.r, origC = o.c;
+
+          B[origR][origC] = null; B[r][c] = o; o.r = r; o.c = c;
+          if (target) target.dead = true;
+
+          const score = alphaBetaSearch(searchDepth - 1, -Infinity, Infinity, false, opp(aiCol), aiCol);
+
+          B[r][c] = target; B[origR][origC] = o; o.r = origR; o.c = origC;
+          if (target) target.dead = false;
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMoves = [m];
+          } else if (score === bestScore) {
+            bestMoves.push(m);
+          }
+        }
+
+        chosen = bestMoves[Math.floor(Math.random() * bestMoves.length)] || moves[0];
       }
 
       const o = chosen[0], r = chosen[1], c = chosen[2];
