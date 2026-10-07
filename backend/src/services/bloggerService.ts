@@ -41,6 +41,7 @@ export async function publishMatchToBlogger(
     const postTitle = `[${variantName}] ${playerWhiteName} vs ${playerBlackName} - Trận Huyết Chiến Sa Trường`;
 
     const htmlContent = `
+<script src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.4.0"></script>
 <div class="kybien-match-post" data-match-id="${matchId}">
   <!-- Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ -->
   <p class="kybien-post-summary-text" style="font-weight: 600; color: #e5b36a; font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; background: rgba(229,179,106,0.08); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #f1c40f;">
@@ -58,10 +59,10 @@ export async function publishMatchToBlogger(
         <div id="chess-board-canvas" style="width: 100%; max-width: 500px; height: 520px; margin: 0 auto; background: #f0d9b5; border-radius: 8px;"></div>
         
         <div class="viewer-controls" style="text-align: center; margin-top: 14px; display: flex; justify-content: center; gap: 8px;">
-          <button class="btn-first" onclick="KybienViewer.firstMove()" style="background: #4a3320; color: #fff; border: 1px solid #5a3d22; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">⏪ Đầu</button>
-          <button class="btn-prev" onclick="KybienViewer.prevMove()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">◀ Lùi</button>
-          <button class="btn-next" onclick="KybienViewer.nextMove()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Tiến ▶</button>
-          <button class="btn-last" onclick="KybienViewer.lastMove()" style="background: #4a3320; color: #fff; border: 1px solid #5a3d22; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Cuối ⏩</button>
+          <button class="btn-first" onclick="window.KybienViewer.firstMove()" style="background: #4a3320; color: #fff; border: 1px solid #5a3d22; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">⏪ Đầu</button>
+          <button class="btn-prev" onclick="window.KybienViewer.prevMove()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">◀ Lùi</button>
+          <button class="btn-next" onclick="window.KybienViewer.nextMove()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Tiến ▶</button>
+          <button class="btn-last" onclick="window.KybienViewer.lastMove()" style="background: #4a3320; color: #fff; border: 1px solid #5a3d22; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Cuối ⏩</button>
         </div>
       </div>
     </div>
@@ -89,7 +90,7 @@ export async function publishMatchToBlogger(
 </div>
 `;
 
-    // 3. Gọi Blogger API v3 POST bài viết
+    // 3. Gọi Blogger API v3 POST bài viết trực tiếp (không để dạng nháp)
     const blogUrl = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/`;
     const postResponse = await fetch(blogUrl, {
       method: 'POST',
@@ -101,6 +102,7 @@ export async function publishMatchToBlogger(
         kind: 'blogger#post',
         title: postTitle,
         content: htmlContent,
+        isDraft: false,
         labels: ['Phân Tích Cờ', 'Đại Chiến Kỳ Biển', variantName],
       }),
     });

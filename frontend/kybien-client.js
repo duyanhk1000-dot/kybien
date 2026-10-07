@@ -15,7 +15,7 @@
     // Khởi tạo Widget Header Profile
     initHeaderProfileWidget();
 
-    // Tự động khởi tạo Replay Viewer
+    // Khởi tạo Replay Viewer
     window.KybienViewer.init();
   });
 
@@ -85,23 +85,23 @@
 
     init: function () {
       const viewerElem = document.getElementById('kybien-board-viewer');
-      if (!viewerElem) {
-        // Thử lại nếu DOM bài viết chưa sẵn sàng
-        setTimeout(() => {
-          if (document.getElementById('kybien-board-viewer') && !window.KybienViewer.canvas) {
-            window.KybienViewer.init();
-          }
-        }, 500);
-        return;
-      }
+      if (!viewerElem) return;
 
       try {
-        this.moves = JSON.parse(viewerElem.getAttribute('data-moves') || '[]');
+        const rawMoves = viewerElem.getAttribute('data-moves');
+        if (rawMoves) {
+          this.moves = JSON.parse(rawMoves);
+        }
         console.log('[Kỳ Biến Replay Viewer] Đã tải ván cờ với', this.moves.length, 'nước đi.');
         
         const canvasContainer = document.getElementById('chess-board-canvas');
         if (canvasContainer) {
-          canvasContainer.innerHTML = '<canvas id="kybien-replay-canvas" width="500" height="550" style="width:100%; height:100%; max-width:500px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.5);"></canvas><div id="kybien-step-info" style="text-align:center; margin-top:10px; font-weight:bold; color:#f1c40f; font-size:0.95rem; font-family:sans-serif; background:rgba(0,0,0,0.4); padding:6px 12px; border-radius:6px; border:1px solid #5a3d22;">Nước: 0 / ' + this.moves.length + '</div>';
+          canvasContainer.innerHTML = `
+            <canvas id="kybien-replay-canvas" width="500" height="550" style="width:100%; max-width:500px; height:auto; background:#f0d9b5; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.5); display:block; margin:0 auto;"></canvas>
+            <div id="kybien-step-info" style="text-align:center; margin-top:10px; font-weight:bold; color:#f1c40f; font-size:0.95rem; font-family:sans-serif; background:rgba(0,0,0,0.5); padding:8px 12px; border-radius:6px; border:1px solid #5a3d22; min-height:40px; display:flex; align-items:center; justify-content:center;">
+              🔴 Nước 0 / ${this.moves.length}: Khai cuộc ván đấu
+            </div>
+          `;
           this.canvas = document.getElementById('kybien-replay-canvas');
           if (this.canvas) this.ctx = this.canvas.getContext('2d');
         }
@@ -130,52 +130,76 @@
     computeBoardAtStep: function(step) {
       const board = this.getInitialBoard();
       let lastMove = null;
-      let movedPiece = null;
-      let capturedPiece = null;
+      let moveNote = '';
 
       for (let i = 0; i < step && i < this.moves.length; i++) {
         const mStr = this.moves[i];
         if (!mStr) continue;
+
+        // Xử lý sự kiện Bí Pháp (CARD:...)
+        if (mStr.startsWith('CARD:')) {
+          const spellName = mStr.replace('CARD:', '');
+          moveNote = `Thi triển Bí Pháp [${spellName}]`;
+          continue;
+        }
+
+        // Xử lý sự kiện Lật Quân Cờ Úp (FLIP:...)
+        if (mStr.startsWith('FLIP:')) {
+          moveNote = `Lật ngửa quân Cờ Úp`;
+          continue;
+        }
+
+        // Xử lý Nước đi tọa độ chuẩn (r1,c1-r2,c2)
         const parts = mStr.split('-');
         if (parts.length === 2) {
           const from = parts[0].split(',').map(Number);
           const to = parts[1].split(',').map(Number);
-          if (from.length === 2 && to.length === 2 && !isNaN(from[0]) && !isNaN(to[0])) {
+          if (from.length === 2 && to.length === 2 && !isNaN(from[0]) && !isNaN(from[1]) && !isNaN(to[0]) && !isNaN(to[1])) {
             const p = board[from[0]][from[1]];
-            capturedPiece = board[to[0]][to[1]];
+            const cap = board[to[0]][to[1]];
             board[from[0]][from[1]] = null;
             board[to[0]][to[1]] = p;
-            movedPiece = p;
-            lastMove = { from, to, piece: p, captured: capturedPiece };
+
+            if (p) {
+              const sideStr = p.col === 'r' ? '🔴 Đỏ' : '⚫ Đen';
+              const pName = (this.pieceNames[p.t] && this.pieceNames[p.t][p.col]) || p.t;
+              const capStr = cap ? ` ⚔️ ăn quân ${this.pieceNames[cap.t]?.[cap.col] || cap.t}` : ' di chuyển';
+              moveNote = `${sideStr}: ${pName} (${from[0]},${from[1]}) ➔ (${to[0]},${to[1]})${capStr}`;
+            }
+
+            lastMove = { from, to, piece: p, captured: cap, note: moveNote };
           }
         }
       }
-      return { board, lastMove };
+      return { board, lastMove, note: moveNote };
     },
 
     render: function () {
       if (!this.ctx || !this.canvas) return;
       const ctx = this.ctx;
-      const W = this.canvas.width;
-      const H = this.canvas.height;
+      const W = 500;
+      const H = 550;
+      this.canvas.width = W;
+      this.canvas.height = H;
+
       const OX = 45, OY = 45, CS = 51;
 
-      const { board, lastMove } = this.computeBoardAtStep(this.currentStep);
+      const { board, lastMove, note } = this.computeBoardAtStep(this.currentStep);
 
-      // Background
+      // 1. Nền bàn cờ màu gỗ ấm
       ctx.fillStyle = '#f0d9b5';
       ctx.fillRect(0, 0, W, H);
 
-      // Border frame
+      // 2. Đường viền khung ngoài
       ctx.strokeStyle = '#5a3d22';
       ctx.lineWidth = 4;
       ctx.strokeRect(10, 10, W - 20, H - 20);
 
-      // Grid lines
-      ctx.lineWidth = 1.5;
+      // 3. Kẻ lưới bàn cờ (Grid lines)
+      ctx.lineWidth = 1.8;
       ctx.strokeStyle = '#5a3d22';
 
-      // Horizontal lines
+      // Ngang (10 hàng)
       for (let r = 0; r < 10; r++) {
         ctx.beginPath();
         ctx.moveTo(OX, OY + r * CS);
@@ -183,7 +207,7 @@
         ctx.stroke();
       }
 
-      // Vertical lines
+      // Dọc (9 cột)
       for (let c = 0; c < 9; c++) {
         ctx.beginPath();
         ctx.moveTo(OX + c * CS, OY);
@@ -195,15 +219,13 @@
         ctx.stroke();
       }
 
-      // River side lines
+      // Đường biên Sông
       ctx.beginPath();
-      ctx.moveTo(OX, OY + 4 * CS);
-      ctx.lineTo(OX, OY + 5 * CS);
-      ctx.moveTo(OX + 8 * CS, OY + 4 * CS);
-      ctx.lineTo(OX + 8 * CS, OY + 5 * CS);
+      ctx.moveTo(OX, OY + 4 * CS); ctx.lineTo(OX, OY + 5 * CS);
+      ctx.moveTo(OX + 8 * CS, OY + 4 * CS); ctx.lineTo(OX + 8 * CS, OY + 5 * CS);
       ctx.stroke();
 
-      // River text
+      // Chữ Sông (楚 河 - 漢 界)
       ctx.fillStyle = '#8b4513';
       ctx.font = 'bold 22px serif';
       ctx.textAlign = 'center';
@@ -211,7 +233,7 @@
       ctx.fillText('楚 河', OX + 2 * CS, OY + 4.5 * CS);
       ctx.fillText('漢 界', OX + 6 * CS, OY + 4.5 * CS);
 
-      // Palaces (Cung Tướng)
+      // Cung Tướng (Palaces)
       ctx.beginPath();
       ctx.moveTo(OX + 3 * CS, OY); ctx.lineTo(OX + 5 * CS, OY + 2 * CS);
       ctx.moveTo(OX + 5 * CS, OY); ctx.lineTo(OX + 3 * CS, OY + 2 * CS);
@@ -219,7 +241,7 @@
       ctx.moveTo(OX + 5 * CS, OY + 7 * CS); ctx.lineTo(OX + 3 * CS, OY + 9 * CS);
       ctx.stroke();
 
-      // Highlight Last Move
+      // Highlight Nước đi vừa đi
       if (lastMove) {
         ctx.fillStyle = 'rgba(241, 196, 15, 0.45)';
         ctx.fillRect(OX + lastMove.from[1] * CS - 20, OY + lastMove.from[0] * CS - 20, 40, 40);
@@ -227,7 +249,7 @@
         ctx.fillRect(OX + lastMove.to[1] * CS - 20, OY + lastMove.to[0] * CS - 20, 40, 40);
       }
 
-      // Draw Pieces
+      // 4. Vẽ Quân Cờ (Pieces)
       for (let r = 0; r < 10; r++) {
         for (let c = 0; c < 9; c++) {
           const p = board[r][c];
@@ -236,24 +258,24 @@
           const y = OY + r * CS;
           const rad = 20;
 
-          // Circle background
+          // Nền hình tròn quân cờ
           ctx.beginPath();
           ctx.arc(x, y, rad, 0, Math.PI * 2);
           ctx.fillStyle = '#fffdfa';
           ctx.fill();
           ctx.lineWidth = 2;
-          ctx.strokeStyle = p.col === 'r' ? '#c62828' : '#222';
+          ctx.strokeStyle = p.col === 'r' ? '#c62828' : '#222222';
           ctx.stroke();
 
-          // Inner ring
+          // Vòng chỉ trong
           ctx.beginPath();
           ctx.arc(x, y, rad - 3, 0, Math.PI * 2);
           ctx.lineWidth = 1;
           ctx.stroke();
 
-          // Piece Label
+          // Chữ Quân Cờ
           const char = (this.pieceNames[p.t] && this.pieceNames[p.t][p.col]) || p.t;
-          ctx.fillStyle = p.col === 'r' ? '#c62828' : '#222';
+          ctx.fillStyle = p.col === 'r' ? '#c62828' : '#222222';
           ctx.font = 'bold 20px serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
@@ -261,16 +283,13 @@
         }
       }
 
-      // Step Info Update & Tóm tắt nước đi
+      // 5. Cập nhật Thanh Tóm tắt Nước đi bên dưới
       const stepInfo = document.getElementById('kybien-step-info');
       if (stepInfo) {
         if (this.currentStep === 0) {
           stepInfo.innerHTML = `🔴 <strong>Nước 0 / ${this.moves.length}</strong>: Khai cuộc trận đấu`;
-        } else if (lastMove && lastMove.piece) {
-          const sideText = lastMove.piece.col === 'r' ? '🔴 Phe Đỏ' : '⚫ Phe Đen';
-          const pName = (this.pieceNames[lastMove.piece.t] && this.pieceNames[lastMove.piece.t][lastMove.piece.col]) || lastMove.piece.t;
-          const actionText = lastMove.captured ? ` ⚔️ ăn quân ${this.pieceNames[lastMove.captured.t]?.[lastMove.captured.col] || lastMove.captured.t}` : ' di chuyển';
-          stepInfo.innerHTML = `<strong>Nước ${this.currentStep} / ${this.moves.length}</strong>: ${sideText} - ${pName} (${lastMove.from[0]},${lastMove.from[1]}) ➔ (${lastMove.to[0]},${lastMove.to[1]})${actionText}`;
+        } else {
+          stepInfo.innerHTML = `<strong>Nước ${this.currentStep} / ${this.moves.length}</strong>: ${note || 'Di chuyển quân'}`;
         }
       }
     },
@@ -297,7 +316,7 @@
     },
   };
 
-  document.addEventListener('DOMContentLoaded', () => window.KybienViewer.init());
-  // Backup poll cho Blogger
+  // Tự động khởi tạo ngay khi tải xong
   window.addEventListener('load', () => window.KybienViewer.init());
+  setTimeout(() => window.KybienViewer.init(), 800);
 })();

@@ -41,7 +41,7 @@ DỮ LIỆU TRẬN ĐẤU:
 - Phe Đen (Chủ tướng): ${loserName}
 - Thể loại cờ: ${variantDesc}
 - Kết quả trận đấu: ${resultType}
-- Danh sách nước đi (chuỗi tọa độ from-to & sự kiện bí pháp/lật quân): ${JSON.stringify(pgnMoves)}
+- Danh sách nước đi: ${JSON.stringify(pgnMoves)}
 
 Hãy dựa chính xác vào danh sách nước đi để phân tích và viết bài tường thuật trận đấu khoảng 300–400 chữ, theo phong cách kiếm hiệp – chiến trường cổ đại – hùng tráng – tàn khốc.
 
@@ -55,24 +55,25 @@ Hãy dựa chính xác vào danh sách nước đi để phân tích và viết 
   + Càn Khôn Di Vị → Phép hoán đổi vị trí chủ tướng trong cung cấm.
 - Nước ăn quân là cuộc giao chiến tiêu diệt đối phương; nước KHÔNG ăn quân tuyệt đối không tự ý viết có quân bị chết hay bị tiêu diệt.
 
-2. PHẢI BÁM SÁT DIỄN BIẾN, KHÔNG NHẢY CÓC:
+2. QUY TẮC VIẾT "keyMoves" (NƯỚC CỜ BƯỚC NGOẶT):
+- BẮT BUỘC mô tả nước cờ bằng VĂN DIỄN GIẢI TIẾNG VIỆT RÕ RÀNG (Ví dụ: "Nước 12: Đại pháo Đỏ nổ lan thiêu rụi phòng tuyến kỵ binh Đen", "Nước 28: Kỵ binh Đen đột kích chém hạ Chiến xa Đỏ").
+- TUYỆT ĐỐI KHÔNG xuất ra mã ký hiệu tọa độ dạng "0,7-4,7" hay "7,1-7,4" trong keyMoves!
+
+3. PHẢI BÁM SÁT DIỄN BIẾN, KHÔNG NHẢY CÓC:
 Các nước đi tạo thành chuỗi diễn biến liên tục: Khai chiến → điều quân → thăm dò → giằng co → tập kích → phản kích → thế áp đảo → cao trào → đòn quyết định → kết thúc.
 
-3. HAI NGƯỜI CHƠI LÀ HAI CHỦ TƯỚNG:
+4. HAI NGƯỜI CHƠI LÀ HAI CHỦ TƯỚNG:
 Đưa tên hai chủ tướng (${winnerName} và ${loserName}) vào câu chuyện một cách tự nhiên.
 
-4. PHONG CÁCH VĂN:
-Hùng tráng, tàn khốc, dồn dập, có sát khí, chất cổ trang, đấu trí chiến thuật. Sử dụng hình ảnh tiếng trống trận, vó ngựa, chiến xa, đại pháo, bụi đất, khói lửa, huyết chiến,... Văn phong mạnh, chắc, có nhịp.
+5. PHONG CÁCH VĂN:
+Hùng tráng, tàn khốc, dồn dập, có sát khí, chất cổ trang, đấu trí chiến thuật.
 
-5. CAO TRÀO VÀ KẾT THÚC:
+6. CAO TRÀO VÀ KẾT THÚC:
 20–25% cuối bài phải là cao trào. BẮT BUỘC tuyên bố rõ người thắng và người bại ở cuối bài như một đoạn sử thi hùng tráng.
-
-6. TUYỆT ĐỐI KHÔNG:
-Không liệt kê lại nước cờ, không giải thích ký hiệu, không dùng thuật ngữ cờ hiện đại, không bịa thêm quân bị chết khi không ăn quân.
 
 Trả về đúng định dạng JSON có cấu trúc sau:
 {
-  "keyMoves": ["Danh sách 3-5 nước đi then chốt tạo bước ngoặt"],
+  "keyMoves": ["Danh sách 3-5 nước cờ bước ngoặt bằng văn diễn giải tiếng Việt rõ ràng, KHÔNG dùng tọa độ ký hiệu"],
   "tacticalAnalysis": "Tóm tắt ngắn gọn 2-3 câu về mưu đồ chiến thuật & ý đồ điều quân",
   "blunders": ["Danh sách sơ hở đáng chú ý nếu có"],
   "saTruongCommentary": "Bài tường thuật sa trường kiếm hiệp dồn dập 300-400 chữ chuẩn xác theo các quy tắc trên."
