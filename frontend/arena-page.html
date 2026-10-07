@@ -1,5 +1,5 @@
 <!-- 
-  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL ONLINE REALTIME + CHECKMATE DETECTION + PIKAFISH AI + ADVANCED MOVE VISUALS)
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL BÍ PHÁP VISUAL & SOUND FX + PIKAFISH AI + SECURITY HARDENED)
 -->
 
 <div id="kybien-arena-app">
@@ -517,6 +517,7 @@ let myOnlineSide = 'r';
 let currentUser = null;
 let boardFlipped = false;
 let modalTimer = null;
+let FX = [];
 
 const VARIANT_NAMES = {
   kb: 'Kỳ Biến (Bí Pháp)',
@@ -971,7 +972,19 @@ function flipBoardAction() {
 const $=id=>document.getElementById(id);
 const SoundSystem=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext||window.webkitAudioContext)();if(a.state==='suspended')a.resume();return a};
 function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
-return{playMove:()=>tn('triangle',320,.08,.5,0,80),playCapture:()=>tn('sawtooth',180,.15,.7,0,40),playCheck:()=>[523.25,659.25,783.99].forEach((f,i)=>tn('square',f,.25,.35,i*.07)),playMate:()=>[440,392,349.23,293.66].forEach((f,i)=>tn('sawtooth',f,.45,.45,i*.18)),playTick:()=>tn('square',880,.06,.15)}})();
+return{
+  playMove:()=>tn('triangle',320,.08,.5,0,80),
+  playCapture:()=>tn('sawtooth',180,.15,.7,0,40),
+  playCheck:()=>[523.25,659.25,783.99].forEach((f,i)=>tn('square',f,.25,.35,i*.07)),
+  playMate:()=>[440,392,349.23,293.66].forEach((f,i)=>tn('sawtooth',f,.45,.45,i*.18)),
+  playCardSpell:()=>[587.33,739.99,880,1174.66].forEach((f,i)=>tn('sine',f,.3,.4,i*.08,f*1.4)),
+  playTick:()=>tn('square',880,.06,.15)
+}})();
+
+function spawnFX(r, c, name) {
+  FX.push({ r, c, name, time: 0, maxTime: 36 });
+  draw();
+}
 
 function syncTrayLayout(){
   const box=$('card-tray-wrapper');
@@ -1074,7 +1087,7 @@ const OFF={k:[[1,0],[-1,0],[0,1],[0,-1]],a:[[1,1],[1,-1],[-1,1],[-1,-1]],b:[[2,2
 OFF.p=OFF.k;
 
 let B,P,K,turn,merit,hands,sel,VM,pend,armed,used,ms,mode,KB,bag,plies,over,busy,ai;
-let ANIM=null,FX=[],LASTMV=null,LIM=0,tleft=0,lastTick=0,lastBeep=0;
+let ANIM=null,LASTMV=null,LIM=0,tleft=0,lastTick=0,lastBeep=0;
 let checkHistory={};
 let moveHistoryStack=[];
 let eatenPieces={r:[],b:[]};
@@ -1173,7 +1186,7 @@ const test=()=>false,free=v=>false,handOf=v=>hands[v],pips=n=>Array.from({length
 function newGame(onlineVariant, onlinePieces){
   const variant = onlineVariant || $('mode_variant').value;
   B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};eatenPieces={r:[],b:[]};
-  moveHistoryStack=[];LASTMV=null;
+  moveHistoryStack=[];LASTMV=null;FX=[];
 
   const bk='rnbakabnr';
   if (variant === 'n' || variant === 'kb') {
@@ -1216,7 +1229,7 @@ function newGame(onlineVariant, onlinePieces){
   }
 
   turn='r';merit={r:3,b:3};hands={r:pick(3),b:pick(3)};sel=null;VM=[];pend=null;armed=null;used=false;ms=null;mode=null;KB={r:null,b:null};bag=null;plies=0;over=false;busy=false;
-  ANIM=null;FX=[];LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
+  ANIM=null;LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
   checkHistory={};
   ai=$('mode').value==='ai' && !isOnlineMatch;
 
@@ -1270,7 +1283,7 @@ function selCard(i){
   if(pend===i){pend=null;say('Đã hủy chọn bí pháp','#a8947d');ui();return}
   if(!free(v)&&merit[v]<c.cost)return say('Không đủ Công trạng (cần '+c.cost+')!','#e74c3c');
   pend=i;sel=null;VM=[];
-  say((turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Chọn 1 quân '+TN[c.t]+' để truyền thụ ['+c.name+']','#f1c40f','log-sp');ui();draw();
+  say((turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Chọn 1 quân '+TN[c.t]+' của mình để truyền thụ bí pháp ['+c.name+']','#f1c40f','log-sp');ui();draw();
 }
 
 function skip(){if(!ms)return;ms=null;endTurn()}
@@ -1331,7 +1344,7 @@ function endTurn(){
   }
 }
 
-/* ---------- ĐỘNG CƠ ĐÁNH ĐÁNH BOT AI PIKAFISH (ALPHA-BETA + QUIESCENCE SEARCH) ---------- */
+/* ---------- ĐỘNG CƠ BOT AI PIKAFISH (ALPHA-BETA + QUIESCENCE SEARCH) ---------- */
 function evaluateBoard(evalCol) {
   let score = 0;
   for (let r = 0; r < 10; r++) {
@@ -1545,7 +1558,7 @@ function triggerAIMove(){
   }, 100);
 }
 
-/* VẼ BÀN CỜ CANVAS & HIỆU ỨNG NƯỚC ĐI VẬT LÝ */
+/* VẼ BÀN CỜ CANVAS & HIỆU ỨNG VẬT LÝ FX */
 const PX=c=>OX+(boardFlipped?8-c:c)*CS;
 const PY=r=>OY+(boardFlipped?9-r:r)*CS;
 
@@ -1563,6 +1576,15 @@ function grid(){
 function pcBase(o){
   const X=PX(o.c),Y=PY(o.r),red=o.col==='r',d3=$('vw').value==='3',sl=sel===o;
   x.save();
+
+  // HIỆU ỨNG VÒNG HÀO QUANG CHO QUÂN CỜ ĐANG SỞ HỮU BÍ PHÁP KỲ BIẾN
+  if (o.p && Object.keys(o.p).length > 0) {
+    x.beginPath(); x.arc(X, Y, PR + 6, 0, Math.PI * 2);
+    x.lineWidth = 3; x.strokeStyle = '#f39c12';
+    x.shadowColor = '#e67e22'; x.shadowBlur = 10;
+    x.stroke(); x.shadowColor = 'transparent';
+  }
+
   if(d3){x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=8;x.shadowOffsetX=2;x.shadowOffsetY=5;x.beginPath();x.arc(X,Y+5,PR,0,7);x.fillStyle='#8c5e31';x.fill();x.shadowColor='transparent';
   for(let i=4;i>0;i--){x.beginPath();x.arc(X,Y+i,PR,0,7);x.fillStyle='#8c5e31';x.fill()}}
   x.beginPath();x.arc(X,Y,PR,0,7);
@@ -1590,13 +1612,9 @@ function draw(){
     if (k && !k.dead) {
       const KX = PX(k.c), KY = PY(k.r);
       x.save();
-      x.beginPath();
-      x.arc(KX, KY, PR + 8, 0, Math.PI * 2);
-      x.fillStyle = 'rgba(231, 76, 60, 0.35)';
-      x.fill();
-      x.lineWidth = 3.5;
-      x.strokeStyle = '#e74c3c';
-      x.stroke();
+      x.beginPath(); x.arc(KX, KY, PR + 8, 0, Math.PI * 2);
+      x.fillStyle = 'rgba(231, 76, 60, 0.35)'; x.fill();
+      x.lineWidth = 3.5; x.strokeStyle = '#e74c3c'; x.stroke();
       x.restore();
     }
   }
@@ -1607,12 +1625,10 @@ function draw(){
     const tX = PX(LASTMV.to[1]), tY = PY(LASTMV.to[0]);
 
     x.save();
-    // Vùng xuất phát (Ô vàng nhạt)
     x.beginPath(); x.arc(fX, fY, PR + 3, 0, Math.PI * 2);
     x.fillStyle = 'rgba(241, 196, 15, 0.25)'; x.fill();
     x.lineWidth = 2; x.strokeStyle = '#f1c40f'; x.stroke();
 
-    // Ô đích đến (Viền xanh lá rực rỡ)
     x.beginPath(); x.arc(tX, tY, PR + 4, 0, Math.PI * 2);
     x.lineWidth = 3; x.strokeStyle = '#2ecc71'; x.stroke();
     x.restore();
@@ -1635,17 +1651,39 @@ function draw(){
     const X=PX(c),Y=PY(r);
     x.save();
     if(B[r][c]){
-      // Mục tiêu ăn quân (Vòng tròn đỏ rực)
       x.beginPath(); x.arc(X,Y,PR+4,0,Math.PI*2);
       x.lineWidth=3.5; x.strokeStyle='#e74c3c'; x.stroke();
       x.fillStyle='rgba(231,76,60,0.2)'; x.fill();
     }else{
-      // Ô di chuyển (Chấm xanh lá)
       x.beginPath(); x.arc(X,Y,10,0,Math.PI*2);
       x.fillStyle='rgba(39,174,96,0.9)'; x.fill();
       x.lineWidth=2; x.strokeStyle='#ffffff'; x.stroke();
     }
     x.restore();
+  }
+
+  // VẼ HIỆU ỨNG THI TRIỂN BÍ PHÁP KỲ BIẾN (FX ANIMATION PARTICLES)
+  for (let i = FX.length - 1; i >= 0; i--) {
+    const fx = FX[i];
+    fx.time++;
+    const X = PX(fx.c), Y = PY(fx.r);
+    const progress = fx.time / fx.maxTime;
+    const radius = PR + progress * 35;
+    const alpha = 1 - progress;
+
+    x.save();
+    x.beginPath(); x.arc(X, Y, radius, 0, Math.PI * 2);
+    x.lineWidth = 3 * alpha;
+    x.strokeStyle = `rgba(241, 196, 15, ${alpha})`;
+    x.stroke();
+
+    x.font = 'bold 15px "Be Vietnam Pro", sans-serif';
+    x.fillStyle = `rgba(241, 196, 15, ${alpha})`;
+    x.textAlign = 'center';
+    x.fillText(`✨ ${fx.name}`, X, Y - PR - 10 - progress * 20);
+    x.restore();
+
+    if (fx.time >= fx.maxTime) FX.splice(i, 1);
   }
 }
 
@@ -1657,8 +1695,41 @@ function onClick(r,c){
     return;
   }
 
-  const hit=VM.some(q=>q[0]===r&&q[1]===c);
   const p=B[r][c];
+
+  // XỬ LÝ THI TRIỂN BÍ PHÁP KỲ BIẾN LÊN QUÂN CỜ
+  if (pend !== null) {
+    const v = ai ? 'r' : turn;
+    const cardList = handOf(v);
+    const card = cardList[pend];
+    if (card && p && p.col === turn && p.t === card.t) {
+      if (!free(v) && merit[v] < card.cost) {
+        say('❌ Không đủ Công trạng!', '#ff4757');
+        return;
+      }
+      merit[v] -= card.cost;
+      cardList.splice(pend, 1);
+      
+      p.p = p.p || {};
+      p.p[card.id] = true;
+      if (card.id === 'ADVISOR_1') p.p.leave = true;
+      if (card.id === 'ELEPHANT_2') p.p.cross = true;
+      if (card.id === 'PAWN_2') p.p.back = true;
+      if (card.id === 'KING_1') p.p.out = true;
+
+      pend = null; sel = null; VM = [];
+      SoundSystem.playCardSpell();
+      spawnFX(p.r, p.c, card.name);
+      say(`✨ [${turn==='r'?'Phe Đỏ':'Phe Đen'}] Thi triển Bí Pháp [${card.name}] thành công!`, '#f1c40f', 'log-sp');
+      ui(); draw();
+      return;
+    } else if (card) {
+      say(`⚠️ Vui lòng chọn đúng quân ${TN[card.t]} của phe mình để truyền thụ bí pháp!`, '#ff6b6b');
+      return;
+    }
+  }
+
+  const hit=VM.some(q=>q[0]===r&&q[1]===c);
   if(sel){
     if(p===sel){sel=null;VM=[];draw();return}
     if(hit){
