@@ -210,6 +210,34 @@ class MatchmakingManager {
     }
     this.activeRooms.delete(roomId);
   }
+
+  public async finishGame(roomId: string, winnerId: number | null, reason: string): Promise<{ stats: any } | null> {
+    const room = this.activeRooms.get(roomId);
+    if (!room) return null;
+    room.status = 'FINISHED';
+    room.winnerId = winnerId;
+    room.resultReason = reason;
+
+    this.removeRoom(roomId);
+    return { stats: { winnerId, reason } };
+  }
+
+  public handleSocketDisconnect(socketId: string): { updatedPublicList: boolean } {
+    this.removeFromQueue(socketId);
+    let updatedPublicList = false;
+
+    this.activeRooms.forEach((room, roomId) => {
+      if (room.playerWhite.socketId === socketId || room.playerBlack?.socketId === socketId) {
+        if (room.status === 'WAITING') {
+          this.removeRoom(roomId);
+          updatedPublicList = true;
+        }
+      }
+    });
+
+    return { updatedPublicList };
+  }
 }
 
-export const matchmakingService = new MatchmakingManager();
+export const matchmakingManager = new MatchmakingManager();
+export const matchmakingService = matchmakingManager;
