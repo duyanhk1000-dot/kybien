@@ -4,7 +4,8 @@
  */
 
 (function () {
-  const SERVER_URL = 'http://localhost:4000'; // Hoặc https://kybien-backend.onrender.com
+  // Production Backend URL trên Render
+  const SERVER_URL = 'https://kybien-backend.onrender.com';
 
   // FR-06: Silent Wake-up ngầm khi DOMContentLoaded
   document.addEventListener('DOMContentLoaded', () => {
