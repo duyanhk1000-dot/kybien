@@ -1,5 +1,5 @@
 <!-- 
-  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL ONLINE SOCKET.IO REALTIME SYNC + PIKAFISH BOT ENGINE + POPUP MATCH NOTIFICATION)
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL ONLINE REALTIME + CHECKMATE DETECTION + PIKAFISH AI + ADVANCED MOVE VISUALS)
 -->
 
 <div id="kybien-arena-app">
@@ -97,6 +97,18 @@
       margin-bottom: 10px;
       min-height: 38px;
     }
+    .pill.check-danger {
+      background: #8e1b1b;
+      border-color: #e74c3c;
+      color: #fff;
+      animation: checkPulse 1s infinite alternate;
+    }
+
+    @keyframes checkPulse {
+      0% { box-shadow: 0 0 5px #e74c3c; }
+      100% { box-shadow: 0 0 20px #e74c3c; }
+    }
+
     .pl {
       display: flex;
       align-items: center;
@@ -298,6 +310,23 @@
       
       <button type="button" onclick="closeMatchModal()" style="background:linear-gradient(135deg, #e67e22, #d35400); color:#fff; font-weight:700; font-size:1rem; border:none; padding:12px 28px; border-radius:8px; cursor:pointer; box-shadow:0 4px 15px rgba(230,126,34,0.4);">
         VÀO TRẬN ĐẤU ⚔️ (<span id="modal-countdown">5</span>s)
+      </button>
+    </div>
+  </div>
+
+  <!-- POPUP KẾT THÚC VÁN ĐẤU (CHIẾU BÍ / HÒA CỜ) -->
+  <div id="game-over-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);">
+    <div style="background:linear-gradient(145deg, #3d2516, #1a0f08); border:2px solid #f1c40f; border-radius:16px; padding:24px 28px; max-width:440px; width:90%; text-align:center; box-shadow:0 0 35px rgba(241,196,15,0.45); animation:modalBounce 0.35s ease-out;">
+      <div id="go-modal-icon" style="font-size:3.2rem; line-height:1; margin-bottom:10px;">👑</div>
+      <h2 id="go-modal-title" style="color:#f1c40f; font-family:'Noto Serif TC',serif; font-size:1.5rem; margin-bottom:6px; letter-spacing:1px;">KẾT THÚC VÁN ĐẤU</h2>
+      <div id="go-modal-sub" style="color:#2ecc71; font-weight:700; font-size:1rem; margin-bottom:14px;"></div>
+      
+      <div style="background:rgba(0,0,0,0.45); border:1px solid #5a3d22; border-radius:10px; padding:12px 16px; margin-bottom:18px;">
+        <div id="go-modal-desc" style="font-size:0.92rem; color:#e8dcc6; line-height:1.5;"></div>
+      </div>
+      
+      <button type="button" onclick="closeGameOverModal()" style="background:linear-gradient(135deg, #e67e22, #d35400); color:#fff; font-weight:700; font-size:1rem; border:none; padding:12px 28px; border-radius:8px; cursor:pointer; box-shadow:0 4px 15px rgba(230,126,34,0.4);">
+        ĐÓNG & XEM BÀN CỜ ⚔️
       </button>
     </div>
   </div>
@@ -650,6 +679,40 @@ function closeMatchModal() {
   if (modal) modal.style.display = 'none';
 }
 
+function showGameOverModal(type, winnerCol, loserCol) {
+  const modal = document.getElementById('game-over-modal');
+  if (!modal) return;
+
+  SoundSystem.playMate();
+
+  const titleEl = document.getElementById('go-modal-title');
+  const subEl = document.getElementById('go-modal-sub');
+  const descEl = document.getElementById('go-modal-desc');
+  const iconEl = document.getElementById('go-modal-icon');
+
+  if (type === 'mate') {
+    const isWinnerMe = isOnlineMatch ? (winnerCol === myOnlineSide) : (winnerCol === 'r');
+    iconEl.innerText = isWinnerMe ? '🏆' : '💀';
+    titleEl.innerText = isWinnerMe ? 'CHIẾN THẮNG RỰC RỠ!' : 'VÁN ĐẤU KẾT THÚC!';
+    titleEl.style.color = isWinnerMe ? '#f1c40f' : '#e74c3c';
+    subEl.innerText = `💥 ${winnerCol === 'r' ? '🔴 PHE ĐỎ' : '⚫ PHE ĐEN'} ĐÃ CHIẾU BÍ THẮNG TRẬN!`;
+    descEl.innerHTML = `Quân Tướng của bên ${loserCol === 'r' ? 'ĐỎ' : 'ĐEN'} đã bị tuyệt đường di chuyển (Bị Chiếu Hết / Chiếu Bí)!`;
+  } else {
+    iconEl.innerText = '⚖️';
+    titleEl.innerText = 'HÒA CỜ (BỊ HẾT NƯỚC ĐI)';
+    titleEl.style.color = '#e8dcc6';
+    subEl.innerText = `🤝 VÁN ĐẤU KẾT THÚC HÒA!`;
+    descEl.innerText = `Bên ${loserCol === 'r' ? 'ĐỎ' : 'ĐEN'} không bị chiếu nhưng không còn nước đi hợp lệ nào.`;
+  }
+
+  modal.style.display = 'flex';
+}
+
+function closeGameOverModal() {
+  const modal = document.getElementById('game-over-modal');
+  if (modal) modal.style.display = 'none';
+}
+
 async function initSocketConnection() {
   const logged = await ensureUserLoggedIn();
   const token = localStorage.getItem('kybien_jwt_token');
@@ -732,10 +795,8 @@ async function initSocketConnection() {
       
       say(`[Chiến Trường Online] Kết nối trận thành công [${varTitle}]! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}.`, '#2ec4b6', 'log-sp');
       
-      // HIỂN THỊ POPUP THÔNG BÁO GHÉP TRẬN
       showMatchModal(data, varTitle, myOnlineSide);
 
-      // TẢI VÁN ĐẤU VỚI BỐ CỤC ĐỒNG BỘ VÀ KHÓA THIẾT LẬP
       newGame(data.variant, data.initialPieces);
       setGameControlsLocked(true);
     });
@@ -765,6 +826,8 @@ async function initSocketConnection() {
             if (v) v.dead = true;
             if (v) SoundSystem.playCapture();
             else SoundSystem.playMove();
+
+            LASTMV = { from: [fromPos[0], fromPos[1]], to: [toPos[0], toPos[1]] };
             endTurnLocalOnly();
           }
         }
@@ -1110,7 +1173,7 @@ const test=()=>false,free=v=>false,handOf=v=>hands[v],pips=n=>Array.from({length
 function newGame(onlineVariant, onlinePieces){
   const variant = onlineVariant || $('mode_variant').value;
   B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};eatenPieces={r:[],b:[]};
-  moveHistoryStack=[];
+  moveHistoryStack=[];LASTMV=null;
 
   const bk='rnbakabnr';
   if (variant === 'n' || variant === 'kb') {
@@ -1153,7 +1216,7 @@ function newGame(onlineVariant, onlinePieces){
   }
 
   turn='r';merit={r:3,b:3};hands={r:pick(3),b:pick(3)};sel=null;VM=[];pend=null;armed=null;used=false;ms=null;mode=null;KB={r:null,b:null};bag=null;plies=0;over=false;busy=false;
-  ANIM=null;FX=[];LASTMV=null;LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
+  ANIM=null;FX=[];LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
   checkHistory={};
   ai=$('mode').value==='ai' && !isOnlineMatch;
 
@@ -1171,8 +1234,15 @@ function pick(n){const a=CARDS.slice();for(let i=a.length-1;i>0;i--){const j=Mat
 
 function stat(){
   const ck=!over&&inCheck(turn);
-  $('st').innerText=(ai?(turn==='r'?'Lượt của bạn (Đỏ)':'Đối thủ (Đen) đang suy nghĩ...'):'Lượt đi: '+(turn==='r'?'Đỏ':'Đen'))+(ck?' — ĐANG BỊ CHIẾU TƯỚNG!':'');
-  $('st').style.color=ck?'#ff4757':turn==='r'?'#e0705a':'#69b4ff';
+  const stEl = $('st');
+  if (ck) {
+    stEl.className = 'pill check-danger';
+    stEl.innerText = `⚠️ CẢNH BÁO CHIẾU TƯỚNG! — TƯỚNG ${turn==='r'?'ĐỎ':'ĐEN'} ĐANG BỊ UY HIẾP!`;
+  } else {
+    stEl.className = 'pill';
+    stEl.innerText = (ai?(turn==='r'?'Lượt của bạn (Đỏ)':'Đối thủ (Đen) đang suy nghĩ...'):'Lượt đi: '+(turn==='r'?'Đỏ':'Đen'));
+    stEl.style.color = turn==='r'?'#e0705a':'#69b4ff';
+  }
 }
 
 function ui(){
@@ -1205,13 +1275,39 @@ function selCard(i){
 
 function skip(){if(!ms)return;ms=null;endTurn()}
 
+function checkGameEnd(currentTurn) {
+  const moves = allMoves(currentTurn);
+  const ck = inCheck(currentTurn);
+
+  if (moves.length === 0) {
+    over = true;
+    setGameControlsLocked(false);
+
+    if (ck) {
+      const winner = opp(currentTurn);
+      say(`💥 CHIẾU BÍ! ${winner === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} ĐÃ THẮNG BẰNG NƯỚC CHIẾU HẾT!`, '#f1c40f', 'log-sp');
+      showGameOverModal('mate', winner, currentTurn);
+    } else {
+      say(`⚖️ HÒA CỜ! ${currentTurn === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} Không còn nước đi hợp lệ.`, '#a8947d', 'log-sp');
+      showGameOverModal('stalemate', null, currentTurn);
+    }
+    return true;
+  }
+  return false;
+}
+
 function endTurnLocalOnly() {
   const prev=turn;
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
   turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
-  const ck=inCheck(turn);
-  if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
-  else stat();
+
+  const ended = checkGameEnd(turn);
+  if (!ended) {
+    const ck=inCheck(turn);
+    if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
+    else stat();
+  }
+
   busy=false;ui();draw();
 }
 
@@ -1220,9 +1316,12 @@ function endTurn(){
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
   turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
   
-  const ck=inCheck(turn);
-  if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
-  else stat();
+  const ended = checkGameEnd(turn);
+  if (!ended) {
+    const ck=inCheck(turn);
+    if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
+    else stat();
+  }
 
   busy=false;
   ui();draw();
@@ -1368,9 +1467,7 @@ function triggerAIMove(){
       const moves = allMoves(aiCol);
       if(!moves.length){
         over = true;
-        SoundSystem.playMate();
-        $('st').innerText = 'BẠN ĐÃ CHIẾN THẮNG!';
-        say('🎉 BẠN ĐÃ CHIẾN THẮNG ĐỐI THỦ TỰ ĐỘNG!','#f1c40f','log-sp');
+        showGameOverModal('mate', 'r', 'b');
         busy = false;
         setGameControlsLocked(false);
         return;
@@ -1417,6 +1514,8 @@ function triggerAIMove(){
       const o = chosen[0], r = chosen[1], c = chosen[2];
       const v = B[r][c];
 
+      LASTMV = { from: [o.r, o.c], to: [r, c] };
+
       B[o.r][o.c] = null;
       B[r][c] = o;
       o.r = r; o.c = c;
@@ -1446,7 +1545,7 @@ function triggerAIMove(){
   }, 100);
 }
 
-/* VẼ BÀN CỜ CANVAS */
+/* VẼ BÀN CỜ CANVAS & HIỆU ỨNG NƯỚC ĐI VẬT LÝ */
 const PX=c=>OX+(boardFlipped?8-c:c)*CS;
 const PY=r=>OY+(boardFlipped?9-r:r)*CS;
 
@@ -1484,11 +1583,69 @@ function pcBase(o){
 
 function draw(){
   x.clearRect(0,0,600,660);grid();
+  
+  // VẼ BÍ TƯỚNG BỊ CHIẾU TƯỚNG (AURA ĐỎ CẢNH BÁO)
+  if (!over && inCheck(turn)) {
+    const k = K[turn];
+    if (k && !k.dead) {
+      const KX = PX(k.c), KY = PY(k.r);
+      x.save();
+      x.beginPath();
+      x.arc(KX, KY, PR + 8, 0, Math.PI * 2);
+      x.fillStyle = 'rgba(231, 76, 60, 0.35)';
+      x.fill();
+      x.lineWidth = 3.5;
+      x.strokeStyle = '#e74c3c';
+      x.stroke();
+      x.restore();
+    }
+  }
+
+  // VẼ VỆT ĐI CỦA NƯỚC ĐI GẦN NHẤT (LAST MOVE HIGHLIGHT)
+  if (LASTMV) {
+    const fX = PX(LASTMV.from[1]), fY = PY(LASTMV.from[0]);
+    const tX = PX(LASTMV.to[1]), tY = PY(LASTMV.to[0]);
+
+    x.save();
+    // Vùng xuất phát (Ô vàng nhạt)
+    x.beginPath(); x.arc(fX, fY, PR + 3, 0, Math.PI * 2);
+    x.fillStyle = 'rgba(241, 196, 15, 0.25)'; x.fill();
+    x.lineWidth = 2; x.strokeStyle = '#f1c40f'; x.stroke();
+
+    // Ô đích đến (Viền xanh lá rực rỡ)
+    x.beginPath(); x.arc(tX, tY, PR + 4, 0, Math.PI * 2);
+    x.lineWidth = 3; x.strokeStyle = '#2ecc71'; x.stroke();
+    x.restore();
+  }
+
+  // VẼ QUÂN CỜ
   for(const col of['r','b'])for(const o of P[col])if(!o.dead)pcBase(o);
+
+  // VẼ QUÂN CỜ ĐANG ĐƯỢC CHỌN (SELECTION HIGHLIGHT)
+  if (sel) {
+    const sX = PX(sel.c), sY = PY(sel.r);
+    x.save();
+    x.beginPath(); x.arc(sX, sY, PR + 5, 0, Math.PI * 2);
+    x.lineWidth = 3.5; x.strokeStyle = '#f39c12'; x.stroke();
+    x.restore();
+  }
+
+  // VẼ NƯỚC ĐI HỢP LỆ (GỢI Ý DI CHUYỂN & BẮT QUÂN)
   for(const[r,c]of VM){
-    const X=PX(c),Y=PY(r);x.beginPath();
-    if(B[r][c]){x.arc(X,Y,PR+3,0,7);x.lineWidth=3;x.strokeStyle='#e74c3c';x.stroke()}
-    else{x.arc(X,Y,9,0,7);x.fillStyle='rgba(39,174,96,.85)';x.fill()}
+    const X=PX(c),Y=PY(r);
+    x.save();
+    if(B[r][c]){
+      // Mục tiêu ăn quân (Vòng tròn đỏ rực)
+      x.beginPath(); x.arc(X,Y,PR+4,0,Math.PI*2);
+      x.lineWidth=3.5; x.strokeStyle='#e74c3c'; x.stroke();
+      x.fillStyle='rgba(231,76,60,0.2)'; x.fill();
+    }else{
+      // Ô di chuyển (Chấm xanh lá)
+      x.beginPath(); x.arc(X,Y,10,0,Math.PI*2);
+      x.fillStyle='rgba(39,174,96,0.9)'; x.fill();
+      x.lineWidth=2; x.strokeStyle='#ffffff'; x.stroke();
+    }
+    x.restore();
   }
 }
 
@@ -1508,6 +1665,8 @@ function onClick(r,c){
       const fromPos = `${sel.r},${sel.c}`;
       const toPos = `${r},${c}`;
       
+      LASTMV = { from: [sel.r, sel.c], to: [r, c] };
+
       const v=B[r][c];
       B[sel.r][sel.c]=null;B[r][c]=sel;sel.r=r;sel.c=c;
       
