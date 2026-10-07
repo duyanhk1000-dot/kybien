@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  username       String    @unique @db.VarChar(50)
+  email          String    @unique @db.VarChar(100)
+  password_hash  String    @db.VarChar(255)
+  elo            Int       @default(1200)
+  exp            BigInt    @default(0)
+  level          Int       @default(1)
+  matches_played Int       @default(0)
+  matches_won    Int       @default(0)
+  created_at     DateTime  @default(now())
+
+  matches_as_white Match[] @relation("PlayerWhite")
+  matches_as_black Match[] @relation("PlayerBlack")
+
+  @@map("users")
+}
+
+model Match {
+  id              String   @id @default(uuid()) @db.Uuid
+  player_white_id Int?
+  player_black_id Int?
+  pgn_moves       String   @db.Text
+  result          String   @db.VarChar(10) // 'WHITE_WIN', 'BLACK_WIN', 'DRAW'
+  is_featured     Boolean  @default(false)
+  blogger_post_id String?  @db.VarChar(50)
+  created_at      DateTime @default(now())
+
+  player_white User? @relation("PlayerWhite", fields: [player_white_id], references: [id], onDelete: SetNull)
+  player_black User? @relation("PlayerBlack", fields: [player_black_id], references: [id], onDelete: SetNull)
+
+  @@map("matches")
+}
