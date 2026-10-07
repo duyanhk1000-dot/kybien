@@ -1,0 +1,151 @@
+<!-- 
+  NỘI DUNG DÁN VÀO TRANG TĨNH BLOGSPOT (/p/arena.html)
+  Chế độ chỉnh sửa: HTML View
+-->
+
+<div id="kybien-arena-container" style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;">
+  <div style="text-align: center; margin-bottom: 25px;">
+    <h1 style="color: #8b0000; font-size: 2.2rem; font-weight: 700;">⚔️ SẢNH ĐẤU KỲ BIỂN CHESS</h1>
+    <p style="color: #555;">Sàn đấu cờ tướng thời gian thực kết nối máy chủ Render & AI Gemini</p>
+  </div>
+
+  <!-- BẢNG ĐIỀU KHIỂN ĐĂNG NHẬP / TÌM TRẬN -->
+  <div id="arena-controls" style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; margin-bottom: 25px;">
+    
+    <!-- KHU VỰC KHI CHƯA ĐĂNG NHẬP -->
+    <div id="auth-section">
+      <h3 style="margin-bottom: 15px; color: #2c3e50;">Đăng Nhập Hoặc Đăng Ký Kỳ Thủ</h3>
+      <div style="display: flex; gap: 10px; justify-content: center; max-width: 400px; margin: 0 auto 15px auto;">
+        <input type="text" id="auth-username" placeholder="Tên tài khoản" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
+        <input type="password" id="auth-password" placeholder="Mật khẩu" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button onclick="handleLogin()" style="background: #8b0000; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">Đăng Nhập</button>
+        <button onclick="handleRegister()" style="background: #27ae60; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">Đăng Ký Mới</button>
+      </div>
+      <p id="auth-msg" style="margin-top: 10px; color: #e74c3c; font-weight: 600;"></p>
+    </div>
+
+    <!-- KHU VỰC KHI ĐÃ ĐĂNG NHẬP -->
+    <div id="match-section" style="display: none;">
+      <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">
+        Chào mừng Kỳ thủ <span id="player-name-display" style="color: #8b0000;"></span> (Elo: <span id="player-elo-display"></span>)
+      </div>
+      <button id="btn-find-match" onclick="toggleFindMatch()" style="background: #f1c40f; color: #8b0000; border: none; padding: 14px 35px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(241, 196, 15, 0.4);">
+        ⚡ TÌM TRẬN NHANH (QUICK MATCH)
+      </button>
+      <p id="match-status-msg" style="margin-top: 12px; font-weight: bold; color: #e67e22;"></p>
+    </div>
+
+  </div>
+
+  <!-- BÀN CỜ ĐẤU THỜI GIAN THỰC -->
+  <div id="game-board-area" style="display: none; background: #faf6f0; border: 3px solid #8b0000; border-radius: 12px; padding: 20px; text-align: center;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold;">
+      <div id="black-player-info" style="color: #333;">Đối Thủ (Quân Đen): Loading...</div>
+      <div id="turn-indicator" style="background: #8b0000; color: #fff; padding: 5px 15px; border-radius: 15px;">Lượt đi: Quân Đỏ</div>
+      <div id="red-player-info" style="color: #c0392b;">Bạn (Quân Đỏ): Loading...</div>
+    </div>
+
+    <!-- Khung vẽ bàn cờ SVG/Canvas -->
+    <div id="interactive-xiangqi-board" style="width: 100%; max-width: 520px; height: 560px; margin: 0 auto; background: #e6c896; border-radius: 8px; position: relative;">
+      <!-- Xiangqi Board Grid & Pieces Rendered Dynamically -->
+    </div>
+  </div>
+</div>
+
+<script>
+  const BACKEND_URL = 'https://kybien-backend.onrender.com';
+  let socket = null;
+  let isSearching = false;
+
+  function updateAuthUI() {
+    const token = localStorage.getItem('kybien_jwt_token');
+    if (token) {
+      document.getElementById('auth-section').style.display = 'none';
+      document.getElementById('match-section').style.display = 'block';
+      fetch(`${BACKEND_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(user => {
+          document.getElementById('player-name-display').innerText = user.username;
+          document.getElementById('player-elo-display').innerText = user.elo;
+        });
+    } else {
+      document.getElementById('auth-section').style.display = 'block';
+      document.getElementById('match-section').style.display = 'none';
+    }
+  }
+
+  async function handleLogin() {
+    const u = document.getElementById('auth-username').value;
+    const p = document.getElementById('auth-password').value;
+    const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usernameOrEmail: u, password: p })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('kybien_jwt_token', data.token);
+      updateAuthUI();
+      location.reload();
+    } else {
+      document.getElementById('auth-msg').innerText = data.error || 'Lỗi đăng nhập';
+    }
+  }
+
+  async function handleRegister() {
+    const u = document.getElementById('auth-username').value;
+    const p = document.getElementById('auth-password').value;
+    const res = await fetch(`${BACKEND_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, email: `${u}@kybien.com`, password: p })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('kybien_jwt_token', data.token);
+      updateAuthUI();
+      location.reload();
+    } else {
+      document.getElementById('auth-msg').innerText = data.error || 'Lỗi đăng ký';
+    }
+  }
+
+  function toggleFindMatch() {
+    const token = localStorage.getItem('kybien_jwt_token');
+    if (!token) return alert('Vui lòng đăng nhập!');
+
+    if (!socket) {
+      socket = io(BACKEND_URL, { auth: { token } });
+
+      socket.on('connect', () => {
+        console.log('Đã kết nối Socket tới Server Kỳ Biến!');
+      });
+
+      socket.on('matchmaking_queued', data => {
+        document.getElementById('match-status-msg').innerText = '🔍 ' + data.message;
+      });
+
+      socket.on('match_found', data => {
+        document.getElementById('match-status-msg').innerText = '🎉 Đã tìm thấy đối thủ! Đang vào phòng...';
+        document.getElementById('game-board-area').style.display = 'block';
+        document.getElementById('red-player-info').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
+        document.getElementById('black-player-info').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
+      });
+    }
+
+    if (!isSearching) {
+      isSearching = true;
+      document.getElementById('btn-find-match').innerText = '❌ HỦY TÌM TRẬN';
+      socket.emit('join_matchmaking', {});
+    } else {
+      isSearching = false;
+      document.getElementById('btn-find-match').innerText = '⚡ TÌM TRẬN NHANH (QUICK MATCH)';
+      document.getElementById('match-status-msg').innerText = '';
+      socket.emit('cancel_matchmaking');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', updateAuthUI);
+</script>
