@@ -360,12 +360,26 @@
 
         <!-- ONLINE ROOM TOOLS -->
         <div id="online-room-tools" style="display: none; margin-top: 12px; padding: 10px; background: #20140b; border: 1px solid #4a331f; border-radius: 8px;">
-          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-            <button type="button" onclick="createPrivateRoom()" style="flex: 1; background: #27ae60; color: #fff; font-size: 0.8rem;">➕ Tạo Mã Phòng</button>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+            <button type="button" onclick="createRoom()" style="flex: 1; background: #27ae60; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 7px; border: none; border-radius: 6px; cursor: pointer;">➕ Tạo Mã Phòng</button>
+            <label style="display: flex; align-items: center; gap: 5px; font-size: 0.76rem; color: var(--ac); cursor: pointer; white-space: nowrap; user-select: none;">
+              <input type="checkbox" id="chk-private-room" style="accent-color: #27ae60; cursor: pointer;" /> Phòng riêng
+            </label>
           </div>
-          <div style="display: flex; gap: 6px;">
-            <input type="text" id="room-code-input" placeholder="Nhập mã (vd: KB-8899)" style="flex: 1; background: #1a110a; border: 1px solid var(--bd); color: #fff; padding: 6px; border-radius: 6px; font-size: 0.8rem;" />
-            <button type="button" onclick="joinPrivateRoom()" style="background: #2980b9; color: #fff; font-size: 0.8rem;">Vào Phòng</button>
+          <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+            <input type="text" id="room-code-input" placeholder="Nhập mã phòng (vd: KB-8899)" style="flex: 1; background: #1a110a; border: 1px solid var(--bd); color: #fff; padding: 6px; border-radius: 6px; font-size: 0.8rem;" />
+            <button type="button" onclick="joinRoomByCode()" style="background: #2980b9; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer;">Vào Phòng</button>
+          </div>
+
+          <!-- PHÒNG CHỜ CÔNG KHAI -->
+          <div style="margin-top: 10px; border-top: 1px dashed var(--bd); padding-top: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--ac);">🏰 Phòng Chờ Công Khai</span>
+              <button type="button" onclick="refreshPublicRooms()" style="padding: 2px 6px; font-size: 0.65rem; background: var(--bt); border: 1px solid var(--bd); border-radius: 4px; color: var(--mu);">🔄 Refresh</button>
+            </div>
+            <div id="public-rooms-list" style="max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+              <div style="font-size: 0.72rem; color: var(--mu); text-align: center; padding: 6px;">Đang tải phòng chờ...</div>
+            </div>
           </div>
         </div>
 
@@ -475,8 +489,20 @@ function initSocketConnection() {
   if (!socketInstance) {
     socketInstance = io(SERVER_API_ENDPOINT, { auth: { token } });
 
+    socketInstance.on('connect', () => {
+      socketInstance.emit('get_public_rooms');
+    });
+
     socketInstance.on('matchmaking_queued', data => {
       document.getElementById('st').innerText = '🔍 ' + data.message;
+    });
+
+    socketInstance.on('room_created', data => {
+      const isPrivate = data.isPrivate;
+      const code = data.roomCode;
+      document.getElementById('st').innerText = `🔑 Mã phòng đã tạo: ${code} (${isPrivate ? 'Phòng riêng' : 'Công khai'}) - Đang chờ đối thủ vào...`;
+      say(`[Hệ Thống] Đã tạo mã phòng: ${code}. ${isPrivate ? 'Phòng riêng (chỉ người có mã mới vào được).' : 'Phòng công khai (người khác có thể bấm trực tiếp vào để chơi chung).'}`,'#f1c40f','log-sp');
+      alert(`Đã tạo phòng thành công!\nMã phòng: ${code}\n${isPrivate ? '(Phòng riêng)' : '(Phòng công khai)'}`);
     });
 
     socketInstance.on('private_room_created', data => {
@@ -484,24 +510,48 @@ function initSocketConnection() {
       alert(data.message);
     });
 
+    socketInstance.on('public_rooms_list', rooms => {
+      const listEl = document.getElementById('public-rooms-list');
+      if (!listEl) return;
+      if (!rooms || rooms.length === 0) {
+        listEl.innerHTML = '<div style="font-size:0.72rem;color:var(--mu);text-align:center;padding:6px;">Chưa có phòng công khai nào...</div>';
+        return;
+      }
+      listEl.innerHTML = rooms.map(r => `
+        <div onclick="joinRoomByCode('${r.roomCode}')" style="display:flex;justify-content:space-between;align-items:center;background:#1a110a;border:1px solid var(--bd);padding:6px 8px;border-radius:6px;cursor:pointer;" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)'">
+          <div>
+            <b style="color:var(--ac);font-size:0.78rem;">${r.roomCode}</b>
+            <span style="font-size:0.7rem;color:var(--mu);margin-left:6px;">Chủ phòng: ${r.hostName} (${r.elo} Elo)</span>
+          </div>
+          <button type="button" style="background:#27ae60;color:#fff;font-size:0.68rem;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;">Vào Đấu ⚔️</button>
+        </div>
+      `).join('');
+    });
+
     socketInstance.on('match_found', data => {
       isOnlineMatch = true;
       currentRoomId = data.roomId;
+      isMatchSearching = false;
       
-      const isRed = (currentUser && currentUser.username === data.playerWhite.username) || 
-                    (socketInstance.id === data.playerWhite.socketId);
+      const btnAction = document.getElementById('btn-action');
+      if (btnAction) {
+        btnAction.innerText = '⚡ Trận Đấu Đang Diễn Ra';
+      }
+
+      const isRed = (socketInstance && socketInstance.id === data.playerWhite.socketId) || 
+                    (currentUser && currentUser.username === data.playerWhite.username);
       myOnlineSide = isRed ? 'r' : 'b';
 
       document.getElementById('st').innerText = `🎉 Khai cuộc Online! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}`;
       document.getElementById('nr').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
       document.getElementById('nb').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
       
+      say(`[Chiến Trường Online] Kết nối trận thành công! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}.`, '#2ec4b6', 'log-sp');
       newGame();
     });
 
     socketInstance.on('move_made', data => {
       if (isOnlineMatch && data.turn !== (myOnlineSide === 'r' ? 'RED' : 'BLACK')) {
-        // Opponent made move, apply locally
         const move = data.move;
         const fromPos = move.from.split(',').map(Number);
         const toPos = move.to.split(',').map(Number);
@@ -523,7 +573,10 @@ function initSocketConnection() {
     socketInstance.on('game_error', data => {
       alert(data.message);
     });
+  } else if (!socketInstance.connected) {
+    socketInstance.connect();
   }
+  socketInstance.emit('get_public_rooms');
   return true;
 }
 
@@ -539,6 +592,7 @@ function onModeChange() {
     btnAction.innerText = '⚡ GẮN KẾT TÌM TRẬN TỰ ĐỘNG';
     btnAction.style.background = '#f1c40f';
     btnAction.style.color = '#8b0000';
+    initSocketConnection();
   } else {
     lblLv.style.display = modeVal === 'ai' ? 'flex' : 'none';
     roomTools.style.display = 'none';
@@ -549,16 +603,32 @@ function onModeChange() {
   }
 }
 
-function createPrivateRoom() {
+function createRoom() {
   if (!initSocketConnection()) return;
-  socketInstance.emit('create_private_room', {});
+  const chkPrivate = document.getElementById('chk-private-room');
+  const isPrivate = chkPrivate ? chkPrivate.checked : false;
+  socketInstance.emit('create_room', { isPrivate });
+}
+
+function createPrivateRoom() {
+  createRoom();
+}
+
+function joinRoomByCode(codeToJoin) {
+  const code = codeToJoin || document.getElementById('room-code-input').value;
+  if (!code) return alert('Vui lòng nhập mã phòng (vd: KB-8899)');
+  if (!initSocketConnection()) return;
+  socketInstance.emit('join_room_by_code', { roomCode: code });
 }
 
 function joinPrivateRoom() {
-  const code = document.getElementById('room-code-input').value;
-  if (!code) return alert('Vui lòng nhập mã phòng (vd: KB-8899)');
-  if (!initSocketConnection()) return;
-  socketInstance.emit('join_private_room', { roomCode: code });
+  joinRoomByCode();
+}
+
+function refreshPublicRooms() {
+  if (socketInstance) {
+    socketInstance.emit('get_public_rooms');
+  }
 }
 
 function handleGameAction() {

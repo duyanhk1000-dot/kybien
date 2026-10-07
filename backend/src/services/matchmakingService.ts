@@ -22,6 +22,7 @@ export interface GameRoom {
   moves: string[];
   turn: 'RED' | 'BLACK';
   status: 'WAITING' | 'PLAYING' | 'FINISHED';
+  isPrivate?: boolean;
   winnerId?: number | null;
   resultReason?: string;
   createdAt: number;
@@ -82,10 +83,10 @@ class MatchmakingManager {
     return { matched: false };
   }
 
-  public createPrivateRoom(player: PlayerInQueue): { roomCode: string; room: GameRoom } {
+  public createRoom(player: PlayerInQueue, isPrivate: boolean): { roomCode: string; room: GameRoom } {
     const codeNumber = Math.floor(1000 + Math.random() * 9000);
     const roomCode = `KB-${codeNumber}`;
-    const roomId = `room_priv_${Date.now()}_${roomCode}`;
+    const roomId = `room_${isPrivate ? 'priv' : 'pub'}_${Date.now()}_${roomCode}`;
 
     const newRoom: GameRoom = {
       roomId,
@@ -102,6 +103,7 @@ class MatchmakingManager {
       moves: [],
       turn: 'RED',
       status: 'WAITING',
+      isPrivate,
       createdAt: Date.now(),
     };
 
@@ -110,7 +112,7 @@ class MatchmakingManager {
     return { roomCode, room: newRoom };
   }
 
-  public joinPrivateRoom(
+  public joinRoomByCode(
     roomCode: string,
     player: PlayerInQueue
   ): { success: boolean; error?: string; room?: GameRoom } {
@@ -126,7 +128,7 @@ class MatchmakingManager {
     }
 
     if (room.playerWhite.socketId === player.socketId) {
-      return { success: false, error: 'Bạn đang là chủ phòng này.' };
+      return { success: false, error: 'Bạn đang là chủ phòng này, vui lòng chờ đối thủ vào.' };
     }
 
     room.playerBlack = {
@@ -140,6 +142,40 @@ class MatchmakingManager {
     room.status = 'PLAYING';
 
     return { success: true, room };
+  }
+
+  public getPublicWaitingRooms(): Array<{ roomCode: string; roomId: string; hostName: string; elo: number; createdAt: number }> {
+    const list: Array<{ roomCode: string; roomId: string; hostName: string; elo: number; createdAt: number }> = [];
+    this.activeRooms.forEach((room) => {
+      if (room.status === 'WAITING' && !room.isPrivate && room.roomCode) {
+        list.push({
+          roomCode: room.roomCode,
+          roomId: room.roomId,
+          hostName: room.playerWhite.username,
+          elo: room.playerWhite.elo,
+          createdAt: room.createdAt,
+        });
+      }
+    });
+    return list;
+  }
+
+  public handleSocketDisconnect(socketId: string): { updatedPublicList: boolean } {
+    this.queue = this.queue.filter((p) => p.socketId !== socketId);
+
+    let listChanged = false;
+    this.activeRooms.forEach((room, roomId) => {
+      if (room.status === 'WAITING' && room.playerWhite.socketId === socketId) {
+        this.activeRooms.delete(roomId);
+        if (room.roomCode) {
+          this.privateCodeToRoomId.delete(room.roomCode);
+        }
+        if (!room.isPrivate) {
+          listChanged = true;
+        }
+      }
+    });
+    return { updatedPublicList: listChanged };
   }
 
   public removeFromQueue(userId: number): void {
