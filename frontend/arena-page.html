@@ -1,5 +1,5 @@
 <!-- 
-  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL BÍ PHÁP VISUAL & SOUND FX + PIKAFISH AI + SECURITY HARDENED)
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (CỜ ÚP GIÁN ĐIỆP CHUẨN + 🎒 TÚI KỲ MƯU + AI BÍ PHÁP + BADGES FX)
 -->
 
 <div id="kybien-arena-app">
@@ -821,7 +821,15 @@ async function initSocketConnection() {
             if (piece.hd) {
               piece.hd = false;
               piece.t = piece.tru;
-              say(`[Đối Thủ] Lật ngửa quân cờ úp thành ${TN[piece.t]}!`, '#f1c40f');
+              if (piece.truCol && piece.truCol !== piece.col) {
+                const oldCol = piece.col;
+                piece.col = piece.truCol;
+                P[oldCol] = P[oldCol].filter(item => item !== piece);
+                P[piece.col].push(piece);
+                say(`🕵️ [GIÁN ĐIỆP VẠCH MẶT] Quân cờ lật ra là ${TN[piece.t]} thuộc về ${piece.col==='r'?'[Phe Đỏ]':'[Phe Đen]'}!`, '#f1c40f', 'log-sp');
+              } else {
+                say(`[Đối Thủ] Lật ngửa quân cờ úp thành ${TN[piece.t]}!`, '#f1c40f');
+              }
             }
 
             if (v) v.dead = true;
@@ -1103,8 +1111,8 @@ function getStandardPieceType(r, c) {
   return 'p';
 }
 
-function put(t,col,r,c,hdState,truType){
-  const o={t,col,r,c,p:{},st:0,dead:false,hd:!!hdState,tru:truType||t};
+function put(t,col,r,c,hdState,truType,truCol){
+  const o={t,col,r,c,p:{},st:0,dead:false,hd:!!hdState,tru:truType||t,truCol:truCol||col};
   B[r][c]=o;P[col].push(o);if(t==='k')K[col]=o;
 }
 
@@ -1197,9 +1205,6 @@ function newGame(onlineVariant, onlinePieces){
     const piecesList = ['r','r','n','n','b','b','a','a','c','c','p','p','p','p','p'];
     const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
     
-    let redShuffled = (onlinePieces && onlinePieces.red) ? onlinePieces.red : shuffle(piecesList.slice());
-    let blackShuffled = (onlinePieces && onlinePieces.black) ? onlinePieces.black : shuffle(piecesList.slice());
-
     put('k','b',0,4); put('k','r',9,4);
 
     const positions = [
@@ -1207,16 +1212,59 @@ function newGame(onlineVariant, onlinePieces){
       [2,1],[2,7],[3,0],[3,2],[3,4],[3,6],[3,8]
     ];
 
-    positions.forEach((pos, idx) => {
-      const blackR = pos[0], blackC = pos[1];
-      const redR = 9 - pos[0], redC = pos[1];
-      
-      const blackOrigType = getStandardPieceType(blackR, blackC);
-      const redOrigType = getStandardPieceType(redR, redC);
+    if (variant === 'g') {
+      // CỜ ÚP GIÁN ĐIỆP: Trộn lẫn 15 quân Đỏ và 15 quân Đen vào cùng 1 pool ngẫu nhiên
+      let combinedPool = [
+        ...piecesList.map(t => ({ t, col: 'r' })),
+        ...piecesList.map(t => ({ t, col: 'b' }))
+      ];
+      if (onlinePieces && onlinePieces.red && onlinePieces.black) {
+        combinedPool = [...onlinePieces.red, ...onlinePieces.black];
+      } else {
+        shuffle(combinedPool);
+      }
 
-      put(blackOrigType, 'b', blackR, blackC, true, blackShuffled[idx]);
-      put(redOrigType, 'r', redR, redC, true, redShuffled[idx]);
-    });
+      positions.forEach((pos, idx) => {
+        const blackR = pos[0], blackC = pos[1];
+        const redR = 9 - pos[0], redC = pos[1];
+        
+        const blackOrigType = getStandardPieceType(blackR, blackC);
+        const redOrigType = getStandardPieceType(redR, redC);
+
+        const bPieceData = combinedPool[idx];
+        const rPieceData = combinedPool[idx + 15];
+
+        const bTrueType = typeof bPieceData === 'string' ? bPieceData : bPieceData.t;
+        const bTrueCol = typeof bPieceData === 'string' ? 'b' : bPieceData.col;
+
+        const rTrueType = typeof rPieceData === 'string' ? rPieceData : rPieceData.t;
+        const rTrueCol = typeof rPieceData === 'string' ? 'r' : rPieceData.col;
+
+        put(blackOrigType, 'b', blackR, blackC, true, bTrueType, bTrueCol);
+        put(redOrigType, 'r', redR, redC, true, rTrueType, rTrueCol);
+      });
+    } else {
+      // CỜ ÚP TRUYỀN THỐNG
+      let redShuffled = (onlinePieces && onlinePieces.red) ? onlinePieces.red : shuffle(piecesList.slice());
+      let blackShuffled = (onlinePieces && onlinePieces.black) ? onlinePieces.black : shuffle(piecesList.slice());
+
+      positions.forEach((pos, idx) => {
+        const blackR = pos[0], blackC = pos[1];
+        const redR = 9 - pos[0], redC = pos[1];
+        
+        const blackOrigType = getStandardPieceType(blackR, blackC);
+        const redOrigType = getStandardPieceType(redR, redC);
+
+        const bData = blackShuffled[idx];
+        const rData = redShuffled[idx];
+
+        const bType = typeof bData === 'string' ? bData : bData.t;
+        const rType = typeof rData === 'string' ? rData : rData.t;
+
+        put(blackOrigType, 'b', blackR, blackC, true, bType, 'b');
+        put(redOrigType, 'r', redR, redC, true, rType, 'r');
+      });
+    }
   }
 
   const hcVal = $('hc').value;
@@ -1473,6 +1521,34 @@ function triggerAIMove(){
   busy = true;
   stat();
 
+  // MÁY AI SỬ DỤNG BÍ PHÁP KỲ BIẾN (AI CARD SPELL CASTING)
+  const variant = $('mode_variant').value;
+  if (variant === 'kb' && merit.b >= 2 && hands.b.length > 0) {
+    for (let i = 0; i < hands.b.length; i++) {
+      const card = hands.b[i];
+      if (merit.b >= card.cost) {
+        const targets = P.b.filter(p => !p.dead && p.t === card.t && (!p.p || !p.p[card.id]));
+        if (targets.length > 0) {
+          const targetPiece = targets[Math.floor(Math.random() * targets.length)];
+          merit.b -= card.cost;
+          hands.b.splice(i, 1);
+          targetPiece.p = targetPiece.p || {};
+          targetPiece.p[card.id] = true;
+          if (card.id === 'ADVISOR_1') targetPiece.p.leave = true;
+          if (card.id === 'ELEPHANT_2') targetPiece.p.cross = true;
+          if (card.id === 'PAWN_2') targetPiece.p.back = true;
+          if (card.id === 'KING_1') targetPiece.p.out = true;
+
+          SoundSystem.playCardSpell();
+          spawnFX(targetPiece.r, targetPiece.c, card.name);
+          say(`✨ [Máy AI] Thi triển Bí Pháp [${card.name}] lên quân ${TN[targetPiece.t]}!`, '#f1c40f', 'log-sp');
+          ui(); draw();
+          break;
+        }
+      }
+    }
+  }
+
   const botLvl = +$('lv').value;
 
   setTimeout(() => {
@@ -1536,13 +1612,31 @@ function triggerAIMove(){
       if (o.hd) {
         o.hd = false;
         o.t = o.tru;
-        say(`[Máy] Lật ngửa quân úp thành ${TN[o.t]}!`, '#f1c40f');
+        if (o.truCol && o.truCol !== o.col) {
+          const oldCol = o.col;
+          o.col = o.truCol;
+          P[oldCol] = P[oldCol].filter(item => item !== o);
+          P[o.col].push(o);
+          say(`🕵️ [GIÁN ĐIỆP VẠCH MẶT] Quân lật ra là ${TN[o.t]} thuộc về ${o.col==='r'?'[Phe Đỏ]':'[Phe Đen]'}!`, '#f1c40f', 'log-sp');
+        } else {
+          say(`[Máy] Lật ngửa quân úp thành ${TN[o.t]}!`, '#f1c40f');
+        }
       }
 
       if(v) {
         v.dead = true;
         eatenPieces[aiCol].push(v);
         SoundSystem.playCapture();
+        
+        // CƠ CHẾ RƠI TÚI KỲ MƯU
+        if (variant === 'kb' && Math.random() < 0.45) {
+          merit.b = Math.min(10, merit.b + 2);
+          const newCard = pick(1)[0];
+          if (newCard && hands.b.length < 5) hands.b.push(newCard);
+          SoundSystem.playCardSpell();
+          spawnFX(r, c, "🎒 Túi Kỳ Mưu");
+          say(`🎒 [RƠI TÚI KỲ MƯU] [Máy AI] nhặt được Bí Pháp mới & +2 Công Trạng!`, '#f1c40f', 'log-sp');
+        }
       } else {
         SoundSystem.playMove();
       }
@@ -1600,6 +1694,23 @@ function pcBase(o){
   } else {
     x.fillStyle=red?'#b71c1c':'#141414';
     x.fillText(LB[o.col+(o.tru||o.t)],X,Y+.5);
+  }
+
+  // HIỂN THỊ KÝ HIỆU BÍ PHÁP TRÊN QUÂN CỜ (🌊 Ngự Ba · 🏯 Xuất Trần · ↩️ Hồi Phong · 👑 Thân Chinh · 💣 Tuyệt Mệnh Cổ · 💫 Định Thân)
+  if (o.p && !o.hd) {
+    let badge = '';
+    if (o.p.leave || o.p.ADVISOR_1) badge += '🏯';
+    if (o.p.cross || o.p.ELEPHANT_2) badge += '🌊';
+    if (o.p.back || o.p.PAWN_2) badge += '↩️';
+    if (o.p.out || o.p.KING_1) badge += '👑';
+    if (o.p.KNIGHT_2) badge += '💣';
+    if (o.p.KING_3) badge += '💫';
+
+    if (badge) {
+      x.font = '14px sans-serif';
+      x.textAlign = 'left';
+      x.fillText(badge, X + 14, Y - 14);
+    }
   }
 }
 
@@ -1696,6 +1807,7 @@ function onClick(r,c){
   }
 
   const p=B[r][c];
+  const variant = $('mode_variant').value;
 
   // XỬ LÝ THI TRIỂN BÍ PHÁP KỲ BIẾN LÊN QUÂN CỜ
   if (pend !== null) {
@@ -1744,12 +1856,33 @@ function onClick(r,c){
       if(v) {
         v.dead=true;
         eatenPieces[turn].push(v);
+
+        // CƠ CHẾ RƠI TÚI KỲ MƯU
+        if (variant === 'kb' && Math.random() < 0.45) {
+          const actCol = turn;
+          merit[actCol] = Math.min(10, merit[actCol] + 2);
+          const newCard = pick(1)[0];
+          if (newCard && hands[actCol].length < 5) hands[actCol].push(newCard);
+          SoundSystem.playCardSpell();
+          spawnFX(r, c, "🎒 Túi Kỳ Mưu");
+          say(`🎒 [RƠI TÚI KỲ MƯU] ${actCol==='r'?'[Phe Đỏ]':'[Phe Đen]'} nhặt được Bí Pháp mới & +2 Công Trạng!`, '#f1c40f', 'log-sp');
+        }
       }
       
       if (sel.hd) {
         sel.hd = false;
         sel.t = sel.tru;
-        say(`[Bạn] Lật ngửa quân cờ úp thành ${TN[sel.t]}!`, '#f1c40f');
+
+        // CỜ ÚP GIÁN ĐIỆP: VẠCH MẶT GIÁN ĐIỆP
+        if (sel.truCol && sel.truCol !== sel.col) {
+          const oldCol = sel.col;
+          sel.col = sel.truCol;
+          P[oldCol] = P[oldCol].filter(item => item !== sel);
+          P[sel.col].push(sel);
+          say(`🕵️ [GIÁN ĐIỆP VẠCH MẶT] Quân lật ra là ${TN[sel.t]} thuộc về ${sel.col==='r'?'[Phe Đỏ]':'[Phe Đen]'}!`, '#f1c40f', 'log-sp');
+        } else {
+          say(`[Bạn] Lật ngửa quân cờ úp thành ${TN[sel.t]}!`, '#f1c40f');
+        }
       }
 
       if(v) SoundSystem.playCapture();
