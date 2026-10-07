@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
-<html b:css='false' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<html b:version='2' class='v2' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
 <head>
   <meta charset='utf-8'/>
   <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-  <title><data:blog.pageTitle/></title>
   <b:include data='blog' name='all-head-content'/>
+  <title><data:blog.pageTitle/></title>
 
   <!-- Google Fonts: Be Vietnam Pro & Merriweather -->
   <link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Merriweather:ital,wght@0,400;0,700;1,400&amp;display=swap' rel='stylesheet'/>
@@ -14,7 +14,7 @@
   <script src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
   <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js'></script>
 
-  <style type='text/css'>
+  <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -66,9 +66,6 @@
       grid-template-columns: 1fr 320px;
       gap: 30px;
     }
-    @media (max-width: 850px) {
-      .main-wrapper { grid-template-columns: 1fr; }
-    }
 
     /* ===== POST & ARTICLE STYLES ===== */
     .content-area { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -92,9 +89,7 @@
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
     }
-    .viewer-controls button:hover { background: #a50000; }
 
     /* Sa truong commentary article */
     .sa-truong-article {
@@ -105,14 +100,12 @@
       border-radius: 4px;
       margin-top: 25px;
     }
-    .sa-truong-article h2 { font-family: 'Be Vietnam Pro', sans-serif; color: #8b0000; margin-bottom: 15px; }
 
     /* ===== SIDEBAR ===== */
     .sidebar { display: flex; flex-direction: column; gap: 20px; }
     .widget-box { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .widget-title { font-size: 1.1rem; font-weight: 700; color: #8b0000; border-bottom: 2px solid #f0e6d2; padding-bottom: 8px; margin-bottom: 15px; }
 
-    /* Auth button styling */
     .kybien-auth-buttons .btn-login {
       background: #f1c40f;
       color: #8b0000;
@@ -121,7 +114,7 @@
       font-weight: 700;
       display: inline-block;
     }
-  </style>
+  ]]></b:skin>
 </head>
 <body>
 
@@ -168,7 +161,7 @@
     <aside class='sidebar'>
       <div class='widget-box'>
         <h3 class='widget-title'>🏆 Bảng Xếp Hạng Kỳ Thủ</h3>
-        <p style='font-size: 0.9em; color: #666;'>Cập nhật trực tiếp từ Server Render Render Managed Postgres.</p>
+        <p style='font-size: 0.9em; color: #666;'>Cập nhật trực tiếp từ Server Render Managed Postgres.</p>
         <div id='top-elo-leaderboard' style='margin-top: 10px;'>
           <ol style='padding-left: 20px; font-size: 0.95em;'>
             <li><strong>Thần Cờ 99</strong> - 1850 Elo</li>
