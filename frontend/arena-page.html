@@ -1,5 +1,5 @@
 <!-- 
-  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (CỜ ÚP GIÁN ĐIỆP CHUẨN + 🎒 TÚI KỲ MƯU + AI BÍ PHÁP + BADGES FX)
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (TÚI KỲ MƯU THEO NHỊP NƯỚC ĐI + BẢNG QUY TẮC 16 BÍ PHÁP + PIKAFISH ENGINE)
 -->
 
 <div id="kybien-arena-app">
@@ -417,6 +417,14 @@
             </select>
           </label>
 
+          <label id="lbl-bag-freq">Rơi Túi Kỳ Mưu
+            <select id="drop_bag_freq">
+              <option value="10" selected>Mỗi 10 nước đi</option>
+              <option value="15">Mỗi 15 nước đi</option>
+              <option value="20">Mỗi 20 nước đi</option>
+            </select>
+          </label>
+
           <label id="lbl-hc">Chấp quân (Chế độ máy)
             <select id="hc">
               <option value="0" selected>Không chấp</option>
@@ -518,6 +526,7 @@ let currentUser = null;
 let boardFlipped = false;
 let modalTimer = null;
 let FX = [];
+let bagPos = null;
 
 const VARIANT_NAMES = {
   kb: 'Kỳ Biến (Bí Pháp)',
@@ -528,7 +537,7 @@ const VARIANT_NAMES = {
 
 /* ---------- KHÓA / MỞ THIẾT LẬP KHI VÀO VÁN ---------- */
 function setGameControlsLocked(locked) {
-  const ids = ['mode_variant', 'mode', 'lv', 'hc', 'tm'];
+  const ids = ['mode_variant', 'mode', 'lv', 'hc', 'tm', 'drop_bag_freq'];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.disabled = locked;
@@ -826,7 +835,7 @@ async function initSocketConnection() {
                 piece.col = piece.truCol;
                 P[oldCol] = P[oldCol].filter(item => item !== piece);
                 P[piece.col].push(piece);
-                say(`🕵️ [GIÁN ĐIỆP VẠCH MẶT] Quân cờ lật ra là ${TN[piece.t]} thuộc về ${piece.col==='r'?'[Phe Đỏ]':'[Phe Đen]'}!`, '#f1c40f', 'log-sp');
+                say(`🕵️ [GIÁN ĐIỆP VẠCH MẶT] Quân lật ra là ${TN[piece.t]} thuộc về ${piece.col==='r'?'[Phe Đỏ]':'[Phe Đen]'}!`, '#f1c40f', 'log-sp');
               } else {
                 say(`[Đối Thủ] Lật ngửa quân cờ úp thành ${TN[piece.t]}!`, '#f1c40f');
               }
@@ -858,19 +867,23 @@ function onVariantChangeUIOnly() {
   const trayWrapper = document.getElementById('card-tray-wrapper');
   const eatenWrapper = document.getElementById('eaten-tray-card');
   const legendBox = document.getElementById('legend-box');
+  const lblBag = document.getElementById('lbl-bag-freq');
 
   if (variant === 'kb') {
     if (trayWrapper) trayWrapper.style.display = 'block';
     if (eatenWrapper) eatenWrapper.style.display = 'none';
     if (legendBox) legendBox.style.display = 'block';
+    if (lblBag) lblBag.style.display = 'flex';
   } else if (variant === 't' || variant === 'g') {
     if (trayWrapper) trayWrapper.style.display = 'none';
     if (eatenWrapper) eatenWrapper.style.display = 'block';
     if (legendBox) legendBox.style.display = 'none';
+    if (lblBag) lblBag.style.display = 'none';
   } else {
     if (trayWrapper) trayWrapper.style.display = 'none';
     if (eatenWrapper) eatenWrapper.style.display = 'none';
     if (legendBox) legendBox.style.display = 'none';
+    if (lblBag) lblBag.style.display = 'none';
   }
 }
 
@@ -1194,7 +1207,7 @@ const test=()=>false,free=v=>false,handOf=v=>hands[v],pips=n=>Array.from({length
 function newGame(onlineVariant, onlinePieces){
   const variant = onlineVariant || $('mode_variant').value;
   B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};eatenPieces={r:[],b:[]};
-  moveHistoryStack=[];LASTMV=null;FX=[];
+  moveHistoryStack=[];LASTMV=null;FX=[];bagPos=null;
 
   const bk='rnbakabnr';
   if (variant === 'n' || variant === 'kb') {
@@ -1213,7 +1226,6 @@ function newGame(onlineVariant, onlinePieces){
     ];
 
     if (variant === 'g') {
-      // CỜ ÚP GIÁN ĐIỆP: Trộn lẫn 15 quân Đỏ và 15 quân Đen vào cùng 1 pool ngẫu nhiên
       let combinedPool = [
         ...piecesList.map(t => ({ t, col: 'r' })),
         ...piecesList.map(t => ({ t, col: 'b' }))
@@ -1244,7 +1256,6 @@ function newGame(onlineVariant, onlinePieces){
         put(redOrigType, 'r', redR, redC, true, rTrueType, rTrueCol);
       });
     } else {
-      // CỜ ÚP TRUYỀN THỐNG
       let redShuffled = (onlinePieces && onlinePieces.red) ? onlinePieces.red : shuffle(piecesList.slice());
       let blackShuffled = (onlinePieces && onlinePieces.black) ? onlinePieces.black : shuffle(piecesList.slice());
 
@@ -1336,6 +1347,39 @@ function selCard(i){
 
 function skip(){if(!ms)return;ms=null;endTurn()}
 
+function updateBagLogic() {
+  const variant = $('mode_variant').value;
+  if (variant !== 'kb') {
+    bagPos = null;
+    return;
+  }
+
+  if (bagPos) {
+    bagPos.ttl--;
+    if (bagPos.ttl <= 0) {
+      say(`🎒 [TÚI KỲ MƯU BIẾN MẤT] Túi Kỳ Mưu tại (${bagPos.r}, ${bagPos.c}) đã hết hạn và đổi sang ô khác!`, '#a8947d');
+      bagPos = null;
+    }
+  }
+
+  const freq = +($('drop_bag_freq') ? $('drop_bag_freq').value : 10);
+  if (!bagPos && plies > 0 && plies % freq === 0) {
+    const emptyCells = [];
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (!B[r][c]) emptyCells.push({ r, c });
+      }
+    }
+    if (emptyCells.length > 0) {
+      const chosenCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      bagPos = { r: chosenCell.r, c: chosenCell.c, ttl: 20 };
+      SoundSystem.playCardSpell();
+      spawnFX(bagPos.r, bagPos.c, "🎒 Túi Kỳ Mưu Rơi");
+      say(`🎒 [TÚI KỲ MƯU XUẤT HIỆN] Rơi ngẫu nhiên tại ô (${bagPos.r}, ${bagPos.c})! Tồn tại trong 20 nước đi.`, '#f1c40f', 'log-sp');
+    }
+  }
+}
+
 function checkGameEnd(currentTurn) {
   const moves = allMoves(currentTurn);
   const ck = inCheck(currentTurn);
@@ -1362,6 +1406,8 @@ function endTurnLocalOnly() {
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
   turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
 
+  updateBagLogic();
+
   const ended = checkGameEnd(turn);
   if (!ended) {
     const ck=inCheck(turn);
@@ -1377,6 +1423,8 @@ function endTurn(){
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
   turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
   
+  updateBagLogic();
+
   const ended = checkGameEnd(turn);
   if (!ended) {
     const ck=inCheck(turn);
@@ -1521,7 +1569,7 @@ function triggerAIMove(){
   busy = true;
   stat();
 
-  // MÁY AI SỬ DỤNG BÍ PHÁP KỲ BIẾN (AI CARD SPELL CASTING)
+  // MÁY AI SỬ DỤNG BÍ PHÁP KỲ BIẾN
   const variant = $('mode_variant').value;
   if (variant === 'kb' && merit.b >= 2 && hands.b.length > 0) {
     for (let i = 0; i < hands.b.length; i++) {
@@ -1605,6 +1653,18 @@ function triggerAIMove(){
 
       LASTMV = { from: [o.r, o.c], to: [r, c] };
 
+      // KIỂM TRA MÁY AI NHẶT TÚI KỲ MƯU
+      if (bagPos && bagPos.r === r && bagPos.c === c) {
+        const newCard = pick(1)[0];
+        if (newCard && hands.b.length < 5) hands.b.push(newCard);
+        merit.b = Math.min(10, merit.b + 2);
+        bagPos = null;
+        SoundSystem.playCardSpell();
+        spawnFX(r, c, "🎒 Nhặt Túi Kỳ Mưu");
+        say(`🎒 [NHẶT TÚI KỲ MƯU] [Máy AI] di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới & +2 Công Trạng!`, '#f1c40f', 'log-sp');
+        ui();
+      }
+
       B[o.r][o.c] = null;
       B[r][c] = o;
       o.r = r; o.c = c;
@@ -1627,16 +1687,6 @@ function triggerAIMove(){
         v.dead = true;
         eatenPieces[aiCol].push(v);
         SoundSystem.playCapture();
-        
-        // CƠ CHẾ RƠI TÚI KỲ MƯU
-        if (variant === 'kb' && Math.random() < 0.45) {
-          merit.b = Math.min(10, merit.b + 2);
-          const newCard = pick(1)[0];
-          if (newCard && hands.b.length < 5) hands.b.push(newCard);
-          SoundSystem.playCardSpell();
-          spawnFX(r, c, "🎒 Túi Kỳ Mưu");
-          say(`🎒 [RƠI TÚI KỲ MƯU] [Máy AI] nhặt được Bí Pháp mới & +2 Công Trạng!`, '#f1c40f', 'log-sp');
-        }
       } else {
         SoundSystem.playMove();
       }
@@ -1696,7 +1746,7 @@ function pcBase(o){
     x.fillText(LB[o.col+(o.tru||o.t)],X,Y+.5);
   }
 
-  // HIỂN THỊ KÝ HIỆU BÍ PHÁP TRÊN QUÂN CỜ (🌊 Ngự Ba · 🏯 Xuất Trần · ↩️ Hồi Phong · 👑 Thân Chinh · 💣 Tuyệt Mệnh Cổ · 💫 Định Thân)
+  // HIỂN THỊ KÝ HIỆU BÍ PHÁP TRÊN QUÂN CỜ
   if (o.p && !o.hd) {
     let badge = '';
     if (o.p.leave || o.p.ADVISOR_1) badge += '🏯';
@@ -1717,6 +1767,19 @@ function pcBase(o){
 function draw(){
   x.clearRect(0,0,600,660);grid();
   
+  // VẼ TÚI KỲ MƯU RƠI TRÊN BÀN CỜ
+  if (bagPos) {
+    const bX = PX(bagPos.c), bY = PY(bagPos.r);
+    x.save();
+    x.beginPath(); x.arc(bX, bY, PR + 2, 0, Math.PI * 2);
+    x.lineWidth = 2.5; x.strokeStyle = '#f1c40f';
+    x.fillStyle = 'rgba(241, 196, 15, 0.25)'; x.fill(); x.stroke();
+    x.font = '22px sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText('🎒', bX, bY);
+    x.restore();
+  }
+
   // VẼ BÍ TƯỚNG BỊ CHIẾU TƯỚNG (AURA ĐỎ CẢNH BÁO)
   if (!over && inCheck(turn)) {
     const k = K[turn];
@@ -1850,30 +1913,30 @@ function onClick(r,c){
       
       LASTMV = { from: [sel.r, sel.c], to: [r, c] };
 
+      // KIỂM TRA NGƯỜI CHƠI NHẶT TÚI KỲ MƯU
+      if (bagPos && bagPos.r === r && bagPos.c === c) {
+        const newCard = pick(1)[0];
+        if (newCard && hands[turn].length < 5) hands[turn].push(newCard);
+        merit[turn] = Math.min(10, merit[turn] + 2);
+        bagPos = null;
+        SoundSystem.playCardSpell();
+        spawnFX(r, c, "🎒 Nhặt Túi Kỳ Mưu");
+        say(`🎒 [NHẶT TÚI KỲ MƯU] ${turn==='r'?'[Phe Đỏ]':'[Phe Đen]'} di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới & +2 Công Trạng!`, '#f1c40f', 'log-sp');
+        ui();
+      }
+
       const v=B[r][c];
       B[sel.r][sel.c]=null;B[r][c]=sel;sel.r=r;sel.c=c;
       
       if(v) {
         v.dead=true;
         eatenPieces[turn].push(v);
-
-        // CƠ CHẾ RƠI TÚI KỲ MƯU
-        if (variant === 'kb' && Math.random() < 0.45) {
-          const actCol = turn;
-          merit[actCol] = Math.min(10, merit[actCol] + 2);
-          const newCard = pick(1)[0];
-          if (newCard && hands[actCol].length < 5) hands[actCol].push(newCard);
-          SoundSystem.playCardSpell();
-          spawnFX(r, c, "🎒 Túi Kỳ Mưu");
-          say(`🎒 [RƠI TÚI KỲ MƯU] ${actCol==='r'?'[Phe Đỏ]':'[Phe Đen]'} nhặt được Bí Pháp mới & +2 Công Trạng!`, '#f1c40f', 'log-sp');
-        }
       }
       
       if (sel.hd) {
         sel.hd = false;
         sel.t = sel.tru;
 
-        // CỜ ÚP GIÁN ĐIỆP: VẠCH MẶT GIÁN ĐIỆP
         if (sel.truCol && sel.truCol !== sel.col) {
           const oldCol = sel.col;
           sel.col = sel.truCol;
