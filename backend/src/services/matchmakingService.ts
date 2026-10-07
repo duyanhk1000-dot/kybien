@@ -10,12 +10,15 @@ export interface PlayerInQueue {
   username: string;
   elo: number;
   level: number;
+  variant: string; // 'kb' | 'n' | 't' | 'g'
   joinedAt: number;
 }
 
 export interface GameRoom {
   roomId: string;
   roomCode?: string;
+  variant: string; // 'kb' | 'n' | 't' | 'g'
+  initialPieces?: { red: string[]; black: string[] };
   playerWhite: { socketId: string; userId: number; username: string; elo: number; level: number; exp: bigint };
   playerBlack?: { socketId: string; userId: number; username: string; elo: number; level: number; exp: bigint };
   fen: string;
@@ -35,12 +38,30 @@ class MatchmakingManager {
 
   public INITIAL_XIANGQI_FEN = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1';
 
+  private generateInitialPieces(variant: string): { red: string[]; black: string[] } | undefined {
+    if (variant !== 't' && variant !== 'g') return undefined;
+    const piecesList = ['r','r','n','n','b','b','a','a','c','c','p','p','p','p','p'];
+    const shuffle = (a: string[]) => {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    return {
+      red: shuffle(piecesList.slice()),
+      black: shuffle(piecesList.slice()),
+    };
+  }
+
   public addToQueue(player: PlayerInQueue): { matched: boolean; room?: GameRoom } {
     // Remove duplicate entry with exact same socketId
     this.queue = this.queue.filter((p) => p.socketId !== player.socketId);
 
-    // Find any opponent in queue with different socketId (allows testing across 2 tabs)
-    const opponentIndex = this.queue.findIndex((p) => p.socketId !== player.socketId);
+    // ONLY match opponent who selected the EXACT SAME chess variant!
+    const opponentIndex = this.queue.findIndex(
+      (p) => p.socketId !== player.socketId && (p.variant || 'n') === (player.variant || 'n')
+    );
 
     if (opponentIndex !== -1) {
       const opponent = this.queue.splice(opponentIndex, 1)[0];
@@ -49,9 +70,12 @@ class MatchmakingManager {
       const isPlayerRed = Math.random() > 0.5;
       const redPlayer = isPlayerRed ? player : opponent;
       const blackPlayer = isPlayerRed ? opponent : player;
+      const variant = player.variant || 'n';
 
       const newRoom: GameRoom = {
         roomId,
+        variant,
+        initialPieces: this.generateInitialPieces(variant),
         playerWhite: {
           socketId: redPlayer.socketId,
           userId: redPlayer.userId,
@@ -83,7 +107,7 @@ class MatchmakingManager {
     return { matched: false };
   }
 
-  public createRoom(player: PlayerInQueue, isPrivate: boolean): { roomCode: string; room: GameRoom } {
+  public createRoom(player: PlayerInQueue, isPrivate: boolean, variant: string = 'n'): { roomCode: string; room: GameRoom } {
     const codeNumber = Math.floor(1000 + Math.random() * 9000);
     const roomCode = `KB-${codeNumber}`;
     const roomId = `room_${isPrivate ? 'priv' : 'pub'}_${Date.now()}_${roomCode}`;
@@ -91,6 +115,8 @@ class MatchmakingManager {
     const newRoom: GameRoom = {
       roomId,
       roomCode,
+      variant,
+      initialPieces: this.generateInitialPieces(variant),
       playerWhite: {
         socketId: player.socketId,
         userId: player.userId,
@@ -144,8 +170,8 @@ class MatchmakingManager {
     return { success: true, room };
   }
 
-  public getPublicWaitingRooms(): Array<{ roomCode: string; roomId: string; hostName: string; elo: number; createdAt: number }> {
-    const list: Array<{ roomCode: string; roomId: string; hostName: string; elo: number; createdAt: number }> = [];
+  public getPublicWaitingRooms(): Array<{ roomCode: string; roomId: string; hostName: string; elo: number; variant: string; createdAt: number }> {
+    const list: Array<{ roomCode: string; roomId: string; hostName: string; elo: number; variant: string; createdAt: number }> = [];
     this.activeRooms.forEach((room) => {
       if (room.status === 'WAITING' && !room.isPrivate && room.roomCode) {
         list.push({
@@ -153,6 +179,7 @@ class MatchmakingManager {
           roomId: room.roomId,
           hostName: room.playerWhite.username,
           elo: room.playerWhite.elo,
+          variant: room.variant || 'n',
           createdAt: room.createdAt,
         });
       }

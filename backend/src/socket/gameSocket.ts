@@ -34,10 +34,11 @@ export function setupGameSocket(io: Server): void {
       socket.emit('public_rooms_list', matchmakingManager.getPublicWaitingRooms());
     });
 
-    // 1. Ghép trận tự động
-    socket.on('join_matchmaking', (data: { elo?: number; level?: number }) => {
+    // 1. Ghép trận tự động (Lọc theo Thể loại cờ variant)
+    socket.on('join_matchmaking', (data: { variant?: string; elo?: number; level?: number }) => {
       const elo = data?.elo || 1200;
       const level = data?.level || 1;
+      const variant = data?.variant || 'n';
 
       const result = matchmakingManager.addToQueue({
         socketId: socket.id,
@@ -45,6 +46,7 @@ export function setupGameSocket(io: Server): void {
         username: user.username,
         elo,
         level,
+        variant,
         joinedAt: Date.now(),
       });
 
@@ -60,6 +62,8 @@ export function setupGameSocket(io: Server): void {
 
         io.to(room.roomId).emit('match_found', {
           roomId: room.roomId,
+          variant: room.variant,
+          initialPieces: room.initialPieces,
           fen: room.fen,
           turn: room.turn,
           playerWhite: {
@@ -78,13 +82,14 @@ export function setupGameSocket(io: Server): void {
           },
         });
       } else {
-        socket.emit('matchmaking_queued', { message: 'Đang tìm kiếm đối thủ phù hợp...' });
+        socket.emit('matchmaking_queued', { message: 'Đang tìm kiếm đối thủ phù hợp thể loại cờ đã chọn...' });
       }
     });
 
-    // 2. Tạo phòng theo mã (Công khai / Riêng tư)
-    socket.on('create_room', (data: { isPrivate?: boolean; elo?: number; level?: number }) => {
+    // 2. Tạo phòng theo mã (Công khai / Riêng tư + Variant)
+    socket.on('create_room', (data: { isPrivate?: boolean; variant?: string; elo?: number; level?: number }) => {
       const isPrivate = !!data?.isPrivate;
+      const variant = data?.variant || 'n';
       const elo = data?.elo || 1200;
       const level = data?.level || 1;
 
@@ -94,43 +99,17 @@ export function setupGameSocket(io: Server): void {
         username: user.username,
         elo,
         level,
+        variant,
         joinedAt: Date.now(),
-      }, isPrivate);
+      }, isPrivate, variant);
 
       socket.join(room.roomId);
 
       socket.emit('room_created', {
         roomCode,
         isPrivate,
+        variant,
         message: `Đã tạo ${isPrivate ? 'phòng riêng' : 'phòng chờ công khai'} thành công! Mã: ${roomCode}`,
-      });
-
-      if (!isPrivate) {
-        broadcastPublicRooms();
-      }
-    });
-
-    // Backward compatibility for legacy 'create_private_room'
-    socket.on('create_private_room', (data: { isPrivate?: boolean; elo?: number; level?: number }) => {
-      const isPrivate = data?.isPrivate !== undefined ? data.isPrivate : true;
-      const elo = data?.elo || 1200;
-      const level = data?.level || 1;
-
-      const { roomCode, room } = matchmakingManager.createRoom({
-        socketId: socket.id,
-        userId: user.userId,
-        username: user.username,
-        elo,
-        level,
-        joinedAt: Date.now(),
-      }, isPrivate);
-
-      socket.join(room.roomId);
-
-      socket.emit('room_created', {
-        roomCode,
-        isPrivate,
-        message: `Đã tạo phòng thành công! Mã: ${roomCode}`,
       });
 
       if (!isPrivate) {
@@ -149,6 +128,7 @@ export function setupGameSocket(io: Server): void {
         username: user.username,
         elo,
         level,
+        variant: 'n',
         joinedAt: Date.now(),
       });
 
@@ -168,57 +148,8 @@ export function setupGameSocket(io: Server): void {
       io.to(room.roomId).emit('match_found', {
         roomId: room.roomId,
         roomCode: room.roomCode,
-        fen: room.fen,
-        turn: room.turn,
-        playerWhite: {
-          socketId: room.playerWhite.socketId,
-          userId: room.playerWhite.userId,
-          username: room.playerWhite.username,
-          elo: room.playerWhite.elo,
-          level: room.playerWhite.level,
-        },
-        playerBlack: {
-          socketId: playerBlack.socketId,
-          userId: playerBlack.userId,
-          username: playerBlack.username,
-          elo: playerBlack.elo,
-          level: playerBlack.level,
-        },
-      });
-
-      broadcastPublicRooms();
-    });
-
-    // Backward compatibility for legacy 'join_private_room'
-    socket.on('join_private_room', (data: { roomCode: string; elo?: number; level?: number }) => {
-      const elo = data?.elo || 1200;
-      const level = data?.level || 1;
-
-      const result = matchmakingManager.joinRoomByCode(data.roomCode, {
-        socketId: socket.id,
-        userId: user.userId,
-        username: user.username,
-        elo,
-        level,
-        joinedAt: Date.now(),
-      });
-
-      if (!result.success || !result.room || !result.room.playerBlack) {
-        socket.emit('game_error', { message: result.error || 'Không thể tham gia phòng này.' });
-        return;
-      }
-
-      const room = result.room;
-      const playerBlack = result.room.playerBlack;
-      const socketWhite = io.sockets.sockets.get(room.playerWhite.socketId);
-      const socketBlack = io.sockets.sockets.get(playerBlack.socketId);
-
-      if (socketWhite) socketWhite.join(room.roomId);
-      if (socketBlack) socketBlack.join(room.roomId);
-
-      io.to(room.roomId).emit('match_found', {
-        roomId: room.roomId,
-        roomCode: room.roomCode,
+        variant: room.variant,
+        initialPieces: room.initialPieces,
         fen: room.fen,
         turn: room.turn,
         playerWhite: {

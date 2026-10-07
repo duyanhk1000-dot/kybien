@@ -460,7 +460,14 @@ let myOnlineSide = 'r';
 let currentUser = null;
 let boardFlipped = false;
 
-/* ---------- AUTH UTILS & AUTO-GUEST (MẬT KHẨU NGẪU NHIÊN & TRY-CATCH) ---------- */
+const VARIANT_NAMES = {
+  kb: 'Kỳ Biến (Bí Pháp)',
+  n: 'Cờ Tướng Truyền Thống',
+  t: 'Cờ Úp Truyền Thống',
+  g: 'Cờ Úp Gián Điệp'
+};
+
+/* ---------- AUTH UTILS & AUTO-GUEST ---------- */
 async function checkAuthUI() {
   const token = localStorage.getItem('kybien_jwt_token');
   const unlogged = document.getElementById('auth-unlogged');
@@ -587,11 +594,13 @@ async function initSocketConnection() {
     socketInstance.on('room_created', data => {
       const isPrivate = data.isPrivate;
       const code = data.roomCode;
-      document.getElementById('st').innerText = `🔑 Mã phòng đã tạo: ${code} (${isPrivate ? 'Phòng riêng' : 'Công khai'}) - Đang chờ đối thủ vào...`;
-      say(`[Hệ Thống] Đã tạo mã phòng: ${code}. ${isPrivate ? 'Phòng riêng (chỉ người có mã mới vào được).' : 'Phòng công khai (hiển thị danh sách cho tất cả kỳ thủ).'}`,'#f1c40f','log-sp');
-      alert(`Đã tạo phòng thành công!\nMã phòng: ${code}\n${isPrivate ? '(Phòng riêng)' : '(Phòng công khai - Mọi người có thể thấy)'}`);
+      const varName = VARIANT_NAMES[data.variant] || 'Cờ Tướng';
+      document.getElementById('st').innerText = `🔑 Mã phòng đã tạo: ${code} [${varName}] (${isPrivate ? 'Phòng riêng' : 'Công khai'}) - Đang chờ đối thủ...`;
+      say(`[Hệ Thống] Đã tạo mã phòng: ${code} [${varName}]. ${isPrivate ? 'Phòng riêng tư.' : 'Phòng công khai.'}`,'#f1c40f','log-sp');
+      alert(`Đã tạo phòng thành công!\nMã phòng: ${code}\nThể loại: ${varName}\n${isPrivate ? '(Phòng riêng)' : '(Phòng công khai)'}`);
     });
 
+    // DANH SÁCH PHÒNG CHỜ HIỂN THỊ RÕ THỂ LOẠI CỜ (VARIANT)
     socketInstance.on('public_rooms_list', rooms => {
       const listEl = document.getElementById('public-rooms-list');
       if (!listEl) return;
@@ -604,10 +613,12 @@ async function initSocketConnection() {
         const itemDiv = document.createElement('div');
         itemDiv.style.cssText = 'display:flex;justify-content:space-between;align-items:center;background:#1a110a;border:1px solid var(--bd);padding:6px 8px;border-radius:6px;cursor:pointer;';
         itemDiv.dataset.roomCode = r.roomCode;
+        const varLabel = VARIANT_NAMES[r.variant] || 'Cờ Tướng';
         itemDiv.innerHTML = `
           <div>
             <b style="color:var(--ac);font-size:0.78rem;">${r.roomCode}</b>
-            <span style="font-size:0.7rem;color:var(--mu);margin-left:6px;">Chủ phòng: ${r.hostName} (${r.elo} Elo)</span>
+            <span style="font-size:0.68rem;color:#2ecc71;margin-left:4px;">[${varLabel}]</span>
+            <span style="font-size:0.68rem;color:var(--mu);margin-left:4px;">${r.hostName}</span>
           </div>
           <button type="button" style="background:#27ae60;color:#fff;font-size:0.68rem;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;">Vào Đấu ⚔️</button>
         `;
@@ -618,6 +629,7 @@ async function initSocketConnection() {
       });
     });
 
+    // KHẮC PHỤC GHÉP TRẬN CHUẨN ĐỒNG BỘ CÙNG THỂ LOẠI CỜ & CÙNG BẢN ĐỒ CỜ ÚP
     socketInstance.on('match_found', data => {
       isOnlineMatch = true;
       currentRoomId = data.roomId;
@@ -632,18 +644,26 @@ async function initSocketConnection() {
                     (currentUser && currentUser.username === data.playerWhite.username);
       myOnlineSide = isRed ? 'r' : 'b';
 
-      document.getElementById('st').innerText = `🎉 Khai cuộc Online! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}`;
+      // Đồng bộ thể loại cờ đã chọn
+      if (data.variant) {
+        const selVariant = document.getElementById('mode_variant');
+        if (selVariant) selVariant.value = data.variant;
+        onVariantChangeUIOnly();
+      }
+
+      const varTitle = VARIANT_NAMES[data.variant] || 'Cờ Tướng';
+      document.getElementById('st').innerText = `🎉 Khai cuộc Online [${varTitle}]! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}`;
       document.getElementById('nr').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
       document.getElementById('nb').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
       
-      say(`[Chiến Trường Online] Kết nối trận thành công! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}.`, '#2ec4b6', 'log-sp');
-      newGame();
+      say(`[Chiến Trường Online] Kết nối trận thành công [${varTitle}]! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}.`, '#2ec4b6', 'log-sp');
+      
+      // Tải ván đấu với vị trí quân cờ đồng bộ tuyệt đối từ server
+      newGame(data.variant, data.initialPieces);
     });
 
-    // KHẮC PHỤC DÙNG DỰA TRÊN ĐỒNG BỘ NƯỚC ĐI ONLINE CHUẨN XÁC FOR BOTH RED & BLACK
     socketInstance.on('move_made', data => {
       if (isOnlineMatch) {
-        // data.turn represents the NEW turn emitted by server ('RED' or 'BLACK')
         const isMyTurnNow = data.turn === (myOnlineSide === 'r' ? 'RED' : 'BLACK');
         
         if (isMyTurnNow) {
@@ -658,7 +678,6 @@ async function initSocketConnection() {
             B[toPos[0]][toPos[1]] = piece;
             piece.r = toPos[0]; piece.c = toPos[1];
 
-            // Auto flip face-down piece if applicable
             if (piece.hd) {
               piece.hd = false;
               piece.t = piece.tru;
@@ -684,7 +703,7 @@ async function initSocketConnection() {
   return true;
 }
 
-function onVariantChange() {
+function onVariantChangeUIOnly() {
   const variant = document.getElementById('mode_variant').value;
   const trayWrapper = document.getElementById('card-tray-wrapper');
   const eatenWrapper = document.getElementById('eaten-tray-card');
@@ -703,6 +722,10 @@ function onVariantChange() {
     if (eatenWrapper) eatenWrapper.style.display = 'none';
     if (legendBox) legendBox.style.display = 'none';
   }
+}
+
+function onVariantChange() {
+  onVariantChangeUIOnly();
   newGame();
 }
 
@@ -738,7 +761,8 @@ async function createRoom() {
   if (!ready) return;
   const chkPrivate = document.getElementById('chk-private-room');
   const isPrivate = chkPrivate ? chkPrivate.checked : false;
-  socketInstance.emit('create_room', { isPrivate });
+  const variant = document.getElementById('mode_variant').value;
+  socketInstance.emit('create_room', { isPrivate, variant });
 }
 
 async function joinRoomByCode(codeToJoin) {
@@ -764,7 +788,8 @@ async function handleGameAction() {
     if (!isMatchSearching) {
       isMatchSearching = true;
       document.getElementById('btn-action').innerText = '❌ HỦY TÌM TRẬN';
-      socketInstance.emit('join_matchmaking', {});
+      const variant = document.getElementById('mode_variant').value;
+      socketInstance.emit('join_matchmaking', { variant });
     } else {
       isMatchSearching = false;
       document.getElementById('btn-action').innerText = '⚡ GẮN KẾT TÌM TRẬN TỰ ĐỘNG';
@@ -799,7 +824,7 @@ function flipBoardAction() {
   draw();
 }
 
-/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN & BOT AI MINIMAX ALPHA-BETA ---------- */
+/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN & BOT AI ---------- */
 const $=id=>document.getElementById(id);
 const SoundSystem=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext||window.webkitAudioContext)();if(a.state==='suspended')a.resume();return a};
 function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
@@ -853,7 +878,6 @@ let moveHistoryStack=[];
 let eatenPieces={r:[],b:[]};
 const aiCol='b',opp=c=>c==='r'?'b':'r';
 
-// HÀM LẤY LOẠI QUÂN TIÊU CHUẨN TẠI VỊ TRÍ BAN ĐẦU CHO CỜ ÚP
 function getStandardPieceType(r, c) {
   if (r === 0 || r === 9) {
     const rowStr = 'rnbakabnr';
@@ -887,7 +911,6 @@ function valid(o,r2,c2,bf){
   if(r2<0||r2>9||c2<0||c2>8)return false;const r1=o.r,c1=o.c;if(r1===r2&&c1===c2)return false;
   const tg=B[r2][c2];if(tg&&tg.col===o.col)return false;
   const dr=r2-r1,dc=c2-c1,ar=Math.abs(dr),ac=Math.abs(dc),red=o.col==='r',p=o.p;
-  // QUÂN ÚP DI CHUYỂN THEO LUẬT VỊ TRÍ BAN ĐẦU (o.t) KHI CHƯA LẬT NGỬA
   const pieceType = o.hd ? o.t : (o.tru || o.t);
 
   switch(pieceType){
@@ -945,8 +968,8 @@ function say(t,c,sc){
 
 const test=()=>false,free=v=>false,handOf=v=>hands[v],pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
 
-function newGame(){
-  const variant = $('mode_variant').value;
+function newGame(onlineVariant, onlinePieces){
+  const variant = onlineVariant || $('mode_variant').value;
   B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};eatenPieces={r:[],b:[]};
   moveHistoryStack=[];
 
@@ -956,12 +979,12 @@ function newGame(){
     put('c','b',2,1);put('c','b',2,7);put('c','r',7,1);put('c','r',7,7);
     for(let c=0;c<9;c+=2){put('p','b',3,c);put('p','r',6,c)}
   } else {
-    // CỜ ÚP KHẮC PHỤC CHUẨN XÁC NƯỚC ĐI BAN ĐẦU THEO getStandardPieceType
+    // CỜ ÚP ĐỒNG BỘ NGUYÊN BẢN TỪ SERVER SERVER-SIDE SYNC PIECES
     const piecesList = ['r','r','n','n','b','b','a','a','c','c','p','p','p','p','p'];
     const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
     
-    let redShuffled = shuffle(piecesList.slice());
-    let blackShuffled = shuffle(piecesList.slice());
+    let redShuffled = (onlinePieces && onlinePieces.red) ? onlinePieces.red : shuffle(piecesList.slice());
+    let blackShuffled = (onlinePieces && onlinePieces.black) ? onlinePieces.black : shuffle(piecesList.slice());
 
     put('k','b',0,4); put('k','r',9,4);
 
@@ -1000,7 +1023,7 @@ function newGame(){
     const botLvlName = ['Tay Mơ', 'Ông Đồ', 'Pháo Đầu', 'Cao Thủ', 'Địa Ngục Vương'][+$('lv').value];
     $('nb').innerText=ai ? `Đen (Bot AI: ${botLvlName})` : 'Đen';
   }
-  say(`Khai cuộc: ${variant==='kb'?'Kỳ Biến Bí Pháp':variant==='t'?'Cờ Úp Truyền Thống':variant==='g'?'Cờ Úp Gián Điệp':'Cờ Tướng Truyền Thống'}.`, '#a8947d');
+  say(`Khai cuộc: ${VARIANT_NAMES[variant] || 'Cờ Tướng'}.`, '#a8947d');
   syncTrayLayout();
   stat();ui();draw();
 }
