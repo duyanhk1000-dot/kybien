@@ -5,10 +5,10 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "npx prisma db push && node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:push": "prisma db push"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
