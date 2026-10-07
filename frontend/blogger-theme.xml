@@ -12,7 +12,7 @@
   
   <!-- Socket.io & Ky Bien Client Core Scripts -->
   <script src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js'></script>
+  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=1.0.1'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
