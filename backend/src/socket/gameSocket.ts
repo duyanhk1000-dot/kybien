@@ -117,7 +117,7 @@ export function setupGameSocket(io: Server): void {
       }
     });
 
-    // 3. Tham gia phòng theo mã
+    // 3. Tham gia phòng theo mã (Đồng bộ variant từ phòng chủ)
     socket.on('join_room_by_code', (data: { roomCode: string; elo?: number; level?: number }) => {
       const elo = data?.elo || 1200;
       const level = data?.level || 1;
@@ -128,7 +128,7 @@ export function setupGameSocket(io: Server): void {
         username: user.username,
         elo,
         level,
-        variant: 'n',
+        variant: '',
         joinedAt: Date.now(),
       });
 
