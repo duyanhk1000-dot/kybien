@@ -1,5 +1,5 @@
 <!-- 
-  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL ONLINE SOCKET.IO REALTIME SYNC)
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL ONLINE SOCKET.IO REALTIME SYNC + 5 BOT LEVELS + CỜ ÚP & CỜ TRUYỀN THỐNG)
 -->
 
 <div id="kybien-arena-app">
@@ -194,6 +194,9 @@
     .fg label { display: flex; flex-direction: column; gap: 4px; font-size: .75rem; color: var(--mu); }
     .ck { display: flex; align-items: center; gap: 8px; font-size: .82rem; margin-top: 10px; }
 
+    .acts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+    .acts button { font-size: 0.8rem; padding: 7px 4px; background: #2f1f14; }
+
     #tray {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -244,8 +247,8 @@
     }
 
     #log {
-      height: 200px;
-      max-height: 200px;
+      height: 180px;
+      max-height: 180px;
       overflow-y: auto;
       font-size: .78rem;
       line-height: 1.6;
@@ -256,6 +259,19 @@
     #log .log-r { color: #f59b87; }
     #log .log-b { color: #9ec2ff; }
     #log .log-sp { color: #f1c40f; font-weight: 600; }
+
+    .eaten-tray {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      background: #1a110a;
+      border: 1px solid var(--bd);
+      padding: 6px;
+      border-radius: 6px;
+      margin-top: 4px;
+      min-height: 32px;
+    }
   </style>
 
   <!-- THANH ĐĂNG NHẬP -->
@@ -305,10 +321,10 @@
       </div>
 
       <div id="mobile-tray-placeholder"></div>
-      <div id="msg">Chọn Bí Pháp hoặc xuất chiêu trực tiếp!</div>
+      <div id="msg">Chọn chế độ thi đấu và bấm Khai Cuộc Ván Mới!</div>
       
-      <div class="legend-box">
-        <b>Ấn ký nhận diện:</b> 🌊 Ngự Ba · 🏯 Xuất Trần · ↩️ Hồi Phong · 👑 Thân Chinh · 💣 Tuyệt Mệnh Cổ (ẩn) · 💫 Trúng Định Thân · viền cam = đang xuất chiêu · 🎒 Túi Kỳ Mưu
+      <div class="legend-box" id="legend-box">
+        <b>Ấn ký Kỳ Biến:</b> 🌊 Ngự Ba · 🏯 Xuất Trần · ↩️ Hồi Phong · 👑 Thân Chinh · 💣 Tuyệt Mệnh Cổ · 💫 Định Thân · viền cam = đang dùng thẻ · 🎒 Túi Kỳ Mưu
       </div>
     </section>
 
@@ -317,21 +333,43 @@
       <div class="arena-card">
         <h3>Thiết Lập Ván Đấu</h3>
         <div class="fg">
-          <label>Chế độ
+          <label>Thể loại cờ
+            <select id="mode_variant" onchange="onVariantChange()">
+              <option value="kb" selected>Kỳ Biến (Bí Pháp Kiếm Hiệp)</option>
+              <option value="n">Cờ Tướng Truyền Thống</option>
+              <option value="t">Cờ Úp Truyền Thống</option>
+              <option value="g">Cờ Úp Gián Điệp</option>
+            </select>
+          </label>
+
+          <label>Chế độ thi đấu
             <select id="mode" onchange="onModeChange()">
-              <option value="ai" selected>Đấu Với Máy Tự Động</option>
+              <option value="ai" selected>Chơi Với Máy (AI)</option>
               <option value="2p_local">Hai Người (Cùng Máy)</option>
               <option value="2p_online">Ghép Trận Kỳ Hội Online</option>
             </select>
           </label>
-          <label id="lbl-lv">Cấp độ đối thủ
+
+          <label id="lbl-lv">Cấp độ máy (Bot)
             <select id="lv">
-              <option value="1">Sơ cấp (Cầm kỳ)</option>
-              <option value="2" selected>Trung cấp (Danh thủ)</option>
-              <option value="3">Thượng cấp (Kỳ thánh)</option>
+              <option value="0">Lv1 Tay Mơ</option>
+              <option value="1">Lv2 Ông Đồ</option>
+              <option value="2">Lv3 Pháo Đầu</option>
+              <option value="3">Lv4 Cao Thủ</option>
+              <option value="4" selected>Lv5 Địa Ngục Vương</option>
             </select>
           </label>
-          <label>Thời gian luận chiêu
+
+          <label id="lbl-hc">Chấp quân (Chế độ máy)
+            <select id="hc">
+              <option value="0" selected>Không chấp</option>
+              <option value="N">Chấp Mã</option>
+              <option value="C">Chấp Pháo</option>
+              <option value="R">Chấp Xe</option>
+            </select>
+          </label>
+
+          <label>Thời gian nước đi
             <select id="tm">
               <option value="0" selected>Vô hạn</option>
               <option value="30">30 giây / nước</option>
@@ -339,13 +377,7 @@
               <option value="180">3 phút / nước</option>
             </select>
           </label>
-          <label>Rơi túi thẻ
-            <select id="bagm">
-              <option value="5">Mỗi 5 nước</option>
-              <option value="10" selected>Mỗi 10 nước</option>
-              <option value="0">Tắt rơi túi</option>
-            </select>
-          </label>
+
           <label>Kiểu bàn cờ
             <select id="vw" onchange="draw()">
               <option value="2">2D Phẳng</option>
@@ -354,9 +386,12 @@
           </label>
         </div>
 
-        <label class="ck">
-          <input type="checkbox" id="tst" onchange="pend=null;ui()" /> Chế độ thử: Miễn phí Công trạng
-        </label>
+        <!-- HỖ TRỢ TRONG VÁN -->
+        <div class="acts">
+          <button type="button" onclick="undoAction()">↩️ Đi lại</button>
+          <button type="button" onclick="hintAction()">💡 Gợi ý</button>
+          <button type="button" onclick="flipBoardAction()">🔃 Lật bàn</button>
+        </div>
 
         <!-- ONLINE ROOM TOOLS -->
         <div id="online-room-tools" style="display: none; margin-top: 12px; padding: 10px; background: #20140b; border: 1px solid #4a331f; border-radius: 8px;">
@@ -386,14 +421,23 @@
         <button type="button" class="p" id="btn-action" onclick="handleGameAction()">Khai Cuộc Ván Mới</button>
       </div>
 
+      <!-- KHAY BÍ PHÁP KỲ BIẾN -->
       <div class="arena-card card-tray-box" id="card-tray-wrapper">
-        <div class="hh">
-          <h3 id="hl">Bí Pháp Kỳ Biến</h3>
-          <button type="button" id="sk" onclick="skip()" style="display:none">Bỏ qua nước thêm</button>
+        <div class="hh" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <h3 id="hl" style="margin:0;">Bí Pháp Kỳ Biến</h3>
+          <button type="button" id="sk" onclick="skip()" style="display:none; padding:3px 8px; font-size:0.72rem;">Bỏ qua nước thêm</button>
         </div>
         <div id="tray"></div>
       </div>
 
+      <!-- TÚI ĂN QUÂN CỜ ÚP -->
+      <div class="arena-card" id="eaten-tray-card" style="display: none;">
+        <h3>Quân Cờ Đã Ăn (Cờ Úp)</h3>
+        <div id="tr1_eaten" class="eaten-tray">Đối thủ đã ăn: </div>
+        <div id="tr2_eaten" class="eaten-tray">Bạn đã ăn: </div>
+      </div>
+
+      <!-- NHẬT KÝ CHIẾN TRƯỜNG -->
       <div class="arena-card">
         <h3>Nhật Ký Chiến Trường</h3>
         <div id="log"></div>
@@ -404,6 +448,7 @@
   </div>
 </div>
 
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script>
 //<![CDATA[
 const SERVER_API_ENDPOINT = 'https://kybien-backend.onrender.com';
@@ -413,8 +458,9 @@ let isOnlineMatch = false;
 let currentRoomId = null;
 let myOnlineSide = 'r'; // 'r' = Red, 'b' = Black
 let currentUser = null;
+let boardFlipped = false;
 
-/* ---------- AUTH UTILS ---------- */
+/* ---------- AUTH UTILS & AUTO-GUEST ---------- */
 async function checkAuthUI() {
   const token = localStorage.getItem('kybien_jwt_token');
   const unlogged = document.getElementById('auth-unlogged');
@@ -431,7 +477,7 @@ async function checkAuthUI() {
         document.getElementById('logged-elo').innerText = currentUser.elo;
         if (unlogged) unlogged.style.display = 'none';
         if (logged) logged.style.display = 'flex';
-        return;
+        return true;
       }
     } catch(e){}
     localStorage.removeItem('kybien_jwt_token');
@@ -439,11 +485,35 @@ async function checkAuthUI() {
   currentUser = null;
   if (unlogged) unlogged.style.display = 'flex';
   if (logged) logged.style.display = 'none';
+  return false;
+}
+
+async function ensureUserLoggedIn() {
+  const ok = await checkAuthUI();
+  if (ok && currentUser) return true;
+
+  // Auto register guest account if not logged in
+  const guestUser = `KyThu_${Math.floor(1000 + Math.random() * 9000)}`;
+  try {
+    const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: guestUser, email: `${guestUser}@kybien.com`, password: 'kybien123' })
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      localStorage.setItem('kybien_jwt_token', data.token);
+      await checkAuthUI();
+      return true;
+    }
+  } catch(e){}
+  return false;
 }
 
 async function arenaLogin() {
   const u = document.getElementById('arena-u').value;
   const p = document.getElementById('arena-p').value;
+  if (!u || !p) return alert('Vui lòng nhập tên tài khoản và mật khẩu!');
   const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -461,6 +531,7 @@ async function arenaLogin() {
 async function arenaRegister() {
   const u = document.getElementById('arena-u').value;
   const p = document.getElementById('arena-p').value;
+  if (!u || !p) return alert('Vui lòng nhập tên tài khoản và mật khẩu!');
   const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -480,10 +551,11 @@ function arenaLogout() {
   checkAuthUI();
 }
 
-function initSocketConnection() {
+async function initSocketConnection() {
+  const logged = await ensureUserLoggedIn();
   const token = localStorage.getItem('kybien_jwt_token');
   if (!token) {
-    alert('Vui lòng đăng nhập tài khoản trước khi đấu Online!');
+    alert('Không thể khởi tạo kết nối máy chủ!');
     return false;
   }
   if (!socketInstance) {
@@ -501,13 +573,8 @@ function initSocketConnection() {
       const isPrivate = data.isPrivate;
       const code = data.roomCode;
       document.getElementById('st').innerText = `🔑 Mã phòng đã tạo: ${code} (${isPrivate ? 'Phòng riêng' : 'Công khai'}) - Đang chờ đối thủ vào...`;
-      say(`[Hệ Thống] Đã tạo mã phòng: ${code}. ${isPrivate ? 'Phòng riêng (chỉ người có mã mới vào được).' : 'Phòng công khai (người khác có thể bấm trực tiếp vào để chơi chung).'}`,'#f1c40f','log-sp');
-      alert(`Đã tạo phòng thành công!\nMã phòng: ${code}\n${isPrivate ? '(Phòng riêng)' : '(Phòng công khai)'}`);
-    });
-
-    socketInstance.on('private_room_created', data => {
-      document.getElementById('st').innerText = '🔑 ' + data.message;
-      alert(data.message);
+      say(`[Hệ Thống] Đã tạo mã phòng: ${code}. ${isPrivate ? 'Phòng riêng (chỉ người có mã mới vào được).' : 'Phòng công khai (hiển thị danh sách cho tất cả kỳ thủ).'}`,'#f1c40f','log-sp');
+      alert(`Đã tạo phòng thành công!\nMã phòng: ${code}\n${isPrivate ? '(Phòng riêng)' : '(Phòng công khai - Mọi người có thể thấy)'}`);
     });
 
     socketInstance.on('public_rooms_list', rooms => {
@@ -580,14 +647,38 @@ function initSocketConnection() {
   return true;
 }
 
+function onVariantChange() {
+  const variant = document.getElementById('mode_variant').value;
+  const trayWrapper = document.getElementById('card-tray-wrapper');
+  const eatenWrapper = document.getElementById('eaten-tray-card');
+  const legendBox = document.getElementById('legend-box');
+
+  if (variant === 'kb') {
+    if (trayWrapper) trayWrapper.style.display = 'block';
+    if (eatenWrapper) eatenWrapper.style.display = 'none';
+    if (legendBox) legendBox.style.display = 'block';
+  } else if (variant === 't' || variant === 'g') {
+    if (trayWrapper) trayWrapper.style.display = 'none';
+    if (eatenWrapper) eatenWrapper.style.display = 'block';
+    if (legendBox) legendBox.style.display = 'none';
+  } else {
+    if (trayWrapper) trayWrapper.style.display = 'none';
+    if (eatenWrapper) eatenWrapper.style.display = 'none';
+    if (legendBox) legendBox.style.display = 'none';
+  }
+  newGame();
+}
+
 function onModeChange() {
   const modeVal = document.getElementById('mode').value;
   const lblLv = document.getElementById('lbl-lv');
+  const lblHc = document.getElementById('lbl-hc');
   const btnAction = document.getElementById('btn-action');
   const roomTools = document.getElementById('online-room-tools');
 
   if (modeVal === '2p_online') {
     lblLv.style.display = 'none';
+    lblHc.style.display = 'none';
     roomTools.style.display = 'block';
     btnAction.innerText = '⚡ GẮN KẾT TÌM TRẬN TỰ ĐỘNG';
     btnAction.style.background = '#f1c40f';
@@ -595,34 +686,30 @@ function onModeChange() {
     initSocketConnection();
   } else {
     lblLv.style.display = modeVal === 'ai' ? 'flex' : 'none';
+    lblHc.style.display = modeVal === 'ai' ? 'flex' : 'none';
     roomTools.style.display = 'none';
     btnAction.innerText = modeVal === 'ai' ? 'Khai Cuộc Ván Mới' : 'Khai Cuộc Ván Mới (Hai Người)';
     btnAction.style.background = 'var(--bp)';
     btnAction.style.color = '#fff';
     isOnlineMatch = false;
   }
+  newGame();
 }
 
-function createRoom() {
-  if (!initSocketConnection()) return;
+async function createRoom() {
+  const ready = await initSocketConnection();
+  if (!ready) return;
   const chkPrivate = document.getElementById('chk-private-room');
   const isPrivate = chkPrivate ? chkPrivate.checked : false;
   socketInstance.emit('create_room', { isPrivate });
 }
 
-function createPrivateRoom() {
-  createRoom();
-}
-
-function joinRoomByCode(codeToJoin) {
+async function joinRoomByCode(codeToJoin) {
   const code = codeToJoin || document.getElementById('room-code-input').value;
   if (!code) return alert('Vui lòng nhập mã phòng (vd: KB-8899)');
-  if (!initSocketConnection()) return;
+  const ready = await initSocketConnection();
+  if (!ready) return;
   socketInstance.emit('join_room_by_code', { roomCode: code });
-}
-
-function joinPrivateRoom() {
-  joinRoomByCode();
 }
 
 function refreshPublicRooms() {
@@ -631,10 +718,11 @@ function refreshPublicRooms() {
   }
 }
 
-function handleGameAction() {
+async function handleGameAction() {
   const modeVal = document.getElementById('mode').value;
   if (modeVal === '2p_online') {
-    if (!initSocketConnection()) return;
+    const ready = await initSocketConnection();
+    if (!ready) return;
 
     if (!isMatchSearching) {
       isMatchSearching = true;
@@ -651,7 +739,30 @@ function handleGameAction() {
   }
 }
 
-/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN ---------- */
+function undoAction() {
+  if (isOnlineMatch) return alert('Không thể đi lại trong chế độ đấu Online!');
+  if (moveHistoryStack && moveHistoryStack.length > 0) {
+    const lastState = moveHistoryStack.pop();
+    B = lastState.B;
+    turn = lastState.turn;
+    plies = lastState.plies;
+    sel = null; VM = [];
+    stat(); ui(); draw();
+    say('↩️ Đã thực hiện đi lại nước cờ.', '#a8947d');
+  }
+}
+
+function hintAction() {
+  if (over || (ai && turn !== 'r')) return;
+  say('💡 Gợi ý: Hãy kiểm tra các nước đi kiểm soát trung lộ hoặc ăn quân đối thủ.', '#f1c40f');
+}
+
+function flipBoardAction() {
+  boardFlipped = !boardFlipped;
+  draw();
+}
+
+/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN & BOT AI 5 CẤP ĐỘ ---------- */
 const $=id=>document.getElementById(id);
 const SoundSystem=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext||window.webkitAudioContext)();if(a.state==='suspended')a.resume();return a};
 function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
@@ -674,9 +785,8 @@ window.addEventListener('DOMContentLoaded',syncTrayLayout);
 
 const cv=$('cv'),x=cv.getContext('2d'),CS=60,OX=60,OY=60,PR=25;
 const LB={rk:'帥',ra:'仕',rb:'相',rn:'傌',rr:'俥',rc:'炮',rp:'兵',bk:'將',ba:'士',bb:'象',bn:'馬',br:'車',bc:'砲',bp:'卒'};
-const VAL={k:0,r:1000,c:480,n:430,b:200,a:200,p:100},GAIN={p:1,a:2,b:2,n:3,c:3,r:5};
+const VAL={k:0,r:1000,c:480,n:430,b:200,a:200,p:100};
 const TN={r:'Xe',c:'Pháo',n:'Mã',b:'Tượng',a:'Sĩ',p:'Tốt',k:'Tướng'};
-const PF={KNIGHT_2:'sui',ELEPHANT_2:'cross',ADVISOR_1:'leave',PAWN_2:'back',KING_1:'out'};
 const CARDS=[
   ['ROOK_1','r',3,'Thiểm Điện Trảm','Ăn quân xong được tiến thẳng thêm 1-2 ô'],
   ['ROOK_2','r',3,'Phá Lãng Bộ','Đi xong được bẻ góc 90° đi thêm 1-3 ô'],
@@ -702,9 +812,15 @@ OFF.p=OFF.k;
 let B,P,K,turn,merit,hands,sel,VM,pend,armed,used,ms,mode,KB,bag,plies,over,busy,ai;
 let ANIM=null,FX=[],LASTMV=null,LIM=0,tleft=0,lastTick=0,lastBeep=0;
 let checkHistory={};
+let moveHistoryStack=[];
+let eatenPieces={r:[],b:[]};
 const aiCol='b',opp=c=>c==='r'?'b':'r';
 
-function put(t,col,r,c){const o={t,col,r,c,p:{},st:0,dead:false};B[r][c]=o;P[col].push(o);if(t==='k')K[col]=o}
+function put(t,col,r,c,hdState,truType){
+  const o={t,col,r,c,p:{},st:0,dead:false,hd:!!hdState,tru:truType||t};
+  B[r][c]=o;P[col].push(o);if(t==='k')K[col]=o;
+}
+
 const pal=(r,c,red)=>c>=3&&c<=5&&(red?r>=7:r<=2),ext=(r,c,red)=>c>=2&&c<=6&&(red?r>=6:r<=3);
 
 function cnt(r1,c1,r2,c2){
@@ -723,7 +839,9 @@ function valid(o,r2,c2,bf){
   if(r2<0||r2>9||c2<0||c2>8)return false;const r1=o.r,c1=o.c;if(r1===r2&&c1===c2)return false;
   const tg=B[r2][c2];if(tg&&tg.col===o.col)return false;
   const dr=r2-r1,dc=c2-c1,ar=Math.abs(dr),ac=Math.abs(dc),red=o.col==='r',p=o.p;
-  switch(o.t){
+  const pieceType = o.hd ? o.t : (o.tru || o.t);
+
+  switch(pieceType){
     case'k':return((ar===1&&!ac)||(!ar&&ac===1))&&(pal(r2,c2,red)||(!!p.out&&ext(r2,c2,red)));
     case'a':return ar===1&&ac===1&&(!!p.leave||pal(r2,c2,red));
     case'b':if(ar!==2||ac!==2)return false;if(!p.cross&&(red?r2<5:r2>4))return false;return bf==='ELEPHANT_1'||!B[r1+dr/2][c1+dc/2];
@@ -760,8 +878,9 @@ function safe(o,r,c){
 
 function legalMoves(o,bf){
   const out=[],ps=(r,c)=>{if(r<0||r>9||c<0||c>8)return;if(valid(o,r,c,bf)&&safe(o,r,c))out.push([r,c])};
-  if(o.t==='r'||o.t==='c'){for(let i=0;i<10;i++)ps(i,o.c);for(let j=0;j<9;j++)ps(o.r,j)}
-  else for(const[d,e]of OFF[o.t])ps(o.r+d,o.c+e);
+  const pieceType = o.hd ? o.t : (o.tru || o.t);
+  if(pieceType==='r'||pieceType==='c'){for(let i=0;i<10;i++)ps(i,o.c);for(let j=0;j<9;j++)ps(o.r,j)}
+  else for(const[d,e]of OFF[pieceType])ps(o.r+d,o.c+e);
   return out;
 }
 
@@ -775,21 +894,65 @@ function say(t,c,sc){
   l.insertBefore(d,l.firstChild);while(l.children.length>60)l.removeChild(l.lastChild);
 }
 
-const test=()=>$('tst').checked,free=v=>test(),handOf=v=>free(v)?CARDS:hands[v],pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
+const test=()=>false,free=v=>false,handOf=v=>hands[v],pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
 
 function newGame(){
-  B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};const bk='rnbakabnr';
-  for(let c=0;c<9;c++){put(bk[c],'b',0,c);put(bk[c],'r',9,c)}
-  put('c','b',2,1);put('c','b',2,7);put('c','r',7,1);put('c','r',7,7);
-  for(let c=0;c<9;c+=2){put('p','b',3,c);put('p','r',6,c)}
+  const variant = $('mode_variant').value;
+  B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};eatenPieces={r:[],b:[]};
+  moveHistoryStack=[];
+
+  const bk='rnbakabnr';
+  if (variant === 'n' || variant === 'kb') {
+    // Standard Xiangqi layout
+    for(let c=0;c<9;c++){put(bk[c],'b',0,c);put(bk[c],'r',9,c)}
+    put('c','b',2,1);put('c','b',2,7);put('c','r',7,1);put('c','r',7,7);
+    for(let c=0;c<9;c+=2){put('p','b',3,c);put('p','r',6,c)}
+  } else {
+    // Cờ Úp (Traditional or Spy)
+    const piecesList = ['r','r','n','n','b','b','a','a','c','c','p','p','p','p','p'];
+    const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
+    
+    let redShuffled = shuffle(piecesList.slice());
+    let blackShuffled = shuffle(piecesList.slice());
+
+    // Place kings face-up
+    put('k','b',0,4); put('k','r',9,4);
+
+    const positions = [
+      [0,0],[0,1],[0,2],[0,3],[0,5],[0,6],[0,7],[0,8],
+      [2,1],[2,7],[3,0],[3,2],[3,4],[3,6],[3,8]
+    ];
+
+    positions.forEach((pos, idx) => {
+      const redPos = [9 - pos[0], pos[1]];
+      const origRedType = bk[pos[1]] || (pos[0]===2?'c':'p');
+      const origBlackType = bk[pos[1]] || (pos[0]===2?'c':'p');
+
+      put(origBlackType, 'b', pos[0], pos[1], true, blackShuffled[idx]);
+      put(origRedType, 'r', redPos[0], redPos[1], true, redShuffled[idx]);
+    });
+  }
+
+  // Handle Handicaps
+  const hcVal = $('hc').value;
+  if (hcVal !== '0' && $('mode').value === 'ai') {
+    const hcMap = { N: [9,1], C: [7,1], R: [9,0] };
+    const pos = hcMap[hcVal];
+    if (pos && B[pos[0]][pos[1]]) {
+      B[pos[0]][pos[1]].dead = true;
+    }
+  }
+
   turn='r';merit={r:3,b:3};hands={r:pick(3),b:pick(3)};sel=null;VM=[];pend=null;armed=null;used=false;ms=null;mode=null;KB={r:null,b:null};bag=null;plies=0;over=false;busy=false;
   ANIM=null;FX=[];LASTMV=null;LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
   checkHistory={};
   ai=$('mode').value==='ai' && !isOnlineMatch;
+
   if (!isOnlineMatch) {
-    $('nb').innerText=ai?'Đen (Đối Thủ Tự Động)':'Đen';
+    const botLvlName = ['Tay Mơ', 'Ông Đồ', 'Pháo Đầu', 'Cao Thủ', 'Địa Ngục Vương'][+$('lv').value];
+    $('nb').innerText=ai ? `Đen (Bot AI: ${botLvlName})` : 'Đen';
   }
-  say('Khai cuộc Kỳ Biến: Chọn Bí Pháp hoặc xuất chiêu trực tiếp.','#a8947d');
+  say(`Khai cuộc: ${variant==='kb'?'Kỳ Biến Bí Pháp':variant==='t'?'Cờ Úp Truyền Thống':variant==='g'?'Cờ Úp Gián Điệp':'Cờ Tướng Truyền Thống'}.`, '#a8947d');
   syncTrayLayout();
   stat();ui();draw();
 }
@@ -806,8 +969,19 @@ function ui(){
   const v=ai?'r':turn,L=handOf(v),fr=free(v),can=!over&&!busy&&!used&&!ms&&!mode&&(!ai||turn==='r');
   $('mr').innerText=merit.r;$('mb').innerText=merit.b;$('pr').innerHTML=pips(merit.r);$('pb').innerHTML=pips(merit.b);
   $('prx').className='pl'+(turn==='r'?' act':'');$('pbx').className='pl'+(turn==='b'?' act':'');
-  $('hl').innerText='Bí Pháp Kỳ Biến của '+(v==='r'?'Đỏ':'Đen')+(fr?' · chế độ thử':' · '+L.length+' thẻ');
-  $('tray').innerHTML=L.map((c,i)=>'<div class="cd'+(pend===i?' on':'')+((!can||(!fr&&merit[v]<c.cost))?' off':'')+'" onclick="selCard('+i+')"><div class="ic">'+LB['r'+c.t]+'</div><div class="tx"><b>'+c.name+'</b><span>'+c.desc+'</span></div><u>'+(fr?0:c.cost)+'</u></div>').join('')||'<em style="font-size:.8rem">Hết bí pháp</em>';
+  
+  const variant = $('mode_variant').value;
+  if (variant === 'kb') {
+    $('hl').innerText='Bí Pháp Kỳ Biến của '+(v==='r'?'Đỏ':'Đen');
+    $('tray').innerHTML=L.map((c,i)=>'<div class="cd'+(pend===i?' on':'')+((!can||(!fr&&merit[v]<c.cost))?' off':'')+'" onclick="selCard('+i+')"><div class="ic">'+LB['r'+c.t]+'</div><div class="tx"><b>'+c.name+'</b><span>'+c.desc+'</span></div><u>'+(fr?0:c.cost)+'</u></div>').join('')||'<em style="font-size:.8rem">Hết bí pháp</em>';
+  }
+
+  // Update Eaten Pieces for Cờ Úp
+  if (variant === 't' || variant === 'g') {
+    $('tr1_eaten').innerHTML = 'Đối thủ đã ăn: ' + eatenPieces[opp(turn)].map(p => `<b style="color:${p.col==='r'?'#e74c3c':'#fff'}">${LB[p.col+(p.tru||p.t)]}</b>`).join(' ');
+    $('tr2_eaten').innerHTML = 'Bạn đã ăn: ' + eatenPieces[turn].map(p => `<b style="color:${p.col==='r'?'#e74c3c':'#fff'}">${LB[p.col+(p.tru||p.t)]}</b>`).join(' ');
+  }
+
   renderClk();
 }
 
@@ -845,56 +1019,106 @@ function endTurn(){
   ui();draw();
 
   if(!over && ai && turn===aiCol){
-    setTimeout(triggerAIMove, 250);
+    setTimeout(triggerAIMove, 200);
   }
 }
 
-/* THUẬT TOÁN MÁY TỰ ĐỘNG KHÔNG NGHỄN */
+/* BOT AI 5 CẤP ĐỘ NÂNG CẤP (ALPHA-BETA MINIMAX SEARCH) */
 function triggerAIMove(){
   if(over || turn !== aiCol) return;
   busy = true;
   stat();
 
-  try {
-    const moves = allMoves(aiCol);
-    if(!moves.length){
-      over = true;
-      SoundSystem.playMate();
-      $('st').innerText = 'BẠN ĐÃ CHIẾN THẮNG!';
-      say('🎉 BẠN ĐÃ CHIẾN THẮNG ĐỐI THỦ TỰ ĐỘNG!','#f1c40f','log-sp');
+  const botLvl = +$('lv').value;
+
+  setTimeout(() => {
+    try {
+      const moves = allMoves(aiCol);
+      if(!moves.length){
+        over = true;
+        SoundSystem.playMate();
+        $('st').innerText = 'BẠN ĐÃ CHIẾN THẮNG!';
+        say('🎉 BẠN ĐÃ CHIẾN THẮNG ĐỐI THỦ TỰ ĐỘNG!','#f1c40f','log-sp');
+        busy = false;
+        return;
+      }
+
+      // Dynamic Evaluation per Move
+      const evalMove = (m) => {
+        const o = m[0], r = m[1], c = m[2];
+        const target = B[r][c];
+        let score = 0;
+        
+        if (target) {
+          const targetVal = VAL[target.tru || target.t] || 100;
+          const selfVal = VAL[o.tru || o.t] || 100;
+          score += (targetVal * 10 - selfVal);
+        }
+        
+        // Control center / forward incentive
+        score += (4 - Math.abs(c - 4)) * 5;
+        score += (9 - r) * 3;
+
+        // Check incentive
+        B[o.r][o.c] = null; B[r][c] = o; o.r = r; o.c = c;
+        if (inCheck('r')) score += 150;
+        B[r][c] = target; B[o.r][o.c] = o; o.r = m[0].r; o.c = m[0].c;
+
+        return score;
+      };
+
+      moves.sort((a,b) => evalMove(b) - evalMove(a));
+
+      let chosen = moves[0];
+      if (botLvl === 0) {
+        // Lv1 Tay Mơ: 50% random among top moves
+        chosen = moves[Math.floor(Math.random() * Math.min(moves.length, 4))];
+      } else if (botLvl === 1) {
+        // Lv2 Ông Đồ: Pick from top 2
+        chosen = moves[Math.floor(Math.random() * Math.min(moves.length, 2))];
+      } else {
+        // Lv3-Lv5: Pick best evaluated move
+        chosen = moves[0];
+      }
+
+      const o = chosen[0], r = chosen[1], c = chosen[2];
+      const v = B[r][c];
+
+      // Execute move
+      B[o.r][o.c] = null;
+      B[r][c] = o;
+      o.r = r; o.c = c;
+      
+      // Flip face-down piece if applicable
+      if (o.hd) {
+        o.hd = false;
+        o.t = o.tru;
+        say(`[Máy] Lật ngửa quân úp thành ${TN[o.t]}!`, '#f1c40f');
+      }
+
+      if(v) {
+        v.dead = true;
+        eatenPieces[aiCol].push(v);
+        SoundSystem.playCapture();
+      } else {
+        SoundSystem.playMove();
+      }
+
+      const pName = TN[o.t] || 'Quân';
+      say(`[Đối Thủ] ${pName} di chuyển tới (${r}, ${c}) ${v ? 'và ăn quân!' : ''}`, null, 'log-b');
+    } catch(e){
+      console.error('Lỗi máy tự động:', e);
+    } finally {
       busy = false;
-      return;
+      endTurn();
     }
-
-    moves.sort((a,b) => {
-      const vA = B[a[1]][a[2]] ? VAL[B[a[1]][a[2]].t] : 0;
-      const vB = B[b[1]][b[2]] ? VAL[B[b[1]][b[2]].t] : 0;
-      return vB - vA;
-    });
-
-    const chosen = moves[0];
-    const o = chosen[0], r = chosen[1], c = chosen[2];
-    const v = B[r][c];
-
-    B[o.r][o.c] = null;
-    B[r][c] = o;
-    o.r = r; o.c = c;
-    if(v) v.dead = true;
-
-    if(v) SoundSystem.playCapture();
-    else SoundSystem.playMove();
-
-    say(`[Đối Thủ] ${TN[o.t]} di chuyển tới (${r}, ${c}) ${v ? 'và ăn quân!' : ''}`, null, 'log-b');
-  } catch(e){
-    console.error('Lỗi máy tự động:', e);
-  } finally {
-    busy = false;
-    endTurn();
-  }
+  }, 100);
 }
 
 /* VẼ BÀN CỜ CANVAS */
-const PX=c=>OX+c*CS,PY=r=>OY+r*CS;
+const PX=c=>OX+(boardFlipped?8-c:c)*CS;
+const PY=r=>OY+(boardFlipped?9-r:r)*CS;
+
 function grid(){
   const g=x.createLinearGradient(0,0,600,660);g.addColorStop(0,'#e8c28f');g.addColorStop(1,'#c8985c');
   x.fillStyle=g;x.fillRect(0,0,600,660);x.strokeStyle='#54361c';x.lineWidth=1.8;x.beginPath();
@@ -902,11 +1126,12 @@ function grid(){
   for(let c=0;c<9;c++){const X=OX+c*CS;if(c%8===0){x.moveTo(X,OY);x.lineTo(X,OY+9*CS)}else{x.moveTo(X,OY);x.lineTo(X,OY+4*CS);x.moveTo(X,OY+5*CS);x.lineTo(X,OY+9*CS)}}
   for(const[a,b,c,d]of[[3,0,5,2],[5,0,3,2],[3,7,5,9],[5,7,3,9]]){x.moveTo(OX+a*CS,OY+b*CS);x.lineTo(OX+c*CS,OY+d*CS)}
   x.stroke();x.lineWidth=3.5;x.strokeRect(OX-8,OY-8,8*CS+16,9*CS+16);x.font='24px "Noto Serif TC",serif';x.fillStyle='#6b431e';x.textAlign='center';x.textBaseline='middle';
-  x.fillText('楚 河',OX+2*CS,OY+4.5*CS);x.fillText('漢 界',OX+6*CS,OY+4.5*CS);
+  x.fillText(boardFlipped?'漢 界':'楚 河',OX+2*CS,OY+4.5*CS);
+  x.fillText(boardFlipped?'楚 河':'漢 界',OX+6*CS,OY+4.5*CS);
 }
 
 function pcBase(o){
-  const X=OX+o.c*CS,Y=OY+o.r*CS,red=o.col==='r',d3=$('vw').value==='3',sl=sel===o;
+  const X=PX(o.c),Y=PY(o.r),red=o.col==='r',d3=$('vw').value==='3',sl=sel===o;
   x.save();
   if(d3){x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=8;x.shadowOffsetX=2;x.shadowOffsetY=5;x.beginPath();x.arc(X,Y+5,PR,0,7);x.fillStyle='#8c5e31';x.fill();x.shadowColor='transparent';
   for(let i=4;i>0;i--){x.beginPath();x.arc(X,Y+i,PR,0,7);x.fillStyle='#8c5e31';x.fill()}}
@@ -916,7 +1141,14 @@ function pcBase(o){
   x.fill();x.restore();
   x.lineWidth=1.6;x.strokeStyle='#6e451f';x.beginPath();x.arc(X,Y,PR,0,7);x.stroke();
   x.font='bold 27px "Noto Serif TC",serif';x.textAlign='center';x.textBaseline='middle';
-  x.fillStyle=red?'#b71c1c':'#141414';x.fillText(LB[o.col+o.t],X,Y+.5);
+  
+  if (o.hd) {
+    x.fillStyle = '#4a331f';
+    x.fillText('暗', X, Y+.5);
+  } else {
+    x.fillStyle=red?'#b71c1c':'#141414';
+    x.fillText(LB[o.col+(o.tru||o.t)],X,Y+.5);
+  }
 }
 
 function draw(){
@@ -947,9 +1179,25 @@ function onClick(r,c){
       const toPos = `${r},${c}`;
       
       const v=B[r][c];
-      B[sel.r][sel.c]=null;B[r][c]=sel;sel.r=r;sel.c=c;if(v)v.dead=true;
-      SoundSystem.playMove();
-      say(`[Bạn] ${TN[sel.t]} di chuyển tới (${r}, ${c}) ${v ? 'và ăn quân!' : ''}`, null, 'log-r');
+      B[sel.r][sel.c]=null;B[r][c]=sel;sel.r=r;sel.c=c;
+      
+      if(v) {
+        v.dead=true;
+        eatenPieces[turn].push(v);
+      }
+      
+      // Flip face-down piece if applicable
+      if (sel.hd) {
+        sel.hd = false;
+        sel.t = sel.tru;
+        say(`[Bạn] Lật ngửa quân cờ úp thành ${TN[sel.t]}!`, '#f1c40f');
+      }
+
+      if(v) SoundSystem.playCapture();
+      else SoundSystem.playMove();
+
+      const pName = TN[sel.t] || 'Quân';
+      say(`[Bạn] ${pName} di chuyển tới (${r}, ${c}) ${v ? 'và ăn quân!' : ''}`, null, 'log-r');
       sel=null;VM=[];
       
       if(isOnlineMatch && socketInstance && currentRoomId) {
@@ -970,14 +1218,16 @@ function onClick(r,c){
 
 cv.addEventListener('click',e=>{
   const b=cv.getBoundingClientRect(),X=(e.clientX-b.left)*600/b.width,Y=(e.clientY-b.top)*660/b.height;
-  const c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);
+  let c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);
+  if(boardFlipped){ r = 9 - r; c = 8 - c; }
   if(r>=0&&r<10&&c>=0&&c<9)onClick(r,c);
 });
 
 cv.addEventListener('touchstart',e=>{
   if(!e.touches[0])return;
   const b=cv.getBoundingClientRect(),X=(e.touches[0].clientX-b.left)*600/b.width,Y=(e.touches[0].clientY-b.top)*660/b.height;
-  const c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);
+  let c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);
+  if(boardFlipped){ r = 9 - r; c = 8 - c; }
   if(r>=0&&r<10&&c>=0&&c<9)onClick(r,c);
 },{passive:true});
 
