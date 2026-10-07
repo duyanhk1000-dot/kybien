@@ -1,4 +1,5 @@
 import { config } from '../config/index.js';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface AIAnalysisResult {
   keyMoves: string[];
@@ -19,9 +20,13 @@ export async function analyzeMatchWithGemini(
   }
 
   try {
-    // Dynamic import Google Gen AI SDK
-    const { GoogleGenAI } = await import('@google/genai');
-    const ai = new GoogleGenAI({ apiKey: config.geminiApiKey });
+    const genAI = new GoogleGenerativeAI(config.geminiApiKey);
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        responseMimeType: 'application/json',
+      },
+    });
 
     const prompt = `
 Bạn là một Đại kỳ sĩ và cũng là một Nhà bình luận chiến trận hào hùng cho Nền tảng Cờ Tướng Kỳ Biến (kybien.blogspot.com).
@@ -42,15 +47,8 @@ Yêu cầu trả về đúng định dạng JSON có cấu trúc sau:
 }
 `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-      },
-    });
-
-    const responseText = response.text || '';
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
     const parsedData: AIAnalysisResult = JSON.parse(responseText);
     return parsedData;
   } catch (error) {
