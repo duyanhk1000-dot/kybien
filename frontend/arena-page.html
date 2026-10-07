@@ -438,7 +438,7 @@
       </div>
 
       <!-- NHẬT KÝ CHIẾN TRƯỜNG -->
-      <div class="arena-card">
+      <div class="arena-card" id="log-card-wrapper">
         <h3>Nhật Ký Chiến Trường</h3>
         <div id="log"></div>
       </div>
@@ -456,11 +456,11 @@ let socketInstance = null;
 let isMatchSearching = false;
 let isOnlineMatch = false;
 let currentRoomId = null;
-let myOnlineSide = 'r'; // 'r' = Red, 'b' = Black
+let myOnlineSide = 'r';
 let currentUser = null;
 let boardFlipped = false;
 
-/* ---------- AUTH UTILS & AUTO-GUEST ---------- */
+/* ---------- AUTH UTILS & AUTO-GUEST (MẬT KHẨU NGẪU NHIÊN & TRY-CATCH) ---------- */
 async function checkAuthUI() {
   const token = localStorage.getItem('kybien_jwt_token');
   const unlogged = document.getElementById('auth-unlogged');
@@ -479,7 +479,9 @@ async function checkAuthUI() {
         if (logged) logged.style.display = 'flex';
         return true;
       }
-    } catch(e){}
+    } catch(err) {
+      console.warn('Lỗi kết nối auth check:', err);
+    }
     localStorage.removeItem('kybien_jwt_token');
   }
   currentUser = null;
@@ -489,60 +491,74 @@ async function checkAuthUI() {
 }
 
 async function ensureUserLoggedIn() {
-  const ok = await checkAuthUI();
-  if (ok && currentUser) return true;
-
-  // Auto register guest account if not logged in
-  const guestUser = `KyThu_${Math.floor(1000 + Math.random() * 9000)}`;
   try {
+    const ok = await checkAuthUI();
+    if (ok && currentUser) return true;
+
+    // Tự động tạo tài khoản khách với MẬT KHẨU NGẪU NHIÊN MẠNH
+    const guestUser = `KyThu_${Math.floor(10000 + Math.random() * 90000)}`;
+    const randomPassword = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+
     const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: guestUser, email: `${guestUser}@kybien.com`, password: 'kybien123' })
+      body: JSON.stringify({ username: guestUser, email: `${guestUser}@kybien.com`, password: randomPassword })
     });
-    const data = await res.json();
-    if (res.ok && data.token) {
-      localStorage.setItem('kybien_jwt_token', data.token);
-      await checkAuthUI();
-      return true;
+    if (res.ok) {
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem('kybien_jwt_token', data.token);
+        await checkAuthUI();
+        return true;
+      }
     }
-  } catch(e){}
+  } catch(err) {
+    console.warn('Lỗi đăng ký tài khoản khách:', err);
+  }
   return false;
 }
 
 async function arenaLogin() {
-  const u = document.getElementById('arena-u').value;
-  const p = document.getElementById('arena-p').value;
-  if (!u || !p) return alert('Vui lòng nhập tên tài khoản và mật khẩu!');
-  const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ usernameOrEmail: u, password: p })
-  });
-  const data = await res.json();
-  if (res.ok) {
-    localStorage.setItem('kybien_jwt_token', data.token);
-    checkAuthUI();
-  } else {
-    document.getElementById('auth-err-msg').innerText = data.error || 'Lỗi đăng nhập';
+  try {
+    const u = document.getElementById('arena-u').value;
+    const p = document.getElementById('arena-p').value;
+    if (!u || !p) return alert('Vui lòng nhập tên tài khoản và mật khẩu!');
+    const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usernameOrEmail: u, password: p })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('kybien_jwt_token', data.token);
+      checkAuthUI();
+    } else {
+      document.getElementById('auth-err-msg').innerText = data.error || 'Lỗi đăng nhập';
+    }
+  } catch(err) {
+    alert('Không thể kết nối máy chủ đăng nhập!');
   }
 }
 
 async function arenaRegister() {
-  const u = document.getElementById('arena-u').value;
-  const p = document.getElementById('arena-p').value;
-  if (!u || !p) return alert('Vui lòng nhập tên tài khoản và mật khẩu!');
-  const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: u, email: `${u}@kybien.com`, password: p })
-  });
-  const data = await res.json();
-  if (res.ok) {
-    localStorage.setItem('kybien_jwt_token', data.token);
-    checkAuthUI();
-  } else {
-    document.getElementById('auth-err-msg').innerText = data.error || 'Lỗi đăng ký';
+  try {
+    const u = document.getElementById('arena-u').value;
+    const p = document.getElementById('arena-p').value;
+    if (!u || !p) return alert('Vui lòng nhập tên tài khoản và mật khẩu!');
+    const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, email: `${u}@kybien.com`, password: p })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('kybien_jwt_token', data.token);
+      checkAuthUI();
+    } else {
+      document.getElementById('auth-err-msg').innerText = data.error || 'Lỗi đăng ký';
+    }
+  } catch(err) {
+    alert('Không thể kết nối máy chủ đăng ký!');
   }
 }
 
@@ -577,6 +593,7 @@ async function initSocketConnection() {
       alert(`Đã tạo phòng thành công!\nMã phòng: ${code}\n${isPrivate ? '(Phòng riêng)' : '(Phòng công khai - Mọi người có thể thấy)'}`);
     });
 
+    // DANH SÁCH PHÒNG CHỜ DÙNG EVENT LISTENER AN TOÀN (KHÔNG NỐI CHUỖI ONCLICK)
     socketInstance.on('public_rooms_list', rooms => {
       const listEl = document.getElementById('public-rooms-list');
       if (!listEl) return;
@@ -584,15 +601,23 @@ async function initSocketConnection() {
         listEl.innerHTML = '<div style="font-size:0.72rem;color:var(--mu);text-align:center;padding:6px;">Chưa có phòng công khai nào...</div>';
         return;
       }
-      listEl.innerHTML = rooms.map(r => `
-        <div onclick="joinRoomByCode('${r.roomCode}')" style="display:flex;justify-content:space-between;align-items:center;background:#1a110a;border:1px solid var(--bd);padding:6px 8px;border-radius:6px;cursor:pointer;" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)'">
+      listEl.innerHTML = '';
+      rooms.forEach(r => {
+        const itemDiv = document.createElement('div');
+        itemDiv.style.cssText = 'display:flex;justify-content:space-between;align-items:center;background:#1a110a;border:1px solid var(--bd);padding:6px 8px;border-radius:6px;cursor:pointer;';
+        itemDiv.dataset.roomCode = r.roomCode;
+        itemDiv.innerHTML = `
           <div>
             <b style="color:var(--ac);font-size:0.78rem;">${r.roomCode}</b>
             <span style="font-size:0.7rem;color:var(--mu);margin-left:6px;">Chủ phòng: ${r.hostName} (${r.elo} Elo)</span>
           </div>
           <button type="button" style="background:#27ae60;color:#fff;font-size:0.68rem;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;">Vào Đấu ⚔️</button>
-        </div>
-      `).join('');
+        `;
+        itemDiv.addEventListener('click', () => joinRoomByCode(r.roomCode));
+        itemDiv.addEventListener('mouseover', () => itemDiv.style.borderColor = 'var(--ac)');
+        itemDiv.addEventListener('mouseout', () => itemDiv.style.borderColor = 'var(--bd)');
+        listEl.appendChild(itemDiv);
+      });
     });
 
     socketInstance.on('match_found', data => {
@@ -762,12 +787,13 @@ function flipBoardAction() {
   draw();
 }
 
-/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN & BOT AI 5 CẤP ĐỘ ---------- */
+/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN & BOT AI MINIMAX ALPHA-BETA ---------- */
 const $=id=>document.getElementById(id);
 const SoundSystem=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext||window.webkitAudioContext)();if(a.state==='suspended')a.resume();return a};
 function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
 return{playMove:()=>tn('triangle',320,.08,.5,0,80),playCapture:()=>tn('sawtooth',180,.15,.7,0,40),playCheck:()=>[523.25,659.25,783.99].forEach((f,i)=>tn('square',f,.25,.35,i*.07)),playMate:()=>[440,392,349.23,293.66].forEach((f,i)=>tn('sawtooth',f,.45,.45,i*.18)),playTick:()=>tn('square',880,.06,.15)}})();
 
+// AN TOÀN KHÔNG DÙNG CHILDREN[2]
 function syncTrayLayout(){
   const box=$('card-tray-wrapper');
   if(!box)return;
@@ -776,8 +802,8 @@ function syncTrayLayout(){
     if(mobileHolder&&box.parentNode!==mobileHolder) mobileHolder.appendChild(box);
   }else{
     const aside=$('sec-aside');
-    const logCard=aside.children[2];
-    if(aside&&box.parentNode!==aside) aside.insertBefore(box,logCard);
+    const logCard=$('log-card-wrapper');
+    if(aside&&logCard&&box.parentNode!==aside) aside.insertBefore(box,logCard);
   }
 }
 window.addEventListener('resize',syncTrayLayout);
@@ -903,19 +929,16 @@ function newGame(){
 
   const bk='rnbakabnr';
   if (variant === 'n' || variant === 'kb') {
-    // Standard Xiangqi layout
     for(let c=0;c<9;c++){put(bk[c],'b',0,c);put(bk[c],'r',9,c)}
     put('c','b',2,1);put('c','b',2,7);put('c','r',7,1);put('c','r',7,7);
     for(let c=0;c<9;c+=2){put('p','b',3,c);put('p','r',6,c)}
   } else {
-    // Cờ Úp (Traditional or Spy)
     const piecesList = ['r','r','n','n','b','b','a','a','c','c','p','p','p','p','p'];
     const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
     
     let redShuffled = shuffle(piecesList.slice());
     let blackShuffled = shuffle(piecesList.slice());
 
-    // Place kings face-up
     put('k','b',0,4); put('k','r',9,4);
 
     const positions = [
@@ -933,7 +956,6 @@ function newGame(){
     });
   }
 
-  // Handle Handicaps
   const hcVal = $('hc').value;
   if (hcVal !== '0' && $('mode').value === 'ai') {
     const hcMap = { N: [9,1], C: [7,1], R: [9,0] };
@@ -976,7 +998,6 @@ function ui(){
     $('tray').innerHTML=L.map((c,i)=>'<div class="cd'+(pend===i?' on':'')+((!can||(!fr&&merit[v]<c.cost))?' off':'')+'" onclick="selCard('+i+')"><div class="ic">'+LB['r'+c.t]+'</div><div class="tx"><b>'+c.name+'</b><span>'+c.desc+'</span></div><u>'+(fr?0:c.cost)+'</u></div>').join('')||'<em style="font-size:.8rem">Hết bí pháp</em>';
   }
 
-  // Update Eaten Pieces for Cờ Úp
   if (variant === 't' || variant === 'g') {
     $('tr1_eaten').innerHTML = 'Đối thủ đã ăn: ' + eatenPieces[opp(turn)].map(p => `<b style="color:${p.col==='r'?'#e74c3c':'#fff'}">${LB[p.col+(p.tru||p.t)]}</b>`).join(' ');
     $('tr2_eaten').innerHTML = 'Bạn đã ăn: ' + eatenPieces[turn].map(p => `<b style="color:${p.col==='r'?'#e74c3c':'#fff'}">${LB[p.col+(p.tru||p.t)]}</b>`).join(' ');
@@ -1019,11 +1040,11 @@ function endTurn(){
   ui();draw();
 
   if(!over && ai && turn===aiCol){
-    setTimeout(triggerAIMove, 200);
+    setTimeout(triggerAIMove, 150);
   }
 }
 
-/* BOT AI 5 CẤP ĐỘ NÂNG CẤP (ALPHA-BETA MINIMAX SEARCH) */
+/* BOT AI NÂNG CẤP ALPHA-BETA ĐA CẤP ĐỘ */
 function triggerAIMove(){
   if(over || turn !== aiCol) return;
   busy = true;
@@ -1043,7 +1064,6 @@ function triggerAIMove(){
         return;
       }
 
-      // Dynamic Evaluation per Move
       const evalMove = (m) => {
         const o = m[0], r = m[1], c = m[2];
         const target = B[r][c];
@@ -1052,16 +1072,14 @@ function triggerAIMove(){
         if (target) {
           const targetVal = VAL[target.tru || target.t] || 100;
           const selfVal = VAL[o.tru || o.t] || 100;
-          score += (targetVal * 10 - selfVal);
+          score += (targetVal * 12 - selfVal);
         }
         
-        // Control center / forward incentive
-        score += (4 - Math.abs(c - 4)) * 5;
-        score += (9 - r) * 3;
+        score += (4 - Math.abs(c - 4)) * 6;
+        score += (9 - r) * 4;
 
-        // Check incentive
         B[o.r][o.c] = null; B[r][c] = o; o.r = r; o.c = c;
-        if (inCheck('r')) score += 150;
+        if (inCheck('r')) score += 200;
         B[r][c] = target; B[o.r][o.c] = o; o.r = m[0].r; o.c = m[0].c;
 
         return score;
@@ -1071,25 +1089,20 @@ function triggerAIMove(){
 
       let chosen = moves[0];
       if (botLvl === 0) {
-        // Lv1 Tay Mơ: 50% random among top moves
         chosen = moves[Math.floor(Math.random() * Math.min(moves.length, 4))];
       } else if (botLvl === 1) {
-        // Lv2 Ông Đồ: Pick from top 2
         chosen = moves[Math.floor(Math.random() * Math.min(moves.length, 2))];
       } else {
-        // Lv3-Lv5: Pick best evaluated move
         chosen = moves[0];
       }
 
       const o = chosen[0], r = chosen[1], c = chosen[2];
       const v = B[r][c];
 
-      // Execute move
       B[o.r][o.c] = null;
       B[r][c] = o;
       o.r = r; o.c = c;
       
-      // Flip face-down piece if applicable
       if (o.hd) {
         o.hd = false;
         o.t = o.tru;
@@ -1164,7 +1177,6 @@ function draw(){
 function onClick(r,c){
   if(over||busy)return;
 
-  // Xử lý kiểm tra lượt đi ở chế độ Online
   if(isOnlineMatch && turn !== myOnlineSide) {
     say('⚠️ Chưa đến lượt đi của bạn!','#ff6b6b');
     return;
@@ -1186,7 +1198,6 @@ function onClick(r,c){
         eatenPieces[turn].push(v);
       }
       
-      // Flip face-down piece if applicable
       if (sel.hd) {
         sel.hd = false;
         sel.t = sel.tru;
@@ -1216,20 +1227,13 @@ function onClick(r,c){
   }
 }
 
+// KHÔNG CÒN LẮNG NGHE TOUCHSTART ĐỂ TRÁNH GỌI DÚP TRÊN MOBILE
 cv.addEventListener('click',e=>{
   const b=cv.getBoundingClientRect(),X=(e.clientX-b.left)*600/b.width,Y=(e.clientY-b.top)*660/b.height;
   let c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);
   if(boardFlipped){ r = 9 - r; c = 8 - c; }
   if(r>=0&&r<10&&c>=0&&c<9)onClick(r,c);
 });
-
-cv.addEventListener('touchstart',e=>{
-  if(!e.touches[0])return;
-  const b=cv.getBoundingClientRect(),X=(e.touches[0].clientX-b.left)*600/b.width,Y=(e.touches[0].clientY-b.top)*660/b.height;
-  let c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);
-  if(boardFlipped){ r = 9 - r; c = 8 - c; }
-  if(r>=0&&r<10&&c>=0&&c<9)onClick(r,c);
-},{passive:true});
 
 function renderClk(){
   $('ckr').innerText=!LIM?'∞':fmt(tleft);
