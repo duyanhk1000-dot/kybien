@@ -1,5 +1,5 @@
 <!-- 
-  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (TÚI KỲ MƯU THEO NHỊP NƯỚC ĐI + BẢNG QUY TẮC 16 BÍ PHÁP + PIKAFISH ENGINE)
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (CHUẨN BẢN QUY TẮC 16 BÍ PHÁP - BÍ PHÁP.PDF + HÀO QUANG CAM ĐỨT XOAY + PHẠT ĐỔI Ý)
 -->
 
 <div id="kybien-arena-app">
@@ -525,8 +525,8 @@ let myOnlineSide = 'r';
 let currentUser = null;
 let boardFlipped = false;
 let modalTimer = null;
-let FX = [];
 let bagPos = null;
+let cardUsedThisTurn = false;
 
 const VARIANT_NAMES = {
   kb: 'Kỳ Biến (Bí Pháp)',
@@ -1002,11 +1002,6 @@ return{
   playTick:()=>tn('square',880,.06,.15)
 }})();
 
-function spawnFX(r, c, name) {
-  FX.push({ r, c, name, time: 0, maxTime: 36 });
-  draw();
-}
-
 function syncTrayLayout(){
   const box=$('card-tray-wrapper');
   if(!box)return;
@@ -1089,19 +1084,19 @@ const CARDS=[
   ['ROOK_1','r',3,'Thiểm Điện Trảm','Ăn quân xong được tiến thẳng thêm 1-2 ô'],
   ['ROOK_2','r',3,'Phá Lãng Bộ','Đi xong được bẻ góc 90° đi thêm 1-3 ô'],
   ['CANNON_1','c',2,'Xuyên Vân Tiễn','Ăn quân qua 1 hoặc 2 ngòi (cấm ăn Tướng bằng 2 ngòi)'],
-  ['CANNON_2','c',3,'Bích Lịch Hỏa','Ăn quân nổ lan: 4 ô kề và chính Pháo bị choáng 1 lượt'],
+  ['CANNON_2','c',3,'Bích Lịch Hỏa','Ăn quân thì 4 ô kề và chính Pháo bị choáng 1 lượt'],
   ['KNIGHT_1','n',2,'Đạp Vân Tiêu','Khinh công: Bỏ qua cản chân Mã trong 1 nước'],
   ['KNIGHT_2','n',3,'Tuyệt Mệnh Cổ','Nội tại ẩn: Quân địch ăn Mã này sẽ chết theo',1],
   ['ELEPHANT_1','b',1,'Minh Kính Thuật','Bay không bị cản mắt 1 nước'],
   ['ELEPHANT_2','b',2,'Ngự Ba Viễn Chinh','Nội tại: Tượng bay chéo qua sông',1],
   ['ADVISOR_1','a',2,'Xuất Trần Hộ Pháp','Nội tại: Sĩ xuất Cửu Cung, qua sông',1],
-  ['ADVISOR_2','a',3,'Song Long Xuất Hải','Sĩ được đi 2 nước liên tiếp'],
-  ['PAWN_1','p',2,'Tật Phong Binh','Tốt được đi 2 nước liên tiếp'],
-  ['PAWN_2','p',2,'Hồi Phong Binh','Nội tại: Tốt có thể đi và ăn lùi 1 ô',1],
-  ['KING_1','k',3,'Thân Chinh Xuất Giá','Nội tại: Tướng ra ngoài cung 1 ô (vẫn cấm lộ mặt)',1],
-  ['KING_2','k',2,'Cấp Cứu Cần Vương','Triệu hồi 1 quân Sĩ về cạnh hộ giá (hết lượt)'],
+  ['ADVISOR_2','a',3,'Song Long Xuất Hải','Sĩ được đi thêm nước thứ hai'],
+  ['PAWN_1','p',2,'Tật Phong Binh','Tốt được đi thêm nước thứ hai'],
+  ['PAWN_2','p',2,'Hồi Phong Binh','Nội tại: Tốt được đi và ăn lùi 1 ô',1],
+  ['KING_1','k',3,'Thân Chinh Xuất Giá','Nội tại: Tướng bước ra ngoài cung (vẫn cấm lộ mặt)',1],
+  ['KING_2','k',2,'Cấp Cứu Cần Vương','Triệu hồi 1 Sĩ gần nhất về ô trống cạnh Tướng'],
   ['KING_3','k',3,'Kim Cang Bất Hoại','Chọn 1 hướng, miễn nhiễm đòn chiếu thẳng 3 lượt'],
-  ['KING_4','k',4,'Càn Khôn Di Vị','Đổi chỗ Tướng với quân trong cung (hết lượt)']
+  ['KING_4','k',4,'Càn Khôn Di Vị','Đổi chỗ Tướng với quân mình trong cung']
 ].map(a=>({id:a[0],t:a[1],cost:a[2],name:a[3],desc:a[4],pas:!!a[5]}));
 
 const OFF={k:[[1,0],[-1,0],[0,1],[0,-1]],a:[[1,1],[1,-1],[-1,1],[-1,-1]],b:[[2,2],[2,-2],[-2,2],[-2,-2]],n:[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]]};
@@ -1125,7 +1120,7 @@ function getStandardPieceType(r, c) {
 }
 
 function put(t,col,r,c,hdState,truType,truCol){
-  const o={t,col,r,c,p:{},st:0,dead:false,hd:!!hdState,tru:truType||t,truCol:truCol||col};
+  const o={t,col,r,c,p:{},st:0,dead:false,hd:!!hdState,tru:truType||t,truCol:truCol||col,oneTurnCard:null};
   B[r][c]=o;P[col].push(o);if(t==='k')K[col]=o;
 }
 
@@ -1207,7 +1202,7 @@ const test=()=>false,free=v=>false,handOf=v=>hands[v],pips=n=>Array.from({length
 function newGame(onlineVariant, onlinePieces){
   const variant = onlineVariant || $('mode_variant').value;
   B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};eatenPieces={r:[],b:[]};
-  moveHistoryStack=[];LASTMV=null;FX=[];bagPos=null;
+  moveHistoryStack=[];LASTMV=null;FX=[];bagPos=null;cardUsedThisTurn=false;
 
   const bk='rnbakabnr';
   if (variant === 'n' || variant === 'kb') {
@@ -1309,7 +1304,7 @@ function stat(){
   const stEl = $('st');
   if (ck) {
     stEl.className = 'pill check-danger';
-    stEl.innerText = `⚠️ CẢNH BÁO CHIẾU TƯỚNG! — TƯỚNG ${turn==='r'?'ĐỎ':'ĐEN'} ĐANG BỊ UY HIẾP!`;
+    stEl.innerText = `CẢNH BÁO CHIẾU TƯỚNG! — TƯỚNG ${turn==='r'?'ĐỎ':'ĐEN'} ĐANG BỊ UY HIẾP!`;
   } else {
     stEl.className = 'pill';
     stEl.innerText = (ai?(turn==='r'?'Lượt của bạn (Đỏ)':'Đối thủ (Đen) đang suy nghĩ...'):'Lượt đi: '+(turn==='r'?'Đỏ':'Đen'));
@@ -1338,11 +1333,15 @@ function ui(){
 
 function selCard(i){
   const v=ai?'r':turn;if(over||busy||used||ms||mode||(ai&&turn!=='r'))return;
+  if (cardUsedThisTurn) {
+    say('Mỗi lượt chỉ được sử dụng 1 thẻ Bí Pháp!', '#ff6b6b');
+    return;
+  }
   const c=handOf(v)[i];if(!c)return;
   if(pend===i){pend=null;say('Đã hủy chọn bí pháp','#a8947d');ui();return}
   if(!free(v)&&merit[v]<c.cost)return say('Không đủ Công trạng (cần '+c.cost+')!','#e74c3c');
   pend=i;sel=null;VM=[];
-  say((turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Chọn 1 quân '+TN[c.t]+' của mình để truyền thụ bí pháp ['+c.name+']','#f1c40f','log-sp');ui();draw();
+  say((turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Chọn 1 quân '+TN[c.t]+' của mình để kích hoạt ['+c.name+']','#f1c40f','log-sp');ui();draw();
 }
 
 function skip(){if(!ms)return;ms=null;endTurn()}
@@ -1374,7 +1373,6 @@ function updateBagLogic() {
       const chosenCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
       bagPos = { r: chosenCell.r, c: chosenCell.c, ttl: 20 };
       SoundSystem.playCardSpell();
-      spawnFX(bagPos.r, bagPos.c, "🎒 Túi Kỳ Mưu Rơi");
       say(`🎒 [TÚI KỲ MƯU XUẤT HIỆN] Rơi ngẫu nhiên tại ô (${bagPos.r}, ${bagPos.c})! Tồn tại trong 20 nước đi.`, '#f1c40f', 'log-sp');
     }
   }
@@ -1404,14 +1402,23 @@ function checkGameEnd(currentTurn) {
 function endTurnLocalOnly() {
   const prev=turn;
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
+  
+  // Dọn dẹp thẻ Một Lượt của phe vừa đi
+  for (const o of P[prev]) {
+    if (!o.dead && o.oneTurnCard) {
+      o.oneTurnCard = null;
+    }
+  }
+
   turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
+  cardUsedThisTurn = false;
 
   updateBagLogic();
 
   const ended = checkGameEnd(turn);
   if (!ended) {
     const ck=inCheck(turn);
-    if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
+    if(ck){SoundSystem.playCheck();say('CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
     else stat();
   }
 
@@ -1421,14 +1428,23 @@ function endTurnLocalOnly() {
 function endTurn(){
   const prev=turn;
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
+
+  // Dọn dẹp thẻ Một Lượt của phe vừa đi
+  for (const o of P[prev]) {
+    if (!o.dead && o.oneTurnCard) {
+      o.oneTurnCard = null;
+    }
+  }
+
   turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
+  cardUsedThisTurn = false;
   
   updateBagLogic();
 
   const ended = checkGameEnd(turn);
   if (!ended) {
     const ck=inCheck(turn);
-    if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
+    if(ck){SoundSystem.playCheck();say('CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
     else stat();
   }
 
@@ -1571,7 +1587,7 @@ function triggerAIMove(){
 
   // MÁY AI SỬ DỤNG BÍ PHÁP KỲ BIẾN
   const variant = $('mode_variant').value;
-  if (variant === 'kb' && merit.b >= 2 && hands.b.length > 0) {
+  if (variant === 'kb' && !cardUsedThisTurn && merit.b >= 2 && hands.b.length > 0) {
     for (let i = 0; i < hands.b.length; i++) {
       const card = hands.b[i];
       if (merit.b >= card.cost) {
@@ -1580,16 +1596,21 @@ function triggerAIMove(){
           const targetPiece = targets[Math.floor(Math.random() * targets.length)];
           merit.b -= card.cost;
           hands.b.splice(i, 1);
-          targetPiece.p = targetPiece.p || {};
-          targetPiece.p[card.id] = true;
-          if (card.id === 'ADVISOR_1') targetPiece.p.leave = true;
-          if (card.id === 'ELEPHANT_2') targetPiece.p.cross = true;
-          if (card.id === 'PAWN_2') targetPiece.p.back = true;
-          if (card.id === 'KING_1') targetPiece.p.out = true;
+          cardUsedThisTurn = true;
+
+          if (card.pas) {
+            targetPiece.p = targetPiece.p || {};
+            targetPiece.p[card.id] = true;
+            if (card.id === 'ADVISOR_1') targetPiece.p.leave = true;
+            if (card.id === 'ELEPHANT_2') targetPiece.p.cross = true;
+            if (card.id === 'PAWN_2') targetPiece.p.back = true;
+            if (card.id === 'KING_1') targetPiece.p.out = true;
+          } else {
+            targetPiece.oneTurnCard = card;
+          }
 
           SoundSystem.playCardSpell();
-          spawnFX(targetPiece.r, targetPiece.c, card.name);
-          say(`✨ [Máy AI] Thi triển Bí Pháp [${card.name}] lên quân ${TN[targetPiece.t]}!`, '#f1c40f', 'log-sp');
+          say(`[Máy AI] Kích hoạt Bí Pháp [${card.name}] lên quân ${TN[targetPiece.t]}!`, '#f1c40f', 'log-sp');
           ui(); draw();
           break;
         }
@@ -1660,9 +1681,14 @@ function triggerAIMove(){
         merit.b = Math.min(10, merit.b + 2);
         bagPos = null;
         SoundSystem.playCardSpell();
-        spawnFX(r, c, "🎒 Nhặt Túi Kỳ Mưu");
-        say(`🎒 [NHẶT TÚI KỲ MƯU] [Máy AI] di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới & +2 Công Trạng!`, '#f1c40f', 'log-sp');
+        say(`[NHẶT TÚI KỲ MƯU] [Máy AI] di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới +2 Công Trạng!`, '#f1c40f', 'log-sp');
         ui();
+      }
+
+      // XỬ LÝ TUYỆT MỆNH CỔ (KHI ĂN MÃ VÒNG CỔ)
+      if (v && v.t === 'n' && v.p && v.p['KNIGHT_2'] && o.t !== 'k') {
+        o.dead = true;
+        say(`💣 [TUYỆT MỆNH CỔ NỔ LOGIC] Quân ${TN[o.t]} ăn Mã Bùa đã đồng thọ thương tử!`, '#ff4757', 'log-sp');
       }
 
       B[o.r][o.c] = null;
@@ -1721,12 +1747,24 @@ function pcBase(o){
   const X=PX(o.c),Y=PY(o.r),red=o.col==='r',d3=$('vw').value==='3',sl=sel===o;
   x.save();
 
-  // HIỆU ỨNG VÒNG HÀO QUANG CHO QUÂN CỜ ĐANG SỞ HỮU BÍ PHÁP KỲ BIẾN
-  if (o.p && Object.keys(o.p).length > 0) {
+  // HÀO QUANG CAM ĐỨT XOAY CHO QUÂN CỜ ĐANG GẮN THẺ MỘT LƯỢT (CHỜ ĐI)
+  if (o.oneTurnCard) {
+    const auraAngle = (performance.now() / 600) * Math.PI;
     x.beginPath(); x.arc(X, Y, PR + 6, 0, Math.PI * 2);
-    x.lineWidth = 3; x.strokeStyle = '#f39c12';
-    x.shadowColor = '#e67e22'; x.shadowBlur = 10;
-    x.stroke(); x.shadowColor = 'transparent';
+    x.lineWidth = 3; x.strokeStyle = '#e67e22';
+    x.setLineDash([8, 6]); x.lineDashOffset = -auraAngle * 18;
+    x.stroke();
+    x.setLineDash([]);
+  }
+
+  // TRẠNG THÁI CHOÁNG (💫 MẶT QUÂN PHỦ XANH + VÒNG XANH ĐỨT XOAY)
+  if (o.st > 0) {
+    const stunAngle = (performance.now() / 800) * Math.PI * 2;
+    x.beginPath(); x.arc(X, Y, PR + 5, 0, Math.PI * 2);
+    x.lineWidth = 2.5; x.strokeStyle = '#2ecc71';
+    x.setLineDash([6, 4]); x.lineDashOffset = stunAngle * 15;
+    x.stroke();
+    x.setLineDash([]);
   }
 
   if(d3){x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=8;x.shadowOffsetX=2;x.shadowOffsetY=5;x.beginPath();x.arc(X,Y+5,PR,0,7);x.fillStyle='#8c5e31';x.fill();x.shadowColor='transparent';
@@ -1734,7 +1772,15 @@ function pcBase(o){
   x.beginPath();x.arc(X,Y,PR,0,7);
   if(d3){const g=x.createRadialGradient(X-8,Y-9,2,X,Y,PR+2);g.addColorStop(0,sl?'#fffbe6':'#fff4df');g.addColorStop(.65,sl?'#f7d377':'#ecd3ad');g.addColorStop(1,sl?'#cca043':'#b88958');x.fillStyle=g}
   else x.fillStyle=sl?'#ffea9f':'#f1dcb8';
-  x.fill();x.restore();
+  x.fill();
+
+  // PHỦ MẶT QUÂN XANH KHI BỊ CHOÁNG
+  if (o.st > 0) {
+    x.fillStyle = 'rgba(39, 174, 96, 0.45)';
+    x.fill();
+  }
+
+  x.restore();
   x.lineWidth=1.6;x.strokeStyle='#6e451f';x.beginPath();x.arc(X,Y,PR,0,7);x.stroke();
   x.font='bold 27px "Noto Serif TC",serif';x.textAlign='center';x.textBaseline='middle';
   
@@ -1746,20 +1792,30 @@ function pcBase(o){
     x.fillText(LB[o.col+(o.tru||o.t)],X,Y+.5);
   }
 
-  // HIỂN THỊ KÝ HIỆU BÍ PHÁP TRÊN QUÂN CỜ
-  if (o.p && !o.hd) {
-    let badge = '';
-    if (o.p.leave || o.p.ADVISOR_1) badge += '🏯';
-    if (o.p.cross || o.p.ELEPHANT_2) badge += '🌊';
-    if (o.p.back || o.p.PAWN_2) badge += '↩️';
-    if (o.p.out || o.p.KING_1) badge += '👑';
-    if (o.p.KNIGHT_2) badge += '💣';
-    if (o.p.KING_3) badge += '💫';
+  // HIỂN THỊ CÁC HUY HIỆU NỘI TẠI DỌC THEO CUNG PHÍA TRÊN BÊN PHẢI CỦA QUÂN CỜ
+  if (!o.hd) {
+    const badges = [];
+    if (o.p && (o.p.leave || o.p.ADVISOR_1)) badges.push('🏯');
+    if (o.p && (o.p.cross || o.p.ELEPHANT_2)) badges.push('🌊');
+    if (o.p && (o.p.back || o.p.PAWN_2)) badges.push('↩️');
+    if (o.p && (o.p.out || o.p.KING_1)) badges.push('👑');
+    // Tuyệt Mệnh Cổ chỉ hiện cho chủ sở hữu
+    if (o.p && o.p.KNIGHT_2 && (o.col === myOnlineSide || !isOnlineMatch || o.col === 'r')) badges.push('💣');
+    if (o.st > 0) badges.push('💫');
 
-    if (badge) {
-      x.font = '14px sans-serif';
-      x.textAlign = 'left';
-      x.fillText(badge, X + 14, Y - 14);
+    if (badges.length > 0) {
+      x.save();
+      x.font = '13px sans-serif';
+      x.textAlign = 'center';
+      x.textBaseline = 'middle';
+      badges.forEach((b, idx) => {
+        const ang = -Math.PI / 6 - idx * (Math.PI / 7);
+        const rBadge = PR + 11;
+        const bx = X + Math.cos(ang) * rBadge;
+        const by = Y + Math.sin(ang) * rBadge;
+        x.fillText(b, bx, by);
+      });
+      x.restore();
     }
   }
 }
@@ -1836,36 +1892,15 @@ function draw(){
     x.restore();
   }
 
-  // VẼ HIỆU ỨNG THI TRIỂN BÍ PHÁP KỲ BIẾN (FX ANIMATION PARTICLES)
-  for (let i = FX.length - 1; i >= 0; i--) {
-    const fx = FX[i];
-    fx.time++;
-    const X = PX(fx.c), Y = PY(fx.r);
-    const progress = fx.time / fx.maxTime;
-    const radius = PR + progress * 35;
-    const alpha = 1 - progress;
-
-    x.save();
-    x.beginPath(); x.arc(X, Y, radius, 0, Math.PI * 2);
-    x.lineWidth = 3 * alpha;
-    x.strokeStyle = `rgba(241, 196, 15, ${alpha})`;
-    x.stroke();
-
-    x.font = 'bold 15px "Be Vietnam Pro", sans-serif';
-    x.fillStyle = `rgba(241, 196, 15, ${alpha})`;
-    x.textAlign = 'center';
-    x.fillText(`✨ ${fx.name}`, X, Y - PR - 10 - progress * 20);
-    x.restore();
-
-    if (fx.time >= fx.maxTime) FX.splice(i, 1);
-  }
+  // VỜI HỌA TỰ ĐỘNG CHẠY HÀO QUANG VÀ CHUYỂN ĐỘNG CHO ANIMATION
+  requestAnimationFrame(draw);
 }
 
 function onClick(r,c){
   if(over||busy)return;
 
   if(isOnlineMatch && turn !== myOnlineSide) {
-    say('⚠️ Chưa đến lượt đi của bạn!','#ff6b6b');
+    say('Chưa đến lượt đi của bạn!','#ff6b6b');
     return;
   }
 
@@ -1877,29 +1912,71 @@ function onClick(r,c){
     const v = ai ? 'r' : turn;
     const cardList = handOf(v);
     const card = cardList[pend];
+
+    if (cardUsedThisTurn) {
+      say('Mỗi lượt chỉ được sử dụng 1 thẻ Bí Pháp!', '#ff6b6b');
+      pend = null;
+      return;
+    }
+
     if (card && p && p.col === turn && p.t === card.t) {
+      // KIỂM TRA ĐỔI Ý VỚI THẺ MỘT LƯỢT TRÊN QUÂN CŨ
+      for (const oldP of P[turn]) {
+        if (!oldP.dead && oldP.oneTurnCard) {
+          const oldCard = oldP.oneTurnCard;
+          oldP.oneTurnCard = null;
+          hands[v].push(oldCard);
+          merit[v] = Math.max(0, merit[v] + Math.max(0, oldCard.cost - 1));
+          say(`[Đổi Ý] Hủy thẻ [${oldCard.name}] trên quân cũ (Hoàn thẻ và phạt 1đ Công trạng).`, '#e67e22');
+        }
+      }
+
       if (!free(v) && merit[v] < card.cost) {
-        say('❌ Không đủ Công trạng!', '#ff4757');
+        say('Không đủ Công trạng!', '#ff4757');
         return;
       }
+
+      // TRỪ ĐIỂM NGAY KHI BẤM QUÂN
       merit[v] -= card.cost;
       cardList.splice(pend, 1);
-      
-      p.p = p.p || {};
-      p.p[card.id] = true;
-      if (card.id === 'ADVISOR_1') p.p.leave = true;
-      if (card.id === 'ELEPHANT_2') p.p.cross = true;
-      if (card.id === 'PAWN_2') p.p.back = true;
-      if (card.id === 'KING_1') p.p.out = true;
+      cardUsedThisTurn = true;
+
+      // XỬ LÝ THEO LOẠI THẺ (NỘI TẠI vs MỘT LƯỢT vs TỨC THÌ)
+      if (card.id === 'KING_2') { // Cấp Cứu Cần Vương (Tức thì)
+        const candidates = P[turn].filter(item => !item.dead && item.t === 'a');
+        if (candidates.length > 0) {
+          const targetAdv = candidates[0];
+          const emptyOffs = [[0,1],[0,-1],[1,0],[-1,0]].map(off => [p.r + off[0], p.c + off[1]]).filter(pos => pos[0]>=0&&pos[0]<10&&pos[1]>=0&&pos[1]<9&&!B[pos[0]][pos[1]]);
+          if (emptyOffs.length > 0) {
+            B[targetAdv.r][targetAdv.c] = null;
+            targetAdv.r = emptyOffs[0][0]; targetAdv.c = emptyOffs[0][1];
+            B[targetAdv.r][targetAdv.c] = targetAdv;
+            say(`[Bí Pháp Cấp Cứu Cần Vương] Sĩ lập tức di chuyển về hộ giá Tướng!`, '#f1c40f', 'log-sp');
+          }
+        }
+        pend = null; ui(); draw(); endTurn(); return;
+      } else if (card.id === 'KING_4') { // Càn Khôn Di Vị (Tức thì)
+        say(`[Càn Khôn Di Vị] Chọn 1 quân trong cung để đổi chỗ với Tướng!`, '#f1c40f');
+        p.oneTurnCard = card;
+        pend = null; ui(); draw(); return;
+      } else if (card.pas) { // Thẻ Nội Tại
+        p.p = p.p || {};
+        p.p[card.id] = true;
+        if (card.id === 'ADVISOR_1') p.p.leave = true;
+        if (card.id === 'ELEPHANT_2') p.p.cross = true;
+        if (card.id === 'PAWN_2') p.p.back = true;
+        if (card.id === 'KING_1') p.p.out = true;
+      } else { // Thẻ Một Lượt
+        p.oneTurnCard = card;
+      }
 
       pend = null; sel = null; VM = [];
       SoundSystem.playCardSpell();
-      spawnFX(p.r, p.c, card.name);
-      say(`✨ [${turn==='r'?'Phe Đỏ':'Phe Đen'}] Thi triển Bí Pháp [${card.name}] thành công!`, '#f1c40f', 'log-sp');
+      say(`[${turn==='r'?'Phe Đỏ':'Phe Đen'}] Thi triển Bí Pháp [${card.name}] thành công!`, '#f1c40f', 'log-sp');
       ui(); draw();
       return;
     } else if (card) {
-      say(`⚠️ Vui lòng chọn đúng quân ${TN[card.t]} của phe mình để truyền thụ bí pháp!`, '#ff6b6b');
+      say(`Vui lòng chọn đúng quân ${TN[card.t]} của phe mình để truyền thụ bí pháp!`, '#ff6b6b');
       return;
     }
   }
@@ -1920,12 +1997,31 @@ function onClick(r,c){
         merit[turn] = Math.min(10, merit[turn] + 2);
         bagPos = null;
         SoundSystem.playCardSpell();
-        spawnFX(r, c, "🎒 Nhặt Túi Kỳ Mưu");
-        say(`🎒 [NHẶT TÚI KỲ MƯU] ${turn==='r'?'[Phe Đỏ]':'[Phe Đen]'} di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới & +2 Công Trạng!`, '#f1c40f', 'log-sp');
+        say(`[NHẶT TÚI KỲ MƯU] ${turn==='r'?'[Phe Đỏ]':'[Phe Đen]'} di chuyển đến ô Túi Kỳ Mưu, nhận 1 Bí Pháp mới +2 Công Trạng!`, '#f1c40f', 'log-sp');
         ui();
       }
 
       const v=B[r][c];
+
+      // XỬ LÝ BÍCH LỊCH HỎA (NỔ LAN GÂY CHOÁNG 4 Ô KỀ)
+      if (sel.oneTurnCard && sel.oneTurnCard.id === 'CANNON_2' && v) {
+        const adjOffs = [[0,1],[0,-1],[1,0],[-1,0]];
+        adjOffs.forEach(off => {
+          const ar = r + off[0], ac = c + off[1];
+          if (ar>=0 && ar<10 && ac>=0 && ac<9 && B[ar][ac] && B[ar][ac].col !== turn) {
+            B[ar][ac].st = 1; // Choáng 1 lượt
+          }
+        });
+        sel.st = 1; // Chính pháo bị choáng 1 lượt
+        say(`💥 [BÍCH LỊCH HỎA NỔ LAN] Gây choáng quân kề xung quanh & Pháo bị choáng 1 lượt!`, '#ff4757', 'log-sp');
+      }
+
+      // XỬ LÝ TUYỆT MỆNH CỔ (KHI ĂN MÃ VÒNG CỔ)
+      if (v && v.t === 'n' && v.p && v.p['KNIGHT_2'] && sel.t !== 'k') {
+        sel.dead = true;
+        say(`💣 [TUYỆT MỆNH CỔ NỔ LOGIC] Quân ${TN[sel.t]} ăn Mã Bùa đã đồng thọ thương tử!`, '#ff4757', 'log-sp');
+      }
+
       B[sel.r][sel.c]=null;B[r][c]=sel;sel.r=r;sel.c=c;
       
       if(v) {
