@@ -1143,20 +1143,40 @@ function cnt(r1,c1,r2,c2){
   return n;
 }
 
-function valid(o,r2,c2,bf){
-  if(r2<0||r2>9||c2<0||c2>8)return false;const r1=o.r,c1=o.c;if(r1===r2&&c1===c2)return false;
+function valid(o,r2,c2,customBf){
+  if(r2<0||r2>9||c2<0||c2>8)return false;
+  if(o.st > 0) return false;
+  const r1=o.r,c1=o.c;if(r1===r2&&c1===c2)return false;
   const tg=B[r2][c2];if(tg&&tg.col===o.col)return false;
-  const dr=r2-r1,dc=c2-c1,ar=Math.abs(dr),ac=Math.abs(dc),red=o.col==='r',p=o.p;
+  const dr=r2-r1,dc=c2-c1,ar=Math.abs(dr),ac=Math.abs(dc),red=o.col==='r',p=o.p||{};
+  const bf = customBf || (o.oneTurnCard ? o.oneTurnCard.id : null);
   const pieceType = o.hd ? o.t : (o.tru || o.t);
 
   switch(pieceType){
-    case'k':return((ar===1&&!ac)||(!ar&&ac===1))&&(pal(r2,c2,red)||(!!p.out&&ext(r2,c2,red)));
-    case'a':return ar===1&&ac===1&&(!!p.leave||pal(r2,c2,red));
-    case'b':if(ar!==2||ac!==2)return false;if(!p.cross&&(red?r2<5:r2>4))return false;return bf==='ELEPHANT_1'||!B[r1+dr/2][c1+dc/2];
+    case'k':return((ar===1&&!ac)||(!ar&&ac===1))&&(pal(r2,c2,red)||(!!p.out||!!p.KING_1)||ext(r2,c2,red));
+    case'a':return ar===1&&ac===1&&(!!p.leave||!!p.ADVISOR_1||pal(r2,c2,red));
+    case'b':if(ar!==2||ac!==2)return false;if(!p.cross&&!p.ELEPHANT_2&&(red?r2<5:r2>4))return false;return bf==='ELEPHANT_1'||!B[r1+dr/2][c1+dc/2];
     case'n':if(ar*ac!==2)return false;return bf==='KNIGHT_1'||!(ar===2?B[r1+dr/2][c1]:B[r1][c1+dc/2]);
-    case'r':return(!dr||!dc)&&cnt(r1,c1,r2,c2)===0;
-    case'c':{if(dr&&dc)return false;const n=cnt(r1,c1,r2,c2);return tg?(n===1||(bf==='CANNON_1'&&n===2&&tg.t!=='k')):n===0}
-    case'p':{const f=red?-1:1;if(dr===f&&!dc)return true;if(p.back&&dr===-f&&!dc)return true;return(red?r1<=4:r1>=5)&&!dr&&ac===1}
+    case'r':
+      if (dr && dc) return false;
+      const countR = cnt(r1,c1,r2,c2);
+      if (bf === 'ROOK_1') return countR === 0 || (tg && countR === 1);
+      return countR === 0;
+    case'c':
+      if (dr && dc) return false;
+      const n = cnt(r1,c1,r2,c2);
+      if (tg) {
+        if (n === 1) return true;
+        if (bf === 'CANNON_1' && n === 2) return true;
+        return false;
+      }
+      return n === 0;
+    case'p':
+      const f = red ? -1 : 1;
+      if (dr === f && !dc) return true;
+      if ((p.back || p.PAWN_2) && dr === -f && !dc) return true;
+      if ((p.PAWN_1 || (red ? r1 <= 4 : r1 >= 5)) && !dr && ac === 1) return true;
+      return false;
   }
   return false;
 }
@@ -1184,7 +1204,9 @@ function safe(o,r,c){
   return ok;
 }
 
-function legalMoves(o,bf){
+function legalMoves(o,customBf){
+  if (o.dead || o.st > 0) return [];
+  const bf = customBf || (o.oneTurnCard ? o.oneTurnCard.id : null);
   const out=[],ps=(r,c)=>{if(r<0||r>9||c<0||c>8)return;if(valid(o,r,c,bf)&&safe(o,r,c))out.push([r,c])};
   const pieceType = o.hd ? o.t : (o.tru || o.t);
   if(pieceType==='r'||pieceType==='c'){for(let i=0;i<10;i++)ps(i,o.c);for(let j=0;j<9;j++)ps(o.r,j)}
@@ -1464,12 +1486,21 @@ function endTurn(){
 /* ---------- ĐỘNG CƠ BOT AI PIKAFISH (ALPHA-BETA + QUIESCENCE SEARCH) ---------- */
 function evaluateBoard(evalCol) {
   let score = 0;
+  score += (merit[evalCol] || 0) * 25 - (merit[opp(evalCol)] || 0) * 25;
+  score += (hands[evalCol] ? hands[evalCol].length : 0) * 60 - (hands[opp(evalCol)] ? hands[opp(evalCol)].length : 0) * 60;
+
   for (let r = 0; r < 10; r++) {
     for (let c = 0; c < 9; c++) {
       const p = B[r][c];
       if (!p || p.dead) continue;
-      const type = p.hd ? p.t : (p.tru || p.t);
-      const val = VAL[type] || 100;
+      let type, val;
+      if (p.hd) {
+        type = 'p';
+        val = 220;
+      } else {
+        type = p.t;
+        val = VAL[type] || 100;
+      }
       const pst = getPSTValue(type, p.col, r, c);
       const total = val + pst;
       if (p.col === evalCol) score += total;
@@ -1590,36 +1621,70 @@ function triggerAIMove(){
   busy = true;
   stat();
 
-  // MÁY AI SỬ DỤNG BÍ PHÁP KỲ BIẾN
+  // PHÂN TÍCH VÀ SỬ DỤNG BÍ PHÁP THÔNG MINH CHO MÁY AI
   const variant = $('mode_variant').value;
-  if (variant === 'kb' && !cardUsedThisTurn && merit.b >= 2 && hands.b.length > 0) {
+  if (variant === 'kb' && !cardUsedThisTurn && merit.b >= 1 && hands.b.length > 0) {
+    let bestCardIdx = -1;
+    let bestTargetPiece = null;
+    let maxCardGain = 0;
+
+    const baseEval = evaluateBoard(aiCol);
+
     for (let i = 0; i < hands.b.length; i++) {
       const card = hands.b[i];
       if (merit.b >= card.cost) {
-        const targets = P.b.filter(p => !p.dead && p.t === card.t && (!p.p || !p.p[card.id]));
-        if (targets.length > 0) {
-          const targetPiece = targets[Math.floor(Math.random() * targets.length)];
-          merit.b -= card.cost;
-          hands.b.splice(i, 1);
-          cardUsedThisTurn = true;
-
+        const eligibleTargets = P.b.filter(p => !p.dead && p.t === card.t && (!p.p || !p.p[card.id]));
+        for (const targetPiece of eligibleTargets) {
+          let gain = 0;
           if (card.pas) {
             targetPiece.p = targetPiece.p || {};
             targetPiece.p[card.id] = true;
-            if (card.id === 'ADVISOR_1') targetPiece.p.leave = true;
-            if (card.id === 'ELEPHANT_2') targetPiece.p.cross = true;
-            if (card.id === 'PAWN_2') targetPiece.p.back = true;
-            if (card.id === 'KING_1') targetPiece.p.out = true;
+            const evalWithCard = evaluateBoard(aiCol);
+            delete targetPiece.p[card.id];
+            gain = evalWithCard - baseEval;
           } else {
             targetPiece.oneTurnCard = card;
+            const cardMoves = legalMoves(targetPiece, card.id);
+            targetPiece.oneTurnCard = null;
+            for (const m of cardMoves) {
+              const victim = B[m[0]][m[1]];
+              if (victim) {
+                const victimVal = VAL[victim.t] || 100;
+                if (victimVal > gain) gain = victimVal;
+              }
+            }
           }
 
-          SoundSystem.playCardSpell();
-          say(`[Máy AI] Kích hoạt Bí Pháp [${card.name}] lên quân ${TN[targetPiece.t]}!`, '#f1c40f', 'log-sp');
-          ui(); draw();
-          break;
+          const netGain = gain - card.cost * 25;
+          if (netGain > maxCardGain && netGain > 15) {
+            maxCardGain = netGain;
+            bestCardIdx = i;
+            bestTargetPiece = targetPiece;
+          }
         }
       }
+    }
+
+    if (bestCardIdx >= 0 && bestTargetPiece) {
+      const card = hands.b[bestCardIdx];
+      merit.b -= card.cost;
+      hands.b.splice(bestCardIdx, 1);
+      cardUsedThisTurn = true;
+
+      if (card.pas) {
+        bestTargetPiece.p = bestTargetPiece.p || {};
+        bestTargetPiece.p[card.id] = true;
+        if (card.id === 'ADVISOR_1') bestTargetPiece.p.leave = true;
+        if (card.id === 'ELEPHANT_2') bestTargetPiece.p.cross = true;
+        if (card.id === 'PAWN_2') bestTargetPiece.p.back = true;
+        if (card.id === 'KING_1') bestTargetPiece.p.out = true;
+      } else {
+        bestTargetPiece.oneTurnCard = card;
+      }
+
+      SoundSystem.playCardSpell();
+      say(`[Máy AI] Kích hoạt Bí Pháp [${card.name}] lên quân ${TN[bestTargetPiece.t]}!`, '#f1c40f', 'log-sp');
+      ui(); draw();
     }
   }
 
@@ -1831,7 +1896,9 @@ function pcBase(o){
   }
 }
 
-function draw(){
+let isDrawLoopRunning = false;
+
+function drawFrame(){
   x.clearRect(0,0,600,660);grid();
   
   // VẼ TÚI KỲ MƯU RƠI TRÊN BÀN CỜ
@@ -1924,9 +1991,18 @@ function draw(){
 
     if (fx.time >= fx.maxTime) MERIT_FX.splice(i, 1);
   }
+}
 
-  // VỜI HỌA TỰ ĐỘNG CHẠY HÀO QUANG VÀ CHUYỂN ĐỘNG CHO ANIMATION
-  requestAnimationFrame(draw);
+function draw(){
+  drawFrame();
+  if (!isDrawLoopRunning) {
+    isDrawLoopRunning = true;
+    function loop() {
+      drawFrame();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
 }
 
 function onClick(r,c){
