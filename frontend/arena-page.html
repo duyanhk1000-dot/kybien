@@ -495,7 +495,6 @@ async function ensureUserLoggedIn() {
     const ok = await checkAuthUI();
     if (ok && currentUser) return true;
 
-    // Tự động tạo tài khoản khách với MẬT KHẨU NGẪU NHIÊN MẠNH
     const guestUser = `KyThu_${Math.floor(10000 + Math.random() * 90000)}`;
     const randomPassword = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
 
@@ -593,7 +592,6 @@ async function initSocketConnection() {
       alert(`Đã tạo phòng thành công!\nMã phòng: ${code}\n${isPrivate ? '(Phòng riêng)' : '(Phòng công khai - Mọi người có thể thấy)'}`);
     });
 
-    // DANH SÁCH PHÒNG CHỜ DÙNG EVENT LISTENER AN TOÀN (KHÔNG NỐI CHUỖI ONCLICK)
     socketInstance.on('public_rooms_list', rooms => {
       const listEl = document.getElementById('public-rooms-list');
       if (!listEl) return;
@@ -642,22 +640,36 @@ async function initSocketConnection() {
       newGame();
     });
 
+    // KHẮC PHỤC DÙNG DỰA TRÊN ĐỒNG BỘ NƯỚC ĐI ONLINE CHUẨN XÁC FOR BOTH RED & BLACK
     socketInstance.on('move_made', data => {
-      if (isOnlineMatch && data.turn !== (myOnlineSide === 'r' ? 'RED' : 'BLACK')) {
-        const move = data.move;
-        const fromPos = move.from.split(',').map(Number);
-        const toPos = move.to.split(',').map(Number);
+      if (isOnlineMatch) {
+        // data.turn represents the NEW turn emitted by server ('RED' or 'BLACK')
+        const isMyTurnNow = data.turn === (myOnlineSide === 'r' ? 'RED' : 'BLACK');
         
-        const piece = B[fromPos[0]][fromPos[1]];
-        if (piece) {
-          const v = B[toPos[0]][toPos[1]];
-          B[fromPos[0]][fromPos[1]] = null;
-          B[toPos[0]][toPos[1]] = piece;
-          piece.r = toPos[0]; piece.c = toPos[1];
-          if (v) v.dead = true;
-          if (v) SoundSystem.playCapture();
-          else SoundSystem.playMove();
-          endTurnLocalOnly();
+        if (isMyTurnNow) {
+          const move = data.move;
+          const fromPos = move.from.split(',').map(Number);
+          const toPos = move.to.split(',').map(Number);
+          
+          const piece = B[fromPos[0]][fromPos[1]];
+          if (piece) {
+            const v = B[toPos[0]][toPos[1]];
+            B[fromPos[0]][fromPos[1]] = null;
+            B[toPos[0]][toPos[1]] = piece;
+            piece.r = toPos[0]; piece.c = toPos[1];
+
+            // Auto flip face-down piece if applicable
+            if (piece.hd) {
+              piece.hd = false;
+              piece.t = piece.tru;
+              say(`[Đối Thủ] Lật ngửa quân cờ úp thành ${TN[piece.t]}!`, '#f1c40f');
+            }
+
+            if (v) v.dead = true;
+            if (v) SoundSystem.playCapture();
+            else SoundSystem.playMove();
+            endTurnLocalOnly();
+          }
         }
       }
     });
@@ -793,7 +805,6 @@ const SoundSystem=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext
 function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
 return{playMove:()=>tn('triangle',320,.08,.5,0,80),playCapture:()=>tn('sawtooth',180,.15,.7,0,40),playCheck:()=>[523.25,659.25,783.99].forEach((f,i)=>tn('square',f,.25,.35,i*.07)),playMate:()=>[440,392,349.23,293.66].forEach((f,i)=>tn('sawtooth',f,.45,.45,i*.18)),playTick:()=>tn('square',880,.06,.15)}})();
 
-// AN TOÀN KHÔNG DÙNG CHILDREN[2]
 function syncTrayLayout(){
   const box=$('card-tray-wrapper');
   if(!box)return;
@@ -842,6 +853,17 @@ let moveHistoryStack=[];
 let eatenPieces={r:[],b:[]};
 const aiCol='b',opp=c=>c==='r'?'b':'r';
 
+// HÀM LẤY LOẠI QUÂN TIÊU CHUẨN TẠI VỊ TRÍ BAN ĐẦU CHO CỜ ÚP
+function getStandardPieceType(r, c) {
+  if (r === 0 || r === 9) {
+    const rowStr = 'rnbakabnr';
+    return rowStr[c];
+  }
+  if (r === 2 || r === 7) return 'c';
+  if (r === 3 || r === 6) return 'p';
+  return 'p';
+}
+
 function put(t,col,r,c,hdState,truType){
   const o={t,col,r,c,p:{},st:0,dead:false,hd:!!hdState,tru:truType||t};
   B[r][c]=o;P[col].push(o);if(t==='k')K[col]=o;
@@ -865,6 +887,7 @@ function valid(o,r2,c2,bf){
   if(r2<0||r2>9||c2<0||c2>8)return false;const r1=o.r,c1=o.c;if(r1===r2&&c1===c2)return false;
   const tg=B[r2][c2];if(tg&&tg.col===o.col)return false;
   const dr=r2-r1,dc=c2-c1,ar=Math.abs(dr),ac=Math.abs(dc),red=o.col==='r',p=o.p;
+  // QUÂN ÚP DI CHUYỂN THEO LUẬT VỊ TRÍ BAN ĐẦU (o.t) KHI CHƯA LẬT NGỬA
   const pieceType = o.hd ? o.t : (o.tru || o.t);
 
   switch(pieceType){
@@ -933,6 +956,7 @@ function newGame(){
     put('c','b',2,1);put('c','b',2,7);put('c','r',7,1);put('c','r',7,7);
     for(let c=0;c<9;c+=2){put('p','b',3,c);put('p','r',6,c)}
   } else {
+    // CỜ ÚP KHẮC PHỤC CHUẨN XÁC NƯỚC ĐI BAN ĐẦU THEO getStandardPieceType
     const piecesList = ['r','r','n','n','b','b','a','a','c','c','p','p','p','p','p'];
     const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
     
@@ -947,12 +971,14 @@ function newGame(){
     ];
 
     positions.forEach((pos, idx) => {
-      const redPos = [9 - pos[0], pos[1]];
-      const origRedType = bk[pos[1]] || (pos[0]===2?'c':'p');
-      const origBlackType = bk[pos[1]] || (pos[0]===2?'c':'p');
+      const blackR = pos[0], blackC = pos[1];
+      const redR = 9 - pos[0], redC = pos[1];
+      
+      const blackOrigType = getStandardPieceType(blackR, blackC);
+      const redOrigType = getStandardPieceType(redR, redC);
 
-      put(origBlackType, 'b', pos[0], pos[1], true, blackShuffled[idx]);
-      put(origRedType, 'r', redPos[0], redPos[1], true, redShuffled[idx]);
+      put(blackOrigType, 'b', blackR, blackC, true, blackShuffled[idx]);
+      put(redOrigType, 'r', redR, redC, true, redShuffled[idx]);
     });
   }
 
@@ -1227,7 +1253,6 @@ function onClick(r,c){
   }
 }
 
-// KHÔNG CÒN LẮNG NGHE TOUCHSTART ĐỂ TRÁNH GỌI DÚP TRÊN MOBILE
 cv.addEventListener('click',e=>{
   const b=cv.getBoundingClientRect(),X=(e.clientX-b.left)*600/b.width,Y=(e.clientY-b.top)*660/b.height;
   let c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);
