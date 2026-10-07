@@ -1,85 +1,204 @@
 <!-- 
-  NỘI DUNG DÁN VÀO TRANG TĨNH BLOGSPOT (/p/arena.html)
-  Chế độ chỉnh sửa: HTML View
+  NỘI DUNG TÍCH HỢP CHO TRANG TĨNH BLOGSPOT (/p/sanh-au-co.html)
+  Tích hợp Đấu 2 Người Online (Socket.io) + Đấu Với Máy AI (16 Bí Pháp Kỳ Biến)
 -->
 
-<div id="kybien-arena-container" style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;">
-  <div style="text-align: center; margin-bottom: 25px;">
-    <h1 style="color: #8b0000; font-size: 2.2rem; font-weight: 700;">⚔️ SẢNH ĐẤU KỲ BIỂN CHESS</h1>
-    <p style="color: #555;">Sàn đấu cờ tướng thời gian thực kết nối máy chủ Render & AI Gemini</p>
+<div id="kybien-app" class="app" style="max-width: 1050px; margin: 0 auto; padding: 10px; font-family: 'Be Vietnam Pro', -apple-system, sans-serif;">
+  
+  <!-- THANH TIÊU ĐỀ & PROFILE HEADER -->
+  <div class="top" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <h1 style="font-family: 'Noto Serif TC', serif; font-size: 1.6rem; letter-spacing: 3px; color: #e5b36a; margin: 0;">
+      KỲ <em style="font-style: normal; color: #e0705a;">BIẾN</em> CHESS
+    </h1>
+    <div id="auth-widget-box">
+      <!-- Profiles / Login Status Auto-loaded by kybien-client.js -->
+    </div>
   </div>
 
   <!-- BẢNG ĐIỀU KHIỂN ĐĂNG NHẬP / TÌM TRẬN -->
-  <div id="arena-controls" style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; margin-bottom: 25px;">
-    
-    <!-- KHU VỰC KHI CHƯA ĐĂNG NHẬP -->
-    <div id="auth-section">
-      <h3 style="margin-bottom: 15px; color: #2c3e50;">Đăng Nhập Hoặc Đăng Ký Kỳ Thủ</h3>
-      <div style="display: flex; gap: 10px; justify-content: center; max-width: 400px; margin: 0 auto 15px auto;">
-        <input type="text" id="auth-username" placeholder="Tên tài khoản" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
-        <input type="password" id="auth-password" placeholder="Mật khẩu" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
+  <div id="arena-auth-card" style="background: #33251a; border: 1px solid #5a3d22; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.3);">
+    <div id="auth-unlogged" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;">
+      <div style="color: #e8dcc6; font-size: 0.9rem;">
+        👉 <strong>Đăng nhập tài khoản</strong> để tích lũy Elo/Exp trên Bảng Xếp Hạng & Khởi chạy ván cờ với AI hoặc Người thật:
       </div>
-      <div style="display: flex; gap: 10px; justify-content: center;">
-        <button onclick="handleLogin()" style="background: #8b0000; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">Đăng Nhập</button>
-        <button onclick="handleRegister()" style="background: #27ae60; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">Đăng Ký Mới</button>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <input type="text" id="arena-u" placeholder="Tên tài khoản" style="background: #22150c; border: 1px solid #5a3d22; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem;" />
+        <input type="password" id="arena-p" placeholder="Mật khẩu" style="background: #22150c; border: 1px solid #5a3d22; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem;" />
+        <button onclick="arenaLogin()" style="background: #a83a1f; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; cursor: pointer;">Đăng Nhập</button>
+        <button onclick="arenaRegister()" style="background: #27ae60; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; cursor: pointer;">Đăng Ký Mới</button>
       </div>
-      <p id="auth-msg" style="margin-top: 10px; color: #e74c3c; font-weight: 600;"></p>
     </div>
-
-    <!-- KHU VỰC KHI ĐÃ ĐĂNG NHẬP -->
-    <div id="match-section" style="display: none;">
-      <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">
-        Chào mừng Kỳ thủ <span id="player-name-display" style="color: #8b0000;"></span> (Elo: <span id="player-elo-display"></span>)
-      </div>
-      <button id="btn-find-match" onclick="toggleFindMatch()" style="background: #f1c40f; color: #8b0000; border: none; padding: 14px 35px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(241, 196, 15, 0.4);">
-        ⚡ TÌM TRẬN NHANH (QUICK MATCH)
-      </button>
-      <p id="match-status-msg" style="margin-top: 12px; font-weight: bold; color: #e67e22;"></p>
-    </div>
-
+    <div id="auth-msg-err" style="color: #e74c3c; font-size: 0.82rem; margin-top: 5px; font-weight: bold;"></div >
   </div>
 
-  <!-- BÀN CỜ ĐẤU THỜI GIAN THỰC -->
-  <div id="game-board-area" style="display: none; background: #faf6f0; border: 3px solid #8b0000; border-radius: 12px; padding: 20px; text-align: center;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold;">
-      <div id="black-player-info" style="color: #333;">Đối Thủ (Quân Đen): Loading...</div>
-      <div id="turn-indicator" style="background: #8b0000; color: #fff; padding: 5px 15px; border-radius: 15px;">Lượt đi: Quân Đỏ</div>
-      <div id="red-player-info" style="color: #c0392b;">Bạn (Quân Đỏ): Loading...</div>
-    </div>
+  <!-- CHÍNH: KHUNG BÀN CỜ & BẢNG THIẾT LẬP -->
+  <div class="main">
+    <section id="sec-board">
+      <div class="pill" id="st">Lượt đi: Đỏ</div>
+      
+      <!-- PLAYER ĐEN -->
+      <div class="pl" id="pbx">
+        <span class="dot b"></span>
+        <b id="nb">Đen (AI)</b>
+        <span class="clk" id="ckb">∞</span>
+        <span class="pips" id="pb"></span>
+        <span class="mm"><b id="mb">3</b>/10</span>
+      </div>
 
-    <!-- Khung vẽ bàn cờ SVG/Canvas -->
-    <div id="interactive-xiangqi-board" style="width: 100%; max-width: 520px; height: 560px; margin: 0 auto; background: #e6c896; border-radius: 8px; position: relative;">
-      <!-- Xiangqi Board Grid & Pieces Rendered Dynamically -->
+      <!-- BÀN CỜ CANVAS -->
+      <div class="bc" id="bc">
+        <canvas id="cv" width="600" height="660"></canvas>
+      </div>
+
+      <!-- PLAYER ĐỎ -->
+      <div class="pl" id="prx">
+        <span class="dot r"></span>
+        <b id="nr">Đỏ (Bạn)</b>
+        <span class="clk" id="ckr">∞</span>
+        <span class="pips" id="pr"></span>
+        <span class="mm"><b id="mr">3</b>/10</span>
+      </div>
+
+      <div id="mobile-tray-placeholder"></div>
+      <div id="msg">Khai cuộc KỲ BIẾN: Chọn Bí Pháp rồi chọn quân để kích hoạt, hoặc xuất chiêu trực tiếp!</div>
+      
+      <div class="legend-box">
+        <b>Ấn ký nhận diện:</b> 🌊 Ngự Ba · 🏯 Xuất Trần · ↩️ Hồi Phong · 👑 Thân Chinh · 💣 Tuyệt Mệnh Cổ (ẩn) · 💫 Trúng Định Thân · viền cam = đang xuất chiêu · 🎒 Túi Kỳ Mưu
+      </div>
+    </section>
+
+    <!-- BẢNG BÊN PHẢI (SIDEBAR THIẾT LẬP & TÚI THẺ) -->
+    <aside id="sec-aside">
+      <div class="card">
+        <h3>Thiết Lập Ván Đấu</h3>
+        <div class="fg">
+          <label>Chế độ
+            <select id="mode" onchange="onModeChange()">
+              <option value="ai" selected>Đấu với máy AI</option>
+              <option value="2p_local">Hai người (Cùng máy)</option>
+              <option value="2p_online">⚡ 2 Người Online (Socket.io Render)</option>
+            </select>
+          </label>
+          <label>Trình độ máy
+            <select id="lv">
+              <option value="1">Sơ cấp (Cầm kỳ)</option>
+              <option value="2" selected>Trung cấp (Danh thủ)</option>
+              <option value="3">Thượng cấp (Kỳ thánh)</option>
+            </select>
+          </label>
+          <label>Thời gian luận chiêu
+            <select id="tm">
+              <option value="0" selected>Vô hạn</option>
+              <option value="30">30 giây / nước</option>
+              <option value="60">1 phút / nước</option>
+              <option value="180">3 phút / nước</option>
+            </select>
+          </label>
+          <label>Rơi túi thẻ
+            <select id="bagm">
+              <option value="5">Mỗi 5 nước</option>
+              <option value="10" selected>Mỗi 10 nước</option>
+              <option value="0">Tắt rơi túi</option>
+            </select>
+          </label>
+          <label>Kiểu bàn cờ
+            <select id="vw" onchange="draw()">
+              <option value="2">2D Phẳng</option>
+              <option value="3" selected>3D Khối</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="ck">
+          <input type="checkbox" id="tst" onchange="pend=null;ui()" /> Chế độ thử: Dùng mọi thẻ bí pháp miễn phí
+        </label>
+
+        <!-- BUTTON KHỞI CHẠY / TÌM TRẬN -->
+        <button type="button" class="p" id="btn-start-game" onclick="handleStartOrMatch()">Khai Cuộc Ván Mới</button>
+      </div>
+
+      <!-- TRAY THẺ BÍ PHÁP -->
+      <div class="card card-tray-box" id="card-tray-wrapper">
+        <div class="hh">
+          <h3 id="hl">Bí Pháp KỲ BIẾN</h3>
+          <button type="button" id="sk" onclick="skip()" style="display:none">Bỏ qua bước thêm</button>
+        </div>
+        <div id="tray"></div>
+      </div>
+
+      <!-- NHẬT KÝ CHIẾN TRƯỜNG -->
+      <div class="card">
+        <h3>Nhật Ký Chiến Trường</h3>
+        <div id="log"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- TAB QUY TẮC & BÁCH KHOA BÍ PHÁP 16 CHIÊU -->
+  <div class="tab-box">
+    <div class="tab-btns">
+      <button type="button" id="btn-t1" class="tb-btn active" onclick="switchTab(1)">📜 Quy Ước KỲ BIẾN</button>
+      <button type="button" id="btn-t2" class="tb-btn" onclick="switchTab(2)">🥋 Bách Khoa Bí Pháp (16 Chiêu)</button>
+    </div>
+    <div id="tab-1" class="tab-content show">
+      <h4>1. Nguyên Lý Khởi Nguồn và Công Trạng</h4>
+      <p>Ván cờ tuân theo toàn bộ luật cờ tướng cổ điển. Mỗi bên khởi điểm với <b>3 điểm Công trạng</b> (tối đa 10). Hạ quân địch thu Công trạng: <b>Tốt (+1), Sĩ/Tượng (+2), Mã/Pháo (+3), Xe (+5)</b>.</p>
+      <h4>2. Vận Dụng Bí Pháp và Hoàn Trả</h4>
+      <p>Bí pháp <b>Nội Tại</b> gắn lên quân nào thì quân đó nhận hiệu lực vĩnh viễn, bạn vẫn tự do đi quân khác. Với bí pháp <b>1 lượt</b>, nếu đã gắn lên một quân nhưng đổi ý đi quân khác, hệ thống <b>hoàn lại thẻ và Công trạng, chỉ phạt 1 điểm</b>.</p>
+      <h4>3. Rơi Túi Kỳ Mưu</h4>
+      <p>Theo chu kỳ cài đặt (5 hoặc 10 hiệp), một <b>Túi Kỳ Mưu (🎒)</b> xuất hiện ngẫu nhiên trên ô trống. Quân tiến vào ô đó sẽ ngộ thêm một thẻ ngẫu nhiên.</p>
+      <h4>4. Thời Gian Luận Chiêu & Cấm Trường Chiếu</h4>
+      <p>Giới hạn suy nghĩ cho <b>mỗi nước đi</b> linh hoạt. Đặc biệt: <b>Nghiêm cấm Trường Chiếu</b> (chiếu liên tục cùng một thao tác lặp lại 5 lần). Bên cố tình chiếu dai sẽ <b>bị xử thua cuộc ngay lập tức</b>.</p>
+    </div>
+    <div id="tab-2" class="tab-content">
+      <h4>Bảng Danh Mục 16 Bí Pháp Kiếm Hiệp KỲ BIẾN</h4>
+      <table class="buff-table">
+        <thead><tr><th>Quân</th><th>Tên Kiếm Hiệp</th><th>Thời Hạn</th><th>Chi Phí</th><th>Mô Tả Hiệu Quả</th></tr></thead>
+        <tbody>
+          <tr><td><b>Xe</b></td><td>Thiểm Điện Trảm</td><td>1 Lượt</td><td>3 Điểm</td><td>Ăn quân xong được tiến thẳng thêm 1-2 ô cùng hướng.</td></tr>
+          <tr><td><b>Xe</b></td><td>Phá Lãng Bộ</td><td>1 Lượt</td><td>3 Điểm</td><td>Đi xong được bẻ góc 90 độ lướt thêm 1-3 ô.</td></tr>
+          <tr><td><b>Pháo</b></td><td>Xuyên Vân Tiễn</td><td>1 Lượt</td><td>2 Điểm</td><td>Bắn ăn quân qua 1 hoặc 2 ngòi (không ăn Tướng bằng 2 ngòi).</td></tr>
+          <tr><td><b>Pháo</b></td><td>Bích Lịch Hỏa</td><td>1 Lượt</td><td>3 Điểm</td><td>Ăn quân kích nổ: 4 ô kề dấu + và bản thân Pháo bị choáng 1 lượt.</td></tr>
+          <tr><td><b>Mã</b></td><td>Đạp Vân Tiêu</td><td>1 Lượt</td><td>2 Điểm</td><td>Bỏ qua hoàn toàn cản chân Mã trong 1 nước.</td></tr>
+          <tr><td><b>Mã</b></td><td>Tuyệt Mệnh Cổ</td><td>Nội Tại</td><td>3 Điểm</td><td>Ẩn: quân địch ăn Mã này sẽ chết theo.</td></tr>
+          <tr><td><b>Tượng</b></td><td>Minh Kính Thuật</td><td>1 Lượt</td><td>1 Điểm</td><td>Đi và ăn không bị cản mắt Tượng.</td></tr>
+          <tr><td><b>Tượng</b></td><td>Ngự Ba Viễn Chinh</td><td>Nội Tại</td><td>2 Điểm</td><td>Tượng được bay sang nửa bàn đối phương.</td></tr>
+          <tr><td><b>Sĩ</b></td><td>Xuất Trần Hộ Pháp</td><td>Nội Tại</td><td>2 Điểm</td><td>Sĩ ra khỏi Cửu Cung, vượt sông theo đường chéo.</td></tr>
+          <tr><td><b>Sĩ</b></td><td>Song Long Xuất Hải</td><td>1 Lượt</td><td>3 Điểm</td><td>Sĩ được đi 2 nước liên tiếp.</td></tr>
+          <tr><td><b>Tốt</b></td><td>Tật Phong Binh</td><td>1 Lượt</td><td>2 Điểm</td><td>Tốt được đi 2 nước liên tiếp.</td></tr>
+          <tr><td><b>Tốt</b></td><td>Hồi Phong Binh</td><td>Nội Tại</td><td>2 Điểm</td><td>Tốt có thể đi và ăn lùi 1 ô.</td></tr>
+          <tr><td><b>Tướng</b></td><td>Thân Chinh Xuất Giá</td><td>Nội Tại</td><td>3 Điểm</td><td>Tướng bước ra ngoài Cung 1 ô (vẫn cấm lộ mặt).</td></tr>
+          <tr><td><b>Tướng</b></td><td>Cấp Cứu Cần Vương</td><td>Tức Thì</td><td>2 Điểm</td><td>Triệu hồi 1 quân Sĩ về ô cạnh Tướng hộ giá (hết lượt).</td></tr>
+          <tr><td><b>Tướng</b></td><td>Kim Cang Bất Hoại</td><td>3 Lượt</td><td>3 Điểm</td><td>Chọn 1 hướng: miễn nhiễm đòn chiếu thẳng từ hướng đó.</td></tr>
+          <tr><td><b>Tướng</b></td><td>Càn Khôn Di Vị</td><td>Tức Thì</td><td>4 Điểm</td><td>Đổi chỗ với 1 quân trong cung (không được gây lộ mặt hoặc bị chiếu).</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
+
 </div>
 
+<!-- SCRIPT GAME KỲ BIẾN CLIENT ENGINE -->
 <script>
-  const BACKEND_URL = 'https://kybien-backend.onrender.com';
-  let socket = null;
-  let isSearching = false;
+  const BACKEND_RENDER_URL = 'https://kybien-backend.onrender.com';
+  let socketInstance = null;
+  let isOnlineSearching = false;
 
-  function updateAuthUI() {
+  // Cập nhật giao diện Đăng Nhập trên Sảnh Đấu
+  function checkArenaAuthStatus() {
     const token = localStorage.getItem('kybien_jwt_token');
+    const authBox = document.getElementById('arena-auth-card');
     if (token) {
-      document.getElementById('auth-section').style.display = 'none';
-      document.getElementById('match-section').style.display = 'block';
-      fetch(`${BACKEND_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
-        .then(r => r.json())
-        .then(user => {
-          document.getElementById('player-name-display').innerText = user.username;
-          document.getElementById('player-elo-display').innerText = user.elo;
-        });
+      if (authBox) authBox.style.display = 'none';
     } else {
-      document.getElementById('auth-section').style.display = 'block';
-      document.getElementById('match-section').style.display = 'none';
+      if (authBox) authBox.style.display = 'block';
     }
   }
 
-  async function handleLogin() {
-    const u = document.getElementById('auth-username').value;
-    const p = document.getElementById('auth-password').value;
-    const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
+  async function arenaLogin() {
+    const u = document.getElementById('arena-u').value;
+    const p = document.getElementById('arena-p').value;
+    const res = await fetch(`${BACKEND_RENDER_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ usernameOrEmail: u, password: p })
@@ -87,17 +206,16 @@
     const data = await res.json();
     if (res.ok) {
       localStorage.setItem('kybien_jwt_token', data.token);
-      updateAuthUI();
       location.reload();
     } else {
-      document.getElementById('auth-msg').innerText = data.error || 'Lỗi đăng nhập';
+      document.getElementById('auth-msg-err').innerText = data.error || 'Lỗi đăng nhập';
     }
   }
 
-  async function handleRegister() {
-    const u = document.getElementById('auth-username').value;
-    const p = document.getElementById('auth-password').value;
-    const res = await fetch(`${BACKEND_URL}/api/auth/register`, {
+  async function arenaRegister() {
+    const u = document.getElementById('arena-u').value;
+    const p = document.getElementById('arena-p').value;
+    const res = await fetch(`${BACKEND_RENDER_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: u, email: `${u}@kybien.com`, password: p })
@@ -105,47 +223,73 @@
     const data = await res.json();
     if (res.ok) {
       localStorage.setItem('kybien_jwt_token', data.token);
-      updateAuthUI();
       location.reload();
     } else {
-      document.getElementById('auth-msg').innerText = data.error || 'Lỗi đăng ký';
+      document.getElementById('auth-msg-err').innerText = data.error || 'Lỗi đăng ký';
     }
   }
 
-  function toggleFindMatch() {
-    const token = localStorage.getItem('kybien_jwt_token');
-    if (!token) return alert('Vui lòng đăng nhập!');
+  function onModeChange() {
+    const modeVal = document.getElementById('mode').value;
+    const lvSelect = document.getElementById('lv');
+    const btnStart = document.getElementById('btn-start-game');
 
-    if (!socket) {
-      socket = io(BACKEND_URL, { auth: { token } });
-
-      socket.on('connect', () => {
-        console.log('Đã kết nối Socket tới Server Kỳ Biến!');
-      });
-
-      socket.on('matchmaking_queued', data => {
-        document.getElementById('match-status-msg').innerText = '🔍 ' + data.message;
-      });
-
-      socket.on('match_found', data => {
-        document.getElementById('match-status-msg').innerText = '🎉 Đã tìm thấy đối thủ! Đang vào phòng...';
-        document.getElementById('game-board-area').style.display = 'block';
-        document.getElementById('red-player-info').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
-        document.getElementById('black-player-info').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
-      });
-    }
-
-    if (!isSearching) {
-      isSearching = true;
-      document.getElementById('btn-find-match').innerText = '❌ HỦY TÌM TRẬN';
-      socket.emit('join_matchmaking', {});
+    if (modeVal === '2p_online') {
+      lvSelect.parentNode.style.display = 'none';
+      btnStart.innerText = '⚡ TÌM TRẬN NHANH ONLINE';
+      btnStart.style.background = '#f1c40f';
+      btnStart.style.color = '#8b0000';
+    } else if (modeVal === 'ai') {
+      lvSelect.parentNode.style.display = 'block';
+      btnStart.innerText = 'Khai Cuộc Ván Mới (Vs AI)';
+      btnStart.style.background = '#a83a1f';
+      btnStart.style.color = '#fff';
     } else {
-      isSearching = false;
-      document.getElementById('btn-find-match').innerText = '⚡ TÌM TRẬN NHANH (QUICK MATCH)';
-      document.getElementById('match-status-msg').innerText = '';
-      socket.emit('cancel_matchmaking');
+      lvSelect.parentNode.style.display = 'none';
+      btnStart.innerText = 'Khai Cuộc Ván Mới (Hai Người)';
+      btnStart.style.background = '#a83a1f';
+      btnStart.style.color = '#fff';
     }
   }
 
-  document.addEventListener('DOMContentLoaded', updateAuthUI);
+  function handleStartOrMatch() {
+    const modeVal = document.getElementById('mode').value;
+    if (modeVal === '2p_online') {
+      const token = localStorage.getItem('kybien_jwt_token');
+      if (!token) return alert('Vui lòng đăng nhập tài khoản để đấu 2 Người Online!');
+      
+      if (!socketInstance) {
+        socketInstance = io(BACKEND_RENDER_URL, { auth: { token } });
+
+        socketInstance.on('matchmaking_queued', data => {
+          document.getElementById('st').innerText = '🔍 ' + data.message;
+        });
+
+        socketInstance.on('match_found', data => {
+          document.getElementById('st').innerText = '🎉 Đã tìm thấy đối thủ Online! Vào trận!';
+          document.getElementById('nr').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
+          document.getElementById('nb').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
+          newGame();
+        });
+
+        socketInstance.on('move_made', data => {
+          console.log('Nước đi đối thủ Online:', data);
+        });
+      }
+
+      if (!isOnlineSearching) {
+        isOnlineSearching = true;
+        document.getElementById('btn-start-game').innerText = '❌ HỦY TÌM TRẬN';
+        socketInstance.emit('join_matchmaking', {});
+      } else {
+        isOnlineSearching = false;
+        document.getElementById('btn-start-game').innerText = '⚡ TÌM TRẬN NHANH ONLINE';
+        socketInstance.emit('cancel_matchmaking');
+      }
+    } else {
+      newGame();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', checkArenaAuthStatus);
 </script>
