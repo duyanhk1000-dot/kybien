@@ -12,7 +12,7 @@
   
   <!-- Socket.io & Ky Bien Client Core Scripts -->
   <script src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.0.0'></script>
+  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.1.0'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -26,15 +26,15 @@
     a { color: #e5b36a; text-decoration: none; transition: all 0.2s ease; }
     a:hover { color: #f1c40f; }
 
-    /* ===== HEADER & NAVIGATION ===== */
+    /* ===== HEADER KHÔNG DÍNH (POSITION RELATIVE) ĐỂ KHÔNG CHÊ BÀN CỜ ===== */
     .kybien-navbar {
       background: #8b0000;
       color: #ffffff;
-      padding: 12px 20px;
+      padding: 14px 20px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      position: relative;
+      z-index: 10;
+      margin-bottom: 10px;
     }
     .nav-container {
       max-width: 1200px;
@@ -60,7 +60,7 @@
     /* ===== MAIN LAYOUT TOÀN MÀN HÌNH ===== */
     .main-wrapper {
       max-width: 1200px;
-      margin: 20px auto;
+      margin: 10px auto 30px auto;
       padding: 0 15px;
       display: flex;
       flex-direction: column;
@@ -97,7 +97,6 @@
       cursor: pointer;
     }
 
-    /* Sa truong commentary article */
     .sa-truong-article {
       font-family: 'Merriweather', serif;
       background: #22160c;
@@ -120,7 +119,7 @@
 </head>
 <body>
 
-  <!-- HEADER NAVBAR -->
+  <!-- HEADER NAVBAR CỐ ĐỊNH PHÍA TRÊN, KHÔNG TRÙM LÊN BÀN CỜ -->
   <header class='kybien-navbar'>
     <div class='nav-container'>
       <a class='brand-logo' href='/'>
@@ -138,7 +137,7 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER (100% FULL WIDTH CHO BÀN CỜ LỚN) -->
+  <!-- MAIN CONTAINER -->
   <div class='main-wrapper'>
     <main class='content-area'>
       <b:section id='main' showaddelement='yes'>

@@ -1,6 +1,6 @@
 <!-- 
   SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (TOÀN MÀN HÌNH & TỐI ƯU MOBILE 100%)
-  Ẩn toàn bộ thông tin lập trình. Bàn cờ lớn, phản hồi máy siêu tốc.
+  Header cố định không che khuất bàn cờ. Đầy đủ tính năng Tìm Trận Tự Động & Tạo/Nhập Mã Phòng (KB-XXXX).
 -->
 
 <div id="kybien-arena-app">
@@ -174,7 +174,6 @@
     }
     .legend-box b { color: var(--ac); }
 
-    /* THIẾT LẬP & TÙY CHỌN */
     select, button {
       background: var(--bt);
       border: 1px solid var(--bd);
@@ -199,7 +198,6 @@
     .fg label { display: flex; flex-direction: column; gap: 4px; font-size: .75rem; color: var(--mu); }
     .ck { display: flex; align-items: center; gap: 8px; font-size: .82rem; margin-top: 10px; }
 
-    /* KHAY BÍ PHÁP */
     #tray {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -284,10 +282,10 @@
     </div>
   </div>
 
-  <!-- KHU VỰC BÀN CỜ TO VÀ SIDEBAR TÙY CHỌN -->
+  <!-- BỐ CỤC CHÍNH (BÀN CỜ VÀ SIDEBAR TÙY CHỌN) -->
   <div class="arena-layout">
     
-    <!-- CỘT CHÍNH: BÀN CỜ TO VÀ TRẠNG THÁI -->
+    <!-- CỘT TRÁI: BÀN CỜ TO -->
     <section id="sec-board">
       <div class="pill" id="st">Lượt đi: Đỏ</div>
 
@@ -299,7 +297,6 @@
         <span class="mm"><b id="mb">3</b>/10</span>
       </div>
 
-      <!-- BÀN CỜ CANVAS RỘNG RÃI -->
       <div class="bc" id="bc">
         <canvas id="cv" width="600" height="660"></canvas>
       </div>
@@ -313,14 +310,14 @@
       </div>
 
       <div id="mobile-tray-placeholder"></div>
-      <div id="msg">Chọn Bí Pháp rồi chọn quân để kích hoạt, hoặc trực tiếp xuất chiêu!</div>
+      <div id="msg">Chọn Bí Pháp hoặc xuất chiêu trực tiếp!</div>
       
       <div class="legend-box">
         <b>Ấn ký nhận diện:</b> 🌊 Ngự Ba · 🏯 Xuất Trần · ↩️ Hồi Phong · 👑 Thân Chinh · 💣 Tuyệt Mệnh Cổ (ẩn) · 💫 Trúng Định Thân · viền cam = đang xuất chiêu · 🎒 Túi Kỳ Mưu
       </div>
     </section>
 
-    <!-- CỘT PHỤ: TÙY CHỌN, BÍ PHÁP & NHẬT KÝ CHIẾN TRƯỜNG -->
+    <!-- CỘT PHỤ: TÙY CHỌN & PHÒNG ONLINE -->
     <aside id="sec-aside">
       
       <div class="arena-card">
@@ -367,6 +364,17 @@
           <input type="checkbox" id="tst" onchange="pend=null;ui()" /> Chế độ thử: Miễn phí Công trạng
         </label>
 
+        <!-- KHU VỰC ĐẤU ONLINE CÓ NÚT TẠO / NHẬP MÃ PHÒNG -->
+        <div id="online-room-tools" style="display: none; margin-top: 12px; padding: 10px; background: #20140b; border: 1px solid #4a331f; border-radius: 8px;">
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <button type="button" onclick="createPrivateRoom()" style="flex: 1; background: #27ae60; color: #fff; font-size: 0.8rem;">➕ Tạo Mã Phòng</button>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <input type="text" id="room-code-input" placeholder="Nhập mã (vd: KB-8899)" style="flex: 1; background: #1a110a; border: 1px solid var(--bd); color: #fff; padding: 6px; border-radius: 6px; font-size: 0.8rem;" />
+            <button type="button" onclick="joinPrivateRoom()" style="background: #2980b9; color: #fff; font-size: 0.8rem;">Vào Phòng</button>
+          </div>
+        </div>
+
         <button type="button" class="p" id="btn-action" onclick="handleGameAction()">Khai Cuộc Ván Mới</button>
       </div>
 
@@ -390,7 +398,6 @@
   </div>
 </div>
 
-<!-- ĐỘNG CƠ CỜ TƯỚNG SIÊU TỐC & KHÔNG NGHẼN TRÊN MOBILE/DESKTOP -->
 <script>
 //<![CDATA[
 const SERVER_API_ENDPOINT = 'https://kybien-backend.onrender.com';
@@ -462,49 +469,75 @@ function arenaLogout() {
   checkAuthUI();
 }
 
+function initSocketConnection() {
+  const token = localStorage.getItem('kybien_jwt_token');
+  if (!token) {
+    alert('Vui lòng đăng nhập tài khoản trước khi đấu Online!');
+    return false;
+  }
+  if (!socketInstance) {
+    socketInstance = io(SERVER_API_ENDPOINT, { auth: { token } });
+
+    socketInstance.on('matchmaking_queued', data => {
+      document.getElementById('st').innerText = '🔍 ' + data.message;
+    });
+
+    socketInstance.on('private_room_created', data => {
+      document.getElementById('st').innerText = '🔑 ' + data.message;
+      alert(data.message);
+    });
+
+    socketInstance.on('match_found', data => {
+      document.getElementById('st').innerText = '🎉 Đã kết nối đối thủ! Khai cuộc!';
+      document.getElementById('nr').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
+      document.getElementById('nb').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
+      newGame();
+    });
+
+    socketInstance.on('game_error', data => {
+      alert(data.message);
+    });
+  }
+  return true;
+}
+
 function onModeChange() {
   const modeVal = document.getElementById('mode').value;
   const lblLv = document.getElementById('lbl-lv');
   const btnAction = document.getElementById('btn-action');
+  const roomTools = document.getElementById('online-room-tools');
 
   if (modeVal === '2p_online') {
     lblLv.style.display = 'none';
-    btnAction.innerText = '⚡ GẮN KẾT TÌM TRẬN ONLINE';
+    roomTools.style.display = 'block';
+    btnAction.innerText = '⚡ GẮN KẾT TÌM TRẬN TỰ ĐỘNG';
     btnAction.style.background = '#f1c40f';
     btnAction.style.color = '#8b0000';
-  } else if (modeVal === 'ai') {
-    lblLv.style.display = 'flex';
-    btnAction.innerText = 'Khai Cuộc Ván Mới';
-    btnAction.style.background = 'var(--bp)';
-    btnAction.style.color = '#fff';
   } else {
-    lblLv.style.display = 'none';
-    btnAction.innerText = 'Khai Cuộc Ván Mới (Hai Người)';
+    lblLv.style.display = modeVal === 'ai' ? 'flex' : 'none';
+    roomTools.style.display = 'none';
+    btnAction.innerText = modeVal === 'ai' ? 'Khai Cuộc Ván Mới' : 'Khai Cuộc Ván Mới (Hai Người)';
     btnAction.style.background = 'var(--bp)';
     btnAction.style.color = '#fff';
   }
 }
 
+function createPrivateRoom() {
+  if (!initSocketConnection()) return;
+  socketInstance.emit('create_private_room', {});
+}
+
+function joinPrivateRoom() {
+  const code = document.getElementById('room-code-input').value;
+  if (!code) return alert('Vui lòng nhập mã phòng (vd: KB-8899)');
+  if (!initSocketConnection()) return;
+  socketInstance.emit('join_private_room', { roomCode: code });
+}
+
 function handleGameAction() {
   const modeVal = document.getElementById('mode').value;
   if (modeVal === '2p_online') {
-    const token = localStorage.getItem('kybien_jwt_token');
-    if (!token) return alert('Vui lòng đăng nhập tài khoản trước khi đấu Online!');
-    
-    if (!socketInstance) {
-      socketInstance = io(SERVER_API_ENDPOINT, { auth: { token } });
-
-      socketInstance.on('matchmaking_queued', data => {
-        document.getElementById('st').innerText = '🔍 ' + data.message;
-      });
-
-      socketInstance.on('match_found', data => {
-        document.getElementById('st').innerText = '🎉 Đã kết nối đối thủ! Khai cuộc!';
-        document.getElementById('nr').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
-        document.getElementById('nb').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
-        newGame();
-      });
-    }
+    if (!initSocketConnection()) return;
 
     if (!isMatchSearching) {
       isMatchSearching = true;
@@ -512,7 +545,7 @@ function handleGameAction() {
       socketInstance.emit('join_matchmaking', {});
     } else {
       isMatchSearching = false;
-      document.getElementById('btn-action').innerText = '⚡ GẮN KẾT TÌM TRẬN ONLINE';
+      document.getElementById('btn-action').innerText = '⚡ GẮN KẾT TÌM TRẬN TỰ ĐỘNG';
       socketInstance.emit('cancel_matchmaking');
     }
   } else {
@@ -520,7 +553,7 @@ function handleGameAction() {
   }
 }
 
-/* ---------- ĐỘNG CƠ CỜ TƯỚNG NGUYÊN BẢN KỲ BIẾN ---------- */
+/* ---------- ĐỘNG CƠ CỜ TƯỚNG KỲ BIẾN ---------- */
 const $=id=>document.getElementById(id);
 const SoundSystem=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext||window.webkitAudioContext)();if(a.state==='suspended')a.resume();return a};
 function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
@@ -701,13 +734,12 @@ function endTurn(){
   busy=false;
   ui();draw();
 
-  // NẾU LÀ LƯỢT ĐỐI THỦ TỰ ĐỘNG -> CHẠY NGAY SAU 250MS KHÔNG NGHỄN
   if(!over && ai && turn===aiCol){
     setTimeout(triggerAIMove, 250);
   }
 }
 
-/* THUẬT TOÁN ĐỐI THỦ TỰ ĐỘNG PHẢN HỒI SIÊU TỐC (<100MS) */
+/* THUẬT TOÁN MÁY TỰ ĐỘNG KHÔNG NGHỄN */
 function triggerAIMove(){
   if(over || turn !== aiCol) return;
   busy = true;
@@ -724,7 +756,6 @@ function triggerAIMove(){
       return;
     }
 
-    // Đánh giá nước đi ưu tiên: Ăn quân có giá trị lớn nhất hoặc đi ngẫu nhiên
     moves.sort((a,b) => {
       const vA = B[a[1]][a[2]] ? VAL[B[a[1]][a[2]].t] : 0;
       const vB = B[b[1]][b[2]] ? VAL[B[b[1]][b[2]].t] : 0;
@@ -788,7 +819,6 @@ function draw(){
   }
 }
 
-/* SỰ KIỆN CLICK VÀ CẢM ỨNG MOBILE */
 function onClick(r,c){
   if(over||busy||(ai&&turn!=='r'))return;
   const hit=VM.some(q=>q[0]===r&&q[1]===c);

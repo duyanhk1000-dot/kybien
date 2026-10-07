@@ -20,9 +20,8 @@ export function setupGameSocket(io: Server): void {
 
   io.on('connection', (socket: Socket) => {
     const user = socket.data.user;
-    console.log(`[Socket Connected] User ${user.username} (ID: ${user.userId})`);
 
-    // 1. Tham gia Hàng đợi ghép phòng
+    // 1. Ghép trận tự động
     socket.on('join_matchmaking', (data: { elo?: number; level?: number }) => {
       const elo = data?.elo || 1200;
       const level = data?.level || 1;
@@ -36,17 +35,16 @@ export function setupGameSocket(io: Server): void {
         joinedAt: Date.now(),
       });
 
-      if (result.matched && result.room) {
+      if (result.matched && result.room && result.room.playerBlack) {
         const room = result.room;
+        const playerBlack = result.room.playerBlack;
 
-        // Cho 2 người chơi join socket room
         const socketWhite = io.sockets.sockets.get(room.playerWhite.socketId);
-        const socketBlack = io.sockets.sockets.get(room.playerBlack.socketId);
+        const socketBlack = io.sockets.sockets.get(playerBlack.socketId);
 
         if (socketWhite) socketWhite.join(room.roomId);
         if (socketBlack) socketBlack.join(room.roomId);
 
-        // Phát sự kiện tìm thấy trận cho 2 bên
         io.to(room.roomId).emit('match_found', {
           roomId: room.roomId,
           fen: room.fen,
@@ -58,10 +56,10 @@ export function setupGameSocket(io: Server): void {
             level: room.playerWhite.level,
           },
           playerBlack: {
-            userId: room.playerBlack.userId,
-            username: room.playerBlack.username,
-            elo: room.playerBlack.elo,
-            level: room.playerBlack.level,
+            userId: playerBlack.userId,
+            username: playerBlack.username,
+            elo: playerBlack.elo,
+            level: playerBlack.level,
           },
         });
       } else {
@@ -69,23 +67,89 @@ export function setupGameSocket(io: Server): void {
       }
     });
 
-    // 2. Hủy tìm trận
+    // 2. Tạo phòng riêng theo mã (KB-XXXX)
+    socket.on('create_private_room', (data: { elo?: number; level?: number }) => {
+      const elo = data?.elo || 1200;
+      const level = data?.level || 1;
+
+      const { roomCode, room } = matchmakingManager.createPrivateRoom({
+        socketId: socket.id,
+        userId: user.userId,
+        username: user.username,
+        elo,
+        level,
+        joinedAt: Date.now(),
+      });
+
+      socket.join(room.roomId);
+      socket.emit('private_room_created', {
+        roomCode,
+        message: `Đã tạo phòng riêng thành công! Mã phòng: ${roomCode}`,
+      });
+    });
+
+    // 3. Tham gia phòng riêng theo mã
+    socket.on('join_private_room', (data: { roomCode: string; elo?: number; level?: number }) => {
+      const elo = data?.elo || 1200;
+      const level = data?.level || 1;
+
+      const result = matchmakingManager.joinPrivateRoom(data.roomCode, {
+        socketId: socket.id,
+        userId: user.userId,
+        username: user.username,
+        elo,
+        level,
+        joinedAt: Date.now(),
+      });
+
+      if (!result.success || !result.room || !result.room.playerBlack) {
+        socket.emit('game_error', { message: result.error || 'Không thể tham gia phòng này.' });
+        return;
+      }
+
+      const room = result.room;
+      const playerBlack = result.room.playerBlack;
+      const socketWhite = io.sockets.sockets.get(room.playerWhite.socketId);
+      const socketBlack = io.sockets.sockets.get(playerBlack.socketId);
+
+      if (socketWhite) socketWhite.join(room.roomId);
+      if (socketBlack) socketBlack.join(room.roomId);
+
+      io.to(room.roomId).emit('match_found', {
+        roomId: room.roomId,
+        fen: room.fen,
+        turn: room.turn,
+        playerWhite: {
+          userId: room.playerWhite.userId,
+          username: room.playerWhite.username,
+          elo: room.playerWhite.elo,
+          level: room.playerWhite.level,
+        },
+        playerBlack: {
+          userId: playerBlack.userId,
+          username: playerBlack.username,
+          elo: playerBlack.elo,
+          level: playerBlack.level,
+        },
+      });
+    });
+
+    // 4. Hủy tìm trận
     socket.on('cancel_matchmaking', () => {
       matchmakingManager.removeFromQueue(user.userId);
       socket.emit('matchmaking_cancelled', { message: 'Đã hủy tìm kiếm trận.' });
     });
 
-    // 3. Thực hiện nước đi Cờ Tướng (Move Event)
+    // 5. Nước đi cờ
     socket.on('make_move', async (data: { roomId: string; move: { from: string; to: string }; nextFen: string }) => {
       const { roomId, move, nextFen } = data;
       const room = matchmakingManager.getRoom(roomId);
 
-      if (!room || room.status !== 'PLAYING') {
+      if (!room || room.status !== 'PLAYING' || !room.playerBlack) {
         socket.emit('game_error', { message: 'Phòng đấu không tồn tại hoặc đã kết thúc.' });
         return;
       }
 
-      // Kiểm tra lượt đi đúng người chơi
       const isRedPlayer = socket.id === room.playerWhite.socketId;
       const isBlackPlayer = socket.id === room.playerBlack.socketId;
 
@@ -94,13 +158,11 @@ export function setupGameSocket(io: Server): void {
         return;
       }
 
-      // Cập nhật FEN & Nước cờ
       const moveNotation = `${move.from}-${move.to}`;
       room.moves.push(moveNotation);
       room.fen = nextFen;
       room.turn = room.turn === 'RED' ? 'BLACK' : 'RED';
 
-      // Phát nước đi cho đối thủ trong phòng
       io.to(roomId).emit('move_made', {
         move: data.move,
         nextFen: room.fen,
@@ -109,7 +171,7 @@ export function setupGameSocket(io: Server): void {
       });
     });
 
-    // 4. Kết thúc ván cờ (Báo Chiếu bí / Đầu hàng / Hòa)
+    // 6. Kết thúc ván cờ
     socket.on('game_over', async (data: { roomId: string; winnerId: number | null; reason: string }) => {
       const { roomId, winnerId, reason } = data;
       const finished = await matchmakingManager.finishGame(roomId, winnerId, reason);
@@ -123,9 +185,7 @@ export function setupGameSocket(io: Server): void {
       }
     });
 
-    // 5. Ngắt kết nối
     socket.on('disconnect', () => {
-      console.log(`[Socket Disconnected] User ${user.username}`);
       matchmakingManager.removeFromQueue(user.userId);
     });
   });

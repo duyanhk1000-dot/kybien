@@ -15,12 +15,13 @@ export interface PlayerInQueue {
 
 export interface GameRoom {
   roomId: string;
+  roomCode?: string; // 5-digit private code e.g. KB-8899
   playerWhite: { socketId: string; userId: number; username: string; elo: number; level: number; exp: bigint };
-  playerBlack: { socketId: string; userId: number; username: string; elo: number; level: number; exp: bigint };
+  playerBlack?: { socketId: string; userId: number; username: string; elo: number; level: number; exp: bigint };
   fen: string; // Position state in FEN
   moves: string[]; // List of moves (PGN string format)
   turn: 'RED' | 'BLACK'; // RED = White side in standard Xiangqi notation
-  status: 'PLAYING' | 'FINISHED';
+  status: 'WAITING' | 'PLAYING' | 'FINISHED';
   winnerId?: number | null;
   resultReason?: string;
   createdAt: number;
@@ -29,19 +30,18 @@ export interface GameRoom {
 class MatchmakingManager {
   private queue: PlayerInQueue[] = [];
   private activeRooms: Map<string, GameRoom> = new Map();
+  private privateCodeToRoomId: Map<string, string> = new Map();
 
   // Initial Xiangqi standard board FEN
   public INITIAL_XIANGQI_FEN = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1';
 
   public addToQueue(player: PlayerInQueue): { matched: boolean; room?: GameRoom } {
-    // Remove duplicate entry if exists
     this.removeFromQueue(player.userId);
 
-    // Try finding opponent with +/- 100 Elo or +/- 2 Level (FR-04)
     const now = Date.now();
     const opponentIndex = this.queue.findIndex((p) => {
       const waitTimeSec = (now - p.joinedAt) / 1000;
-      const allowedEloDiff = 100 + Math.floor(waitTimeSec) * 10; // Expand over time if waiting
+      const allowedEloDiff = 100 + Math.floor(waitTimeSec) * 10;
       const eloDiff = Math.abs(p.elo - player.elo);
       const levelDiff = Math.abs(p.level - player.level);
       return eloDiff <= allowedEloDiff || levelDiff <= 2;
@@ -51,7 +51,6 @@ class MatchmakingManager {
       const opponent = this.queue.splice(opponentIndex, 1)[0];
       const roomId = `room_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
-      // Randomize Red (White) / Black assigned side
       const isPlayerRed = Math.random() > 0.5;
       const redPlayer = isPlayerRed ? player : opponent;
       const blackPlayer = isPlayerRed ? opponent : player;
@@ -85,9 +84,68 @@ class MatchmakingManager {
       return { matched: true, room: newRoom };
     }
 
-    // No match found immediately, add to queue
     this.queue.push(player);
     return { matched: false };
+  }
+
+  public createPrivateRoom(player: PlayerInQueue): { roomCode: string; room: GameRoom } {
+    const codeNumber = Math.floor(1000 + Math.random() * 9000);
+    const roomCode = `KB-${codeNumber}`;
+    const roomId = `room_priv_${Date.now()}_${roomCode}`;
+
+    const newRoom: GameRoom = {
+      roomId,
+      roomCode,
+      playerWhite: {
+        socketId: player.socketId,
+        userId: player.userId,
+        username: player.username,
+        elo: player.elo,
+        level: player.level,
+        exp: 0n,
+      },
+      fen: this.INITIAL_XIANGQI_FEN,
+      moves: [],
+      turn: 'RED',
+      status: 'WAITING',
+      createdAt: Date.now(),
+    };
+
+    this.activeRooms.set(roomId, newRoom);
+    this.privateCodeToRoomId.set(roomCode, roomId);
+    return { roomCode, room: newRoom };
+  }
+
+  public joinPrivateRoom(
+    roomCode: string,
+    player: PlayerInQueue
+  ): { success: boolean; error?: string; room?: GameRoom } {
+    const formattedCode = roomCode.trim().toUpperCase();
+    const roomId = this.privateCodeToRoomId.get(formattedCode);
+    if (!roomId) {
+      return { success: false, error: 'Mã phòng không tồn tại hoặc đã hết hạn.' };
+    }
+
+    const room = this.activeRooms.get(roomId);
+    if (!room || room.status !== 'WAITING') {
+      return { success: false, error: 'Phòng đấu đã đầy hoặc ván đấu đã kết thúc.' };
+    }
+
+    if (room.playerWhite.userId === player.userId) {
+      return { success: false, error: 'Bạn đang là chủ phòng này.' };
+    }
+
+    room.playerBlack = {
+      socketId: player.socketId,
+      userId: player.userId,
+      username: player.username,
+      elo: player.elo,
+      level: player.level,
+      exp: 0n,
+    };
+    room.status = 'PLAYING';
+
+    return { success: true, room };
   }
 
   public removeFromQueue(userId: number): void {
@@ -104,13 +162,12 @@ class MatchmakingManager {
     reason: string
   ): Promise<{ room: GameRoom; stats: ReturnType<typeof calculatePostMatchStats> } | null> {
     const room = this.activeRooms.get(roomId);
-    if (!room || room.status === 'FINISHED') return null;
+    if (!room || room.status === 'FINISHED' || !room.playerBlack) return null;
 
     room.status = 'FINISHED';
     room.winnerId = winnerId;
     room.resultReason = reason;
 
-    // Fetch full user records from DB for DB update
     let whiteUser = await prisma.user.findUnique({ where: { id: room.playerWhite.userId } });
     let blackUser = await prisma.user.findUnique({ where: { id: room.playerBlack.userId } });
 
@@ -165,7 +222,6 @@ class MatchmakingManager {
     const isWhiteWinner = winnerId === whiteUser.id;
     const isBlackWinner = winnerId === blackUser.id;
 
-    // Update DB Users in background if connected
     try {
       await prisma.user.update({
         where: { id: whiteUser.id },
@@ -195,7 +251,7 @@ class MatchmakingManager {
         ? 'WHITE_WIN'
         : 'BLACK_WIN';
 
-      const isFeatured = room.moves.length >= 30; // Basic check, full check in Pha 2
+      const isFeatured = room.moves.length >= 30;
 
       await prisma.match.create({
         data: {
@@ -207,7 +263,7 @@ class MatchmakingManager {
         },
       });
     } catch (err) {
-      console.warn('Cảnh báo: Không thể lưu ván cờ vào DB (Môi trường local/chưa kết nối DB):', err);
+      console.warn('Cảnh báo: Không thể lưu ván cờ vào DB:', err);
     }
 
     return { room, stats };
