@@ -7,34 +7,35 @@
   <b:include data='blog' name='all-head-content'/>
   <title><data:blog.pageTitle/></title>
 
-  <!-- Google Fonts: Be Vietnam Pro & Merriweather -->
-  <link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Merriweather:ital,wght@0,400;0,700;1,400&amp;display=swap' rel='stylesheet'/>
+  <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC -->
+  <link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap' rel='stylesheet'/>
   
   <!-- Socket.io & Ky Bien Client Core Scripts -->
   <script src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.1.0'></script>
+  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.2.0'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
-      background-color: #1a120b;
+      background: radial-gradient(circle at 50% 0, #291e14, #0d0906);
       color: #e8dcc6;
       line-height: 1.6;
+      min-height: 100vh;
     }
     a { color: #e5b36a; text-decoration: none; transition: all 0.2s ease; }
     a:hover { color: #f1c40f; }
 
-    /* ===== HEADER KHÔNG DÍNH (POSITION RELATIVE) ĐỂ KHÔNG CHÊ BÀN CỜ ===== */
+    /* ===== NAVBAR ===== */
     .kybien-navbar {
-      background: #8b0000;
+      background: linear-gradient(135deg, #8b0000, #4a0000);
       color: #ffffff;
       padding: 14px 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
       position: relative;
       z-index: 10;
-      margin-bottom: 10px;
+      border-bottom: 2px solid #f1c40f;
     }
     .nav-container {
       max-width: 1200px;
@@ -42,6 +43,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
     }
     .brand-logo {
       font-size: 1.6rem;
@@ -51,75 +54,152 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      font-family: 'Noto Serif TC', serif;
     }
     .brand-logo span { color: #f1c40f; }
     .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
     .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.95rem; }
     .nav-links a:hover { color: #f1c40f; }
 
-    /* ===== MAIN LAYOUT TOÀN MÀN HÌNH ===== */
+    /* ===== MAIN LAYOUT ===== */
     .main-wrapper {
-      max-width: 1200px;
-      margin: 10px auto 30px auto;
+      max-width: 1100px;
+      margin: 20px auto 40px auto;
       padding: 0 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
     }
 
     .content-area {
-      background: #271a10;
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid #5a3d22;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
       width: 100%;
     }
-    .post-title { font-size: 1.8rem; font-weight: 700; color: #f1c40f; margin-bottom: 15px; line-height: 1.3; }
-    
-    /* Replay Viewer Component */
-    .kybien-viewer-container {
-      background: #faf6f0;
-      border: 2px solid #e2d7c5;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-      text-align: center;
+
+    /* SECTION HEADER TITLE */
+    .section-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #5a3d22;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
     }
-    .viewer-controls button {
-      background: #8b0000;
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      margin: 4px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
+    .section-title-bar h2 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.4rem;
+      color: #f1c40f;
+      letter-spacing: 1px;
     }
 
-    .sa-truong-article {
-      font-family: 'Merriweather', serif;
-      background: #22160c;
-      color: #e8dcc6;
-      padding: 20px;
-      border-left: 4px solid #8b0000;
-      border-radius: 4px;
-      margin-top: 25px;
+    /* GRID CÁC THẺ BÀI VIẾT BÌNH VĂN SA TRƯỜNG (TRANG CHỦ) */
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 22px;
     }
 
-    .kybien-auth-buttons .btn-login {
-      background: #f1c40f;
-      color: #8b0000;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: 700;
+    .post-card {
+      background: linear-gradient(145deg, #33251a, #20140b);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .post-card:hover {
+      transform: translateY(-4px);
+      border-color: #f1c40f;
+      box-shadow: 0 8px 25px rgba(241,196,15,0.2);
+    }
+    .post-card-tag {
       display: inline-block;
+      background: #8b0000;
+      color: #f1c40f;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .post-card-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f1c40f;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .post-card-title a { color: #f1c40f; }
+    .post-card-title a:hover { color: #fff; }
+
+    .post-card-snippet {
+      font-size: 0.9rem;
+      color: #a8947d;
+      line-height: 1.6;
+      margin-bottom: 18px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .btn-read-post {
+      background: linear-gradient(135deg, #8b0000, #600000);
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-align: center;
+      display: block;
+      border: 1px solid #a83a1f;
+      box-shadow: 0 3px 10px rgba(139,0,0,0.4);
+    }
+    .btn-read-post:hover {
+      background: linear-gradient(135deg, #a83a1f, #8b0000);
+      color: #f1c40f !important;
+      border-color: #f1c40f;
+    }
+
+    /* CHI TIẾT BÀI VIẾT (SINGLE POST PAGE - ITEM) */
+    .single-post-view {
+      background: linear-gradient(145deg, #33251a, #1f140b);
+      border: 1px solid #5a3d22;
+      border-radius: 14px;
+      padding: 25px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+    .single-post-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f1c40f;
+      margin-bottom: 15px;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .single-post-body {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #e8dcc6;
+    }
+
+    /* FOOTER */
+    footer.kybien-footer {
+      text-align: center;
+      padding: 20px;
+      color: #a8947d;
+      font-size: 0.85rem;
+      border-top: 1px solid #33251a;
+      margin-top: 40px;
     }
   ]]></b:skin>
 </head>
 <body>
 
-  <!-- HEADER NAVBAR CỐ ĐỊNH PHÍA TRÊN, KHÔNG TRÙM LÊN BÀN CỜ -->
+  <!-- HEADER NAVBAR -->
   <header class='kybien-navbar'>
     <div class='nav-container'>
       <a class='brand-logo' href='/'>
@@ -132,7 +212,6 @@
         <li><a href='/search/label/Phân%20Tích%20Cờ'>Bình Văn Sa Trường</a></li>
       </ul>
 
-      <!-- WIDGET HEADER PROFILE AUTOLOADED BY KYBIEN-CLIENT.JS -->
       <div id='kybien-header-profile'></div>
     </div>
   </header>
@@ -143,21 +222,57 @@
       <b:section id='main' showaddelement='yes'>
         <b:widget id='Blog1' locked='true' title='Bài đăng trên Blog' type='Blog'>
           <b:includable id='main'>
-            <b:loop values='data:posts' var='post'>
-              <article class='post-item'>
-                <h1 class='post-title'>
-                  <a expr:href='data:post.url'><data:post.title/></a>
-                </h1>
-                <div class='post-body'>
-                  <data:post.body/>
-                </div>
-              </article>
-            </b:loop>
+            
+            <!-- KIỂM TRA: NẾU LÀ TRANG BÀI VIẾT CHI TIẾT (SINGLE ITEM PAGE) -->
+            <b:if cond='data:blog.pageType == "item"'>
+              <b:loop values='data:posts' var='post'>
+                <article class='single-post-view'>
+                  <h1 class='single-post-title'><data:post.title/></h1>
+                  <div class='single-post-body'>
+                    <data:post.body/>
+                  </div>
+                </article>
+              </b:loop>
+
+            <!-- NẾU LÀ TRANG CHỦ / TRANG DANH SÁCH (HOMEPAGE / LIST) -->
+            <b:else/>
+              <div class='section-title-bar'>
+                <h2>⚔️ DANH SÁCH BÌNH VĂN SA TRƯỜNG &amp; TRẬN HAY</h2>
+                <span><a href='/p/arena.html' style='font-size: 0.9rem; color: #f1c40f;'>+ Đánh Cờ Mới</a></span>
+              </div>
+              <div class='post-grid'>
+                <b:loop values='data:posts' var='post'>
+                  <div class='post-card'>
+                    <div>
+                      <span class='post-card-tag'>⚔️ Trận Hay</span>
+                      <h3 class='post-card-title'>
+                        <a expr:href='data:post.url'><data:post.title/></a>
+                      </h3>
+                      <div class='post-card-snippet'>
+                        <b:if cond='data:post.snippet'>
+                          <data:post.snippet/>
+                        <b:else/>
+                          Nhấp vào bên dưới để xem toàn bộ bài ký sự sa trường kiếm hiệp và bàn cờ xem lại...
+                        </b:if>
+                      </div>
+                    </div>
+                    <a class='btn-read-post' expr:href='data:post.url'>
+                      📖 Đọc Bài Tường Thuật &amp; Xem Ván Cờ ➔
+                    </a>
+                  </div>
+                </b:loop>
+              </div>
+            </b:if>
+
           </b:includable>
         </b:widget>
       </b:section>
     </main>
   </div>
+
+  <footer class='kybien-footer'>
+    <p>© 2026 Nền Tảng Cờ Tướng Kỳ Biến. Tất cả các ván đấu đều được tự động lưu trữ và phân tích bởi Gemini AI.</p>
+  </footer>
 
 </body>
 </html>
