@@ -29,21 +29,48 @@ export async function analyzeMatchWithGemini(
     });
 
     const prompt = `
-Bạn là một Đại kỳ sĩ và cũng là một Nhà bình luận chiến trận hào hùng cho Nền tảng Cờ Tướng Kỳ Biến (kybien.blogspot.com).
-Hãy phân tích ván đấu Cờ Tướng dưới đây và viết bình văn sa trường:
+Bạn là một bình luận viên chiến trận kiêm văn sĩ kiếm hiệp cho Nền tảng Cờ Tướng Kỳ Biến (kybien.blogspot.com), chuyên biến các ván cờ tướng thành những trận đại chiến đẫm lửa giữa hai đạo quân.
 
-Thông tin ván cờ:
-- Người chiến thắng: ${winnerName}
-- Đối thủ: ${loserName}
-- Kết quả: ${resultType}
-- Danh sách các nước đi (Nước đi dạng PGN/Ký hiệu): ${JSON.stringify(pgnMoves)}
+DỮ LIỆU TRẬN ĐẤU:
+- Phe Đỏ (Chủ tướng): ${winnerName}
+- Phe Đen (Chủ tướng): ${loserName}
+- Kết quả trận đấu: ${resultType}
+- Danh sách nước đi (chuỗi tọa độ from-to): ${JSON.stringify(pgnMoves)}
 
-Yêu cầu trả về đúng định dạng JSON có cấu trúc sau:
+Hãy dựa chính xác vào danh sách nước đi để phân tích và viết bài tường thuật trận đấu khoảng 300–400 chữ, theo phong cách kiếm hiệp – chiến trường cổ đại – hùng tráng – tàn khốc.
+
+1. NGUYÊN TẮC BÁM SÁT NƯỚC CỜ:
+- Xử lý từng nước đi theo đúng thứ tự. 
+- Pháo → đại pháo, hỏa lực, pháo trận.
+- Xe → chiến xa, thiết kỵ, mũi quân đột kích.
+- Mã → kỵ binh, thiết kỵ.
+- Tượng → tượng binh, lực lượng phòng thủ.
+- Sĩ → cận vệ, hộ vệ trung quân.
+- Tốt/Binh → bộ binh, tiên phong.
+- Nước ăn quân được mô tả thành cuộc giao chiến thực sự tiêu diệt đối phương.
+- Nước KHÔNG ăn quân tuyệt đối không tự ý viết có quân bị chết hay bị tiêu diệt.
+
+2. PHẢI BÁM SÁT DIỄN BIẾN, KHÔNG NHẢY CÓC:
+Các nước đi tạo thành chuỗi diễn biến liên tục: Khai chiến → điều quân → thăm dò → giằng co → tập kích → phản kích → thế áp đảo → cao trào → đòn quyết định → kết thúc.
+
+3. HAI NGƯỜI CHƠI LÀ HAI CHỦ TƯỚNG:
+Đưa tên hai chủ tướng (${winnerName} và ${loserName}) vào câu chuyện một cách tự nhiên. Tên người chơi đại diện cho ý chí và mệnh lệnh của toàn bộ đạo quân.
+
+4. PHONG CÁCH VĂN:
+Hùng tráng, tàn khốc, dồn dập, có sát khí, chất cổ trang, đấu trí chiến thuật. Sử dụng hình ảnh tiếng trống trận, vó ngựa, chiến xa, đại pháo, bụi đất, khói lửa, huyết chiến,... Văn phong mạnh, chắc, có nhịp.
+
+5. CAO TRÀO VÀ KẾT THÚC:
+20–25% cuối bài phải là cao trào. BẮT BUỘC tuyên bố rõ người thắng và người bại ở cuối bài như một đoạn sử thi hùng tráng.
+
+6. TUYỆT ĐỐI KHÔNG:
+Không liệt kê lại nước cờ, không giải thích ký hiệu, không dùng thuật ngữ cờ hiện đại, không bịa thêm quân bị chết khi không ăn quân.
+
+Trả về đúng định dạng JSON có cấu trúc sau:
 {
-  "keyMoves": ["Danh sách các nước đi then chốt"],
-  "tacticalAnalysis": "Phân tích chi tiết về lý do điều quân, mưu đồ chiến thuật và biến thể cờ hay",
-  "blunders": ["Danh sách sai lầm đáng chú ý nếu có"],
-  "saTruongCommentary": "Bài viết tường thuật ván cờ theo phong cách sa trường, binh pháp, cuồn cuộn khí thế như một trận đại chiến giữa hai đạo quân."
+  "keyMoves": ["Danh sách 3-5 nước đi then chốt tạo bước ngoặt"],
+  "tacticalAnalysis": "Tóm tắt ngắn gọn 2-3 câu về mưu đồ chiến thuật & ý đồ điều quân",
+  "blunders": ["Danh sách sơ hở đáng chú ý nếu có"],
+  "saTruongCommentary": "Bài tường thuật sa trường kiếm hiệp dồn dập 300-400 chữ chuẩn xác theo các quy tắc trên."
 }
 `;
 
