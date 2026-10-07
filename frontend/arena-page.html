@@ -1242,7 +1242,7 @@ function valid(o,r2,c2,customBf){
   const pieceType = o.hd ? o.t : (o.tru || o.t);
 
   switch(pieceType){
-    case'k':return((ar===1&&!ac)||(!ar&&ac===1))&&(pal(r2,c2,red)||(!!p.out||!!p.KING_1)||ext(r2,c2,red));
+    case'k':return((ar===1&&!ac)||(!ar&&ac===1))&&(pal(r2,c2,red)||(!!p.out||!!p.KING_1||!pal(r1,c1,red))||ext(r2,c2,red));
     case'a':return ar===1&&ac===1&&(!!p.leave||!!p.ADVISOR_1||pal(r2,c2,red));
     case'b':if(ar!==2||ac!==2)return false;if(!p.cross&&!p.ELEPHANT_2&&(red?r2<5:r2>4))return false;return bf==='ELEPHANT_1'||!B[r1+dr/2][c1+dc/2];
     case'n':if(ar*ac!==2)return false;return bf==='KNIGHT_1'||!(ar===2?B[r1+dr/2][c1]:B[r1][c1+dc/2]);
@@ -1280,6 +1280,7 @@ function inCheck(col){
   const k=K[col];if(!k||k.dead)return false;
   for(const e of P[opp(col)]){
     if(e.dead||e.st>0)continue;
+    if(B[e.r] && B[e.r][e.c] !== e) continue;
     if(valid(e,k.r,k.c,null)) return true;
   }
   return false;
@@ -1534,6 +1535,20 @@ function updateBagLogic() {
   }
 }
 
+function hasAttackingMaterial(col) {
+  return P[col].some(p => {
+    if (p.dead) return false;
+    if (B[p.r] && B[p.r][p.c] !== p) return false;
+    const type = p.hd ? p.t : (p.tru || p.t);
+    if (type === 'r' || type === 'c' || type === 'n') return true;
+    if (type === 'p') {
+      const red = p.col === 'r';
+      if (red ? p.r > 1 : p.r < 8) return true;
+    }
+    return false;
+  });
+}
+
 function checkGameEnd(currentTurn) {
   const kCurrent = K[currentTurn];
   const kOpp = K[opp(currentTurn)];
@@ -1555,6 +1570,15 @@ function checkGameEnd(currentTurn) {
     return true;
   }
 
+  // TỰ ĐỘNG XỬ HÒA CỜ KHI CẢ HAI BÊN HẾT QUÂN TẤN CÔNG (INSUFFICIENT MATERIAL DRAW)
+  if (!hasAttackingMaterial('r') && !hasAttackingMaterial('b')) {
+    over = true;
+    setGameControlsLocked(false);
+    say(`⚖️ HÒA CỜ! Cả hai bên đều không còn quân tấn công để kết liễu Tướng đối thủ.`, '#a8947d', 'log-sp');
+    showGameOverModal('stalemate', null, currentTurn);
+    return true;
+  }
+
   const moves = allMoves(currentTurn);
   const ck = inCheck(currentTurn);
 
@@ -1567,7 +1591,7 @@ function checkGameEnd(currentTurn) {
       say(`💥 CHIẾU BÍ! ${winner === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} ĐÃ THẮNG BẰNG NƯỚC CHIẾU HẾT!`, '#f1c40f', 'log-sp');
       showGameOverModal('mate', winner, currentTurn);
     } else {
-      say(`⚖️ HÒA CỜ! ${currentTurn === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} Không còn nước đi hợp lệ.`, '#a8947d', 'log-sp');
+      say(`⚖️ HÒA CỜ! ${currentTurn === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} Kín nước đi, không còn nước đi hợp lệ.`, '#a8947d', 'log-sp');
       showGameOverModal('stalemate', null, currentTurn);
     }
     return true;
