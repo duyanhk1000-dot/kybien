@@ -12,32 +12,32 @@
   
   <!-- Socket.io & Ky Bien Client Core Scripts -->
   <script src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=1.0.1'></script>
+  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.0.0'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
-      background-color: #f7f9fc;
-      color: #2c3e50;
+      background-color: #1a120b;
+      color: #e8dcc6;
       line-height: 1.6;
     }
-    a { color: #8b0000; text-decoration: none; transition: all 0.2s ease; }
-    a:hover { color: #c0392b; }
+    a { color: #e5b36a; text-decoration: none; transition: all 0.2s ease; }
+    a:hover { color: #f1c40f; }
 
     /* ===== HEADER & NAVIGATION ===== */
     .kybien-navbar {
       background: #8b0000;
       color: #ffffff;
       padding: 12px 20px;
-      box-shadow: 0 4px 12px rgba(139, 0, 0, 0.15);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
       position: sticky;
       top: 0;
       z-index: 1000;
     }
     .nav-container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -57,19 +57,25 @@
     .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.95rem; }
     .nav-links a:hover { color: #f1c40f; }
 
-    /* ===== MAIN LAYOUT ===== */
+    /* ===== MAIN LAYOUT TOÀN MÀN HÌNH ===== */
     .main-wrapper {
-      max-width: 1100px;
-      margin: 30px auto;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 30px;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    /* ===== POST & ARTICLE STYLES ===== */
-    .content-area { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .post-title { font-size: 1.8rem; font-weight: 700; color: #1a252f; margin-bottom: 15px; line-height: 1.3; }
+    .content-area {
+      background: #271a10;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #5a3d22;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      width: 100%;
+    }
+    .post-title { font-size: 1.8rem; font-weight: 700; color: #f1c40f; margin-bottom: 15px; line-height: 1.3; }
     
     /* Replay Viewer Component */
     .kybien-viewer-container {
@@ -94,17 +100,13 @@
     /* Sa truong commentary article */
     .sa-truong-article {
       font-family: 'Merriweather', serif;
-      background: #fdfaf6;
+      background: #22160c;
+      color: #e8dcc6;
       padding: 20px;
       border-left: 4px solid #8b0000;
       border-radius: 4px;
       margin-top: 25px;
     }
-
-    /* ===== SIDEBAR ===== */
-    .sidebar { display: flex; flex-direction: column; gap: 20px; }
-    .widget-box { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .widget-title { font-size: 1.1rem; font-weight: 700; color: #8b0000; border-bottom: 2px solid #f0e6d2; padding-bottom: 8px; margin-bottom: 15px; }
 
     .kybien-auth-buttons .btn-login {
       background: #f1c40f;
@@ -122,7 +124,7 @@
   <header class='kybien-navbar'>
     <div class='nav-container'>
       <a class='brand-logo' href='/'>
-        ⚔️ KỲ BIỂN <span>CHESS</span>
+        ⚔️ KỲ BIẾN <span>CHESS</span>
       </a>
       
       <ul class='nav-links'>
@@ -136,7 +138,7 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
+  <!-- MAIN CONTAINER (100% FULL WIDTH CHO BÀN CỜ LỚN) -->
   <div class='main-wrapper'>
     <main class='content-area'>
       <b:section id='main' showaddelement='yes'>
@@ -156,26 +158,6 @@
         </b:widget>
       </b:section>
     </main>
-
-    <!-- SIDEBAR -->
-    <aside class='sidebar'>
-      <div class='widget-box'>
-        <h3 class='widget-title'>🏆 Bảng Xếp Hạng Kỳ Thủ</h3>
-        <p style='font-size: 0.9em; color: #666;'>Cập nhật trực tiếp từ Server Render Managed Postgres.</p>
-        <div id='top-elo-leaderboard' style='margin-top: 10px;'>
-          <ol style='padding-left: 20px; font-size: 0.95em;'>
-            <li><strong>Thần Cờ 99</strong> - 1850 Elo</li>
-            <li><strong>Sa Trường Tướng</strong> - 1720 Elo</li>
-            <li><strong>Kỳ Biến Vương</strong> - 1680 Elo</li>
-          </ol>
-        </div>
-      </div>
-
-      <div class='widget-box'>
-        <h3 class='widget-title'>📢 Thông Báo</h3>
-        <p style='font-size: 0.9em;'>Ván cờ có từ 30 nước trở lên sẽ được AI Gemini 2.5 Flash phân tích và đăng ký sự sa trường tự động!</p>
-      </div>
-    </aside>
   </div>
 
 </body>

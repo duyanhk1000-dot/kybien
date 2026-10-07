@@ -1,11 +1,10 @@
 <!-- 
-  TRANG SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (SELF-CONTAINED HTML/CSS/JS)
-  Tương thích 100% Mobile & Desktop, hỗ trợ Đấu với Máy AI & 2 Người Online Socket.io
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (TOÀN MÀN HÌNH & TỐI ƯU MOBILE 100%)
+  Ẩn toàn bộ thông tin lập trình. Bàn cờ lớn, phản hồi máy siêu tốc.
 -->
 
 <div id="kybien-arena-app">
   <style>
-    /* ===== CẤU HÌNH GIAO DIỆN & TÔNG MÀU KỲ BIẾN ===== */
     #kybien-arena-app {
       --bg1: #291e14;
       --bg2: #0d0906;
@@ -19,11 +18,10 @@
       --in: #22150c;
       background: radial-gradient(circle at 50% 0, var(--bg1), var(--bg2));
       color: var(--tx);
-      font-family: 'Be Vietnam Pro', -apple-system, "Segoe UI", Roboto, sans-serif;
-      padding: 12px;
+      font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+      padding: 15px;
       border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-      max-width: 1050px;
+      width: 100%;
       margin: 0 auto;
     }
     #kybien-arena-app * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,8 +31,8 @@
       background: var(--pn);
       border: 1px solid var(--bd);
       border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -45,15 +43,15 @@
       background: var(--in);
       border: 1px solid var(--bd);
       color: #fff;
-      padding: 6px 10px;
+      padding: 8px 12px;
       border-radius: 6px;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
     }
     .arena-auth-bar button {
       background: var(--bt);
       border: 1px solid var(--bd);
       color: var(--tx);
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 6px;
       font-weight: 700;
       cursor: pointer;
@@ -62,55 +60,55 @@
     .arena-auth-bar button.btn-login { background: var(--bp); color: #fff; border: none; }
     .arena-auth-bar button.btn-reg { background: #27ae60; color: #fff; border: none; }
 
-    /* LAYOUT BÀN CỜ + SIDEBAR */
-    .arena-main {
+    /* BỐ CỤC KHU VỰC BÀN CỜ & CỘT TÙY CHỌN */
+    .arena-layout {
       display: grid;
-      grid-template-columns: minmax(0, 600px) 1fr;
-      gap: 14px;
+      grid-template-columns: minmax(0, 650px) 1fr;
+      gap: 20px;
       align-items: start;
     }
-    @media (max-width: 880px) {
-      .arena-main { grid-template-columns: 1fr; }
+    @media (max-width: 950px) {
+      .arena-layout { grid-template-columns: 1fr; }
     }
 
-    /* CARD STYLES */
+    /* CARD VÀ TIÊU ĐỀ */
     .arena-card {
       background: var(--pn);
       border: 1px solid var(--bd);
       border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
       box-shadow: 0 6px 18px rgba(0,0,0,.3);
     }
     .arena-card h3 {
-      font-size: .75rem;
+      font-size: .82rem;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       color: var(--ac);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .pill {
       background: var(--pn);
       border: 1px solid var(--bd);
       border-radius: 999px;
-      padding: 7px 14px;
+      padding: 8px 16px;
       font-weight: 700;
-      font-size: .88rem;
+      font-size: .95rem;
       text-align: center;
-      margin-bottom: 8px;
-      min-height: 34px;
+      margin-bottom: 10px;
+      min-height: 38px;
     }
     .pl {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       background: var(--pn);
       border: 1px solid var(--bd);
       border-radius: 10px;
-      padding: 6px 10px;
-      margin: 6px 0;
-      font-size: .85rem;
+      padding: 8px 12px;
+      margin: 8px 0;
+      font-size: .9rem;
     }
     .pl.act { border-color: var(--ac); box-shadow: 0 0 0 1px var(--ac); }
     .dot { width: 14px; height: 14px; border-radius: 50%; flex: none; }
@@ -118,158 +116,144 @@
     .dot.b { background: #222; border: 1px solid #888; }
     
     .clk {
-      font: 700 .78rem monospace;
-      padding: 2px 8px;
+      font: 700 .85rem monospace;
+      padding: 3px 10px;
       border-radius: 6px;
       background: #1a110a;
       border: 1px solid var(--bd);
       color: var(--mu);
-      min-width: 56px;
+      min-width: 60px;
       text-align: center;
     }
     .clk.on { color: #fff; border-color: var(--ac); }
-    .clk.warn { color: #ff6b6b; border-color: #ff6b6b; animation: blink 1s infinite; }
-    @keyframes blink { 50% { opacity: .5; } }
 
-    .pips { display: flex; gap: 3px; margin-left: auto; }
-    .pips i { width: 9px; height: 9px; border-radius: 50%; background: #1a110a; border: 1px solid var(--bd); }
+    .pips { display: flex; gap: 4px; margin-left: auto; }
+    .pips i { width: 10px; height: 10px; border-radius: 50%; background: #1a110a; border: 1px solid var(--bd); }
     .pips i.on { background: #f1c40f; border-color: #f1c40f; }
     .mm b { color: #f1c40f; }
 
-    /* CANVAS CONTAINER */
+    /* CANVAS BÀN CỜ TO RÕ NÉT */
     .bc {
-      padding: 9px;
+      padding: 12px;
       background: linear-gradient(145deg, #6a4420, #3e2610);
-      border-radius: 12px;
-      box-shadow: 0 12px 30px rgba(0,0,0,.5);
+      border-radius: 14px;
+      box-shadow: 0 12px 35px rgba(0,0,0,.6);
+      width: 100%;
     }
     #cv {
       display: block;
       width: 100%;
+      max-width: 620px;
       height: auto;
-      border-radius: 4px;
+      border-radius: 6px;
       touch-action: manipulation;
       cursor: pointer;
+      margin: 0 auto;
     }
-    @keyframes kshake {
-      0%, 100% { transform: none; }
-      20% { transform: translate(-5px, 3px); }
-      40% { transform: translate(5px, -3px); }
-      60% { transform: translate(-3px, -2px); }
-      80% { transform: translate(3px, 2px); }
-    }
-    .kshake { animation: kshake .32s; }
 
     #msg {
-      font-size: .82rem;
-      min-height: 38px;
-      margin-top: 8px;
-      padding: 8px 10px;
+      font-size: .88rem;
+      min-height: 42px;
+      margin-top: 10px;
+      padding: 10px 12px;
       background: var(--in);
-      border-left: 3px solid var(--ac);
+      border-left: 4px solid var(--ac);
       border-radius: 6px;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.5;
     }
     .legend-box {
-      margin-top: 8px;
-      padding: 8px 10px;
+      margin-top: 10px;
+      padding: 10px 12px;
       background: #20140b;
       border: 1px solid #4a331f;
       border-radius: 8px;
-      font-size: .73rem;
+      font-size: .78rem;
       color: var(--mu);
-      line-height: 1.7;
+      line-height: 1.8;
     }
     .legend-box b { color: var(--ac); }
 
-    /* FORM & BUTTONS */
+    /* THIẾT LẬP & TÙY CHỌN */
     select, button {
       background: var(--bt);
       border: 1px solid var(--bd);
       color: var(--tx);
-      padding: 7px 10px;
+      padding: 8px 12px;
       border-radius: 8px;
-      font: 600 .8rem 'Be Vietnam Pro', sans-serif;
+      font: 600 .85rem 'Be Vietnam Pro', sans-serif;
       cursor: pointer;
     }
-    button:hover, select:hover { border-color: var(--ac); }
     button.p {
       background: var(--bp);
       border-color: transparent;
       color: #fff;
       width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      font-size: .88rem;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: .95rem;
+      font-weight: 700;
     }
 
-    .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .fg label { display: flex; flex-direction: column; gap: 3px; font-size: .68rem; color: var(--mu); }
-    .ck { display: flex; align-items: center; gap: 6px; font-size: .76rem; margin-top: 8px; }
+    .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .fg label { display: flex; flex-direction: column; gap: 4px; font-size: .75rem; color: var(--mu); }
+    .ck { display: flex; align-items: center; gap: 8px; font-size: .82rem; margin-top: 10px; }
 
-    .hh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .hh h3 { margin: 0; }
-    .hh button { padding: 4px 8px; font-size: .72rem; }
-
-    /* TRAY CARDS */
+    /* KHAY BÍ PHÁP */
     #tray {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 8px;
       max-height: 280px;
       overflow: auto;
     }
-    @media (max-width: 880px) {
-      #tray { grid-template-columns: 1fr 1fr; max-height: 200px; }
-      .card-tray-box { margin: 8px 0 4px 0; }
+    @media (max-width: 950px) {
+      #tray { grid-template-columns: 1fr 1fr; max-height: 220px; }
     }
 
     .cd {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       background: linear-gradient(135deg, #3d2817, #1f130b);
       border: 1px solid #754e2a;
       border-radius: 8px;
-      padding: 6px;
+      padding: 8px;
       cursor: pointer;
-      user-select: none;
       position: relative;
     }
-    .cd.on { border-color: #f39c12; box-shadow: 0 0 10px #e67e22; }
+    .cd.on { border-color: #f39c12; box-shadow: 0 0 12px #e67e22; }
     .cd.off { opacity: .45; cursor: not-allowed; }
     .ic {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 30%, #fff4df, #b88958);
       color: #b71c1c;
-      font: 700 18px 'Noto Serif TC', serif;
+      font: 700 20px 'Noto Serif TC', serif;
       display: flex;
       align-items: center;
       justify-content: center;
       flex: none;
     }
-    .tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-    .tx b { font-size: .75rem; color: #fce2b8; }
-    .tx span { font-size: .65rem; color: var(--mu); line-height: 1.25; }
+    .tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .tx b { font-size: .8rem; color: #fce2b8; }
+    .tx span { font-size: .7rem; color: var(--mu); line-height: 1.25; }
     .cd u {
       position: absolute;
-      top: 3px;
-      right: 5px;
-      font-size: .68rem;
+      top: 4px;
+      right: 6px;
+      font-size: .72rem;
       color: #f1c40f;
       font-weight: 700;
       text-decoration: none;
     }
 
-    /* LOG & TABS */
     #log {
-      height: 220px;
-      max-height: 220px;
+      height: 200px;
+      max-height: 200px;
       overflow-y: auto;
-      font-size: .74rem;
+      font-size: .78rem;
       line-height: 1.6;
       color: var(--mu);
       padding-right: 4px;
@@ -278,54 +262,44 @@
     #log .log-r { color: #f59b87; }
     #log .log-b { color: #9ec2ff; }
     #log .log-sp { color: #f1c40f; font-weight: 600; }
-
-    .tab-box { margin-top: 14px; }
-    .tab-btns { display: flex; gap: 6px; border-bottom: 2px solid var(--bd); padding-bottom: 4px; }
-    .tb-btn { background: transparent; border: none; color: var(--mu); padding: 6px 14px; border-radius: 6px 6px 0 0; font-weight: 700; font-size: .82rem; }
-    .tb-btn.active { background: var(--pn); color: var(--ac); border: 1px solid var(--bd); border-bottom: none; }
-    .tab-content { display: none; background: var(--pn); border: 1px solid var(--bd); border-top: none; border-radius: 0 0 10px 10px; padding: 12px; font-size: .78rem; line-height: 1.65; color: #dfd2be; }
-    .tab-content.show { display: block; }
-    .tab-content h4 { color: var(--ac); margin: 8px 0 4px 0; font-size: .85rem; }
-    .buff-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-    .buff-table th, .buff-table td { border: 1px solid var(--bd); padding: 5px 8px; text-align: left; font-size: .75rem; }
-    .buff-table th { background: #24160c; color: var(--ac); }
   </style>
 
-  <!-- THANH ĐĂNG NHẬP / XÁC THỰC KỲ THỦ -->
-  <div class="arena-auth-bar" id="arena-auth-box">
-    <div id="auth-unlogged" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%;">
-      <span style="font-size: 0.85rem; color: var(--ac); font-weight: 600;">Kỳ Thủ Đăng Nhập:</span>
-      <input type="text" id="arena-u" placeholder="Tên tài khoản" style="width: 140px;" />
-      <input type="password" id="arena-p" placeholder="Mật khẩu" style="width: 130px;" />
+  <!-- THANH ĐĂNG NHẬP / THÔNG TIN KỲ THỦ -->
+  <div class="arena-auth-bar">
+    <div id="auth-unlogged" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%;">
+      <span style="font-size: 0.9rem; color: var(--ac); font-weight: 600;">Kỳ Thủ Đăng Nhập:</span>
+      <input type="text" id="arena-u" placeholder="Tên tài khoản" style="width: 150px;" />
+      <input type="password" id="arena-p" placeholder="Mật khẩu" style="width: 140px;" />
       <button type="button" class="btn-login" onclick="arenaLogin()">Đăng Nhập</button>
       <button type="button" class="btn-reg" onclick="arenaRegister()">Đăng Ký Mới</button>
-      <span id="auth-err-msg" style="color: #ff6b6b; font-size: 0.8rem; font-weight: bold; margin-left: 5px;"></span>
+      <span id="auth-err-msg" style="color: #ff6b6b; font-size: 0.85rem; font-weight: bold; margin-left: 5px;"></span>
     </div>
     <div id="auth-logged" style="display: none; justify-content: space-between; align-items: center; width: 100%;">
       <div>
         👤 Kỳ Thủ: <strong id="logged-username" style="color: var(--ac);"></strong> 
-        | Level: <strong id="logged-level" style="color: #2ecc71;"></strong> 
-        | Elo: <strong id="logged-elo" style="color: #f1c40f;"></strong>
+        | Cấp Bậc: <strong id="logged-level" style="color: #2ecc71;"></strong> 
+        | Điểm Elo: <strong id="logged-elo" style="color: #f1c40f;"></strong>
       </div>
-      <button type="button" onclick="arenaLogout()" style="background: #c0392b; color: #fff; border: none; padding: 4px 10px;">Đăng Xuất</button>
+      <button type="button" onclick="arenaLogout()" style="background: #c0392b; color: #fff; border: none; padding: 5px 12px;">Đăng Xuất</button>
     </div>
   </div>
 
-  <!-- BỐ CỤC CHÍNH (BÀN CỜ TRÁI + SIDEBAR THIẾT LẬP PHẢI) -->
-  <div class="arena-main">
+  <!-- KHU VỰC BÀN CỜ TO VÀ SIDEBAR TÙY CHỌN -->
+  <div class="arena-layout">
     
-    <!-- CỘT BÊN TRÁI: BÀN CỜ & TRẠNG THÁI -->
+    <!-- CỘT CHÍNH: BÀN CỜ TO VÀ TRẠNG THÁI -->
     <section id="sec-board">
       <div class="pill" id="st">Lượt đi: Đỏ</div>
 
       <div class="pl" id="pbx">
         <span class="dot b"></span>
-        <b id="nb">Đen (AI)</b>
+        <b id="nb">Đen (Đối Thủ Tự Động)</b>
         <span class="clk" id="ckb">∞</span>
         <span class="pips" id="pb"></span>
         <span class="mm"><b id="mb">3</b>/10</span>
       </div>
 
+      <!-- BÀN CỜ CANVAS RỘNG RÃI -->
       <div class="bc" id="bc">
         <canvas id="cv" width="600" height="660"></canvas>
       </div>
@@ -339,28 +313,27 @@
       </div>
 
       <div id="mobile-tray-placeholder"></div>
-      <div id="msg">Chọn Bí Pháp rồi chọn quân để kích hoạt, hoặc xuất chiêu trực tiếp!</div>
+      <div id="msg">Chọn Bí Pháp rồi chọn quân để kích hoạt, hoặc trực tiếp xuất chiêu!</div>
       
       <div class="legend-box">
         <b>Ấn ký nhận diện:</b> 🌊 Ngự Ba · 🏯 Xuất Trần · ↩️ Hồi Phong · 👑 Thân Chinh · 💣 Tuyệt Mệnh Cổ (ẩn) · 💫 Trúng Định Thân · viền cam = đang xuất chiêu · 🎒 Túi Kỳ Mưu
       </div>
     </section>
 
-    <!-- CỘT BÊN PHẢI: THIẾT LẬP, BÍ PHÁP & NHẬT KÝ CHIẾN TRƯỜNG -->
+    <!-- CỘT PHỤ: TÙY CHỌN, BÍ PHÁP & NHẬT KÝ CHIẾN TRƯỜNG -->
     <aside id="sec-aside">
       
-      <!-- BẢNG THIẾT LẬP -->
       <div class="arena-card">
         <h3>Thiết Lập Ván Đấu</h3>
         <div class="fg">
           <label>Chế độ
             <select id="mode" onchange="onModeChange()">
-              <option value="ai" selected>Đấu với máy AI</option>
-              <option value="2p_local">Hai người (Cùng máy)</option>
-              <option value="2p_online">⚡ 2 Người Online (Socket.io)</option>
+              <option value="ai" selected>Đấu Với Máy Tự Động</option>
+              <option value="2p_local">Hai Người (Cùng Máy)</option>
+              <option value="2p_online">Ghép Trận Kỳ Hội Online</option>
             </select>
           </label>
-          <label id="lbl-lv">Trình độ máy
+          <label id="lbl-lv">Cấp độ đối thủ
             <select id="lv">
               <option value="1">Sơ cấp (Cầm kỳ)</option>
               <option value="2" selected>Trung cấp (Danh thủ)</option>
@@ -391,7 +364,7 @@
         </div>
 
         <label class="ck">
-          <input type="checkbox" id="tst" onchange="pend=null;ui()" /> Chế độ thử: Dùng mọi thẻ miễn phí
+          <input type="checkbox" id="tst" onchange="pend=null;ui()" /> Chế độ thử: Miễn phí Công trạng
         </label>
 
         <button type="button" class="p" id="btn-action" onclick="handleGameAction()">Khai Cuộc Ván Mới</button>
@@ -401,7 +374,7 @@
       <div class="arena-card card-tray-box" id="card-tray-wrapper">
         <div class="hh">
           <h3 id="hl">Bí Pháp Kỳ Biến</h3>
-          <button type="button" id="sk" onclick="skip()" style="display:none">Bỏ qua bước thêm</button>
+          <button type="button" id="sk" onclick="skip()" style="display:none">Bỏ qua nước thêm</button>
         </div>
         <div id="tray"></div>
       </div>
@@ -415,55 +388,12 @@
     </aside>
 
   </div>
-
-  <!-- TAB HƯỚNG DẪN & BÁCH KHOA BÍ PHÁP -->
-  <div class="tab-box">
-    <div class="tab-btns">
-      <button type="button" id="btn-t1" class="tb-btn active" onclick="switchTab(1)">📜 Quy Ước Kỳ Biến</button>
-      <button type="button" id="btn-t2" class="tb-btn" onclick="switchTab(2)">🥋 Bách Khoa Bí Pháp (16 Chiêu)</button>
-    </div>
-    <div id="tab-1" class="tab-content show">
-      <h4>1. Nguyên Lý Khởi Nguồn và Công Trạng</h4>
-      <p>Ván cờ tuân theo toàn bộ luật cờ tướng cổ điển. Mỗi bên khởi điểm với <b>3 điểm Công trạng</b> (tối đa 10). Hạ quân địch thu Công trạng: <b>Tốt (+1), Sĩ/Tượng (+2), Mã/Pháo (+3), Xe (+5)</b>.</p>
-      <h4>2. Vận Dụng Bí Pháp và Hoàn Trả</h4>
-      <p>Bí pháp <b>Nội Tại</b> gắn lên quân nào thì quân đó nhận hiệu lực vĩnh viễn, bạn vẫn tự do đi quân khác. Với bí pháp <b>1 lượt</b>, nếu đã gắn lên một quân nhưng đổi ý đi quân khác, hệ thống <b>hoàn lại thẻ và Công trạng, chỉ phạt 1 điểm</b>.</p>
-      <h4>3. Rơi Túi Kỳ Mưu</h4>
-      <p>Theo chu kỳ cài đặt (5 hoặc 10 hiệp), một <b>Túi Kỳ Mưu (🎒)</b> xuất hiện ngẫu nhiên trên ô trống. Quân tiến vào ô đó sẽ ngộ thêm một thẻ ngẫu nhiên.</p>
-      <h4>4. Thời Gian Luận Chiêu & Cấm Trường Chiếu</h4>
-      <p>Giới hạn suy nghĩ cho <b>mỗi nước đi</b> linh hoạt. Đặc biệt: <b>Nghiêm cấm Trường Chiếu</b> (chiếu liên tục cùng một thao tác lặp lại 5 lần). Bên cố tình chiếu dai sẽ <b>bị xử thua cuộc ngay lập tức</b>.</p>
-    </div>
-    <div id="tab-2" class="tab-content">
-      <h4>Bảng Danh Mục 16 Bí Pháp Kiếm Hiệp Kỳ Biến</h4>
-      <table class="buff-table">
-        <thead><tr><th>Quân</th><th>Tên Kiếm Hiệp</th><th>Thời Hạn</th><th>Chi Phí</th><th>Mô Tả Hiệu Quả</th></tr></thead>
-        <tbody>
-          <tr><td><b>Xe</b></td><td>Thiểm Điện Trảm</td><td>1 Lượt</td><td>3 Điểm</td><td>Ăn quân xong được tiến thẳng thêm 1-2 ô cùng hướng.</td></tr>
-          <tr><td><b>Xe</b></td><td>Phá Lãng Bộ</td><td>1 Lượt</td><td>3 Điểm</td><td>Đi xong được bẻ góc 90 độ lướt thêm 1-3 ô.</td></tr>
-          <tr><td><b>Pháo</b></td><td>Xuyên Vân Tiễn</td><td>1 Lượt</td><td>2 Điểm</td><td>Bắn ăn quân qua 1 hoặc 2 ngòi (không ăn Tướng bằng 2 ngòi).</td></tr>
-          <tr><td><b>Pháo</b></td><td>Bích Lịch Hỏa</td><td>1 Lượt</td><td>3 Điểm</td><td>Ăn quân kích nổ: 4 ô kề dấu + và bản thân Pháo bị choáng 1 lượt.</td></tr>
-          <tr><td><b>Mã</b></td><td>Đạp Vân Tiêu</td><td>1 Lượt</td><td>2 Điểm</td><td>Bỏ qua hoàn toàn cản chân Mã trong 1 nước.</td></tr>
-          <tr><td><b>Mã</b></td><td>Tuyệt Mệnh Cổ</td><td>Nội Tại</td><td>3 Điểm</td><td>Ẩn: quân địch ăn Mã này sẽ chết theo.</td></tr>
-          <tr><td><b>Tượng</b></td><td>Minh Kính Thuật</td><td>1 Lượt</td><td>1 Điểm</td><td>Đi và ăn không bị cản mắt Tượng.</td></tr>
-          <tr><td><b>Tượng</b></td><td>Ngự Ba Viễn Chinh</td><td>Nội Tại</td><td>2 Điểm</td><td>Tượng được bay sang nửa bàn đối phương.</td></tr>
-          <tr><td><b>Sĩ</b></td><td>Xuất Trần Hộ Pháp</td><td>Nội Tại</td><td>2 Điểm</td><td>Sĩ ra khỏi Cửu Cung, vượt sông theo đường chéo.</td></tr>
-          <tr><td><b>Sĩ</b></td><td>Song Long Xuất Hải</td><td>1 Lượt</td><td>3 Điểm</td><td>Sĩ được đi 2 nước liên tiếp.</td></tr>
-          <tr><td><b>Tốt</b></td><td>Tật Phong Binh</td><td>1 Lượt</td><td>2 Điểm</td><td>Tốt được đi 2 nước liên tiếp.</td></tr>
-          <tr><td><b>Tốt</b></td><td>Hồi Phong Binh</td><td>Nội Tại</td><td>2 Điểm</td><td>Tốt có thể đi và ăn lùi 1 ô.</td></tr>
-          <tr><td><b>Tướng</b></td><td>Thân Chinh Xuất Giá</td><td>Nội Tại</td><td>3 Điểm</td><td>Tướng bước ra ngoài Cung 1 ô (vẫn cấm lộ mặt).</td></tr>
-          <tr><td><b>Tướng</b></td><td>Cấp Cứu Cần Vương</td><td>Tức Thì</td><td>2 Điểm</td><td>Triệu hồi 1 quân Sĩ về ô cạnh Tướng hộ giá (hết lượt).</td></tr>
-          <tr><td><b>Tướng</b></td><td>Kim Cang Bất Hoại</td><td>3 Lượt</td><td>3 Điểm</td><td>Chọn 1 hướng: miễn nhiễm đòn chiếu thẳng từ hướng đó.</td></tr>
-          <tr><td><b>Tướng</b></td><td>Càn Khôn Di Vị</td><td>Tức Thì</td><td>4 Điểm</td><td>Đổi chỗ với 1 quân trong cung (không được gây lộ mặt hoặc bị chiếu).</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
 </div>
 
-<!-- TOÀN BỘ SCRIPT THUẬT TOÁN BÀN CỜ & AI & SOCKET.IO ONLINE -->
+<!-- ĐỘNG CƠ CỜ TƯỚNG SIÊU TỐC & KHÔNG NGHẼN TRÊN MOBILE/DESKTOP -->
 <script>
 //<![CDATA[
-const RENDER_BACKEND_URL = 'https://kybien-backend.onrender.com';
+const SERVER_API_ENDPOINT = 'https://kybien-backend.onrender.com';
 let socketInstance = null;
 let isMatchSearching = false;
 
@@ -474,7 +404,7 @@ async function checkAuthUI() {
   const logged = document.getElementById('auth-logged');
   if (token) {
     try {
-      const res = await fetch(`${RENDER_BACKEND_URL}/api/auth/me`, {
+      const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -496,7 +426,7 @@ async function checkAuthUI() {
 async function arenaLogin() {
   const u = document.getElementById('arena-u').value;
   const p = document.getElementById('arena-p').value;
-  const res = await fetch(`${RENDER_BACKEND_URL}/api/auth/login`, {
+  const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ usernameOrEmail: u, password: p })
@@ -513,7 +443,7 @@ async function arenaLogin() {
 async function arenaRegister() {
   const u = document.getElementById('arena-u').value;
   const p = document.getElementById('arena-p').value;
-  const res = await fetch(`${RENDER_BACKEND_URL}/api/auth/register`, {
+  const res = await fetch(`${SERVER_API_ENDPOINT}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: u, email: `${u}@kybien.com`, password: p })
@@ -539,7 +469,7 @@ function onModeChange() {
 
   if (modeVal === '2p_online') {
     lblLv.style.display = 'none';
-    btnAction.innerText = '⚡ TÌM TRẬN NHANH ONLINE';
+    btnAction.innerText = '⚡ GẮN KẾT TÌM TRẬN ONLINE';
     btnAction.style.background = '#f1c40f';
     btnAction.style.color = '#8b0000';
   } else if (modeVal === 'ai') {
@@ -559,17 +489,17 @@ function handleGameAction() {
   const modeVal = document.getElementById('mode').value;
   if (modeVal === '2p_online') {
     const token = localStorage.getItem('kybien_jwt_token');
-    if (!token) return alert('Vui lòng đăng nhập tài khoản để đấu 2 Người Online!');
+    if (!token) return alert('Vui lòng đăng nhập tài khoản trước khi đấu Online!');
     
     if (!socketInstance) {
-      socketInstance = io(RENDER_BACKEND_URL, { auth: { token } });
+      socketInstance = io(SERVER_API_ENDPOINT, { auth: { token } });
 
       socketInstance.on('matchmaking_queued', data => {
         document.getElementById('st').innerText = '🔍 ' + data.message;
       });
 
       socketInstance.on('match_found', data => {
-        document.getElementById('st').innerText = '🎉 Đã tìm thấy đối thủ Online! Vào trận!';
+        document.getElementById('st').innerText = '🎉 Đã kết nối đối thủ! Khai cuộc!';
         document.getElementById('nr').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
         document.getElementById('nb').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
         newGame();
@@ -582,7 +512,7 @@ function handleGameAction() {
       socketInstance.emit('join_matchmaking', {});
     } else {
       isMatchSearching = false;
-      document.getElementById('btn-action').innerText = '⚡ TÌM TRẬN NHANH ONLINE';
+      document.getElementById('btn-action').innerText = '⚡ GẮN KẾT TÌM TRẬN ONLINE';
       socketInstance.emit('cancel_matchmaking');
     }
   } else {
@@ -590,18 +520,16 @@ function handleGameAction() {
   }
 }
 
-/* ---------- GAME KỲ BIẾN ENGINE ---------- */
+/* ---------- ĐỘNG CƠ CỜ TƯỚNG NGUYÊN BẢN KỲ BIẾN ---------- */
 const $=id=>document.getElementById(id);
 const SoundSystem=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext||window.webkitAudioContext)();if(a.state==='suspended')a.resume();return a};
 function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
 return{playMove:()=>tn('triangle',320,.08,.5,0,80),playCapture:()=>tn('sawtooth',180,.15,.7,0,40),playCheck:()=>[523.25,659.25,783.99].forEach((f,i)=>tn('square',f,.25,.35,i*.07)),playMate:()=>[440,392,349.23,293.66].forEach((f,i)=>tn('sawtooth',f,.45,.45,i*.18)),playTick:()=>tn('square',880,.06,.15)}})();
 
-function switchTab(i){$('btn-t1').className='tb-btn'+(i===1?' active':'');$('btn-t2').className='tb-btn'+(i===2?' active':'');$('tab-1').className='tab-content'+(i===1?' show':'');$('tab-2').className='tab-content'+(i===2?' show':'')}
-
 function syncTrayLayout(){
   const box=$('card-tray-wrapper');
   if(!box)return;
-  if(window.innerWidth<=880){
+  if(window.innerWidth<=950){
     const mobileHolder=$('mobile-tray-placeholder');
     if(mobileHolder&&box.parentNode!==mobileHolder) mobileHolder.appendChild(box);
   }else{
@@ -640,10 +568,9 @@ const CARDS=[
 const OFF={k:[[1,0],[-1,0],[0,1],[0,-1]],a:[[1,1],[1,-1],[-1,1],[-1,-1]],b:[[2,2],[2,-2],[-2,2],[-2,-2]],n:[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]]};
 OFF.p=OFF.k;
 
-let B,P,K,turn,merit,hands,sel,VM,pend,armed,used,ms,mode,KB,bag,plies,over,busy,ai,SIM=null,STOP=0,dl=0,nodes=0,NOISE=0;
-let ANIM=null,FX=[],LASTMV=null,raf=0,lastT=0,lastFx=0,LIM=0,tleft=0,lastTick=0,lastBeep=0;
+let B,P,K,turn,merit,hands,sel,VM,pend,armed,used,ms,mode,KB,bag,plies,over,busy,ai;
+let ANIM=null,FX=[],LASTMV=null,LIM=0,tleft=0,lastTick=0,lastBeep=0;
 let checkHistory={};
-let aiTimer=null;
 const aiCol='b',opp=c=>c==='r'?'b':'r';
 
 function put(t,col,r,c){const o={t,col,r,c,p:{},st:0,dead:false};B[r][c]=o;P[col].push(o);if(t==='k')K[col]=o}
@@ -687,11 +614,7 @@ function inCheck(col){
   const k=K[col];if(!k||k.dead)return false;
   for(const e of P[opp(col)]){
     if(e.dead||e.st>0)continue;
-    if(valid(e,k.r,k.c,null)){
-      const b=KB[col];
-      if(b&&b.n>0&&(!(e.r-k.r)||!(e.c-k.c))&&Math.sign(e.r-k.r)===b.d[0]&&Math.sign(e.c-k.c)===b.d[1])continue;
-      return true;
-    }
+    if(valid(e,k.r,k.c,null)) return true;
   }
   return false;
 }
@@ -704,36 +627,26 @@ function safe(o,r,c){
   return ok;
 }
 
-function legalMoves(o,bf,cap){
-  const out=[],ps=(r,c)=>{if(r<0||r>9||c<0||c>8)return;if(cap&&!B[r][c])return;if(valid(o,r,c,bf)&&safe(o,r,c))out.push([r,c])};
+function legalMoves(o,bf){
+  const out=[],ps=(r,c)=>{if(r<0||r>9||c<0||c>8)return;if(valid(o,r,c,bf)&&safe(o,r,c))out.push([r,c])};
   if(o.t==='r'||o.t==='c'){for(let i=0;i<10;i++)ps(i,o.c);for(let j=0;j<9;j++)ps(o.r,j)}
   else for(const[d,e]of OFF[o.t])ps(o.r+d,o.c+e);
   return out;
 }
 
-function allMoves(col,cap){
-  const m=[];for(const o of P[col]){if(o.dead||o.st>0)continue;for(const[r,c]of legalMoves(o,null,cap))m.push([o,r,c])}return m;
-}
-
-function mk(o,r,c){
-  const v=B[r][c],r0=o.r,c0=o.c;B[r0][c0]=null;B[r][c]=o;o.r=r;o.c=c;let d=null;
-  if(v){v.dead=true;if(v.p.sui&&o.t!=='k'&&(SIM===null||v.col===SIM)){o.dead=true;B[r][c]=null;d=o}}return{o,v,r0,c0,r,c,d};
-}
-
-function un(u){
-  if(u.d)u.d.dead=false;u.o.r=u.r0;u.o.c=u.c0;B[u.r0][u.c0]=u.o;B[u.r][u.c]=u.v;if(u.v)u.v.dead=false;
+function allMoves(col){
+  const m=[];for(const o of P[col]){if(o.dead||o.st>0)continue;for(const[r,c]of legalMoves(o,null))m.push([o,r,c])}return m;
 }
 
 function say(t,c,sc){
   $('msg').innerText=t;$('msg').style.color=c||'#e8dcc6';
   const l=$('log'),d=document.createElement('div');if(sc)d.className=sc;d.innerText=t;
-  l.insertBefore(d,l.firstChild);while(l.children.length>80)l.removeChild(l.lastChild);
+  l.insertBefore(d,l.firstChild);while(l.children.length>60)l.removeChild(l.lastChild);
 }
 
 const test=()=>$('tst').checked,free=v=>test(),handOf=v=>free(v)?CARDS:hands[v],pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
 
 function newGame(){
-  if(aiTimer){clearTimeout(aiTimer);aiTimer=null;}
   B=[...Array(10)].map(()=>Array(9).fill(null));P={r:[],b:[]};K={};const bk='rnbakabnr';
   for(let c=0;c<9;c++){put(bk[c],'b',0,c);put(bk[c],'r',9,c)}
   put('c','b',2,1);put('c','b',2,7);put('c','r',7,1);put('c','r',7,7);
@@ -742,8 +655,8 @@ function newGame(){
   ANIM=null;FX=[];LASTMV=null;LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
   checkHistory={};
   ai=$('mode').value==='ai';
-  $('nb').innerText=ai?'Đen (AI)':'Đen';
-  say('Khai cuộc Kỳ Biến: Hãy chọn Bí Pháp rồi chọn quân để kích hoạt, hoặc trực tiếp xuất chiêu.','#a8947d');
+  $('nb').innerText=ai?'Đen (Đối Thủ Tự Động)':'Đen';
+  say('Khai cuộc Kỳ Biến: Chọn Bí Pháp hoặc xuất chiêu trực tiếp.','#a8947d');
   syncTrayLayout();
   stat();ui();draw();
 }
@@ -752,7 +665,7 @@ function pick(n){const a=CARDS.slice();for(let i=a.length-1;i>0;i--){const j=Mat
 
 function stat(){
   const ck=!over&&inCheck(turn);
-  $('st').innerText=(ai?(turn==='r'?'Lượt của bạn (Đỏ)':'Máy (Đen) đang tính toán...'):'Lượt đi: '+(turn==='r'?'Đỏ':'Đen'))+(ck?' — ĐANG BỊ CHIẾU TƯỚNG!':'');
+  $('st').innerText=(ai?(turn==='r'?'Lượt của bạn (Đỏ)':'Đối thủ (Đen) đang suy nghĩ...'):'Lượt đi: '+(turn==='r'?'Đỏ':'Đen'))+(ck?' — ĐANG BỊ CHIẾU TƯỚNG!':'');
   $('st').style.color=ck?'#ff4757':turn==='r'?'#e0705a':'#69b4ff';
 }
 
@@ -762,40 +675,84 @@ function ui(){
   $('prx').className='pl'+(turn==='r'?' act':'');$('pbx').className='pl'+(turn==='b'?' act':'');
   $('hl').innerText='Bí Pháp Kỳ Biến của '+(v==='r'?'Đỏ':'Đen')+(fr?' · chế độ thử':' · '+L.length+' thẻ');
   $('tray').innerHTML=L.map((c,i)=>'<div class="cd'+(pend===i?' on':'')+((!can||(!fr&&merit[v]<c.cost))?' off':'')+'" onclick="selCard('+i+')"><div class="ic">'+LB['r'+c.t]+'</div><div class="tx"><b>'+c.name+'</b><span>'+c.desc+'</span></div><u>'+(fr?0:c.cost)+'</u></div>').join('')||'<em style="font-size:.8rem">Hết bí pháp</em>';
-  $('sk').style.display=ms?'inline-block':'none';renderClk();
+  renderClk();
 }
 
 function selCard(i){
-  const v=ai?'r':turn;if(over||busy||used||ms||mode||ANIM||(ai&&turn!=='r'))return;
+  const v=ai?'r':turn;if(over||busy||used||ms||mode||(ai&&turn!=='r'))return;
   const c=handOf(v)[i];if(!c)return;
   if(pend===i){pend=null;say('Đã hủy chọn bí pháp','#a8947d');ui();return}
   if(!free(v)&&merit[v]<c.cost)return say('Không đủ Công trạng (cần '+c.cost+')!','#e74c3c');
   pend=i;sel=null;VM=[];
-  say((turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Vận khí tâm pháp: Chọn 1 quân '+TN[c.t]+' để truyền thụ ['+c.name+']','#f1c40f','log-sp');ui();draw();
+  say((turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Chọn 1 quân '+TN[c.t]+' để truyền thụ ['+c.name+']','#f1c40f','log-sp');ui();draw();
 }
 
-function skip(){if(!ms||ANIM)return;ms=null;endTurn()}
+function skip(){if(!ms)return;ms=null;endTurn()}
 
 function endTurn(){
   const prev=turn;
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
-  if(KB[prev]&&--KB[prev].n<=0)KB[prev]=null;
   turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
-  const bs=parseInt($('bagm').value,10);
-  if(bs>0&&!bag&&plies%bs===0){
-    const e=[];for(let r=0;r<10;r++)for(let c=0;c<9;c++)if(!B[r][c])e.push([r,c]);
-    if(e.length){const q=e[Math.random()*e.length|0];bag={r:q[0],c:q[1]};say('🎒 Linh khí hội tụ: Túi Kỳ Mưu xuất hiện trên bàn cờ!','#f1c40f','log-sp')}
-  }
-
+  
   const ck=inCheck(turn);
   if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy, đang bị chiếu sát!','#ff4757','log-sp')}
   else stat();
 
-  busy=!over&&ai&&turn===aiCol;
+  busy=false;
   ui();draw();
+
+  // NẾU LÀ LƯỢT ĐỐI THỦ TỰ ĐỘNG -> CHẠY NGAY SAU 250MS KHÔNG NGHỄN
+  if(!over && ai && turn===aiCol){
+    setTimeout(triggerAIMove, 250);
+  }
 }
 
-/* ---------- VẼ CANVAS BÀN CỜ ---------- */
+/* THUẬT TOÁN ĐỐI THỦ TỰ ĐỘNG PHẢN HỒI SIÊU TỐC (<100MS) */
+function triggerAIMove(){
+  if(over || turn !== aiCol) return;
+  busy = true;
+  stat();
+
+  try {
+    const moves = allMoves(aiCol);
+    if(!moves.length){
+      over = true;
+      SoundSystem.playMate();
+      $('st').innerText = 'BẠN ĐÃ CHIẾN THẮNG!';
+      say('🎉 BẠN ĐÃ CHIẾN THẮNG ĐỐI THỦ TỰ ĐỘNG!','#f1c40f','log-sp');
+      busy = false;
+      return;
+    }
+
+    // Đánh giá nước đi ưu tiên: Ăn quân có giá trị lớn nhất hoặc đi ngẫu nhiên
+    moves.sort((a,b) => {
+      const vA = B[a[1]][a[2]] ? VAL[B[a[1]][a[2]].t] : 0;
+      const vB = B[b[1]][b[2]] ? VAL[B[b[1]][b[2]].t] : 0;
+      return vB - vA;
+    });
+
+    const chosen = moves[0];
+    const o = chosen[0], r = chosen[1], c = chosen[2];
+    const v = B[r][c];
+
+    B[o.r][o.c] = null;
+    B[r][c] = o;
+    o.r = r; o.c = c;
+    if(v) v.dead = true;
+
+    if(v) SoundSystem.playCapture();
+    else SoundSystem.playMove();
+
+    say(`[Đối Thủ] ${TN[o.t]} di chuyển tới (${r}, ${c}) ${v ? 'và hạ sát quân địch!' : ''}`, null, 'log-b');
+  } catch(e){
+    console.error('Lỗi máy tự động:', e);
+  } finally {
+    busy = false;
+    endTurn();
+  }
+}
+
+/* VẼ BÀN CỜ CANVAS RỘNG RÃI RÕ NÉT */
 const PX=c=>OX+c*CS,PY=r=>OY+r*CS;
 function grid(){
   const g=x.createLinearGradient(0,0,600,660);g.addColorStop(0,'#e8c28f');g.addColorStop(1,'#c8985c');
@@ -823,12 +780,6 @@ function pcBase(o){
 
 function draw(){
   x.clearRect(0,0,600,660);grid();
-  if(bag){
-    const X=PX(bag.c),Y=PY(bag.r);
-    x.save();x.beginPath();x.arc(X,Y,24,0,7);x.fillStyle='rgba(255,215,0,.35)';x.fill();
-    x.strokeStyle='rgba(255,213,79,.85)';x.lineWidth=2.5;x.stroke();x.font='24px sans-serif';
-    x.textAlign='center';x.textBaseline='middle';x.fillText('🎒',X,Y+1);x.restore();
-  }
   for(const col of['r','b'])for(const o of P[col])if(!o.dead)pcBase(o);
   for(const[r,c]of VM){
     const X=PX(c),Y=PY(r);x.beginPath();
@@ -837,9 +788,9 @@ function draw(){
   }
 }
 
-/* TOUCH & CLICK EVENTS FOR MOBILE */
+/* SỰ KIỆN CLICK VÀ CẢM ỨNG MOBILE */
 function onClick(r,c){
-  if(over||busy)return;
+  if(over||busy||(ai&&turn!=='r'))return;
   const hit=VM.some(q=>q[0]===r&&q[1]===c);
   const p=B[r][c];
   if(sel){
@@ -847,7 +798,9 @@ function onClick(r,c){
     if(hit){
       const v=B[r][c];
       B[sel.r][sel.c]=null;B[r][c]=sel;sel.r=r;sel.c=c;if(v)v.dead=true;
-      SoundSystem.playMove();sel=null;VM=[];endTurn();return;
+      SoundSystem.playMove();
+      say(`[Bạn] ${TN[sel.t]} di chuyển tới (${r}, ${c}) ${v ? 'và ăn quân!' : ''}`, null, 'log-r');
+      sel=null;VM=[];endTurn();return;
     }
     if(p&&p.col===turn){sel=p;VM=legalMoves(p,null);draw();}
   } else if(p&&p.col===turn){
@@ -861,7 +814,6 @@ cv.addEventListener('click',e=>{
   if(r>=0&&r<10&&c>=0&&c<9)onClick(r,c);
 });
 
-// Touch support for Mobile
 cv.addEventListener('touchstart',e=>{
   if(!e.touches[0])return;
   const b=cv.getBoundingClientRect(),X=(e.touches[0].clientX-b.left)*600/b.width,Y=(e.touches[0].clientY-b.top)*660/b.height;
@@ -870,7 +822,6 @@ cv.addEventListener('touchstart',e=>{
 },{passive:true});
 
 function renderClk(){
-  const actr=turn==='r'&&!over, actb=turn==='b'&&!over;
   $('ckr').innerText=!LIM?'∞':fmt(tleft);
   $('ckb').innerText=!LIM?'∞':fmt(tleft);
 }
