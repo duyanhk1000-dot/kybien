@@ -1,6 +1,5 @@
 <!-- 
-  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (TOÀN MÀN HÌNH & TỐI ƯU MOBILE 100%)
-  Header cố định không che khuất bàn cờ. Đầy đủ tính năng Tìm Trận Tự Động & Tạo/Nhập Mã Phòng (KB-XXXX).
+  SẢNH ĐẤU CỜ TƯỚNG KỲ BIẾN (FULL ONLINE SOCKET.IO REALTIME SYNC)
 -->
 
 <div id="kybien-arena-app">
@@ -60,7 +59,6 @@
     .arena-auth-bar button.btn-login { background: var(--bp); color: #fff; border: none; }
     .arena-auth-bar button.btn-reg { background: #27ae60; color: #fff; border: none; }
 
-    /* BỐ CỤC KHU VỰC BÀN CỜ & CỘT TÙY CHỌN */
     .arena-layout {
       display: grid;
       grid-template-columns: minmax(0, 650px) 1fr;
@@ -71,7 +69,6 @@
       .arena-layout { grid-template-columns: 1fr; }
     }
 
-    /* CARD VÀ TIÊU ĐỀ */
     .arena-card {
       background: var(--pn);
       border: 1px solid var(--bd);
@@ -132,7 +129,6 @@
     .pips i.on { background: #f1c40f; border-color: #f1c40f; }
     .mm b { color: #f1c40f; }
 
-    /* CANVAS BÀN CỜ TO RÕ NÉT */
     .bc {
       padding: 12px;
       background: linear-gradient(145deg, #6a4420, #3e2610);
@@ -262,7 +258,7 @@
     #log .log-sp { color: #f1c40f; font-weight: 600; }
   </style>
 
-  <!-- THANH ĐĂNG NHẬP / THÔNG TIN KỲ THỦ -->
+  <!-- THANH ĐĂNG NHẬP -->
   <div class="arena-auth-bar">
     <div id="auth-unlogged" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%;">
       <span style="font-size: 0.9rem; color: var(--ac); font-weight: 600;">Kỳ Thủ Đăng Nhập:</span>
@@ -282,10 +278,9 @@
     </div>
   </div>
 
-  <!-- BỐ CỤC CHÍNH (BÀN CỜ VÀ SIDEBAR TÙY CHỌN) -->
+  <!-- LAYOUT KHU VỰC BÀN CỜ -->
   <div class="arena-layout">
     
-    <!-- CỘT TRÁI: BÀN CỜ TO -->
     <section id="sec-board">
       <div class="pill" id="st">Lượt đi: Đỏ</div>
 
@@ -317,7 +312,6 @@
       </div>
     </section>
 
-    <!-- CỘT PHỤ: TÙY CHỌN & PHÒNG ONLINE -->
     <aside id="sec-aside">
       
       <div class="arena-card">
@@ -364,7 +358,7 @@
           <input type="checkbox" id="tst" onchange="pend=null;ui()" /> Chế độ thử: Miễn phí Công trạng
         </label>
 
-        <!-- KHU VỰC ĐẤU ONLINE CÓ NÚT TẠO / NHẬP MÃ PHÒNG -->
+        <!-- ONLINE ROOM TOOLS -->
         <div id="online-room-tools" style="display: none; margin-top: 12px; padding: 10px; background: #20140b; border: 1px solid #4a331f; border-radius: 8px;">
           <div style="display: flex; gap: 8px; margin-bottom: 8px;">
             <button type="button" onclick="createPrivateRoom()" style="flex: 1; background: #27ae60; color: #fff; font-size: 0.8rem;">➕ Tạo Mã Phòng</button>
@@ -378,7 +372,6 @@
         <button type="button" class="p" id="btn-action" onclick="handleGameAction()">Khai Cuộc Ván Mới</button>
       </div>
 
-      <!-- KHAY BÍ PHÁP KỲ BIẾN -->
       <div class="arena-card card-tray-box" id="card-tray-wrapper">
         <div class="hh">
           <h3 id="hl">Bí Pháp Kỳ Biến</h3>
@@ -387,7 +380,6 @@
         <div id="tray"></div>
       </div>
 
-      <!-- NHẬT KÝ CHIẾN TRƯỜNG -->
       <div class="arena-card">
         <h3>Nhật Ký Chiến Trường</h3>
         <div id="log"></div>
@@ -403,6 +395,10 @@
 const SERVER_API_ENDPOINT = 'https://kybien-backend.onrender.com';
 let socketInstance = null;
 let isMatchSearching = false;
+let isOnlineMatch = false;
+let currentRoomId = null;
+let myOnlineSide = 'r'; // 'r' = Red, 'b' = Black
+let currentUser = null;
 
 /* ---------- AUTH UTILS ---------- */
 async function checkAuthUI() {
@@ -415,10 +411,10 @@ async function checkAuthUI() {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
-        const user = await res.json();
-        document.getElementById('logged-username').innerText = user.username;
-        document.getElementById('logged-level').innerText = user.level;
-        document.getElementById('logged-elo').innerText = user.elo;
+        currentUser = await res.json();
+        document.getElementById('logged-username').innerText = currentUser.username;
+        document.getElementById('logged-level').innerText = currentUser.level;
+        document.getElementById('logged-elo').innerText = currentUser.elo;
         if (unlogged) unlogged.style.display = 'none';
         if (logged) logged.style.display = 'flex';
         return;
@@ -426,6 +422,7 @@ async function checkAuthUI() {
     } catch(e){}
     localStorage.removeItem('kybien_jwt_token');
   }
+  currentUser = null;
   if (unlogged) unlogged.style.display = 'flex';
   if (logged) logged.style.display = 'none';
 }
@@ -488,10 +485,39 @@ function initSocketConnection() {
     });
 
     socketInstance.on('match_found', data => {
-      document.getElementById('st').innerText = '🎉 Đã kết nối đối thủ! Khai cuộc!';
+      isOnlineMatch = true;
+      currentRoomId = data.roomId;
+      
+      const isRed = (currentUser && currentUser.username === data.playerWhite.username) || 
+                    (socketInstance.id === data.playerWhite.socketId);
+      myOnlineSide = isRed ? 'r' : 'b';
+
+      document.getElementById('st').innerText = `🎉 Khai cuộc Online! Bạn cầm quân ${myOnlineSide === 'r' ? 'ĐỎ' : 'ĐEN'}`;
       document.getElementById('nr').innerText = `Đỏ: ${data.playerWhite.username} (${data.playerWhite.elo})`;
       document.getElementById('nb').innerText = `Đen: ${data.playerBlack.username} (${data.playerBlack.elo})`;
+      
       newGame();
+    });
+
+    socketInstance.on('move_made', data => {
+      if (isOnlineMatch && data.turn !== (myOnlineSide === 'r' ? 'RED' : 'BLACK')) {
+        // Opponent made move, apply locally
+        const move = data.move;
+        const fromPos = move.from.split(',').map(Number);
+        const toPos = move.to.split(',').map(Number);
+        
+        const piece = B[fromPos[0]][fromPos[1]];
+        if (piece) {
+          const v = B[toPos[0]][toPos[1]];
+          B[fromPos[0]][fromPos[1]] = null;
+          B[toPos[0]][toPos[1]] = piece;
+          piece.r = toPos[0]; piece.c = toPos[1];
+          if (v) v.dead = true;
+          if (v) SoundSystem.playCapture();
+          else SoundSystem.playMove();
+          endTurnLocalOnly();
+        }
+      }
     });
 
     socketInstance.on('game_error', data => {
@@ -519,6 +545,7 @@ function onModeChange() {
     btnAction.innerText = modeVal === 'ai' ? 'Khai Cuộc Ván Mới' : 'Khai Cuộc Ván Mới (Hai Người)';
     btnAction.style.background = 'var(--bp)';
     btnAction.style.color = '#fff';
+    isOnlineMatch = false;
   }
 }
 
@@ -549,6 +576,7 @@ function handleGameAction() {
       socketInstance.emit('cancel_matchmaking');
     }
   } else {
+    isOnlineMatch = false;
     newGame();
   }
 }
@@ -687,8 +715,10 @@ function newGame(){
   turn='r';merit={r:3,b:3};hands={r:pick(3),b:pick(3)};sel=null;VM=[];pend=null;armed=null;used=false;ms=null;mode=null;KB={r:null,b:null};bag=null;plies=0;over=false;busy=false;
   ANIM=null;FX=[];LASTMV=null;LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
   checkHistory={};
-  ai=$('mode').value==='ai';
-  $('nb').innerText=ai?'Đen (Đối Thủ Tự Động)':'Đen';
+  ai=$('mode').value==='ai' && !isOnlineMatch;
+  if (!isOnlineMatch) {
+    $('nb').innerText=ai?'Đen (Đối Thủ Tự Động)':'Đen';
+  }
   say('Khai cuộc Kỳ Biến: Chọn Bí Pháp hoặc xuất chiêu trực tiếp.','#a8947d');
   syncTrayLayout();
   stat();ui();draw();
@@ -722,13 +752,23 @@ function selCard(i){
 
 function skip(){if(!ms)return;ms=null;endTurn()}
 
+function endTurnLocalOnly() {
+  const prev=turn;
+  for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
+  turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
+  const ck=inCheck(turn);
+  if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
+  else stat();
+  busy=false;ui();draw();
+}
+
 function endTurn(){
   const prev=turn;
   for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
   turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
   
   const ck=inCheck(turn);
-  if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy, đang bị chiếu sát!','#ff4757','log-sp')}
+  if(ck){SoundSystem.playCheck();say('⚠️ CẢNH BÁO: '+(turn==='r'?'[Phe Đỏ]':'[Phe Đen]')+' Tướng quân lâm nguy!','#ff4757','log-sp')}
   else stat();
 
   busy=false;
@@ -774,7 +814,7 @@ function triggerAIMove(){
     if(v) SoundSystem.playCapture();
     else SoundSystem.playMove();
 
-    say(`[Đối Thủ] ${TN[o.t]} di chuyển tới (${r}, ${c}) ${v ? 'và hạ sát quân địch!' : ''}`, null, 'log-b');
+    say(`[Đối Thủ] ${TN[o.t]} di chuyển tới (${r}, ${c}) ${v ? 'và ăn quân!' : ''}`, null, 'log-b');
   } catch(e){
     console.error('Lỗi máy tự động:', e);
   } finally {
@@ -783,7 +823,7 @@ function triggerAIMove(){
   }
 }
 
-/* VẼ BÀN CỜ CANVAS RỘNG RÃI RÕ NÉT */
+/* VẼ BÀN CỜ CANVAS */
 const PX=c=>OX+c*CS,PY=r=>OY+r*CS;
 function grid(){
   const g=x.createLinearGradient(0,0,600,660);g.addColorStop(0,'#e8c28f');g.addColorStop(1,'#c8985c');
@@ -820,17 +860,37 @@ function draw(){
 }
 
 function onClick(r,c){
-  if(over||busy||(ai&&turn!=='r'))return;
+  if(over||busy)return;
+
+  // Xử lý kiểm tra lượt đi ở chế độ Online
+  if(isOnlineMatch && turn !== myOnlineSide) {
+    say('⚠️ Chưa đến lượt đi của bạn!','#ff6b6b');
+    return;
+  }
+
   const hit=VM.some(q=>q[0]===r&&q[1]===c);
   const p=B[r][c];
   if(sel){
     if(p===sel){sel=null;VM=[];draw();return}
     if(hit){
+      const fromPos = `${sel.r},${sel.c}`;
+      const toPos = `${r},${c}`;
+      
       const v=B[r][c];
       B[sel.r][sel.c]=null;B[r][c]=sel;sel.r=r;sel.c=c;if(v)v.dead=true;
       SoundSystem.playMove();
       say(`[Bạn] ${TN[sel.t]} di chuyển tới (${r}, ${c}) ${v ? 'và ăn quân!' : ''}`, null, 'log-r');
-      sel=null;VM=[];endTurn();return;
+      sel=null;VM=[];
+      
+      if(isOnlineMatch && socketInstance && currentRoomId) {
+        socketInstance.emit('make_move', {
+          roomId: currentRoomId,
+          move: { from: fromPos, to: toPos },
+          nextFen: ''
+        });
+      }
+
+      endTurn();return;
     }
     if(p&&p.col===turn){sel=p;VM=legalMoves(p,null);draw();}
   } else if(p&&p.col===turn){

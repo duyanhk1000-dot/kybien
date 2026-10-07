@@ -15,12 +15,12 @@ export interface PlayerInQueue {
 
 export interface GameRoom {
   roomId: string;
-  roomCode?: string; // 5-digit private code e.g. KB-8899
+  roomCode?: string;
   playerWhite: { socketId: string; userId: number; username: string; elo: number; level: number; exp: bigint };
   playerBlack?: { socketId: string; userId: number; username: string; elo: number; level: number; exp: bigint };
-  fen: string; // Position state in FEN
-  moves: string[]; // List of moves (PGN string format)
-  turn: 'RED' | 'BLACK'; // RED = White side in standard Xiangqi notation
+  fen: string;
+  moves: string[];
+  turn: 'RED' | 'BLACK';
   status: 'WAITING' | 'PLAYING' | 'FINISHED';
   winnerId?: number | null;
   resultReason?: string;
@@ -32,20 +32,14 @@ class MatchmakingManager {
   private activeRooms: Map<string, GameRoom> = new Map();
   private privateCodeToRoomId: Map<string, string> = new Map();
 
-  // Initial Xiangqi standard board FEN
   public INITIAL_XIANGQI_FEN = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1';
 
   public addToQueue(player: PlayerInQueue): { matched: boolean; room?: GameRoom } {
-    this.removeFromQueue(player.userId);
+    // Remove duplicate entry with exact same socketId
+    this.queue = this.queue.filter((p) => p.socketId !== player.socketId);
 
-    const now = Date.now();
-    const opponentIndex = this.queue.findIndex((p) => {
-      const waitTimeSec = (now - p.joinedAt) / 1000;
-      const allowedEloDiff = 100 + Math.floor(waitTimeSec) * 10;
-      const eloDiff = Math.abs(p.elo - player.elo);
-      const levelDiff = Math.abs(p.level - player.level);
-      return eloDiff <= allowedEloDiff || levelDiff <= 2;
-    });
+    // Find any opponent in queue with different socketId (allows testing across 2 tabs)
+    const opponentIndex = this.queue.findIndex((p) => p.socketId !== player.socketId);
 
     if (opponentIndex !== -1) {
       const opponent = this.queue.splice(opponentIndex, 1)[0];
@@ -131,7 +125,7 @@ class MatchmakingManager {
       return { success: false, error: 'Phòng đấu đã đầy hoặc ván đấu đã kết thúc.' };
     }
 
-    if (room.playerWhite.userId === player.userId) {
+    if (room.playerWhite.socketId === player.socketId) {
       return { success: false, error: 'Bạn đang là chủ phòng này.' };
     }
 
