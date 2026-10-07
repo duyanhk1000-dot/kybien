@@ -14,6 +14,9 @@
 
     // Khởi tạo Widget Header Profile
     initHeaderProfileWidget();
+
+    // Tự động khởi tạo Replay Viewer
+    window.KybienViewer.init();
   });
 
   // FR-02: Header Profile Widget (Hiển thị User, Exp bar, Elo)
@@ -82,14 +85,23 @@
 
     init: function () {
       const viewerElem = document.getElementById('kybien-board-viewer');
-      if (!viewerElem) return;
+      if (!viewerElem) {
+        // Thử lại nếu DOM bài viết chưa sẵn sàng
+        setTimeout(() => {
+          if (document.getElementById('kybien-board-viewer') && !window.KybienViewer.canvas) {
+            window.KybienViewer.init();
+          }
+        }, 500);
+        return;
+      }
+
       try {
         this.moves = JSON.parse(viewerElem.getAttribute('data-moves') || '[]');
         console.log('[Kỳ Biến Replay Viewer] Đã tải ván cờ với', this.moves.length, 'nước đi.');
         
         const canvasContainer = document.getElementById('chess-board-canvas');
         if (canvasContainer) {
-          canvasContainer.innerHTML = '<canvas id="kybien-replay-canvas" width="500" height="550" style="width:100%; height:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.3);"></canvas><div id="kybien-step-info" style="text-align:center; margin-top:6px; font-weight:bold; color:#8b0000; font-family:sans-serif;">Nước: 0 / ' + this.moves.length + '</div>';
+          canvasContainer.innerHTML = '<canvas id="kybien-replay-canvas" width="500" height="550" style="width:100%; height:100%; max-width:500px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.5);"></canvas><div id="kybien-step-info" style="text-align:center; margin-top:10px; font-weight:bold; color:#f1c40f; font-size:0.95rem; font-family:sans-serif; background:rgba(0,0,0,0.4); padding:6px 12px; border-radius:6px; border:1px solid #5a3d22;">Nước: 0 / ' + this.moves.length + '</div>';
           this.canvas = document.getElementById('kybien-replay-canvas');
           if (this.canvas) this.ctx = this.canvas.getContext('2d');
         }
@@ -118,6 +130,8 @@
     computeBoardAtStep: function(step) {
       const board = this.getInitialBoard();
       let lastMove = null;
+      let movedPiece = null;
+      let capturedPiece = null;
 
       for (let i = 0; i < step && i < this.moves.length; i++) {
         const mStr = this.moves[i];
@@ -128,9 +142,11 @@
           const to = parts[1].split(',').map(Number);
           if (from.length === 2 && to.length === 2 && !isNaN(from[0]) && !isNaN(to[0])) {
             const p = board[from[0]][from[1]];
+            capturedPiece = board[to[0]][to[1]];
             board[from[0]][from[1]] = null;
             board[to[0]][to[1]] = p;
-            lastMove = { from, to };
+            movedPiece = p;
+            lastMove = { from, to, piece: p, captured: capturedPiece };
           }
         }
       }
@@ -205,9 +221,9 @@
 
       // Highlight Last Move
       if (lastMove) {
-        ctx.fillStyle = 'rgba(241, 196, 15, 0.4)';
+        ctx.fillStyle = 'rgba(241, 196, 15, 0.45)';
         ctx.fillRect(OX + lastMove.from[1] * CS - 20, OY + lastMove.from[0] * CS - 20, 40, 40);
-        ctx.fillStyle = 'rgba(46, 204, 113, 0.4)';
+        ctx.fillStyle = 'rgba(46, 204, 113, 0.55)';
         ctx.fillRect(OX + lastMove.to[1] * CS - 20, OY + lastMove.to[0] * CS - 20, 40, 40);
       }
 
@@ -245,10 +261,17 @@
         }
       }
 
-      // Step Info Update
+      // Step Info Update & Tóm tắt nước đi
       const stepInfo = document.getElementById('kybien-step-info');
       if (stepInfo) {
-        stepInfo.innerText = `Nước: ${this.currentStep} / ${this.moves.length}`;
+        if (this.currentStep === 0) {
+          stepInfo.innerHTML = `🔴 <strong>Nước 0 / ${this.moves.length}</strong>: Khai cuộc trận đấu`;
+        } else if (lastMove && lastMove.piece) {
+          const sideText = lastMove.piece.col === 'r' ? '🔴 Phe Đỏ' : '⚫ Phe Đen';
+          const pName = (this.pieceNames[lastMove.piece.t] && this.pieceNames[lastMove.piece.t][lastMove.piece.col]) || lastMove.piece.t;
+          const actionText = lastMove.captured ? ` ⚔️ ăn quân ${this.pieceNames[lastMove.captured.t]?.[lastMove.captured.col] || lastMove.captured.t}` : ' di chuyển';
+          stepInfo.innerHTML = `<strong>Nước ${this.currentStep} / ${this.moves.length}</strong>: ${sideText} - ${pName} (${lastMove.from[0]},${lastMove.from[1]}) ➔ (${lastMove.to[0]},${lastMove.to[1]})${actionText}`;
+        }
       }
     },
 
@@ -275,4 +298,6 @@
   };
 
   document.addEventListener('DOMContentLoaded', () => window.KybienViewer.init());
+  // Backup poll cho Blogger
+  window.addEventListener('load', () => window.KybienViewer.init());
 })();

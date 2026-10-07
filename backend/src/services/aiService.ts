@@ -12,7 +12,8 @@ export async function analyzeMatchWithGemini(
   pgnMoves: string[],
   winnerName: string,
   loserName: string,
-  resultType: string
+  resultType: string,
+  variant: string = 'kb'
 ): Promise<AIAnalysisResult | null> {
   if (!config.geminiApiKey) {
     console.warn('[AI Service] Cảnh báo: GEMINI_API_KEY chưa được cấu hình.');
@@ -28,33 +29,37 @@ export async function analyzeMatchWithGemini(
       },
     });
 
+    const variantDesc = variant === 'kb' ? 'Cờ Tướng Kỳ Biến (Có 16 Bí Pháp Kỳ Mưu)' :
+                        variant === 't' ? 'Cờ Úp Truyền Thống' :
+                        variant === 'g' ? 'Cờ Úp Gián Điệp' : 'Cờ Tướng Tiêu Chuẩn';
+
     const prompt = `
 Bạn là một bình luận viên chiến trận kiêm văn sĩ kiếm hiệp cho Nền tảng Cờ Tướng Kỳ Biến (kybien.blogspot.com), chuyên biến các ván cờ tướng thành những trận đại chiến đẫm lửa giữa hai đạo quân.
 
 DỮ LIỆU TRẬN ĐẤU:
 - Phe Đỏ (Chủ tướng): ${winnerName}
 - Phe Đen (Chủ tướng): ${loserName}
+- Thể loại cờ: ${variantDesc}
 - Kết quả trận đấu: ${resultType}
-- Danh sách nước đi (chuỗi tọa độ from-to): ${JSON.stringify(pgnMoves)}
+- Danh sách nước đi (chuỗi tọa độ from-to & sự kiện bí pháp/lật quân): ${JSON.stringify(pgnMoves)}
 
 Hãy dựa chính xác vào danh sách nước đi để phân tích và viết bài tường thuật trận đấu khoảng 300–400 chữ, theo phong cách kiếm hiệp – chiến trường cổ đại – hùng tráng – tàn khốc.
 
-1. NGUYÊN TẮC BÁM SÁT NƯỚC CỜ:
+1. NGUYÊN TẮC BÁM SÁT NƯỚC CỜ & BÍ PHÁP:
 - Xử lý từng nước đi theo đúng thứ tự. 
-- Pháo → đại pháo, hỏa lực, pháo trận.
-- Xe → chiến xa, thiết kỵ, mũi quân đột kích.
-- Mã → kỵ binh, thiết kỵ.
-- Tượng → tượng binh, lực lượng phòng thủ.
-- Sĩ → cận vệ, hộ vệ trung quân.
-- Tốt/Binh → bộ binh, tiên phong.
-- Nước ăn quân được mô tả thành cuộc giao chiến thực sự tiêu diệt đối phương.
-- Nước KHÔNG ăn quân tuyệt đối không tự ý viết có quân bị chết hay bị tiêu diệt.
+- Pháo → đại pháo, hỏa lực; Xe → chiến xa, thiết kỵ; Mã → kỵ binh; Tượng → tượng binh; Sĩ → cận vệ; Tốt/Binh → bộ binh tiên phong.
+- Nếu là Cờ Úp: Nước lật ngửa quân cờ được tả là "Chiến binh cởi bỏ lớp ngụy trang, lộ diện thân phận đại tướng".
+- Nếu là Cờ Kỳ Biến thi triển Bí Pháp: 
+  + Bích Lịch Hỏa → Sấm nổ trời xanh, mưa lửa thiên lôi thiêu rụi và làm choáng váng 4 ô kề bên.
+  + Tuyệt Mệnh Cổ → Gài vòng cổ độc, dũng sĩ bị ăn liền kéo theo quân đối phương đồng thọ thương tử.
+  + Càn Khôn Di Vị → Phép hoán đổi vị trí chủ tướng trong cung cấm.
+- Nước ăn quân là cuộc giao chiến tiêu diệt đối phương; nước KHÔNG ăn quân tuyệt đối không tự ý viết có quân bị chết hay bị tiêu diệt.
 
 2. PHẢI BÁM SÁT DIỄN BIẾN, KHÔNG NHẢY CÓC:
 Các nước đi tạo thành chuỗi diễn biến liên tục: Khai chiến → điều quân → thăm dò → giằng co → tập kích → phản kích → thế áp đảo → cao trào → đòn quyết định → kết thúc.
 
 3. HAI NGƯỜI CHƠI LÀ HAI CHỦ TƯỚNG:
-Đưa tên hai chủ tướng (${winnerName} và ${loserName}) vào câu chuyện một cách tự nhiên. Tên người chơi đại diện cho ý chí và mệnh lệnh của toàn bộ đạo quân.
+Đưa tên hai chủ tướng (${winnerName} và ${loserName}) vào câu chuyện một cách tự nhiên.
 
 4. PHONG CÁCH VĂN:
 Hùng tráng, tàn khốc, dồn dập, có sát khí, chất cổ trang, đấu trí chiến thuật. Sử dụng hình ảnh tiếng trống trận, vó ngựa, chiến xa, đại pháo, bụi đất, khói lửa, huyết chiến,... Văn phong mạnh, chắc, có nhịp.
