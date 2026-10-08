@@ -374,7 +374,14 @@ export async function publishMatchToBlogger(
 </script>
 `;
 
-    // 3. Gọi Blogger API v3 POST bài viết
+    // 3. Chuẩn hóa đoạn tóm tắt sạch (Search Description) cho Blogger & Google SEO Snippet
+    const cleanSearchDescription = (aiResult.tacticalAnalysis || '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/[\r\n]+/g, ' ')
+      .trim()
+      .slice(0, 190);
+
+    // 4. Gọi Blogger API v3 POST bài viết
     const blogUrl = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/`;
     const postResponse = await fetch(blogUrl, {
       method: 'POST',
@@ -386,6 +393,7 @@ export async function publishMatchToBlogger(
         kind: 'blogger#post',
         title: postTitle,
         content: htmlContent,
+        searchDescription: cleanSearchDescription,
         isDraft: false,
         labels: ['Trận Hay', 'Phân Tích Cờ', variantLabel],
       }),
