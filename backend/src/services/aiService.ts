@@ -20,20 +20,11 @@ export async function analyzeMatchWithGemini(
     return null;
   }
 
-  try {
-    const genAI = new GoogleGenerativeAI(config.geminiApiKey);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
-      generationConfig: {
-        responseMimeType: 'application/json',
-      },
-    });
+  const variantDesc = variant === 'kb' ? 'Cờ Tướng Kỳ Biến (Có 16 Bí Pháp Kỳ Mưu)' :
+                      variant === 't' ? 'Cờ Úp Truyền Thống' :
+                      variant === 'g' ? 'Cờ Úp Gián Điệp' : 'Cờ Tướng Tiêu Chuẩn';
 
-    const variantDesc = variant === 'kb' ? 'Cờ Tướng Kỳ Biến (Có 16 Bí Pháp Kỳ Mưu)' :
-                        variant === 't' ? 'Cờ Úp Truyền Thống' :
-                        variant === 'g' ? 'Cờ Úp Gián Điệp' : 'Cờ Tướng Tiêu Chuẩn';
-
-    const prompt = `
+  const prompt = `
 Bạn là một bình luận viên chiến trận kiêm văn sĩ kiếm hiệp cho Nền tảng Cờ Tướng Kỳ Biến (kybien.blogspot.com), chuyên biến các ván cờ tướng thành những trận đại chiến đẫm lửa giữa hai đạo quân.
 
 DỮ LIỆU TRẬN ĐẤU:
@@ -80,13 +71,35 @@ Trả về đúng định dạng JSON có cấu trúc sau:
 }
 `;
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-    const cleanText = responseText.replace(/^```json\s*/i, '').replace(/\s*```$/, '').trim();
-    const parsedData: AIAnalysisResult = JSON.parse(cleanText);
-    return parsedData;
-  } catch (error) {
-    console.error('[AI Service Error Details]', error);
-    return null;
+  const modelsToTry = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+  const genAI = new GoogleGenerativeAI(config.geminiApiKey);
+
+  for (const modelName of modelsToTry) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        generationConfig: {
+          responseMimeType: 'application/json',
+        },
+      });
+
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+
+      let cleanText = responseText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/, '').trim();
+      const match = cleanText.match(/\{[\s\S]*\}/);
+      if (match) {
+        cleanText = match[0];
+      }
+
+      const parsedData: AIAnalysisResult = JSON.parse(cleanText);
+      console.log(`[AI Service] Sinh bài viết Gemini thành công với model: ${modelName}`);
+      return parsedData;
+    } catch (error) {
+      console.warn(`[AI Service Warning] Thử model ${modelName} thất bại:`, (error as Error)?.message || error);
+    }
   }
+
+  console.error('[AI Service Error] Tất cả các model Gemini đều thất bại.');
+  return null;
 }
