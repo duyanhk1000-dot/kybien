@@ -9,9 +9,9 @@ export interface AIAnalysisResult {
   matchTitlePhrase?: string;
 }
 
-function formatMovesForAI(moves: string[]): string {
+function formatMovesForAI(moves: string[], whiteName: string = '🔴 Đỏ', blackName: string = '⚫ Đen', variant: string = 'kb'): string {
   const pieceNames: Record<string, string> = {
-    k: 'Tướng', a: 'Sĩ', b: 'Tượng', n: 'Mã', r: 'Xe', c: 'Pháo', p: 'Tốt/Binh'
+    k: 'Tướng', a: 'Sĩ', b: 'Tượng', n: 'Mã', r: 'Xe', c: 'Pháo', p: 'Tốt'
   };
   const spellNames: Record<string, string> = {
     ROOK_1: 'Thiểm Điện Trảm (Xe tiến thẳng 1-2 ô)',
@@ -32,36 +32,116 @@ function formatMovesForAI(moves: string[]): string {
     KING_4: 'Càn Khôn Di Vị (Hoán vị Tướng với quân hộ vệ trong cung)'
   };
 
+  // Khởi tạo bàn cờ ảo 10x9 để mô phỏng diễn biến quân cờ
+  const board: Array<Array<{ t: string; col: 'r' | 'b'; hd: boolean } | null>> = Array(10).fill(null).map(() => Array(9).fill(null));
+  if (variant === 'n' || variant === 'kb') {
+    const bk = ['r','n','b','a','k','a','b','n','r'];
+    for (let c = 0; c < 9; c++) {
+      board[0][c] = { t: bk[c], col: 'b', hd: false };
+      board[9][c] = { t: bk[c], col: 'r', hd: false };
+    }
+    board[2][1] = { t: 'c', col: 'b', hd: false }; board[2][7] = { t: 'c', col: 'b', hd: false };
+    board[7][1] = { t: 'c', col: 'r', hd: false }; board[7][7] = { t: 'c', col: 'r', hd: false };
+    for (let c = 0; c < 9; c += 2) {
+      board[3][c] = { t: 'p', col: 'b', hd: false };
+      board[6][c] = { t: 'p', col: 'r', hd: false };
+    }
+  } else {
+    board[0][4] = { t: 'k', col: 'b', hd: false };
+    board[9][4] = { t: 'k', col: 'r', hd: false };
+    const upPositions = [
+      [0,0],[0,1],[0,2],[0,3],[0,5],[0,6],[0,7],[0,8],
+      [2,1],[2,7],[3,0],[3,2],[3,4],[3,6],[3,8],
+      [9,0],[9,1],[9,2],[9,3],[9,5],[9,6],[9,7],[9,8],
+      [7,1],[7,7],[6,0],[6,2],[6,4],[6,6],[6,8]
+    ];
+    upPositions.forEach(([r, c]) => {
+      const col = r < 5 ? 'b' : 'r';
+      board[r][c] = { t: '?', col, hd: true };
+    });
+  }
+
   let plyCount = 0;
   const formatted: string[] = [];
 
   for (const mStr of moves) {
     if (!mStr) continue;
+
+    const currentSide = (plyCount % 2 === 0) ? 'r' : 'b';
+    const sideLabel = currentSide === 'r' ? '🔴 Đỏ' : '⚫ Đen';
+    const currentCommander = currentSide === 'r' ? whiteName : blackName;
+
     if (mStr.startsWith('CARD:')) {
       const parts = mStr.replace('CARD:', '').split('->');
       const spellId = parts[0];
       const pos = parts[1] || '';
       const spellName = spellNames[spellId] || spellId;
-      formatted.push(`✨ [KÍCH HOẠT BÍ PHÁP]: Thi triển ${spellName} tại tọa độ (${pos})`);
+      let targetPieceName = '';
+      if (pos.includes(',')) {
+        const [tr, tc] = pos.split(',').map(Number);
+        const targetObj = board[tr] ? board[tr][tc] : null;
+        if (targetObj) {
+          targetPieceName = ` lên [${pieceNames[targetObj.t] || 'Quân cờ'} ${targetObj.col === 'r' ? 'Đỏ' : 'Đen'}]`;
+        }
+      }
+      formatted.push(`✨ [KÍCH HOẠT BÍ PHÁP] (${sideLabel} - ${currentCommander}): Thi triển ${spellName}${targetPieceName} tại tọa độ (${pos}).`);
       continue;
     }
 
     if (mStr.startsWith('FLIP:')) {
       const parts = mStr.replace('FLIP:', '').split('->');
-      const pos = parts[0];
-      const realType = parts[1];
-      const pieceName = pieceNames[realType] || realType;
-      formatted.push(`🕵️ [LẬT QUÂN ÚP]: Lật ngửa quân Úp tại (${pos}) cởi bỏ ngụy trang, lộ diện thân phận đại tướng ${pieceName}!`);
+      if (parts.length === 2) {
+        const [fr, fc] = parts[0].split(',').map(Number);
+        const realType = parts[1];
+        if (board[fr] && board[fr][fc]) {
+          board[fr][fc].hd = false;
+          board[fr][fc].t = realType;
+          const pieceOwner = board[fr][fc].col === 'r' ? '🔴 Đỏ' : '⚫ Đen';
+          const pName = pieceNames[realType] || realType;
+          formatted.push(`🕵️ [LẬT QUÂN ÚP] (${sideLabel} - ${currentCommander}): Lật ngửa quân Úp tại (${fr},${fc}) -> Lộ diện đại tướng [${pName} ${pieceOwner}]!`);
+        }
+      }
       continue;
     }
 
-    plyCount++;
-    const sideStr = (plyCount % 2 !== 0) ? '🔴 Đỏ' : '⚫ Đen';
+    if (mStr.startsWith('POISON_KILL:')) {
+      const posStr = mStr.replace('POISON_KILL:', '');
+      const [pr, pc] = posStr.split(',').map(Number);
+      if (board[pr] && board[pr][pc]) {
+        const victim = board[pr][pc]!;
+        board[pr][pc] = null;
+        const vOwner = victim.col === 'r' ? '🔴 Đỏ' : '⚫ Đen';
+        const vName = victim.hd ? 'Quân Úp' : (pieceNames[victim.t] || victim.t);
+        formatted.push(`☠️ [KÍCH ĐỘC BÙNG PHÁP]: [${vName} ${vOwner}] dính độc Tuyệt Mệnh Cổ phát tác, lập tức đồng thọ tử bị loại khỏi bàn cờ!`);
+      }
+      continue;
+    }
+
     const parts = mStr.split('-');
     if (parts.length === 2) {
-      formatted.push(`Nước ${plyCount} (${sideStr}): Di chuyển từ (${parts[0]}) đến (${parts[1]})`);
-    } else {
-      formatted.push(`Nước ${plyCount} (${sideStr}): ${mStr}`);
+      const from = parts[0].split(',').map(Number);
+      const to = parts[1].split(',').map(Number);
+      if (from.length === 2 && to.length === 2 && !isNaN(from[0]) && !isNaN(from[1]) && !isNaN(to[0]) && !isNaN(to[1])) {
+        plyCount++;
+        const p = board[from[0]][from[1]];
+        const cap = board[to[0]][to[1]];
+        board[from[0]][from[1]] = null;
+        board[to[0]][to[1]] = p;
+
+        if (p && p.hd) p.hd = false;
+
+        const moveSideStr = (plyCount % 2 !== 0) ? '🔴 Đỏ' : '⚫ Đen';
+        const moveCommander = (plyCount % 2 !== 0) ? whiteName : blackName;
+        const pName = p ? (p.hd ? 'Quân Úp' : (pieceNames[p.t] || p.t)) : 'Quân cờ';
+        const capName = cap ? (cap.hd ? 'Quân Úp' : (pieceNames[cap.t] || cap.t)) : null;
+        const capOwnerStr = cap ? (cap.col === 'r' ? 'Đỏ' : 'Đen') : '';
+
+        if (cap) {
+          formatted.push(`Nước ${plyCount} (${moveSideStr} - ${moveCommander}): [${pName} ${moveSideStr}] từ (${from[0]},${from[1]}) tiến đến (${to[0]},${to[1]}) ăn [${capName} ${capOwnerStr}]!`);
+        } else {
+          formatted.push(`Nước ${plyCount} (${moveSideStr} - ${moveCommander}): [${pName} ${moveSideStr}] di chuyển từ (${from[0]},${from[1]}) đến (${to[0]},${to[1]}).`);
+        }
+      }
     }
   }
 
@@ -84,7 +164,7 @@ export async function analyzeMatchWithGemini(
                       variant === 't' ? 'Cờ Úp Truyền Thống' :
                       variant === 'g' ? 'Cờ Úp Gián Điệp' : 'Cờ Tướng Tiêu Chuẩn';
 
-  const formattedLog = formatMovesForAI(pgnMoves);
+  const formattedLog = formatMovesForAI(pgnMoves, winnerName, loserName, variant);
 
   const prompt = `
 Bạn là một bình luận viên chiến trận kiêm văn sĩ kiếm hiệp cho Nền tảng Cờ Tướng Kỳ Biến (kybien.blogspot.com), chuyên biến các ván cờ tướng thành những trận đại chiến đẫm lửa giữa hai đạo quân.

@@ -224,6 +224,20 @@
           continue;
         }
 
+        // XỬ LÝ SỰ KIỆN KÍCH ĐỘC TỰU TỬ (POISON_KILL:r,c)
+        if (mStr.startsWith('POISON_KILL:')) {
+          const posStr = mStr.replace('POISON_KILL:', '');
+          const [pr, pc] = posStr.split(',').map(Number);
+          if (board[pr] && board[pr][pc]) {
+            const victim = board[pr][pc];
+            board[pr][pc] = null; // Xóa quân cờ vừa ăn Mã độc khỏi bàn cờ
+            const sideStr = victim.col === 'r' ? '🔴 Đỏ' : '⚫ Đen';
+            const vName = victim.hd ? 'Quân Úp' : ((this.pieceNames[victim.t] && this.pieceNames[victim.t][victim.col]) || victim.t);
+            moveNote = `☠️ [Tuyệt Mệnh Cổ] Độc phát tác! ${sideStr} ${vName} tại (${pr},${pc}) đồng thọ tử bị loại khỏi bàn cờ!`;
+          }
+          continue;
+        }
+
         // XỬ LÝ NƯỚC ĐI TỌA ĐỘ CHUẨN (r1,c1-r2,c2)
         const parts = mStr.split('-');
         if (parts.length === 2) {

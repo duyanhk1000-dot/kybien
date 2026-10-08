@@ -648,7 +648,7 @@ rec.push(fr+','+fc+'-'+r+','+c);capFlag=!!v;
 say(rec.length+'. '+note,null,mc==='r'?'log-r':'log-b');
 if(v){merit[mc]=Math.min(10,merit[mc]+(GAIN[v.t==='k'?'p':(v.hd?v.t:v.t)]||(GAIN[v.tru]||1)));
 eaten[mc].push({col:v.col,t:v.t,tru:v.tru,truCol:v.truCol,hd:v.hd,by:mc});Snd.cap();
-if(u.d)say(rec.length+'. '+sideTag(mc)+' [Tuyệt Mệnh Cổ] Kích độc bùng phát! Quân vừa ăn Mã cũng bỏ mạng!','#9b59b6','log-sp')}else Snd.move();
+if(u.d){rec.push('POISON_KILL:'+r+','+c);say(rec.length+'. '+sideTag(mc)+' [Tuyệt Mệnh Cổ] Kích độc bùng phát! Quân vừa ăn Mã cũng bỏ mạng!','#9b59b6','log-sp')}}else Snd.move();
 let rv=null;if(o.hd&&!o.dead){rv=reveal(o);rec.push('FLIP:'+r+','+c+'->'+rv.t)}
 let got=false;
 if(!o.dead&&hadBag){const cd={...CARDS[Math.floor(rng()*CARDS.length)]};if(hands[mc].length<5)hands[mc].push(cd);bag=null;got=true;
