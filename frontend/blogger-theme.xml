@@ -256,7 +256,14 @@
                 <b:loop values='data:posts' var='post'>
                   <div class='post-card'>
                     <div>
-                      <span class='post-card-tag'>⚔️ Trận Hay</span>
+                      <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
+                        <span class='post-card-tag'>⚔️ Trận Hay</span>
+                        <b:loop values='data:post.labels' var='label'>
+                          <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Đại Chiến Kỳ Biển"'>
+                            <span class='post-card-tag' style='background: #3a2416; color: #f1c40f; border: 1px solid #5a3d22;'><data:label.name/></span>
+                          </b:if>
+                        </b:loop>
+                      </div>
                       <h3 class='post-card-title'>
                         <a expr:href='data:post.url'><data:post.title/></a>
                       </h3>

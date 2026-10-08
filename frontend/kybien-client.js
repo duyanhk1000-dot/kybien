@@ -108,12 +108,17 @@
         if (canvasContainer) {
           canvasContainer.innerHTML = `
             <canvas id="kybien-replay-canvas" width="500" height="550" style="width:100%; max-width:500px; height:auto; background:#f0d9b5; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.5); display:block; margin:0 auto;"></canvas>
-            <div id="kybien-step-info" style="text-align:center; margin-top:10px; font-weight:bold; color:#f1c40f; font-size:0.95rem; font-family:sans-serif; background:rgba(0,0,0,0.5); padding:8px 12px; border-radius:6px; border:1px solid #5a3d22; min-height:42px; display:flex; align-items:center; justify-content:center;">
-              🔴 Nước 0 / ${this.moves.length}: Khai cuộc ván đấu
-            </div>
           `;
           this.canvas = document.getElementById('kybien-replay-canvas');
           if (this.canvas) this.ctx = this.canvas.getContext('2d');
+        }
+
+        let stepInfo = document.getElementById('kybien-step-info');
+        if (!stepInfo && viewerElem) {
+          stepInfo = document.createElement('div');
+          stepInfo.id = 'kybien-step-info';
+          stepInfo.style.cssText = 'text-align:center; margin-top:12px; font-weight:bold; color:#f1c40f; font-size:0.95rem; font-family:sans-serif; background:rgba(0,0,0,0.5); padding:8px 12px; border-radius:6px; border:1px solid #5a3d22; min-height:42px; display:flex; align-items:center; justify-content:center;';
+          viewerElem.appendChild(stepInfo);
         }
         this.render();
       } catch (e) {

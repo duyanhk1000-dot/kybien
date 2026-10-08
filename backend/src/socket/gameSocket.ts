@@ -229,11 +229,19 @@ export function setupGameSocket(io: Server): void {
           loserName = whiteName;
         }
 
+        // Map mã Thể loại cờ (variantCode) -> Tên thể loại tiếng Việt (variantName)
+        const variantCode = (room.variant || 'kb').toLowerCase();
+        let variantName = 'Cờ Tướng Kỳ Biến';
+        if (variantCode === 'n') variantName = 'Cờ Tướng Truyền Thống';
+        else if (variantCode === 't') variantName = 'Cờ Úp Truyền Thống';
+        else if (variantCode === 'g') variantName = 'Cờ Úp Gián Điệp';
+        else if (variantCode === 'kb') variantName = 'Cờ Tướng Kỳ Biến';
+
         // Tự động kích hoạt AI sinh bài viết Sa Trường & Đăng bài Blogger cho Trận Hay (>50 nước)
-        analyzeMatchWithGemini(room.moves, winnerName, loserName, reason || 'Chiếu Bí')
+        analyzeMatchWithGemini(room.moves, winnerName, loserName, reason || 'Chiếu Bí', variantCode)
           .then((aiResult) => {
             if (aiResult) {
-              return publishMatchToBlogger(`match_${Date.now()}`, whiteName, blackName, room.moves, aiResult);
+              return publishMatchToBlogger(`match_${Date.now()}`, whiteName, blackName, room.moves, aiResult, variantName, variantCode);
             }
           })
           .catch((err) => console.error('[Socket AI Blog Post Error]', err));

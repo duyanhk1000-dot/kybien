@@ -4,7 +4,7 @@ import { publishMatchToBlogger } from '../services/bloggerService.js';
 
 export async function createGreatMatchPost(req: Request, res: Response): Promise<void> {
   try {
-    const { playerWhite, playerBlack, moves, winnerName, loserName, resultReason, plies } = req.body;
+    const { playerWhite, playerBlack, moves, winnerName, loserName, resultReason, plies, variant } = req.body;
 
     const totalPlies = plies || (moves ? moves.length : 0);
     if (totalPlies < 50) {
@@ -28,10 +28,18 @@ export async function createGreatMatchPost(req: Request, res: Response): Promise
     const winner = winnerName || 'Kỳ Thủ';
     const loser = loserName || 'Đối Thủ';
 
-    console.log(`[Great Match AI Engine] Đang phân tích ván đấu ${totalPlies} nước đi giữa ${whiteName} và ${blackName}...`);
+    // Map mã Thể loại cờ (variantCode) -> Tên thể loại tiếng Việt (variantName)
+    const variantCode = (variant || 'kb').toLowerCase();
+    let variantName = 'Cờ Tướng Kỳ Biến';
+    if (variantCode === 'n') variantName = 'Cờ Tướng Truyền Thống';
+    else if (variantCode === 't') variantName = 'Cờ Úp Truyền Thống';
+    else if (variantCode === 'g') variantName = 'Cờ Úp Gián Điệp';
+    else if (variantCode === 'kb') variantName = 'Cờ Tướng Kỳ Biến';
 
-    // 1. Phân tích bài viết Sa Trường bằng Gemini AI
-    const aiResult = await analyzeMatchWithGemini(moves, winner, loser, resultReason || 'Chiếu Bí');
+    console.log(`[Great Match AI Engine] Phân tích ván đấu (${variantName}) ${totalPlies} nước giữa ${whiteName} và ${blackName}...`);
+
+    // 1. Phân tích bài viết Sa Trường bằng Gemini AI với đúng Thể loại cờ
+    const aiResult = await analyzeMatchWithGemini(moves, winner, loser, resultReason || 'Chiếu Bí', variantCode);
 
     if (!aiResult) {
       res.status(500).json({
@@ -41,17 +49,19 @@ export async function createGreatMatchPost(req: Request, res: Response): Promise
       return;
     }
 
-    // 2. Xuất bản bài đăng lên Blogger API v3
+    // 2. Xuất bản bài đăng lên Blogger API v3 với đúng nhãn & thông số thể loại cờ
     const matchId = `match_${Date.now()}`;
-    const postId = await publishMatchToBlogger(matchId, whiteName, blackName, moves, aiResult);
+    const postId = await publishMatchToBlogger(matchId, whiteName, blackName, moves, aiResult, variantName, variantCode);
 
     res.json({
       success: true,
       matchId,
       postId,
       plies: totalPlies,
+      variant: variantCode,
+      variantName,
       aiAnalysis: aiResult,
-      message: 'Đã tự động dùng AI sinh bài viết Sa Trường và tạo bài đăng Trận Hay thành công!',
+      message: `Đã tự động dùng AI sinh bài viết và đăng bài Trận Hay (${variantName}) thành công!`,
     });
   } catch (error) {
     console.error('[Create Great Match Post Error]', error);
