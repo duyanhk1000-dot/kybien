@@ -730,8 +730,10 @@ function showGameOverModal(type, winnerCol, loserCol) {
     }
 
     if (!isOnlineMatch) {
-      const whiteName = 'Kỳ Thủ Red';
-      const blackName = (typeof ai !== 'undefined' && ai) ? `Máy AI Lv.${typeof aiLvl !== 'undefined' ? aiLvl : 1}` : 'Kỳ Thủ Black';
+      const whiteName = (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : 'Kỳ Thủ Red';
+      const botLvlVal = (typeof $ !== 'undefined' && $('lv')) ? +$('lv').value : 0;
+      const botLvlName = ['Tay Mơ', 'Ông Đồ', 'Pháo Đầu', 'Cao Thủ', 'Địa Ngục Vương'][botLvlVal] || 'Pikafish AI';
+      const blackName = (typeof ai !== 'undefined' && ai) ? `Bot AI ${botLvlName}` : 'Kỳ Thủ Black';
       const winnerName = winnerCol === 'r' ? whiteName : (winnerCol === 'b' ? blackName : 'Hòa');
       const loserName = loserCol === 'r' ? whiteName : (loserCol === 'b' ? blackName : 'Hòa');
       const currentVariant = (typeof $ !== 'undefined' && $('mode_variant')) ? $('mode_variant').value : 'kb';
