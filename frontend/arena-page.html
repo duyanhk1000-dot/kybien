@@ -776,6 +776,7 @@ gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd)
 gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐỦ '+rec.length+' NƯỚC!</div><div style="font-size:0.82rem;color:#e8dcc6;margin-bottom:10px;">Biên soạn bài viết cho danh xưng: <b>[Hành Giả.'+(currentUser?currentUser.username:'Vô Danh')+']</b></div><button id="btn-guest-post" onclick="submitGreatMatchFromModal()" style="background:linear-gradient(135deg,#8b0000,#4a0000);color:#fff;border:1px solid #a83a1f;padding:8px 18px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.88rem;">🔥 Đăng Bài Sa Trường Lên Blog</button><div id="post-status-txt" style="font-size:0.8rem;margin-top:8px;color:#2ecc71;"></div></div>';
 }}
 modal.style.display='flex';ui();draw()}
+function closeGameOverModal(){$('game-over-modal').style.display='none'}
 
 /* ---------- ĐỒNG HỒ ---------- */
 function clockTick(){
@@ -972,14 +973,15 @@ if(VAR==='kb'){$('hl').innerText='Bí Pháp Kỳ Biến của '+(v==='r'?'Đỏ'
 $('tray').innerHTML=L.map((c,i)=>'<div class="cd'+(pend===i?' on':'')+((!can||(!fr&&merit[v]<c.cost))?' off':'')+'" onclick="selCard('+i+')"><div class="ic">'+LB['r'+c.t]+'</div><div class="tx"><b>'+c.name+'</b><span>'+c.desc+'</span></div><u>'+(fr?0:c.cost)+'</u></div>').join('')||'<em style="font-size:.8rem">Hết bí pháp</em>'}
 $('sk').style.display=ms?'inline-block':'none';
 if(UB){const bot=flipped?'b':'r',top=opp(bot);$('tr1_eaten').innerHTML='Đối thủ đã ăn: '+eatenHTML(top,bot);$('tr2_eaten').innerHTML='Bạn đã ăn: '+eatenHTML(bot,bot)}}
+function showElem(id,isShow,flex){const e=$(id);if(e)e.style.display=isShow?(flex?'flex':'block'):'none'}
 function onVariantChangeUIOnly(){
-const kb=VAR==='kb';$('card-tray-wrapper').style.display=kb?'block':'none';$('eaten-tray-card').style.display=UB?'block':'none';
-$('lbl-bag-freq').style.display=kb?'flex':'none';$('lbl-test').style.display=kb?'flex':'none';$('lbl-see').style.display=UB?'flex':'none';
-$('lbl-hc').style.display=($('mode').value==='ai'&&(VAR==='n'||VAR==='kb'))?'flex':'none';
-const lg=$('legend-box');lg.style.display=(kb||UB)?'block':'none';
+const kb=VAR==='kb';showElem('card-tray-wrapper',kb);showElem('eaten-tray-card',UB);
+showElem('lbl-bag-freq',kb,true);showElem('lbl-test',kb,true);showElem('lbl-see',UB,true);
+showElem('lbl-hc',$('mode')&&$('mode').value==='ai'&&(VAR==='n'||VAR==='kb'),true);
+const lg=$('legend-box');if(lg){lg.style.display=(kb||UB)?'block':'none';
 lg.innerHTML=kb?'<b>Ẩn ký Kỳ Biến:</b> 🌊 Ngự Ba | 🏯 Xuất Trần | ↩ Hồi Phong | 👑 Thân Chinh | 💣 Tuyệt Mệnh Cổ (ẩn) | 💫 Định Thân | viền cam xoay = đang dùng thẻ | cung xanh = Kim Cang | 🎒 Túi Kỳ Mưu'
-:UB?'<b>Cờ úp:</b> 暗 = quân úp (đi theo loại quân của ô đang đứng, đi xong thì lật). '+(VAR==='g'?'<span class="spy">Quân úp có thể là quân địch (GIÁN ĐIỆP !)</span>':'Quân úp chắc chắn là quân nhà.'):'';
-$('tb2').innerText=kb?'Bí Pháp (16 chiêu)':UB?'Quân Úp & Mắt Mèo':'Kỳ Âm & Mẹo Hay'}
+:UB?'<b>Cờ úp:</b> 暗 = quân úp (đi theo loại quân của ô đang đứng, đi xong thì lật). '+(VAR==='g'?'<span class="spy">Quân úp có thể là quân địch (GIÁN ĐIỆP !)</span>':'Quân úp chắc chắn là quân nhà.'):'';}
+if($('tb2'))$('tb2').innerText=kb?'Bí Pháp (16 chiêu)':UB?'Quân Úp & Mắt Mèo':'Kỳ Âm & Mẹo Hay'}
 function onVariantChange(){newGame()}
 function onModeChange(){
 const m=$('mode').value;$('lbl-lv').style.display=m==='ai'?'flex':'none';$('online-room-tools').style.display=m==='2p_online'?'block':'none';
@@ -1029,12 +1031,17 @@ let c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);if(flipped){r=9-r;c=8-c}
 if(r>=0&&r<10&&c>=0&&c<9)onClick(r,c)});
 
 /* ---------- TÀI KHOẢN & ONLINE SOCKET ---------- */
+/* ---------- TÀI KHOẢN & ONLINE SOCKET ---------- */
 async function checkAuthUI(){
 const token=localStorage.getItem('kybien_jwt_token'),un=$('auth-unlogged'),lg=$('auth-logged');
 if(token){try{const res=await fetch(SERVER_API_ENDPOINT+'/api/auth/me',{headers:{Authorization:'Bearer '+token}});
-if(res.ok){currentUser=await res.json();$('logged-username').innerText=currentUser.username;$('logged-level').innerText=currentUser.level;$('logged-elo').innerText=currentUser.elo;un.style.display='none';lg.style.display='flex';return true}}catch(e){}
+if(res.ok){currentUser=await res.json();
+if($('logged-username'))$('logged-username').innerText=currentUser.username;
+if($('logged-level'))$('logged-level').innerText=currentUser.level;
+if($('logged-elo'))$('logged-elo').innerText=currentUser.elo;
+if(un)un.style.display='none';if(lg)lg.style.display='flex';return true}}catch(e){}
 localStorage.removeItem('kybien_jwt_token')}
-currentUser=null;un.style.display='flex';lg.style.display='none';return false}
+currentUser=null;if(un)un.style.display='flex';if(lg)lg.style.display='none';return false}
 async function ensureUser(){
 try{if(await checkAuthUI()&&currentUser)return true;
 const g='KyThu_'+Math.floor(10000+Math.random()*90000),pw=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
@@ -1043,17 +1050,17 @@ if(res.ok){const d=await res.json();if(d.token){localStorage.setItem('kybien_jwt
 return false}
 async function authCall(path,body){
 try{const res=await fetch(SERVER_API_ENDPOINT+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),d=await res.json();
-if(res.ok){localStorage.setItem('kybien_jwt_token',d.token);checkAuthUI()}else $('auth-err-msg').innerText=d.error||'Lỗi'}catch(e){alert('Không thể kết nối máy chủ!')}}
+if(res.ok){localStorage.setItem('kybien_jwt_token',d.token);checkAuthUI()}else if($('auth-err-msg'))$('auth-err-msg').innerText=d.error||'Lỗi'}catch(e){alert('Không thể kết nối máy chủ!')}}
 function arenaLogin(){const u=$('arena-u').value,p=$('arena-p').value;if(!u||!p)return alert('Vui lòng nhập tên tài khoản và mật khẩu!');authCall('/api/auth/login',{usernameOrEmail:u,password:p})}
 function arenaRegister(){const u=$('arena-u').value,p=$('arena-p').value;if(!u||!p)return alert('Vui lòng nhập tên tài khoản và mật khẩu!');authCall('/api/auth/register',{username:u,email:u+'@kybien.com',password:p})}
 function arenaLogout(){localStorage.removeItem('kybien_jwt_token');checkAuthUI()}
 function showMatchModal(d,vt,side){
-Snd.check();$('modal-match-variant').innerText='Thể loại: '+vt;
-$('modal-match-players').innerHTML='Đỏ: <b>'+d.playerWhite.username+'</b> ('+d.playerWhite.elo+' ELO)<br/>Đen: <b>'+d.playerBlack.username+'</b> ('+d.playerBlack.elo+' ELO)';
-$('modal-match-side').innerText='Bạn cầm quân: '+(side==='r'?'ĐỎ (đi trước)':'ĐEN (đi sau)');
-$('match-found-modal').style.display='flex';let n=5;$('modal-countdown').innerText=n;
-if(modalTimer)clearInterval(modalTimer);modalTimer=setInterval(()=>{n--;$('modal-countdown').innerText=n;if(n<=0)closeMatchModal()},1000)}
-function closeMatchModal(){if(modalTimer)clearInterval(modalTimer);$('match-found-modal').style.display='none'}
+Snd.check();if($('modal-match-variant'))$('modal-match-variant').innerText='Thể loại: '+vt;
+if($('modal-match-players'))$('modal-match-players').innerHTML='Đỏ: <b>'+d.playerWhite.username+'</b> ('+d.playerWhite.elo+' ELO)<br/>Đen: <b>'+d.playerBlack.username+'</b> ('+d.playerBlack.elo+' ELO)';
+if($('modal-match-side'))$('modal-match-side').innerText='Bạn cầm quân: '+(side==='r'?'ĐỎ (đi trước)':'ĐEN (đi sau)');
+if($('match-found-modal'))$('match-found-modal').style.display='flex';let n=5;if($('modal-countdown'))$('modal-countdown').innerText=n;
+if(modalTimer)clearInterval(modalTimer);modalTimer=setInterval(()=>{n--;if($('modal-countdown'))$('modal-countdown').innerText=n;if(n<=0)closeMatchModal()},1000)}
+function closeMatchModal(){if(modalTimer)clearInterval(modalTimer);if($('match-found-modal'))$('match-found-modal').style.display='none'}
 function replay(acts,fallback){
 REPLAY=true;ms=null;
 try{for(const a of acts){
@@ -1073,7 +1080,7 @@ if(!socket){socket=io(SERVER_API_ENDPOINT,{auth:{token}});
 socket.on('connect',()=>socket.emit('get_public_rooms'));
 socket.on('matchmaking_queued',d=>{$('st').innerText=d.message});
 socket.on('room_created',d=>{const vn=VARS[d.variant]||'Cờ Tướng';$('st').innerText='Mã phòng: '+d.roomCode+' ['+vn+'] - đang chờ đối thủ...';say('[Hệ thống] Đã tạo mã phòng: '+d.roomCode+' ['+vn+'].','#f1c40f','log-sp');alert('Đã tạo phòng!\nMã phòng: '+d.roomCode+'\nThể loại: '+vn+(d.isPrivate?'\n(Phòng riêng)':'\n(Công khai)'))});
-socket.on('public_rooms_list',rooms=>{const l=$('public-rooms-list');l.innerHTML='';
+socket.on('public_rooms_list',rooms=>{const l=$('public-rooms-list');if(!l)return;l.innerHTML='';
 if(!rooms||!rooms.length){l.innerHTML='<div style="font-size:.72rem;color:var(--mu);text-align:center;padding:6px">Chưa có phòng công khai nào...</div>';return}
 rooms.forEach(r=>{const d=document.createElement('div');d.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#1a110a;border:1px solid var(--bd);padding:6px 8px;border-radius:6px;cursor:pointer';
 d.innerHTML='<div><b style="color:var(--ac);font-size:.78rem">'+r.roomCode+'</b> <span style="font-size:.68rem;color:#2ecc71">['+(VARS[r.variant]||'Cờ Tướng')+']</span> <span style="font-size:.68rem;color:var(--mu)">'+r.hostName+'</span></div><span style="font-size:.68rem;color:#2ecc71">Vào đấu</span>';
@@ -1081,9 +1088,9 @@ d.addEventListener('click',()=>joinRoomByCode(r.roomCode));l.appendChild(d)})});
 socket.on('match_found',d=>{
 online.on=true;online.room=d.roomId;searching=false;
 const isRed=(socket&&socket.id===d.playerWhite.socketId)||(currentUser&&currentUser.username===d.playerWhite.username);online.side=isRed?'r':'b';
-if(d.variant)$('mode_variant').value=d.variant;
+if(d.variant&&$('mode_variant'))$('mode_variant').value=d.variant;
 names={r:d.playerWhite.username+' ('+d.playerWhite.elo+')',b:d.playerBlack.username+' ('+d.playerBlack.elo+')'};
-$('btn-action').innerText='Trận Đấu Đang Diễn Ra';
+if($('btn-action'))$('btn-action').innerText='Trận Đấu Đang Diễn Ra';
 newGame(d.variant||VAR,d.initialPieces,String(d.roomId));flipped=online.side==='b';setLocked(true);ui();draw();
 say('[Online] Kết nối trận thành công ['+VARS[VAR]+']! Bạn cầm quân '+(online.side==='r'?'ĐỎ':'ĐEN')+'.','#2ec4b6','log-sp');showMatchModal(d,VARS[VAR],online.side)});
 socket.on('move_made',d=>{if(!online.on||over)return;const mineNow=d.turn===(online.side==='r'?'RED':'BLACK');if(!mineNow)return;
@@ -1097,13 +1104,13 @@ async function joinRoomByCode(code){const c=(typeof code==='string'&&code)||$('r
 function refreshPublicRooms(){if(socket)socket.emit('get_public_rooms')}
 async function handleGameAction(){
 if($('mode').value==='2p_online'){if(!await initSocket())return;
-if(!searching){searching=true;$('btn-action').innerText='HỦY TÌM TRẬN';socket.emit('join_matchmaking',{variant:$('mode_variant').value})}
-else{searching=false;$('btn-action').innerText='GHÉP TRẬN TỰ ĐỘNG';socket.emit('cancel_matchmaking');setLocked(false)}}
+if(!searching){searching=true;if($('btn-action'))$('btn-action').innerText='HỦY TÌM TRẬN';socket.emit('join_matchmaking',{variant:$('mode_variant').value})}
+else{searching=false;if($('btn-action'))$('btn-action').innerText='GHÉP TRẬN TỰ ĐỘNG';socket.emit('cancel_matchmaking');setLocked(false)}}
 else{online.on=false;newGame()}}
 
 /* ---------- KHỞI ĐỘNG KHI TẢI TRANG ---------- */
 Object.assign(window,{onVariantChange,onModeChange,newGame,switchTab,selCard,skipAction,undoAction,hintAction,flipBoardAction,draw,ui,closeMatchModal,closeGameOverModal,
-arenaLogin,arenaRegister,arenaLogout,createRoom,joinRoomByCode,refreshPublicRooms,handleGameAction});
+arenaLogin,arenaRegister,arenaLogout,createRoom,joinRoomByCode,refreshPublicRooms,handleGameAction,submitGreatMatchFromModal});
 window.__kb={get s(){return{turn,over,B,P,K,VM,ms,mode,pend,armed,hands,merit,used,bag,plies,ai,VAR,online,names,flipped,ANIM,eaten,snaps:snaps.length,rec:rec.length}},onClick,selCard,skipAction,undoAction,hintAction,allMoves,facing,inCheck,draw,aiRun,clockTick,finish,flip:()=>{flipped=!flipped;ui()},bars,docs,
 setLIM:v=>{LIM=v;tleft=v*1000},busyAnim:()=>!!ANIM,legal:legalMoves,precheck,sig};
 function syncTray(){const box=$('card-tray-wrapper');if(!box)return;
@@ -1111,8 +1118,8 @@ if(window.innerWidth<=950){const h=$('mobile-tray-placeholder');if(h&&box.parent
 else{const a=$('sec-aside'),l=$('log-card-wrapper');if(a&&l&&box.parentNode!==a)a.insertBefore(box,l)}}
 window.addEventListener('resize',syncTray);
 setInterval(clockTick,250);
-checkAuthUI();onModeChange();syncTray();
-try{document.fonts.load('26px "Noto Serif TC"').then(draw)}catch(e){}
+checkAuthUI();onModeChange();syncTray();draw();
+try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw)}catch(e){}
 })();
 //]]>
 </script>
