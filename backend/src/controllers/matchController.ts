@@ -28,13 +28,29 @@ export async function createGreatMatchPost(req: Request, res: Response): Promise
     const winner = winnerName || 'Kỳ Thủ';
     const loser = loserName || 'Đối Thủ';
 
-    // Map mã Thể loại cờ (variantCode) -> Tên thể loại tiếng Việt (variantName)
+    // Map mã Thể loại cờ (variantCode) -> Tên thể loại tiếng Việt & Label chuẩn có Icon
     const variantCode = (variant || 'kb').toLowerCase();
-    let variantName = 'Cờ Tướng Kỳ Biến';
-    if (variantCode === 'n') variantName = 'Cờ Tướng Truyền Thống';
-    else if (variantCode === 't') variantName = 'Cờ Úp Truyền Thống';
-    else if (variantCode === 'g') variantName = 'Cờ Úp Gián Điệp';
-    else if (variantCode === 'kb') variantName = 'Cờ Tướng Kỳ Biến';
+    let variantName = 'Cờ Bí Pháp';
+    let variantIcon = '✨';
+    let variantLabel = '✨ Cờ Bí Pháp';
+
+    if (variantCode === 'n') {
+      variantName = 'Cờ Truyền Thống';
+      variantIcon = '🏯';
+      variantLabel = '🏯 Cờ Truyền Thống';
+    } else if (variantCode === 't') {
+      variantName = 'Cờ Úp Truyền Thống';
+      variantIcon = '🎴';
+      variantLabel = '🎴 Cờ Úp Truyền Thống';
+    } else if (variantCode === 'g') {
+      variantName = 'Cờ Úp Gián Điệp';
+      variantIcon = '🕵️';
+      variantLabel = '🕵️ Cờ Úp Gián Điệp';
+    } else if (variantCode === 'kb' || variantCode === 'b' || variantCode === 'k') {
+      variantName = 'Cờ Bí Pháp';
+      variantIcon = '✨';
+      variantLabel = '✨ Cờ Bí Pháp';
+    }
 
     console.log(`[Great Match AI Engine] Phân tích ván đấu (${variantName}) ${totalPlies} nước giữa ${whiteName} và ${blackName}...`);
 
@@ -51,7 +67,17 @@ export async function createGreatMatchPost(req: Request, res: Response): Promise
 
     // 2. Xuất bản bài đăng lên Blogger API v3 với đúng nhãn & thông số thể loại cờ
     const matchId = `match_${Date.now()}`;
-    const postId = await publishMatchToBlogger(matchId, whiteName, blackName, moves, aiResult, variantName, variantCode);
+    const postId = await publishMatchToBlogger(
+      matchId,
+      whiteName,
+      blackName,
+      moves,
+      aiResult,
+      variantName,
+      variantCode,
+      variantIcon,
+      variantLabel
+    );
 
     res.json({
       success: true,

@@ -257,10 +257,10 @@
                   <div class='post-card'>
                     <div>
                       <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
-                        <span class='post-card-tag'>⚔️ Trận Hay</span>
+                        <span class='post-card-tag' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold;'>⚔️ TRẬN HAY</span>
                         <b:loop values='data:post.labels' var='label'>
-                          <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Đại Chiến Kỳ Biển"'>
-                            <span class='post-card-tag' style='background: #3a2416; color: #f1c40f; border: 1px solid #5a3d22;'><data:label.name/></span>
+                          <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Đại Chiến Kỳ Biển" and data:label.name != "Trận Hay"'>
+                            <span class='post-card-tag' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold;'><data:label.name/></span>
                           </b:if>
                         </b:loop>
                       </div>

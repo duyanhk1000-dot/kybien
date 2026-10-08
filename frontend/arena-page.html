@@ -649,7 +649,7 @@ say(note,null,mc==='r'?'log-r':'log-b');
 if(v){merit[mc]=Math.min(10,merit[mc]+(GAIN[v.t==='k'?'p':(v.hd?v.t:v.t)]||(GAIN[v.tru]||1)));
 eaten[mc].push({col:v.col,t:v.t,tru:v.tru,truCol:v.truCol,hd:v.hd,by:mc});Snd.cap();
 if(u.d)say(sideTag(mc)+' [Tuyệt Mệnh Cổ] Kích độc bùng phát! Quân vừa ăn Mã cũng bỏ mạng!','#9b59b6','log-sp')}else Snd.move();
-let rv=null;if(o.hd&&!o.dead)rv=reveal(o);
+let rv=null;if(o.hd&&!o.dead){rv=reveal(o);rec.push('FLIP:'+r+','+c+'->'+rv.t)}
 let got=false;
 if(!o.dead&&hadBag){const cd={...CARDS[Math.floor(rng()*CARDS.length)]};if(hands[mc].length<5)hands[mc].push(cd);bag=null;got=true;
 if(isMine(mc)||REPLAY===false)say(sideTag(mc)+' Nhặt Túi Kỳ Mưu, nhận thẻ ['+cd.name+']!','#f1c40f','log-sp')}
@@ -689,7 +689,7 @@ function commit(cid,o){
 const L=handOf(turn),i=L.findIndex(c=>c.id===cid),cd=L[i];if(!cd)return false;
 if(!isFree(turn)){merit[turn]-=cd.cost;hands[turn].splice(i,1)}
 used=true;pend=null;const tag=sideTag(turn),cl=turn==='r'?'log-r':'log-b';
-if(!REPLAY)ACT.push({k:'c',id:cid,r:o.r,c:o.c});
+if(!REPLAY){ACT.push({k:'c',id:cid,r:o.r,c:o.c});rec.push('CARD:'+cid+'->'+o.r+','+o.c)}
 Snd.spell();
 if(cd.pas){o.p[PF[cd.id]]=1;sel=null;VM=[];armed=null;
 if(cd.id==='KNIGHT_2'){const mineView=isMine(turn);if(mineView){$('msg').innerText='Đã âm thầm hạ độc Tuyệt Mệnh Cổ lên Mã (đối thủ không hay biết).';$('msg').style.color='#9b59b6'}}

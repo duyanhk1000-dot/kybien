@@ -7,8 +7,10 @@ export async function publishMatchToBlogger(
   playerBlackName: string,
   pgnMoves: string[],
   aiResult: AIAnalysisResult,
-  variantName: string = 'Cờ Tướng Kỳ Biến',
-  variantCode: string = 'kb'
+  variantName: string = 'Cờ Bí Pháp',
+  variantCode: string = 'kb',
+  variantIcon: string = '✨',
+  variantLabel: string = '✨ Cờ Bí Pháp'
 ): Promise<string | null> {
   const { blogId, clientId, clientSecret, refreshToken } = config.blogger;
 
@@ -43,6 +45,16 @@ export async function publishMatchToBlogger(
 
     const htmlContent = `
 <div class="kybien-match-post" data-match-id="${matchId}">
+  <!-- Khai báo Thẻ Chế độ chơi chuẩn có Icon -->
+  <div class="kybien-variant-header-badge" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+    <span style="background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #a83a1f; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+      ⚔️ TRẬN HAY
+    </span>
+    <span style="background: linear-gradient(135deg, #3a2416, #22150c); color: #f1c40f; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #5a3d22; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+      ${variantIcon} ${variantName}
+    </span>
+  </div>
+
   <!-- Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ -->
   <p class="kybien-post-summary-text" style="font-weight: 600; color: #e5b36a; font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; background: rgba(229,179,106,0.08); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #f1c40f;">
     🎯 <strong>Tóm tắt trận đấu:</strong> ${aiResult.tacticalAnalysis}
@@ -110,10 +122,22 @@ export async function publishMatchToBlogger(
       p: { r: '兵', b: '卒' }
     },
     spellIcons: {
-      CANNON_2: { icon: '🔥', name: 'Bích Lịch Hỏa', color: '#ff4757' },
-      KNIGHT_2: { icon: '☠️', name: 'Tuyệt Mệnh Cổ', color: '#a55eea' },
-      KING_4: { icon: '🌀', name: 'Càn Khôn Di Vị', color: '#f1c40f' },
-      ROOK_1: { icon: '⚡', name: 'Bão Thần', color: '#2ecc71' }
+      ROOK_1: { icon: '⚡', name: 'Thiểm Điện Trảm', badge: '⚡', color: '#2ecc71' },
+      ROOK_2: { icon: '🌊', name: 'Phá Lãng Bộ', badge: '🌊', color: '#3498db' },
+      CANNON_1: { icon: '🏹', name: 'Xuyên Vân Tiễn', badge: '🏹', color: '#e67e22' },
+      CANNON_2: { icon: '🔥', name: 'Bích Lịch Hỏa', badge: '🔥', color: '#ff4757' },
+      KNIGHT_1: { icon: '☁️', name: 'Đạp Vân Tiêu', badge: '☁️', color: '#1abc9c' },
+      KNIGHT_2: { icon: '☠️', name: 'Tuyệt Mệnh Cổ', badge: '☠️', color: '#a55eea' },
+      ELEPHANT_1: { icon: '🪞', name: 'Minh Kính Thuật', badge: '🪞', color: '#f1c40f' },
+      ELEPHANT_2: { icon: '🌊', name: 'Ngự Ba Viễn Chinh', badge: '🌊', color: '#3498db' },
+      ADVISOR_1: { icon: '🏯', name: 'Xuất Trần Hộ Pháp', badge: '🏯', color: '#e74c3c' },
+      ADVISOR_2: { icon: '🐉', name: 'Song Long Xuất Hải', badge: '🐉', color: '#9b59b6' },
+      PAWN_1: { icon: '🌪️', name: 'Tật Phong Binh', badge: '🌪️', color: '#2ecc71' },
+      PAWN_2: { icon: '↩️', name: 'Hồi Phong Binh', badge: '↩️', color: '#f39c12' },
+      KING_1: { icon: '👑', name: 'Thân Chinh Xuất Giá', badge: '👑', color: '#f1c40f' },
+      KING_2: { icon: '🛡️', name: 'Cấp Cứu Cần Vương', badge: '🛡️', color: '#e67e22' },
+      KING_3: { icon: '💎', name: 'Kim Cang Bất Hoại', badge: '💎', color: '#3498db' },
+      KING_4: { icon: '🌀', name: 'Càn Khôn Di Vị', badge: '🌀', color: '#9b59b6' }
     },
     init: function() {
       var viewerElem = document.getElementById('kybien-board-viewer');
@@ -179,9 +203,17 @@ export async function publishMatchToBlogger(
         if (!mStr) continue;
 
         if (mStr.startsWith('CARD:')) {
-          var spellId = mStr.replace('CARD:', '').split('->')[0];
-          var spellInfo = this.spellIcons[spellId] || { icon: '✨', name: spellId, color: '#f1c40f' };
-          moveNote = '✨ Thi triển Bí Pháp [' + spellInfo.name + ']!';
+          var parts = mStr.replace('CARD:', '').split('->');
+          var spellId = parts[0];
+          var posStr = parts[1] || '';
+          var spellInfo = this.spellIcons[spellId] || { icon: '✨', name: spellId, badge: '✨', color: '#f1c40f' };
+          moveNote = '✨ Thi triển Bí Pháp [' + spellInfo.name + ']' + (posStr ? ' tại (' + posStr + ')' : '') + '!';
+          if (posStr) {
+            var pPos = posStr.split(',').map(Number);
+            if (pPos.length === 2 && board[pPos[0]] && board[pPos[0]][pPos[1]]) {
+              board[pPos[0]][pPos[1]].badge = spellInfo.badge;
+            }
+          }
           continue;
         }
 
@@ -194,8 +226,8 @@ export async function publishMatchToBlogger(
               board[fPos[0]][fPos[1]].hd = false;
               board[fPos[0]][fPos[1]].t = realType;
               var sStr = board[fPos[0]][fPos[1]].col === 'r' ? '🔴 Đỏ' : '⚫ Đen';
-              var rName = this.pieceNames[realType]?.[board[fPos[0]][fPos[1]].col] || realType;
-              moveNote = '🕵️ ' + sStr + ' Lật ngửa quân Úp thành ' + rName + '!';
+              var rName = (this.pieceNames[realType] && this.pieceNames[realType][board[fPos[0]][fPos[1]].col]) || realType;
+              moveNote = '🕵️ ' + sStr + ' Lật ngửa quân Úp tại (' + fPos[0] + ',' + fPos[1] + ') thành ' + rName + '!';
             }
           }
           continue;
@@ -289,6 +321,12 @@ export async function publishMatchToBlogger(
             ctx.font = 'bold 20px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(char, x, y + 1);
           }
+
+          if (p.badge) {
+            ctx.fillStyle = '#ff4757';
+            ctx.font = '13px sans-serif';
+            ctx.fillText(p.badge, x + 14, y - 14);
+          }
         }
       }
 
@@ -327,7 +365,7 @@ export async function publishMatchToBlogger(
         title: postTitle,
         content: htmlContent,
         isDraft: false,
-        labels: ['Phân Tích Cờ', 'Đại Chiến Kỳ Biển', variantName],
+        labels: ['Trận Hay', 'Phân Tích Cờ', variantLabel],
       }),
     });
 
