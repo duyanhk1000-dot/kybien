@@ -11,7 +11,7 @@
   <!-- Chuẩn hóa Tiêu đề SEO (Không trùng lặp) -->
   <b:if cond='data:blog.pageType == "index"'>
     <b:if cond='data:blog.searchLabel'>
-      <title><data:blog.searchLabel/> - Bình Văn Sa Trường | KỲ BIẾN CHESS</title>
+      <title><data:blog.searchLabel/> - Thư Viện Bình Văn Sa Trường | KỲ BIẾN CHESS</title>
     <b:else/>
       <title>KỲ BIẾN CHESS - Nền Tảng Cờ Tướng Bí Pháp &amp; Bình Văn Sa Trường</title>
     </b:if>
@@ -76,7 +76,7 @@
   </b:if>
 
   <!-- Script Core Ky Bien Client (Không chặn hiển thị với defer) -->
-  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.4.0'></script>
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.5.0'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -142,6 +142,162 @@
     .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.95rem; }
     .nav-links a:hover { color: #f1c40f; }
 
+    /* ===== HERO SECTION (TRANG CHỦ) ===== */
+    .hero-section {
+      background: linear-gradient(135deg, #33251a, #1a1009);
+      border: 2px solid #5a3d22;
+      border-radius: 16px;
+      padding: 35px 25px;
+      text-align: center;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #8b0000;
+      color: #f1c40f;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid #a83a1f;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .hero-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 2.2rem;
+      color: #f1c40f;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: #e8dcc6;
+      max-width: 750px;
+      margin: 0 auto 25px auto;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .btn-hero-primary {
+      background: linear-gradient(135deg, #8b0000, #500000);
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 26px;
+      border-radius: 10px;
+      border: 1px solid #f1c40f;
+      box-shadow: 0 4px 15px rgba(241,196,15,0.3);
+      transition: transform 0.2s ease;
+    }
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #a83a1f, #8b0000);
+    }
+    .btn-hero-secondary {
+      background: linear-gradient(135deg, #4a3320, #291e14);
+      color: #f1c40f !important;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 26px;
+      border-radius: 10px;
+      border: 1px solid #5a3d22;
+      transition: transform 0.2s ease;
+    }
+    .btn-hero-secondary:hover {
+      transform: translateY(-2px);
+      border-color: #f1c40f;
+      color: #fff !important;
+    }
+
+    /* ===== 4 GAME VARIANT CARDS (TRANG CHỦ) ===== */
+    .variant-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 18px;
+      margin-bottom: 35px;
+    }
+    .variant-card {
+      background: linear-gradient(145deg, #271a10, #140b05);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+    .variant-card:hover {
+      transform: translateY(-4px);
+      border-color: #f1c40f;
+      box-shadow: 0 8px 20px rgba(241,196,15,0.25);
+    }
+    .variant-icon {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    .variant-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.25rem;
+      color: #f1c40f;
+      margin-bottom: 8px;
+    }
+    .variant-desc {
+      font-size: 0.88rem;
+      color: #a8947d;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .btn-play-variant {
+      background: linear-gradient(135deg, #8b0000, #5a0000);
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 9px 14px;
+      border-radius: 6px;
+      text-align: center;
+      border: 1px solid #a83a1f;
+    }
+    .btn-play-variant:hover {
+      background: linear-gradient(135deg, #a83a1f, #8b0000);
+      color: #f1c40f !important;
+    }
+
+    /* ===== THANH LỌC DANH MỤC (LABEL FILTER BAR) ===== */
+    .label-filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+      background: rgba(34, 21, 12, 0.6);
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid #5a3d22;
+    }
+    .filter-btn {
+      background: #33251a;
+      color: #e8dcc6;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid #5a3d22;
+      transition: all 0.2s ease;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: #8b0000;
+      color: #f1c40f;
+      border-color: #f1c40f;
+    }
+
     /* ===== MAIN LAYOUT ===== */
     .main-wrapper {
       max-width: 1200px;
@@ -169,7 +325,7 @@
       letter-spacing: 1px;
     }
 
-    /* GRID CÁC THẺ BÀI VIẾT BÌNH VĂN SA TRƯỜNG (TRANG CHỦ) */
+    /* GRID CÁC THẺ BÀI VIẾT BÌNH VĂN SA TRƯỜNG */
     .post-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
@@ -339,7 +495,7 @@
         <b:widget id='Blog1' locked='true' title='Bài đăng trên Blog' type='Blog'>
           <b:includable id='main'>
             
-            <!-- NẾU LÀ TRANG BÀI VIẾT CHI TIẾT HOẶC TRANG SẢNH CỜ (/p/arena.html) -->
+            <!-- BRANCH 1: TRANG BÀI VIẾT CHI TIẾT HOẶC TRANG SẢNH CỜ (/p/arena.html) -->
             <b:if cond='data:blog.pageType == "item" or data:blog.pageType == "static_page" or data:blog.pageType == "page"'>
               <b:loop values='data:posts' var='post'>
                 <article class='single-page-view'>
@@ -357,17 +513,63 @@
                 </article>
               </b:loop>
 
-            <!-- NẾU LÀ TRANG CHỦ HOẶC DANH SÁCH BÌNH VĂN SA TRƯỜNG -->
-            <b:else/>
+            <!-- BRANCH 2: TRANG CHỦ THUẦN TÚY (HOMEPAGE - KHÔNG CÓ THẺ NHÃN / TÌM KIẾM) -->
+            <b:if cond='!data:blog.searchLabel and !data:blog.searchQuery'>
+              <!-- KHỐI HERO BANNER CHÀO MỪNG TRANG CHỦ -->
+              <div class='hero-section'>
+                <span class='hero-badge'>⚔️ NỀN TẢNG CỜ TƯỚNG BÍ PHÁP KIẾM HIỆP #1</span>
+                <h1 class='hero-title'>KỲ BIẾN CHESS PLATFORM</h1>
+                <p class='hero-subtitle'>
+                  Trải nghiệm cờ tướng bí pháp với 16 thẻ kỳ mưu, cờ úp gián điệp, thi đấu AI Smart Engine &amp; hệ thống bình văn sa trường tự động bằng Gemini AI.
+                </p>
+                <div class='hero-actions'>
+                  <a class='btn-hero-primary' href='/p/arena.html'>🎮 Đấu Với Máy &amp; Online</a>
+                  <a class='btn-hero-secondary' href='/search/label/Phân%20Tích%20Cờ'>📜 Thư Viện Bình Văn Sa Trường</a>
+                </div>
+              </div>
+
+              <!-- KHỐI 4 THẺ THỂ LOẠI CỜ CHƠI NGAY -->
+              <div class='variant-cards-grid'>
+                <div class='variant-card'>
+                  <div>
+                    <div class='variant-icon'>✨</div>
+                    <h3 class='variant-title'>Cờ Kỳ Biến</h3>
+                    <p class='variant-desc'>Đột phá cờ tướng cổ điển với 16 thẻ Bí pháp kiếm hiệp, điểm Công trạng &amp; Túi Kỳ Mưu ngẫu nhiên.</p>
+                  </div>
+                  <a class='btn-play-variant' href='/p/arena.html?variant=kb'>⚔️ Chơi Ngay (Bí Pháp)</a>
+                </div>
+
+                <div class='variant-card'>
+                  <div>
+                    <div class='variant-icon'>🕵️</div>
+                    <h3 class='variant-title'>Cờ Úp Truyền Thống</h3>
+                    <p class='variant-desc'>15 quân úp ẩn số bí ẩn. Lật ngửa quân theo ô đứng, thử thách tài đoán quân và lật kèo kịch tính.</p>
+                  </div>
+                  <a class='btn-play-variant' href='/p/arena.html?variant=t'>🕵️ Chơi Ngay (Cờ Úp)</a>
+                </div>
+
+                <div class='variant-card'>
+                  <div>
+                    <div class='variant-icon'>⚔️</div>
+                    <h3 class='variant-title'>Cờ Úp Gián Điệp</h3>
+                    <p class='variant-desc'>Cơ chế lật quân độc đáo! Quân địch có thể ẩn núp ngụy trang phía bàn cờ nhà bạn, tạo bất ngờ cực lớn.</p>
+                  </div>
+                  <a class='btn-play-variant' href='/p/arena.html?variant=g'>🗡️ Chơi Ngay (Gián Điệp)</a>
+                </div>
+
+                <div class='variant-card'>
+                  <div>
+                    <div class='variant-icon'>👑</div>
+                    <h3 class='variant-title'>Cờ Tướng Tiêu Chuẩn</h3>
+                    <p class='variant-desc'>Luật cờ tướng cổ điển chuẩn mực 9x10. Thể hiện bản lĩnh và chiều sâu thuật điều binh khiển tướng.</p>
+                  </div>
+                  <a class='btn-play-variant' href='/p/arena.html?variant=n'>👑 Chơi Ngay (Truyền Thống)</a>
+                </div>
+              </div>
+
               <div class='section-title-bar'>
-                <h2>
-                  <b:if cond='data:blog.searchLabel'>
-                    ⚔️ THƯ VIỆN BÀI VIẾT: <data:blog.searchLabel/>
-                  <b:else/>
-                    ⚔️ DANH SÁCH BÌNH VĂN SA TRƯỜNG &amp; TRẬN HAY
-                  </b:if>
-                </h2>
-                <span><a href='/p/arena.html' style='font-size: 0.9rem; color: #f1c40f;'>+ Vào Sảnh Đấu Cờ</a></span>
+                <h2>⚔️ BÌNH VĂN SA TRƯỜNG &amp; TRẬN HAY MỚI NHẤT</h2>
+                <span><a href='/search/label/Phân%20Tích%20Cờ' style='font-size: 0.9rem; color: #f1c40f;'>Xem Tất Cả Bài ➔</a></span>
               </div>
               
               <div class='post-grid'>
@@ -375,14 +577,12 @@
                   <div class='post-card'>
                     <div>
                       <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
-                        <!-- Kiểm tra nhãn Trận Hay để gắn Badge -->
                         <b:loop values='data:post.labels' var='label'>
                           <b:if cond='data:label.name == "Trận Hay"'>
                             <span class='post-card-tag' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold;'>⚔️ TRẬN HAY</span>
                           </b:if>
                         </b:loop>
 
-                        <!-- Hiển thị các nhãn thể loại khác -->
                         <b:loop values='data:post.labels' var='label'>
                           <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Trận Hay"'>
                             <span class='post-card-tag' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold;'><data:label.name/></span>
@@ -407,7 +607,69 @@
                 </b:loop>
               </div>
 
-              <!-- PHÂN TRANG (PAGINATION) BÀI CỦ / BÀI MỚI -->
+              <!-- PHÂN TRANG (PAGINATION) -->
+              <b:include name='nextprev'/>
+            </b:if>
+
+            <!-- BRANCH 3: TRANG DANH MỤC / THƯ VIỆN BÀI VIẾT (LABEL HOẶC TÌM KIẾM) -->
+            <b:if cond='data:blog.searchLabel or data:blog.searchQuery'>
+              <div class='section-title-bar'>
+                <h2>
+                  <b:if cond='data:blog.searchLabel'>
+                    ⚔️ THƯ VIỆN BÀI VIẾT: <data:blog.searchLabel/>
+                  <b:else/>
+                    🔍 KẾT QUẢ TÌM KIẾM: <data:blog.searchQuery/>
+                  </b:if>
+                </h2>
+                <span><a href='/p/arena.html' style='font-size: 0.9rem; color: #f1c40f;'>+ Vào Sảnh Đấu Cờ</a></span>
+              </div>
+
+              <!-- THANH BỘ LỌC NHANH DÀNH CHO THƯ VIỆN BÀI VIẾT -->
+              <div class='label-filter-bar'>
+                <a class='filter-btn' href='/search/label/Phân%20Tích%20Cờ'>Tất Cả Bài</a>
+                <a class='filter-btn' href='/search/label/Cờ%20Bí%20Pháp'>Cờ Bí Pháp</a>
+                <a class='filter-btn' href='/search/label/Cờ%20Úp'>Cờ Úp</a>
+                <a class='filter-btn' href='/search/label/Cờ%20Gián%20Điệp'>Cờ Gián Điệp</a>
+                <a class='filter-btn' href='/search/label/Cờ%20Truyền%20Thống'>Cờ Truyền Thống</a>
+                <a class='filter-btn' href='/search/label/Trận%20Hay'>Trận Hay</a>
+              </div>
+
+              <div class='post-grid'>
+                <b:loop values='data:posts' var='post'>
+                  <div class='post-card'>
+                    <div>
+                      <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
+                        <b:loop values='data:post.labels' var='label'>
+                          <b:if cond='data:label.name == "Trận Hay"'>
+                            <span class='post-card-tag' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold;'>⚔️ TRẬN HAY</span>
+                          </b:if>
+                        </b:loop>
+
+                        <b:loop values='data:post.labels' var='label'>
+                          <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Trận Hay"'>
+                            <span class='post-card-tag' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold;'><data:label.name/></span>
+                          </b:if>
+                        </b:loop>
+                      </div>
+                      <h3 class='post-card-title'>
+                        <a expr:href='data:post.url'><data:post.title/></a>
+                      </h3>
+                      <div class='post-card-snippet'>
+                        <b:if cond='data:post.snippet'>
+                          <data:post.snippet/>
+                        <b:else/>
+                          Nhấp bên dưới để đọc bài tường thuật sa trường kiếm hiệp và xem lại bàn cờ tương tác...
+                        </b:if>
+                      </div>
+                    </div>
+                    <a class='btn-read-post' expr:href='data:post.url'>
+                      📖 Đọc Bài Tường Thuật &amp; Xem Ván Cờ ➔
+                    </a>
+                  </div>
+                </b:loop>
+              </div>
+
+              <!-- PHÂN TRANG (PAGINATION) -->
               <b:include name='nextprev'/>
             </b:if>
 

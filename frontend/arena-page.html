@@ -1118,7 +1118,13 @@ if(window.innerWidth<=950){const h=$('mobile-tray-placeholder');if(h&&box.parent
 else{const a=$('sec-aside'),l=$('log-card-wrapper');if(a&&l&&box.parentNode!==a)a.insertBefore(box,l)}}
 window.addEventListener('resize',syncTray);
 setInterval(clockTick,250);
-checkAuthUI();onModeChange();syncTray();draw();
+checkAuthUI();
+try{
+  const params=new URLSearchParams(window.location.search);
+  const v=params.get('variant');
+  if(v&&$('mode_variant')){$('mode_variant').value=v;if(typeof onVariantChange==='function')onVariantChange()}
+}catch(e){}
+onModeChange();syncTray();draw();
 try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw)}catch(e){}
 })();
 //]]>
