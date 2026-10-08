@@ -23,7 +23,7 @@ export async function analyzeMatchWithGemini(
   try {
     const genAI = new GoogleGenerativeAI(config.geminiApiKey);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       generationConfig: {
         responseMimeType: 'application/json',
       },
@@ -82,10 +82,11 @@ Trả về đúng định dạng JSON có cấu trúc sau:
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    const parsedData: AIAnalysisResult = JSON.parse(responseText);
+    const cleanText = responseText.replace(/^```json\s*/i, '').replace(/\s*```$/, '').trim();
+    const parsedData: AIAnalysisResult = JSON.parse(cleanText);
     return parsedData;
   } catch (error) {
-    console.error('[AI Service Error]', error);
+    console.error('[AI Service Error Details]', error);
     return null;
   }
 }
