@@ -117,7 +117,29 @@ class MatchmakingManager {
     return { matched: false };
   }
 
+  public cancelAllWaitingRoomsOfUser(userId: number, exceptRoomId?: string): void {
+    const toDelete: string[] = [];
+    this.activeRooms.forEach((room, roomId) => {
+      if (roomId !== exceptRoomId && room.status === 'WAITING' && room.playerWhite.userId === userId) {
+        toDelete.push(roomId);
+      }
+    });
+    toDelete.forEach((id) => this.removeRoom(id));
+  }
+
+  public getUserActiveRoom(userId: number): GameRoom | null {
+    for (const [, room] of this.activeRooms.entries()) {
+      if (room.status !== 'FINISHED' && (room.playerWhite.userId === userId || room.playerBlack?.userId === userId)) {
+        return room;
+      }
+    }
+    return null;
+  }
+
   public createRoom(player: PlayerInQueue, isPrivate: boolean, variant: string = 'n'): { roomCode: string; room: GameRoom } {
+    // Hủy tất cả các phòng WAITING cũ của người chơi này trước khi tạo phòng mới
+    this.cancelAllWaitingRoomsOfUser(player.userId);
+
     const codeNumber = Math.floor(1000 + Math.random() * 9000);
     const roomCode = `KB-${codeNumber}`;
     const roomId = `room_${isPrivate ? 'priv' : 'pub'}_${Date.now()}_${roomCode}`;
@@ -151,7 +173,7 @@ class MatchmakingManager {
   public joinRoomByCode(roomCode: string, player: PlayerInQueue): { success: boolean; room?: GameRoom; error?: string } {
     const roomId = this.privateCodeToRoomId.get(roomCode);
     if (!roomId) {
-      return { success: false, error: 'Mã phòng không tồn tại hoặc đã hết hạn.' };
+      return { success: false, error: 'Mã phòng không tồn tại hoặc đã bị hủy.' };
     }
 
     const room = this.activeRooms.get(roomId);
@@ -163,9 +185,13 @@ class MatchmakingManager {
       return { success: false, error: 'Phòng đã đầy hoặc đang diễn ra trận đấu.' };
     }
 
-    if (room.playerWhite.socketId === player.socketId) {
-      return { success: false, error: 'Bạn đã ở trong phòng này rồi.' };
+    if (room.playerWhite.userId === player.userId) {
+      return { success: false, error: 'Bạn là chủ phòng của trận đấu này.' };
     }
+
+    // Hủy tất cả các phòng WAITING rác khác của cả 2 người chơi
+    this.cancelAllWaitingRoomsOfUser(player.userId);
+    this.cancelAllWaitingRoomsOfUser(room.playerWhite.userId, roomId);
 
     room.playerBlack = {
       socketId: player.socketId,

@@ -607,6 +607,12 @@
         const socket = io(SERVER_URL, { auth: { token } });
         socket.on('connect', () => socket.emit('get_public_rooms'));
         socket.on('public_rooms_list', (rooms) => renderRooms(rooms));
+        socket.on('match_found', () => {
+          if (window.location.pathname.indexOf('/p/arena.html') === -1) {
+            alert('⚔️ Đã có đối thủ tham gia phòng đấu! Đang tự động chuyển vào Sảnh Đấu...');
+            window.location.href = '/p/arena.html';
+          }
+        });
       } catch (e) {}
     }
 

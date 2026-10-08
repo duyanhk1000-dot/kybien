@@ -570,14 +570,43 @@
                   <!-- CỘT 1: HỒ SƠ KỲ THỦ & PHÒNG CHỜ TRỰC TIẾP -->
                   <div style='display: flex; flex-direction: column; gap: 20px;'>
                     <!-- Widget Hồ Sơ Cá Nhân -->
-                    <div id='kybien-user-profile-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'></div>
+                    <div id='kybien-user-profile-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
+                      <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
+                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.1rem;'>👤 HỒ SƠ KỲ THỦ</h3>
+                      </div>
+                      <div style='text-align: center; padding: 15px 10px;'>
+                        <p style='color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;'>
+                          Bạn đang tham gia với tư cách <strong>Khách Vô Danh</strong>.<br/>Đăng ký tài khoản để tích lũy ELO, thăng cấp &amp; lưu lịch sử đấu!
+                        </p>
+                        <a href='/p/arena.html' style='display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f;'>🔑 Đăng Nhập / Đăng Ký Chơi Ngay ➔</a>
+                      </div>
+                    </div>
                     
                     <!-- Widget Phòng Chờ Trực Tiếp -->
-                    <div id='kybien-live-rooms-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'></div>
+                    <div id='kybien-live-rooms-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
+                      <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
+                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem;'>⚔️ PHÒNG ĐẤU TRỰC TIẾP</h3>
+                        <a href='/p/arena.html' style='font-size: 0.8rem; color: #2ecc71; font-weight: bold;'>+ Tạo Phòng</a>
+                      </div>
+                      <div id='kybien-rooms-list' style='display: flex; flex-direction: column; gap: 8px;'>
+                        <div style='text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;'>
+                          Đang kết nối sảnh cờ... <br/>
+                          <a href='/p/arena.html' style='color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;'>Bấm vào đây để vào Sảnh Đấu ngay! ➔</a>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <!-- CỘT 2: BẢNG XẾP HẠNG TOP ELO -->
-                  <div id='kybien-top-elo-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'></div>
+                  <div id='kybien-top-elo-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
+                    <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
+                      <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem;'>🏆 BẢNG XẾP HẠNG TOP ELO</h3>
+                      <span style='font-size: 0.78rem; color: #a8947d;'>Cao Thủ Kỳ Biến</span>
+                    </div>
+                    <div id='kybien-elo-list' style='display: flex; flex-direction: column; gap: 8px;'>
+                      <div style='text-align: center; color: #a8947d; font-size: 0.85rem; padding: 15px;'>Đang tải bảng xếp hạng...</div>
+                    </div>
+                  </div>
 
                 </div>
 

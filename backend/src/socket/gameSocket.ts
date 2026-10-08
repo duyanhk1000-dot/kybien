@@ -31,17 +31,35 @@ export function setupGameSocket(io: Server): void {
     // Send public waiting rooms list immediately on connection
     socket.emit('public_rooms_list', matchmakingManager.getPublicWaitingRooms());
 
-    // Tự động khôi phục phòng chờ nếu người dùng F5 / reset trang
-    const existingWaitingRoom = matchmakingManager.tryReconnectWaitingRoom(user.userId, socket.id);
-    if (existingWaitingRoom) {
-      socket.join(existingWaitingRoom.roomId);
-      socket.emit('room_created', {
-        roomCode: existingWaitingRoom.roomCode,
-        isPrivate: existingWaitingRoom.isPrivate || false,
-        variant: existingWaitingRoom.variant,
-        message: `Đã khôi phục phòng chờ thành công! Mã: ${existingWaitingRoom.roomCode}`,
-      });
-      broadcastPublicRooms();
+    // Tự động khôi phục hoặc đưa người chơi vào đúng phòng đấu đang tham gia
+    const activeRoom = matchmakingManager.getUserActiveRoom(user.userId);
+    if (activeRoom) {
+      if (activeRoom.status === 'WAITING' && activeRoom.playerWhite.userId === user.userId) {
+        activeRoom.playerWhite.socketId = socket.id;
+        socket.join(activeRoom.roomId);
+        socket.emit('room_created', {
+          roomCode: activeRoom.roomCode,
+          isPrivate: activeRoom.isPrivate || false,
+          variant: activeRoom.variant,
+          message: `Đã khôi phục phòng chờ thành công! Mã: ${activeRoom.roomCode}`,
+        });
+        broadcastPublicRooms();
+      } else if (activeRoom.status === 'PLAYING' && activeRoom.playerBlack) {
+        if (activeRoom.playerWhite.userId === user.userId) activeRoom.playerWhite.socketId = socket.id;
+        if (activeRoom.playerBlack.userId === user.userId) activeRoom.playerBlack.socketId = socket.id;
+        socket.join(activeRoom.roomId);
+
+        socket.emit('match_found', {
+          roomId: activeRoom.roomId,
+          roomCode: activeRoom.roomCode,
+          variant: activeRoom.variant,
+          initialPieces: activeRoom.initialPieces,
+          fen: activeRoom.fen,
+          turn: activeRoom.turn,
+          playerWhite: activeRoom.playerWhite,
+          playerBlack: activeRoom.playerBlack,
+        });
+      }
     }
 
     // Request public rooms list
