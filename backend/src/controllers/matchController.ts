@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { analyzeMatchWithGemini } from '../services/aiService.js';
 import { publishMatchToBlogger } from '../services/bloggerService.js';
+import { matchmakingManager } from '../services/matchmakingService.js';
 
 export async function createGreatMatchPost(req: Request, res: Response): Promise<void> {
   try {
@@ -114,5 +115,14 @@ export async function createGreatMatchPost(req: Request, res: Response): Promise
       success: false,
       message: 'Lỗi máy chủ khi tạo bài viết Trận Hay.',
     });
+  }
+}
+
+export function getPublicRooms(req: Request, res: Response): void {
+  try {
+    const rooms = matchmakingManager.getPublicWaitingRooms();
+    res.json(rooms);
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi máy chủ khi lấy danh sách phòng công khai.' });
   }
 }

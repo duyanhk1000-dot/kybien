@@ -558,41 +558,60 @@
       </div>
       <div id="kybien-rooms-list" style="display: flex; flex-direction: column; gap: 8px;">
         <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;">
-          Đang sẵn sàng kết nối sảnh cờ trực tuyến... <br/>
-          <a href="/p/arena.html" style="color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;">Bấm vào đây để vào Sảnh Đấu ngay! ➔</a>
+          Đang kết nối sảnh cờ...
         </div>
       </div>
     `;
 
+    const renderRooms = (rooms) => {
+      const listContainer = document.getElementById('kybien-rooms-list');
+      if (!listContainer) return;
+      if (!rooms || !rooms.length) {
+        listContainer.innerHTML = `
+          <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;">
+            Chưa có phòng công khai nào đang chờ. <br/>
+            <a href="/p/arena.html" style="color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;">Tạo phòng ngay để chờ đối thủ! ➔</a>
+          </div>
+        `;
+        return;
+      }
+      listContainer.innerHTML = rooms.slice(0, 4).map(r => `
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(34,21,12,0.7); border: 1px solid #5a3d22; padding: 8px 12px; border-radius: 8px;">
+          <div>
+            <b style="color: #f1c40f; font-size: 0.88rem;">${r.roomCode}</b>
+            <span style="font-size: 0.75rem; color: #2ecc71; margin-left: 6px;">[${variantNames[r.variant] || 'Cờ Tướng'}]</span>
+            <div style="font-size: 0.78rem; color: #a8947d;">Chủ phòng: ${r.hostName}</div>
+          </div>
+          <a href="/p/arena.html" style="background: #8b0000; color: #fff; font-size: 0.8rem; padding: 5px 12px; border-radius: 6px; font-weight: bold; border: 1px solid #a83a1f;">Vào Đấu ➔</a>
+        </div>
+      `).join('');
+    };
+
+    // 1. Lấy dữ liệu nhanh qua HTTP REST API
+    const fetchRoomsViaHttp = async () => {
+      try {
+        const res = await fetch(`${SERVER_URL}/api/match/public-rooms`);
+        if (res.ok) {
+          const rooms = await res.json();
+          renderRooms(rooms);
+        }
+      } catch (e) {}
+    };
+
+    fetchRoomsViaHttp();
+
+    // 2. Lắng nghe real-time qua Socket.io nếu có
     if (typeof io !== 'undefined') {
       try {
-        const socket = io(SERVER_URL);
+        const token = localStorage.getItem('kybien_jwt_token') || '';
+        const socket = io(SERVER_URL, { auth: { token } });
         socket.on('connect', () => socket.emit('get_public_rooms'));
-        socket.on('public_rooms_list', (rooms) => {
-          const listContainer = document.getElementById('kybien-rooms-list');
-          if (!listContainer) return;
-          if (!rooms || !rooms.length) {
-            listContainer.innerHTML = `
-              <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;">
-                Chưa có phòng công khai nào đang chờ. <br/>
-                <a href="/p/arena.html" style="color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;">Tạo phòng ngay để chờ đối thủ! ➔</a>
-              </div>
-            `;
-            return;
-          }
-          listContainer.innerHTML = rooms.slice(0, 4).map(r => `
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(34,21,12,0.7); border: 1px solid #5a3d22; padding: 8px 12px; border-radius: 8px;">
-              <div>
-                <b style="color: #f1c40f; font-size: 0.88rem;">${r.roomCode}</b>
-                <span style="font-size: 0.75rem; color: #2ecc71; margin-left: 6px;">[${variantNames[r.variant] || 'Cờ Tướng'}]</span>
-                <div style="font-size: 0.78rem; color: #a8947d;">Chủ phòng: ${r.hostName}</div>
-              </div>
-              <a href="/p/arena.html" style="background: #8b0000; color: #fff; font-size: 0.8rem; padding: 5px 12px; border-radius: 6px; font-weight: bold; border: 1px solid #a83a1f;">Vào Đấu ➔</a>
-            </div>
-          `).join('');
-        });
+        socket.on('public_rooms_list', (rooms) => renderRooms(rooms));
       } catch (e) {}
     }
+
+    // 3. Heartbeat polling 10 giây/lần
+    setInterval(fetchRoomsViaHttp, 10000);
   }
 
   // Tự động khởi tạo ngay khi tải xong

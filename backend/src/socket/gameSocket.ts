@@ -31,6 +31,19 @@ export function setupGameSocket(io: Server): void {
     // Send public waiting rooms list immediately on connection
     socket.emit('public_rooms_list', matchmakingManager.getPublicWaitingRooms());
 
+    // Tự động khôi phục phòng chờ nếu người dùng F5 / reset trang
+    const existingWaitingRoom = matchmakingManager.tryReconnectWaitingRoom(user.userId, socket.id);
+    if (existingWaitingRoom) {
+      socket.join(existingWaitingRoom.roomId);
+      socket.emit('room_created', {
+        roomCode: existingWaitingRoom.roomCode,
+        isPrivate: existingWaitingRoom.isPrivate || false,
+        variant: existingWaitingRoom.variant,
+        message: `Đã khôi phục phòng chờ thành công! Mã: ${existingWaitingRoom.roomCode}`,
+      });
+      broadcastPublicRooms();
+    }
+
     // Request public rooms list
     socket.on('get_public_rooms', () => {
       socket.emit('public_rooms_list', matchmakingManager.getPublicWaitingRooms());
@@ -259,10 +272,7 @@ export function setupGameSocket(io: Server): void {
     });
 
     socket.on('disconnect', () => {
-      const { updatedPublicList } = matchmakingManager.handleSocketDisconnect(socket.id);
-      if (updatedPublicList) {
-        broadcastPublicRooms();
-      }
+      matchmakingManager.handleSocketDisconnect(socket.id, broadcastPublicRooms);
     });
   });
 }

@@ -180,6 +180,8 @@ class MatchmakingManager {
     return { success: true, room };
   }
 
+  private pendingRoomDeletions: Map<string, NodeJS.Timeout> = new Map();
+
   public getPublicWaitingRooms(): Array<{ roomCode: string; hostName: string; hostElo: number; variant: string }> {
     const list: Array<{ roomCode: string; hostName: string; hostElo: number; variant: string }> = [];
     this.activeRooms.forEach((room) => {
@@ -208,6 +210,11 @@ class MatchmakingManager {
     if (room && room.roomCode) {
       this.privateCodeToRoomId.delete(room.roomCode);
     }
+    const pendingTimer = this.pendingRoomDeletions.get(roomId);
+    if (pendingTimer) {
+      clearTimeout(pendingTimer);
+      this.pendingRoomDeletions.delete(roomId);
+    }
     this.activeRooms.delete(roomId);
   }
 
@@ -222,15 +229,36 @@ class MatchmakingManager {
     return { stats: { winnerId, reason } };
   }
 
-  public handleSocketDisconnect(socketId: string): { updatedPublicList: boolean } {
+  public tryReconnectWaitingRoom(userId: number, newSocketId: string): GameRoom | null {
+    for (const [roomId, room] of this.activeRooms.entries()) {
+      if (room.status === 'WAITING' && room.playerWhite.userId === userId) {
+        const pendingTimer = this.pendingRoomDeletions.get(roomId);
+        if (pendingTimer) {
+          clearTimeout(pendingTimer);
+          this.pendingRoomDeletions.delete(roomId);
+        }
+        room.playerWhite.socketId = newSocketId;
+        return room;
+      }
+    }
+    return null;
+  }
+
+  public handleSocketDisconnect(socketId: string, broadcastFn?: () => void): { updatedPublicList: boolean } {
     this.removeFromQueue(socketId);
     let updatedPublicList = false;
 
     this.activeRooms.forEach((room, roomId) => {
       if (room.playerWhite.socketId === socketId || room.playerBlack?.socketId === socketId) {
         if (room.status === 'WAITING') {
-          this.removeRoom(roomId);
-          updatedPublicList = true;
+          if (!this.pendingRoomDeletions.has(roomId)) {
+            const timer = setTimeout(() => {
+              this.removeRoom(roomId);
+              this.pendingRoomDeletions.delete(roomId);
+              if (broadcastFn) broadcastFn();
+            }, 20000); // 20s grace period cho người dùng F5 / reset trang
+            this.pendingRoomDeletions.set(roomId, timer);
+          }
         }
       }
     });
