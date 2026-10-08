@@ -166,3 +166,24 @@ export async function getProfile(req: AuthenticatedRequest, res: Response): Prom
     res.status(500).json({ error: 'Lỗi máy chủ.' });
   }
 }
+
+export async function getLeaderboard(req: Request, res: Response): Promise<void> {
+  try {
+    const topUsers = await prisma.user.findMany({
+      orderBy: { elo: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        username: true,
+        elo: true,
+        level: true,
+        matches_played: true,
+        matches_won: true,
+      },
+    });
+    res.json(topUsers);
+  } catch (error) {
+    console.error('Lỗi Lấy Bảng xếp hạng:', error);
+    res.status(500).json({ error: 'Lỗi máy chủ.' });
+  }
+}

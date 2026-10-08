@@ -567,6 +567,23 @@
                 </div>
               </div>
 
+              <!-- KHỐI WIDGET ĐỘNG TRANG CHỦ: HỒ SƠ, PHÒNG ĐẤU TRỰC TIẾP & TOP ELO LEADERBOARD -->
+              <div class='kybien-dashboard-widgets' style='display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; margin-bottom: 35px;'>
+                
+                <!-- CỘT 1: HỒ SƠ KỲ THỦ & PHÒNG CHỜ TRỰC TIẾP -->
+                <div style='display: flex; flex-direction: column; gap: 20px;'>
+                  <!-- Widget Hồ Sơ Cá Nhân -->
+                  <div id='kybien-user-profile-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'></div>
+                  
+                  <!-- Widget Phòng Chờ Trực Tiếp -->
+                  <div id='kybien-live-rooms-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'></div>
+                </div>
+
+                <!-- CỘT 2: BẢNG XẾP HẠNG TOP ELO -->
+                <div id='kybien-top-elo-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'></div>
+
+              </div>
+
               <div class='section-title-bar'>
                 <h2>⚔️ BÌNH VĂN SA TRƯỜNG &amp; TRẬN HAY MỚI NHẤT</h2>
                 <span><a href='/search/label/Phân%20Tích%20Cờ' style='font-size: 0.9rem; color: #f1c40f;'>Xem Tất Cả Bài ➔</a></span>

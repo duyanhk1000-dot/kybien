@@ -16,6 +16,11 @@
     // Khởi tạo Widget Header Profile
     initHeaderProfileWidget();
 
+    // Khởi tạo 3 khối động Trang Chủ: Hồ Sơ, Top ELO, Phòng Đấu Trực Tiếp
+    initUserProfileSection();
+    initTopEloLeaderboard();
+    initLiveRoomsWidget();
+
     // Khởi tạo Replay Viewer
     window.KybienViewer.init();
 
@@ -429,6 +434,166 @@
       this.render();
     },
   };
+
+  // KHỐI HỒ SƠ CÁ NHÂN KỲ THỦ TRANG CHỦ
+  async function initUserProfileSection() {
+    const container = document.getElementById('kybien-user-profile-section');
+    if (!container) return;
+
+    const token = localStorage.getItem('kybien_jwt_token');
+    if (!token) {
+      container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
+          <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem;">👤 HỒ SƠ KỲ THỦ</h3>
+        </div>
+        <div style="text-align: center; padding: 15px 10px;">
+          <p style="color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;">
+            Bạn đang tham gia với tư cách <strong>Khách Vô Danh</strong>.<br/>Đăng ký tài khoản để tích lũy ELO, thăng cấp &amp; lưu lịch sử đấu!
+          </p>
+          <a href="/p/arena.html" style="display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f;">🔑 Đăng Nhập / Đăng Ký Chơi Ngay ➔</a>
+        </div>
+      `;
+      return;
+    }
+
+    try {
+      const res = await fetch(`${SERVER_URL}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        localStorage.removeItem('kybien_jwt_token');
+        return initUserProfileSection();
+      }
+      const user = await res.json();
+      const expPercent = Math.min(100, Math.floor((user.exp / user.nextLevelExp) * 100));
+      const winRate = user.matchesPlayed > 0 ? Math.round((user.matchesWon / user.matchesPlayed) * 100) : 0;
+
+      container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
+          <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem;">👤 HỒ SƠ KỲ THỦ: <span style="color: #fff;">${user.username}</span></h3>
+          <span style="background: #8b0000; color: #f1c40f; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: bold;">Lv.${user.level}</span>
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+          <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #8b0000, #4a0000); border: 2px solid #f1c40f; color: #fff; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; justify-content: center; font-family: 'Noto Serif TC', serif; flex-shrink: 0;">
+            ${user.username[0].toUpperCase()}
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 0.9rem; margin-bottom: 3px;">Điểm ELO: <strong style="color: #f1c40f; font-size: 1.05rem;">${user.elo}</strong> | Tỉ lệ thắng: <strong style="color: #2ecc71;">${winRate}%</strong></div>
+            <div style="font-size: 0.78rem; color: #a8947d; margin-bottom: 6px;">Số trận đã đấu: <strong>${user.matchesPlayed}</strong> (Thắng: ${user.matchesWon})</div>
+            <div style="background: #140b05; border: 1px solid #5a3d22; height: 7px; border-radius: 4px; overflow: hidden; width: 100%;">
+              <div style="width: ${expPercent}%; height: 100%; background: linear-gradient(90deg, #e67e22, #f1c40f);"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    } catch (e) {
+      console.error('[Profile Section Error]', e);
+    }
+  }
+
+  // KHỐI BẢNG XẾP HẠNG TOP ELO TRANG CHỦ
+  async function initTopEloLeaderboard() {
+    const container = document.getElementById('kybien-top-elo-section');
+    if (!container) return;
+
+    container.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
+        <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.15rem;">🏆 BẢNG XẾP HẠNG TOP ELO</h3>
+        <span style="font-size: 0.78rem; color: #a8947d;">Cao Thủ Kỳ Biến</span>
+      </div>
+      <div id="kybien-elo-list" style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 15px;">Đang tải bảng xếp hạng...</div>
+      </div>
+    `;
+
+    try {
+      const res = await fetch(`${SERVER_URL}/api/auth/leaderboard`);
+      if (!res.ok) throw new Error('API Error');
+      const list = await res.json();
+      const listContainer = document.getElementById('kybien-elo-list');
+      if (!listContainer) return;
+
+      if (!list || !list.length) {
+        listContainer.innerHTML = '<div style="text-align:center; color:#a8947d; font-size:0.85rem;">Chưa có dữ liệu xếp hạng...</div>';
+        return;
+      }
+
+      const rankIcons = ['🥇', '🥈', '🥉'];
+      listContainer.innerHTML = list.slice(0, 5).map((u, i) => {
+        const rankStr = rankIcons[i] || `#${i + 1}`;
+        const winRate = u.matches_played > 0 ? Math.round((u.matches_won / u.matches_played) * 100) : 0;
+        return `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(34,21,12,0.7); border: 1px solid #5a3d22; padding: 8px 12px; border-radius: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.1rem; width: 25px; text-align: center;">${rankStr}</span>
+              <div>
+                <b style="color: #e8dcc6; font-size: 0.9rem;">${u.username}</b>
+                <span style="font-size: 0.75rem; color: #e67e22; margin-left: 4px;">Lv.${u.level}</span>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <strong style="color: #f1c40f; font-size: 0.95rem;">${u.elo} ELO</strong>
+              <div style="font-size: 0.72rem; color: #2ecc71;">${winRate}% thắng (${u.matches_won}/${u.matches_played})</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      const listContainer = document.getElementById('kybien-elo-list');
+      if (listContainer) listContainer.innerHTML = '<div style="text-align:center; color:#a8947d; font-size:0.85rem;">Không thể nạp dữ liệu xếp hạng.</div>';
+    }
+  }
+
+  // KHỐI PHÒNG ĐẤU TRỰC TIẾP TRANG CHỦ
+  async function initLiveRoomsWidget() {
+    const container = document.getElementById('kybien-live-rooms-section');
+    if (!container) return;
+
+    const variantNames = { kb: 'Cờ Bí Pháp', t: 'Cờ Úp', g: 'Gián Điệp', n: 'Truyền Thống' };
+
+    container.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
+        <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.15rem;">⚔️ PHÒNG ĐẤU TRỰC TIẾP</h3>
+        <a href="/p/arena.html" style="font-size: 0.8rem; color: #2ecc71; font-weight: bold;">+ Tạo Phòng</a>
+      </div>
+      <div id="kybien-rooms-list" style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;">
+          Đang sẵn sàng kết nối sảnh cờ trực tuyến... <br/>
+          <a href="/p/arena.html" style="color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;">Bấm vào đây để vào Sảnh Đấu ngay! ➔</a>
+        </div>
+      </div>
+    `;
+
+    if (typeof io !== 'undefined') {
+      try {
+        const socket = io(SERVER_URL);
+        socket.on('connect', () => socket.emit('get_public_rooms'));
+        socket.on('public_rooms_list', (rooms) => {
+          const listContainer = document.getElementById('kybien-rooms-list');
+          if (!listContainer) return;
+          if (!rooms || !rooms.length) {
+            listContainer.innerHTML = `
+              <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;">
+                Chưa có phòng công khai nào đang chờ. <br/>
+                <a href="/p/arena.html" style="color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;">Tạo phòng ngay để chờ đối thủ! ➔</a>
+              </div>
+            `;
+            return;
+          }
+          listContainer.innerHTML = rooms.slice(0, 4).map(r => `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(34,21,12,0.7); border: 1px solid #5a3d22; padding: 8px 12px; border-radius: 8px;">
+              <div>
+                <b style="color: #f1c40f; font-size: 0.88rem;">${r.roomCode}</b>
+                <span style="font-size: 0.75rem; color: #2ecc71; margin-left: 6px;">[${variantNames[r.variant] || 'Cờ Tướng'}]</span>
+                <div style="font-size: 0.78rem; color: #a8947d;">Chủ phòng: ${r.hostName}</div>
+              </div>
+              <a href="/p/arena.html" style="background: #8b0000; color: #fff; font-size: 0.8rem; padding: 5px 12px; border-radius: 6px; font-weight: bold; border: 1px solid #a83a1f;">Vào Đấu ➔</a>
+            </div>
+          `).join('');
+        });
+      } catch (e) {}
+    }
+  }
 
   // Tự động khởi tạo ngay khi tải xong
   window.addEventListener('load', () => window.KybienViewer.init());
