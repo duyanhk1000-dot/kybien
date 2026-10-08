@@ -24,8 +24,8 @@ export async function createGreatMatchPost(req: Request, res: Response): Promise
       return;
     }
 
-    // Helper chuẩn hóa tên Chủ soái có ngoặc vuông [ ] và danh xưng Hành Giả / Lữ Nhân
-    const formatCommanderTitle = (name: string, defaultRole: string = 'Hành Giả'): string => {
+    // Helper chuẩn hóa tên Chủ soái có ngoặc vuông [ ] và danh xưng Chiến Tướng / Hành Giả / Lữ Nhân
+    const formatCommanderTitle = (name: string, defaultRole: string = 'Chiến Tướng'): string => {
       if (!name) return `[${defaultRole}.Vô Danh]`;
       let cleaned = name.trim();
       if (cleaned.startsWith('[') && cleaned.endsWith(']')) {
@@ -37,16 +37,19 @@ export async function createGreatMatchPost(req: Request, res: Response): Promise
       if (cleaned === 'Máy' || cleaned.startsWith('Máy:')) {
         cleaned = cleaned.replace(/^Máy:\s*/, '');
       }
-      if (!cleaned.includes('.') && !cleaned.includes('Máy') && cleaned !== 'Hòa') {
+      // LoạI bỏ Elo trong ngoặc đơn nếu có: "duy (1200)" -> "duy"
+      cleaned = cleaned.replace(/\s*\(\d+\)$/, '').trim();
+
+      if (!cleaned.includes('.') && !cleaned.includes('Máy') && cleaned !== 'Hòa' && cleaned !== 'Địa Ngục Vương') {
         cleaned = `${defaultRole}.${cleaned}`;
       }
       return `[${cleaned}]`;
     };
 
-    const whiteName = formatCommanderTitle(playerWhite || 'Đỏ', 'Hành Giả');
-    const blackName = formatCommanderTitle(playerBlack || 'Đen', 'Lữ Nhân');
-    const winner = winnerName === 'Hòa' ? 'Hòa' : formatCommanderTitle(winnerName || 'Kỳ Thủ', 'Hành Giả');
-    const loser = loserName === 'Hòa' ? 'Hòa' : formatCommanderTitle(loserName || 'Đối Thủ', 'Lữ Nhân');
+    const whiteName = formatCommanderTitle(playerWhite || 'Đỏ', 'Chiến Tướng');
+    const blackName = formatCommanderTitle(playerBlack || 'Đen', 'Chiến Tướng');
+    const winner = winnerName === 'Hòa' ? 'Hòa' : formatCommanderTitle(winnerName || 'Kỳ Thủ', 'Chiến Tướng');
+    const loser = loserName === 'Hòa' ? 'Hòa' : formatCommanderTitle(loserName || 'Đối Thủ', 'Chiến Tướng');
 
     // Map mã Thể loại cờ (variantCode) -> Tên thể loại tiếng Việt & Label chuẩn có Icon
     const variantCode = (variant || 'kb').toLowerCase();

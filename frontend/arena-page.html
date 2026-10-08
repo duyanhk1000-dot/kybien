@@ -742,11 +742,9 @@ return false}
 const REASON={mate:'chiếu bí',stuck:'hết nước đi (bị kín đường)',timeout:'hết giờ luận chiếu',spy:'lật phải quân địch (gián điệp) tự chiếu bí',perp:'chiếu liên tục phạm luật',rep:'lặp thế cờ 3 lần',nocap:'60 nước không ăn quân',mat:'hai bên hết quân tấn công'};
 function submitGreatMatchFromModal(){
 const st=$('post-status-txt');if(st)st.innerText='⏳ Đang gửi dữ liệu để Gemini AI biên soạn bài viết...';
-let rawName='';if(currentUser&&currentUser.username)rawName=currentUser.username;
-else{const ip=$('guest-post-name');if(ip&&ip.value)rawName=ip.value.trim()}
-if(!rawName)rawName='Vô Danh';
-const pfx=(Math.random()<0.5)?'Hành Giả.':'Lữ Nhân.';
-const formattedPlayer=rawName.includes('.')?rawName:(pfx+rawName);
+let rawName='';if(currentUser&&currentUser.username)rawName='Chiến Tướng.'+currentUser.username;
+if(!rawName)rawName='Hành Giả.Vô Danh';
+const formattedPlayer=rawName.includes('.')?rawName:('Chiến Tướng.'+rawName);
 const botName=ai?('Máy: '+BOTN[+$('lv').value]):'Địa Ngục Vương';
 const pWhite=online.on?names.r:formattedPlayer;
 const pBlack=online.on?names.b:(ai?botName:'Lữ Nhân.Đối Thủ');
@@ -755,7 +753,7 @@ const wn=lastRes.kind==='draw'?'Hòa':(lastRes.w==='r'?pWhite:pBlack);
 const ln=lastRes.kind==='draw'?'Hòa':(lastRes.l==='r'?pWhite:pBlack);
 const hd={'Content-Type':'application/json'},tk=localStorage.getItem('kybien_jwt_token');if(tk)hd.Authorization='Bearer '+tk;
 fetch(SERVER_API_ENDPOINT+'/api/matches/great-match',{method:'POST',headers:hd,body:JSON.stringify({playerWhite:pWhite,playerBlack:pBlack,moves:rec,winnerName:wn,loserName:ln,resultReason:REASON[lastRes.why||'mate'],plies:rec.length,variant:VAR})})
-.then(r=>r.json()).then(d=>{if(d.success){if(st)st.innerHTML='🎉 <b>Đã xuất bản bài viết Trận Hay thành công lên Blogger!</b>';const btn=$('btn-guest-post');if(btn)btn.disabled=true}
+.then(r=>r.json()).then(d=>{if(d.success){if(st)st.innerHTML='🎉 <b>Đã tự động xuất bản bài viết Trận Hay thành công lên Blogger!</b>'}
 else{if(st)st.innerText='❌ '+(d.message||'Lỗi khi đăng bài.')}}).catch(()=>{if(st)st.innerText='❌ Lỗi kết nối máy chủ.'})}
 function finish(kind,w,l,why){
 if(over)return;over=true;busy=false;ms=null;sel=null;VM=[];pend=null;armed=null;mode=null;setLocked(false);
@@ -770,11 +768,9 @@ $('st').innerText=kind==='draw'?'HÒA CỜ - '+REASON[why]:(w==='r'?'ĐỎ':'ĐE
 say($('st').innerText,'#ffb300','log-sp');
 const gm=$('go-modal-greatmatch');gm.style.display='none';
 if(rec.length>=50){gm.style.display='block';
-if(!currentUser&&!online.on){
-gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐỦ '+rec.length+' NƯỚC!</div><div style="font-size:0.82rem;color:#e8dcc6;margin-bottom:10px;">Nhập danh xưng kỳ thủ của bạn để AI biên soạn bài Sa Trường Kiếm Hiệp lên Blog:</div><div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;"><input id="guest-post-name" type="text" placeholder="Tên danh xưng (vd: Anh Hai...)" style="background:#1a110a;border:1px solid var(--bd);color:#fff;padding:7px 12px;border-radius:6px;font-size:0.85rem;width:200px;" /><button id="btn-guest-post" onclick="submitGreatMatchFromModal()" style="background:linear-gradient(135deg,#8b0000,#4a0000);color:#fff;border:1px solid #a83a1f;padding:7px 14px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.85rem;">🔥 Đăng Bài Lên Blog</button></div><div id="post-status-txt" style="font-size:0.8rem;margin-top:8px;color:#2ecc71;"></div></div>';
-}else{
-gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐỦ '+rec.length+' NƯỚC!</div><div style="font-size:0.82rem;color:#e8dcc6;margin-bottom:10px;">Biên soạn bài viết cho danh xưng: <b>[Hành Giả.'+(currentUser?currentUser.username:'Vô Danh')+']</b></div><button id="btn-guest-post" onclick="submitGreatMatchFromModal()" style="background:linear-gradient(135deg,#8b0000,#4a0000);color:#fff;border:1px solid #a83a1f;padding:8px 18px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.88rem;">🔥 Đăng Bài Sa Trường Lên Blog</button><div id="post-status-txt" style="font-size:0.8rem;margin-top:8px;color:#2ecc71;"></div></div>';
-}}
+gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐỦ '+rec.length+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">⏳ Đang tự động biên soạn & xuất bản ký sự sa trường lên Blog...</div></div>';
+setTimeout(submitGreatMatchFromModal,400)}
+modal.style.display='flex';ui();draw()}
 modal.style.display='flex';ui();draw()}
 function closeGameOverModal(){$('game-over-modal').style.display='none'}
 
