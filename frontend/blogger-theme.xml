@@ -1,18 +1,82 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
-<html b:version='2' class='v2' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<html b:version='2' class='v2' expr:dir='data:blog.languageDirection' lang='vi' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
 <head>
   <meta charset='utf-8'/>
   <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+  
+  <!-- Thẻ Head mặc định của Blogger -->
   <b:include data='blog' name='all-head-content'/>
-  <title><data:blog.pageTitle/></title>
+
+  <!-- Chuẩn hóa Tiêu đề SEO (Không trùng lặp) -->
+  <b:if cond='data:blog.pageType == "index"'>
+    <b:if cond='data:blog.searchLabel'>
+      <title><data:blog.searchLabel/> - Bình Văn Sa Trường | KỲ BIẾN CHESS</title>
+    <b:else/>
+      <title>KỲ BIẾN CHESS - Nền Tảng Cờ Tướng Bí Pháp &amp; Bình Văn Sa Trường</title>
+    </b:if>
+  <b:else/>
+    <title><data:blog.pageName/> | KỲ BIẾN CHESS</title>
+  </b:if>
+
+  <!-- Thẻ Canonical Link chuẩn hóa URL -->
+  <link expr:href='data:blog.canonicalUrl' rel='canonical'/>
+
+  <!-- Meta Description SEO -->
+  <b:if cond='data:blog.metaDescription'>
+    <meta expr:content='data:blog.metaDescription' name='description'/>
+  <b:else/>
+    <meta content='Kỳ Biến Chess - Nền tảng cờ tướng bí pháp kiếm hiệp, cờ úp, cờ gián điệp và hệ thống bình văn sa trường tự động bằng AI.' name='description'/>
+  </b:if>
+
+  <!-- Open Graph Meta Tags (Facebook, Zalo share) -->
+  <meta expr:content='data:blog.pageTitle' property='og:title'/>
+  <meta expr:content='data:blog.canonicalUrl' property='og:url'/>
+  <meta content='Kỳ Biến Chess' property='og:site_name'/>
+  <meta content='vi_VN' property='og:locale'/>
+  <b:if cond='data:blog.pageType == "item"'>
+    <meta content='article' property='og:type'/>
+  <b:else/>
+    <meta content='website' property='og:type'/>
+  </b:if>
+  <b:if cond='data:blog.metaDescription'>
+    <meta expr:content='data:blog.metaDescription' property='og:description'/>
+  <b:else/>
+    <meta content='Nền tảng cờ tướng bí pháp kiếm hiệp, xem lại ván cờ tương tác và bình văn sa trường bằng AI.' property='og:description'/>
+  </b:if>
+
+  <!-- Twitter Card Tags -->
+  <meta content='summary_large_image' name='twitter:card'/>
+  <meta expr:content='data:blog.pageTitle' name='twitter:title'/>
+  <b:if cond='data:blog.metaDescription'>
+    <meta expr:content='data:blog.metaDescription' name='twitter:description'/>
+  </b:if>
+
+  <!-- JSON-LD Structured Data Schema cho Google Search -->
+  <script type='application/ld+json'>
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Kỳ Biến Chess",
+    "url": "<data:blog.homepageUrl/>",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "<data:blog.homepageUrl/>search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
 
   <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC -->
   <link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap' rel='stylesheet'/>
   
-  <!-- Socket.io & Ky Bien Client Core Scripts -->
-  <script src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.3.0'></script>
+  <!-- Nạp Socket.io có điều kiện (chỉ cho sảnh cờ để không làm chậm trang khác) -->
+  <b:if cond='data:blog.url == data:blog.homepageUrl + "p/arena.html" or data:blog.url == "https://kybien.blogspot.com/p/arena.html"'>
+    <script src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
+  </b:if>
+
+  <!-- Script Core Ky Bien Client (Không chặn hiển thị với defer) -->
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=2.4.0'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -195,6 +259,48 @@
       line-height: 1.3;
     }
 
+    /* STYLING BÌNH LUẬN SA TRƯỜNG */
+    .comments-section {
+      margin-top: 45px;
+      padding-top: 30px;
+      border-top: 2px solid #5a3d22;
+      background: linear-gradient(145deg, #22150c, #140b05);
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #5a3d22;
+    }
+    .comments-title {
+      font-family: 'Noto Serif TC', serif;
+      color: #f1c40f;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    /* STYLING PHÂN TRANG (PAGINATION) */
+    .blog-pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 35px;
+      padding-top: 20px;
+      border-top: 1px solid #5a3d22;
+    }
+    .blog-pager-newer-link, .blog-pager-older-link, .home-link {
+      background: linear-gradient(135deg, #4a3320, #291e14);
+      color: #f1c40f !important;
+      border: 1px solid #5a3d22;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .blog-pager-newer-link:hover, .blog-pager-older-link:hover, .home-link:hover {
+      background: linear-gradient(135deg, #8b0000, #4a0000);
+      color: #fff !important;
+      border-color: #f1c40f;
+    }
+
     /* FOOTER CHUYÊN NGHIỆP */
     footer.kybien-footer {
       text-align: center;
@@ -243,23 +349,42 @@
                   <div class='single-post-body'>
                     <data:post.body/>
                   </div>
+                  
+                  <!-- NHÚNG BÌNH LUẬN TRÊN BÀI BÌNH VĂN SA TRƯỜNG -->
+                  <b:if cond='data:blog.pageType == "item"'>
+                    <b:include data='post' name='comments'/>
+                  </b:if>
                 </article>
               </b:loop>
 
             <!-- NẾU LÀ TRANG CHỦ HOẶC DANH SÁCH BÌNH VĂN SA TRƯỜNG -->
             <b:else/>
               <div class='section-title-bar'>
-                <h2>⚔️ DANH SÁCH BÌNH VĂN SA TRƯỜNG &amp; TRẬN HAY</h2>
+                <h2>
+                  <b:if cond='data:blog.searchLabel'>
+                    ⚔️ THƯ VIỆN BÀI VIẾT: <data:blog.searchLabel/>
+                  <b:else/>
+                    ⚔️ DANH SÁCH BÌNH VĂN SA TRƯỜNG &amp; TRẬN HAY
+                  </b:if>
+                </h2>
                 <span><a href='/p/arena.html' style='font-size: 0.9rem; color: #f1c40f;'>+ Vào Sảnh Đấu Cờ</a></span>
               </div>
+              
               <div class='post-grid'>
                 <b:loop values='data:posts' var='post'>
                   <div class='post-card'>
                     <div>
                       <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
-                        <span class='post-card-tag' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold;'>⚔️ TRẬN HAY</span>
+                        <!-- Kiểm tra nhãn Trận Hay để gắn Badge -->
                         <b:loop values='data:post.labels' var='label'>
-                          <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Đại Chiến Kỳ Biển" and data:label.name != "Trận Hay"'>
+                          <b:if cond='data:label.name == "Trận Hay"'>
+                            <span class='post-card-tag' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold;'>⚔️ TRẬN HAY</span>
+                          </b:if>
+                        </b:loop>
+
+                        <!-- Hiển thị các nhãn thể loại khác -->
+                        <b:loop values='data:post.labels' var='label'>
+                          <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Trận Hay"'>
                             <span class='post-card-tag' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold;'><data:label.name/></span>
                           </b:if>
                         </b:loop>
@@ -281,17 +406,64 @@
                   </div>
                 </b:loop>
               </div>
+
+              <!-- PHÂN TRANG (PAGINATION) BÀI CỦ / BÀI MỚI -->
+              <b:include name='nextprev'/>
             </b:if>
 
           </b:includable>
+
+          <!-- INCLUDABLE CHO PHÂN TRANG -->
+          <b:includable id='nextprev'>
+            <div class='blog-pager' id='blog-pager'>
+              <b:if cond='data:newerPageUrl'>
+                <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' id='blog-pager-newer-link' expr:title='data:newerPageTitle'>⏮️ Ván Mới Hơn</a>
+              <b:else/>
+                <span></span>
+              </b:if>
+
+              <b:if cond='data:blog.homepageUrl != data:blog.url'>
+                <a class='home-link' expr:href='data:blog.homepageUrl'>🏠 Trang Chủ</a>
+              </b:if>
+
+              <b:if cond='data:olderPageUrl'>
+                <a class='blog-pager-older-link' expr:href='data:olderPageUrl' id='blog-pager-older-link' expr:title='data:olderPageTitle'>Ván Cũ Hơn ⏭️</a>
+              <b:else/>
+                <span></span>
+              </b:if>
+            </div>
+          </b:includable>
+
+          <!-- INCLUDABLE CHO BÌNH LUẬN BÀI VIẾT -->
+          <b:includable id='comments' var='post'>
+            <b:if cond='data:post.allowComments'>
+              <section class='comments-section' id='comments'>
+                <h3 class='comments-title'>💬 THẢO LUẬN SA TRƯỜNG</h3>
+                <b:if cond='data:post.numComments != 0'>
+                  <div style='margin-bottom: 20px;'>
+                    <data:post.commentHtml/>
+                  </div>
+                </b:if>
+                <div class='comment-form-box'>
+                  <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:src='data:post.commentFormIframeSrc' id='comment-actions' style='width: 100%; min-height: 250px; border: none;'/>
+                </div>
+              </section>
+            </b:if>
+          </b:includable>
+
         </b:widget>
       </b:section>
     </main>
   </div>
 
-  <!-- CHÂN TRANG CHUYÊN NGHIỆP -->
+  <!-- CHÂN TRANG CHUYÊN NGHIỆP CÓ LIÊN KẾT CHÍNH SÁCH METADATA -->
   <footer class='kybien-footer'>
     <p>© 2026 KỲ BIẾN CHESS PLATFORM. Nền tảng cờ tướng bí pháp &amp; bình văn sa trường hàng đầu.</p>
+    <div style='margin-top: 10px; font-size: 0.82rem; color: #a8947d; display: flex; justify-content: center; gap: 15px;'>
+      <a href='/p/arena.html'>Sảnh Đấu</a> |
+      <a href='/search/label/Phân%20Tích%20Cờ'>Bài Phân Tích</a> |
+      <a href='/'>Trang Chủ</a>
+    </div>
   </footer>
 
 </body>

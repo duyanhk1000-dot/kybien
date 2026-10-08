@@ -43,7 +43,7 @@ export async function publishMatchToBlogger(
     // 2. Build HTML Content chuẩn 2 Cột với Script Bàn cờ nhúng trực tiếp (Self-contained 100%)
     const whiteTitle = playerWhiteName.startsWith('[') ? playerWhiteName : `[${playerWhiteName}]`;
     const blackTitle = playerBlackName.startsWith('[') ? playerBlackName : `[${playerBlackName}]`;
-    const postTitle = `[${variantName}] ${whiteTitle} vs ${blackTitle} - Trận Huyết Chiến Sa Trường`;
+    const postTitle = `[${variantName}] ${whiteTitle} vs ${blackTitle} (${pgnMoves.length} nước) - Trận Huyết Chiến Sa Trường`;
 
     const htmlContent = `
 <div class="kybien-match-post" data-match-id="${matchId}">
@@ -57,34 +57,16 @@ export async function publishMatchToBlogger(
     </span>
   </div>
 
-  <!-- Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ -->
-  <p class="kybien-post-summary-text" style="font-weight: 600; color: #e5b36a; font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; background: rgba(229,179,106,0.08); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #f1c40f;">
-    🎯 <strong>Tóm tắt trận đấu:</strong> ${aiResult.tacticalAnalysis}
+  <!-- Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ & SEO Snippet -->
+  <p class="kybien-post-summary-text" style="font-weight: 600; color: #e5b36a; font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; background: rgba(229,179,106,0.08); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #f1c40f;">
+    🎯 <strong>Tóm tắt ván cờ:</strong> ${aiResult.tacticalAnalysis}
   </p>
 
-  <!-- Khung Bố cục 2 Cột -->
+  <!-- Khung Bố cục 2 Cột (Desktop: Board bên trái order: 1, Story bên phải order: 2) -->
   <div class="kybien-post-layout" style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
     
-    <!-- CỘT BÊN TRÁI: BÀN CỜ CỐ ĐỊNH (STICKY BOARD) -->
-    <div class="sticky-board-col" style="flex: 1 1 480px; max-width: 520px; position: sticky; top: 20px; background: linear-gradient(145deg, #271a10, #180f08); padding: 18px; border-radius: 14px; border: 2px solid #5a3d22; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center;">
-      <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; margin-bottom: 12px; font-size: 1.2rem; letter-spacing: 1px;">⚔️ BÀN CỜ TƯƠNG TÁC XEM LẠI (${variantName})</h3>
-      
-      <div id="kybien-board-viewer" class="kybien-viewer-container" data-variant="${variantCode}" data-moves='${JSON.stringify(pgnMoves)}'>
-        <div id="chess-board-canvas" style="width: 100%; max-width: 500px; height: 520px; margin: 0 auto; background: #f0d9b5; border-radius: 8px;"></div>
-        
-        <div class="viewer-controls" style="text-align: center; margin-top: 14px; display: flex; justify-content: center; gap: 8px;">
-          <button class="btn-first" onclick="window.KybienViewer.firstMove()" style="background: #4a3320; color: #fff; border: 1px solid #5a3d22; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">⏪ Đầu</button>
-          <button class="btn-prev" onclick="window.KybienViewer.prevMove()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">◀ Lùi</button>
-          <button class="btn-next" onclick="window.KybienViewer.nextMove()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Tiến ▶</button>
-          <button class="btn-last" onclick="window.KybienViewer.lastMove()" style="background: #4a3320; color: #fff; border: 1px solid #5a3d22; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Cuối ⏩</button>
-        </div>
-
-        <div id="kybien-step-info" style="text-align:center; margin-top:12px; font-weight:bold; color:#f1c40f; font-size:0.95rem; font-family:sans-serif; background:rgba(0,0,0,0.5); padding:8px 12px; border-radius:6px; border:1px solid #5a3d22; min-height:42px; display:flex; align-items:center; justify-content:center;">🔴 Nước 0 / ${pgnMoves.length}: Khai cuộc ván đấu</div>
-      </div>
-    </div>
-
-    <!-- CỘT BÊN PHẢI: BÀI VIẾT KÝ SỰ SA TRƯỜNG CUỘN TRUỢT (SCROLLABLE) -->
-    <div class="scrollable-story-col" style="flex: 1 1 420px; background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 14px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);">
+    <!-- DOM ORDER #1: BÀI VIẾT KÝ SỰ SA TRƯỜNG (Thứ tự DOM đầu tiên để Blogger & Google lấy đúng mô tả sạch) -->
+    <div class="scrollable-story-col" style="flex: 1 1 420px; order: 2; background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 14px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);">
       
       <!-- Phân tích nước cờ then chốt -->
       <section class="tactical-analysis" style="margin-bottom: 24px; border-bottom: 1px solid #3d2817; padding-bottom: 18px;">
@@ -100,6 +82,24 @@ export async function publishMatchToBlogger(
         <div class="content" style="text-align: justify;">${aiResult.saTruongCommentary.replace(/\n/g, '<br/>')}</div>
       </article>
 
+    </div>
+
+    <!-- DOM ORDER #2: BÀN CỜ CỐ ĐỊNH (Hiển thị bên trái màn hình nhờ order: 1) -->
+    <div class="sticky-board-col" style="flex: 1 1 480px; max-width: 520px; order: 1; position: sticky; top: 20px; background: linear-gradient(145deg, #271a10, #180f08); padding: 18px; border-radius: 14px; border: 2px solid #5a3d22; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center;">
+      <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; margin-bottom: 12px; font-size: 1.2rem; letter-spacing: 1px;">⚔️ BÀN CỜ TƯƠNG TÁC XEM LẠI (${variantName})</h3>
+      
+      <div id="kybien-board-viewer" class="kybien-viewer-container" data-variant="${variantCode}" data-moves='${JSON.stringify(pgnMoves)}'>
+        <div id="chess-board-canvas" style="width: 100%; max-width: 500px; height: 520px; margin: 0 auto; background: #f0d9b5; border-radius: 8px;"></div>
+        
+        <div class="viewer-controls" style="text-align: center; margin-top: 14px; display: flex; justify-content: center; gap: 8px;">
+          <button class="btn-first" onclick="window.KybienViewer.firstMove()" style="background: #4a3320; color: #fff; border: 1px solid #5a3d22; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">⏪ Đầu</button>
+          <button class="btn-prev" onclick="window.KybienViewer.prevMove()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">◀ Lùi</button>
+          <button class="btn-next" onclick="window.KybienViewer.nextMove()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Tiến ▶</button>
+          <button class="btn-last" onclick="window.KybienViewer.lastMove()" style="background: #4a3320; color: #fff; border: 1px solid #5a3d22; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Cuối ⏩</button>
+        </div>
+
+        <div id="kybien-step-info" style="text-align:center; margin-top:12px; font-weight:bold; color:#f1c40f; font-size:0.95rem; font-family:sans-serif; background:rgba(0,0,0,0.5); padding:8px 12px; border-radius:6px; border:1px solid #5a3d22; min-height:42px; display:flex; align-items:center; justify-content:center;">🔴 Nước 0 / ${pgnMoves.length}: Khai cuộc ván đấu</div>
+      </div>
     </div>
 
   </div>

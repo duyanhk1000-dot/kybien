@@ -18,7 +18,18 @@
 
     // Khởi tạo Replay Viewer
     window.KybienViewer.init();
+
+    // Dọn dẹp đoạn trích trang chủ nếu dính chữ nút bấm bàn cờ
+    cleanPostSnippets();
   });
+
+  function cleanPostSnippets() {
+    document.querySelectorAll('.post-card-snippet').forEach((el) => {
+      let txt = el.innerText || el.textContent || '';
+      txt = txt.replace(/⏩\s*Đầu|◀\s*Lùi|Tiến\s*▶|Cuối\s*⏩|🔴\s*Nước\s*\d+.*$/gi, '').trim();
+      if (txt) el.textContent = txt;
+    });
+  }
 
   // FR-02: Header Profile Widget (Hiển thị User, Exp bar, Elo)
   async function initHeaderProfileWidget() {
