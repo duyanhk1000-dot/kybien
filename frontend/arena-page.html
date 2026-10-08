@@ -731,9 +731,10 @@ function showGameOverModal(type, winnerCol, loserCol) {
 
     if (!isOnlineMatch) {
       const whiteName = 'Kỳ Thủ Red';
-      const blackName = (typeof ai !== 'undefined' && ai) ? `Máy AI Lv.${aiLvl}` : 'Kỳ Thủ Black';
+      const blackName = (typeof ai !== 'undefined' && ai) ? `Máy AI Lv.${typeof aiLvl !== 'undefined' ? aiLvl : 1}` : 'Kỳ Thủ Black';
       const winnerName = winnerCol === 'r' ? whiteName : (winnerCol === 'b' ? blackName : 'Hòa');
       const loserName = loserCol === 'r' ? whiteName : (loserCol === 'b' ? blackName : 'Hòa');
+      const currentVariant = (typeof $ !== 'undefined' && $('mode_variant')) ? $('mode_variant').value : 'kb';
 
       fetch(`${SERVER_API_ENDPOINT}/api/matches/great-match`, {
         method: 'POST',
@@ -745,7 +746,8 @@ function showGameOverModal(type, winnerCol, loserCol) {
           winnerName,
           loserName,
           resultReason: type === 'mate' ? 'Chiếu Bí' : 'Hòa Cờ',
-          plies: totalPlies
+          plies: totalPlies,
+          variant: currentVariant
         })
       }).then(res => res.json()).then(data => {
         if (data.success && greatMatchEl) {
@@ -1065,7 +1067,7 @@ function undoAction() {
     cardUsedThisTurn = lastState.cardUsedThisTurn;
     sel = null; VM = [];
     stat(); ui(); draw();
-    say(`↩️ [ĐI LẠI] Đã lùi lại nước cờ (-2đ Công trạng).`, '#e67e22', 'log-sp');
+    say(`[ĐI LẠI] Đã lùi lại nước cờ (-2đ Công trạng).`, '#e67e22', 'log-sp');
   }
 }
 
@@ -1302,7 +1304,7 @@ function valid(o,r2,c2,customBf){
       const f = red ? -1 : 1;
       if (dr === f && !dc) return true;
       if ((p.back || p.PAWN_2 || p['PAWN_2'] || bf === 'PAWN_2') && dr === -f && !dc) return true;
-      if ((p.PAWN_1 || p['PAWN_1'] || bf === 'PAWN_1' || (red ? r1 <= 4 : r1 >= 5)) && !dr && ac === 1) return true;
+      if ((red ? r1 <= 4 : r1 >= 5) && !dr && ac === 1) return true;
       return false;
   }
   return false;
@@ -1574,17 +1576,15 @@ function updateBagLogic() {
 }
 
 function hasAttackingMaterial(col) {
-  return P[col].some(p => {
-    if (p.dead) return false;
-    if (B[p.r] && B[p.r][p.c] !== p) return false;
-    const type = p.hd ? p.t : (p.tru || p.t);
-    if (type === 'r' || type === 'c' || type === 'n') return true;
-    if (type === 'p') {
-      const red = p.col === 'r';
-      if (red ? p.r > 1 : p.r < 8) return true;
+  for (let r = 0; r < 10; r++) {
+    for (let c = 0; c < 9; c++) {
+      const p = B[r][c];
+      if (!p || p.dead || p.col !== col) continue;
+      const type = p.hd ? p.t : (p.tru || p.t);
+      if (type === 'r' || type === 'c' || type === 'n' || type === 'p') return true;
     }
-    return false;
-  });
+  }
+  return false;
 }
 
 function checkGameEnd(currentTurn) {
@@ -1612,7 +1612,7 @@ function checkGameEnd(currentTurn) {
   if (!hasAttackingMaterial('r') && !hasAttackingMaterial('b')) {
     over = true;
     setGameControlsLocked(false);
-    say(`⚖️ HÒA CỜ! Cả hai bên đều không còn quân tấn công để kết liễu Tướng đối thủ.`, '#a8947d', 'log-sp');
+    say(`[Nước ${plies}] HÒA CỜ! Cả hai bên đều không còn quân tấn công để kết liễu Tướng đối thủ.`, '#a8947d', 'log-sp');
     showGameOverModal('stalemate', null, currentTurn);
     return true;
   }
@@ -1629,7 +1629,7 @@ function checkGameEnd(currentTurn) {
       say(`💥 CHIẾU BÍ! ${winner === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} ĐÃ THẮNG BẰNG NƯỚC CHIẾU HẾT!`, '#f1c40f', 'log-sp');
       showGameOverModal('mate', winner, currentTurn);
     } else {
-      say(`⚖️ HÒA CỜ! ${currentTurn === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} Kín nước đi, không còn nước đi hợp lệ.`, '#a8947d', 'log-sp');
+      say(`[Nước ${plies}] HÒA CỜ! ${currentTurn === 'r' ? '[Phe Đỏ]' : '[Phe Đen]'} Kín nước đi, không còn nước đi hợp lệ.`, '#a8947d', 'log-sp');
       showGameOverModal('stalemate', null, currentTurn);
     }
     return true;
@@ -2094,7 +2094,7 @@ function pcBase(o){
     const badges = [];
     if (o.p && (o.p.leave || o.p.ADVISOR_1)) badges.push('🏯');
     if (o.p && (o.p.cross || o.p.ELEPHANT_2)) badges.push('🌊');
-    if (o.p && (o.p.back || o.p.PAWN_2)) badges.push('↩️');
+    if (o.p && (o.p.back || o.p.PAWN_2)) badges.push('↩');
     if (o.p && (o.p.out || o.p.KING_1)) badges.push('👑');
     // Tuyệt Mệnh Cổ chỉ hiện cho chủ sở hữu
     if (o.p && o.p.KNIGHT_2 && (o.col === myOnlineSide || !isOnlineMatch || o.col === 'r')) badges.push('💣');
@@ -2319,6 +2319,27 @@ function onClick(r,c){
     }
   }
 
+  if (ms) {
+    const hitMs = VM.some(q => q[0] === r && q[1] === c);
+    if (hitMs) {
+      saveMoveSnapshot();
+      const fromPos = `${ms.piece.r},${ms.piece.c}`;
+      const toPos = `${r},${c}`;
+      if (typeof matchRecordedMoves !== 'undefined') {
+        matchRecordedMoves.push(`${fromPos}-${toPos}`);
+      }
+      LASTMV = { from: [ms.piece.r, ms.piece.c], to: [r, c] };
+      B[ms.piece.r][ms.piece.c] = null;
+      B[r][c] = ms.piece;
+      ms.piece.r = r; ms.piece.c = c;
+      SoundSystem.playMove();
+      say(`[Bạn] Xe (Phá Lãng Bộ) bẻ góc 90° đi thêm tới (${r}, ${c})`, null, 'log-r');
+      ms = null; sel = null; VM = [];
+      endTurn();
+      return;
+    }
+  }
+
   const hit=VM.some(q=>q[0]===r&&q[1]===c);
   if(sel){
     if(p===sel){sel=null;VM=[];draw();return}
@@ -2343,6 +2364,7 @@ function onClick(r,c){
       }
 
       const v=B[r][c];
+      const isRook2 = sel.oneTurnCard && sel.oneTurnCard.id === 'ROOK_2';
 
       // XỬ LÝ BÍCH LỊCH HỎA (NỔ LAN GÂY CHOÁNG 4 Ô KỀ)
       if (sel.oneTurnCard && sel.oneTurnCard.id === 'CANNON_2' && v) {
@@ -2381,6 +2403,10 @@ function onClick(r,c){
         sel.hd = false;
         sel.t = sel.tru;
 
+        if (typeof matchRecordedMoves !== 'undefined') {
+          matchRecordedMoves.push(`FLIP:${r},${c}->${sel.t}`);
+        }
+
         if (sel.truCol && sel.truCol !== sel.col) {
           const oldCol = sel.col;
           sel.col = sel.truCol;
@@ -2397,7 +2423,6 @@ function onClick(r,c){
 
       const pName = TN[sel.t] || 'Quân';
       say(`[Bạn] ${pName} di chuyển tới (${r}, ${c}) ${v ? 'và ăn quân!' : ''}`, null, 'log-r');
-      sel=null;VM=[];
       
       if(isOnlineMatch && socketInstance && currentRoomId) {
         socketInstance.emit('make_move', {
@@ -2407,6 +2432,31 @@ function onClick(r,c){
         });
       }
 
+      const origR = LASTMV.from[0], origC = LASTMV.from[1];
+      if (isRook2) {
+        const extraMoves = [];
+        const dirs = (origR !== r) ? [[0, 1], [0, -1]] : [[1, 0], [-1, 0]];
+        dirs.forEach(d => {
+          const r1 = r + d[0], c1 = c + d[1];
+          if (r1 >= 0 && r1 < 10 && c1 >= 0 && c1 < 9 && !B[r1][c1]) {
+            extraMoves.push([r1, c1]);
+            const r2 = r + 2 * d[0], c2 = c + 2 * d[1];
+            if (r2 >= 0 && r2 < 10 && c2 >= 0 && c2 < 9 && !B[r2][c2]) {
+              extraMoves.push([r2, c2]);
+            }
+          }
+        });
+
+        if (extraMoves.length > 0) {
+          ms = { piece: sel, type: 'ROOK_2' };
+          VM = extraMoves;
+          say('⚡ [PHÁ LÃNG BỘ] Quân Xe bẻ góc 90°! Chọn ô đi thêm 1-2 bước (Không ăn quân) hoặc bấm Bỏ qua.', '#f1c40f', 'log-sp');
+          busy = false; ui(); draw();
+          return;
+        }
+      }
+
+      sel=null;VM=[];
       endTurn();return;
     }
     if(p&&p.col===turn){sel=p;VM=legalMoves(p,null);draw();}
