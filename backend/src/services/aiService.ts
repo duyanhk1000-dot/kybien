@@ -98,28 +98,30 @@ ${formattedLog}
 
 Hãy dựa chính xác vào nhật ký diễn biến trên để phân tích và viết bài tường thuật trận đấu khoảng 300–400 chữ, theo phong cách kiếm hiệp – chiến trường cổ đại – hùng tráng – tàn khốc.
 
-1. NGUYÊN TẮC BÁM SÁT NƯỚC CỜ, LẬT QUÂN ÚP & BÍ PHÁP:
+1. QUY TẮC BẮT BUỘC VỀ NGOẶC VUÔNG [ ] CHO TÊN CHỦ SOÁI:
+- BẮT BUỘC TẤT CẢ tên / danh xưng của hai Chủ tướng (${winnerName} và ${loserName}) trong MỌI NƠI của bài viết (từ "keyMoves", "tacticalAnalysis", "blunders", cho đến "saTruongCommentary") PHẢI ĐƯỢC ĐẶT TRONG NGOẶC VUÔNG [ ]!
+- Ví dụ đúng: "${winnerName} chủ động điều kỵ binh...", "Nước 12: Pháo Đỏ của ${winnerName} nổ sấm thiêu rụi quân Đen của ${loserName}...".
+- TUYỆT ĐỐI KHÔNG tự ý bỏ ngoặc vuông [ ], KHÔNG dùng các từ chung chung như "Bạn", "Người chơi", "Máy", "Đối thủ". Tất cả đều phải ghi đúng định danh [Tên Chủ Soái].
+
+2. NGUYÊN TẮC BÁM SÁT NƯỚC CỜ, LẬT QUÂN ÚP & BÍ PHÁP:
 - Xử lý từng nước đi, lượt lật quân và thi triển Bí Pháp theo đúng thứ tự. 
 - Pháo → đại pháo, hỏa lực; Xe → chiến xa, thiết kỵ; Mã → kỵ binh; Tượng → tượng binh; Sĩ → cận vệ; Tốt/Binh → bộ binh tiên phong.
 - NẾU LÀ LẬT QUÂN ÚP (🕵️ [LẬT QUÂN ÚP]): BẮT BUỘC tả sự bất ngờ: "Chiến binh cởi bỏ lớp ngụy trang, lộ diện thân phận đại tướng [Pháo/Xe/Mã...] làm xoay chuyển cục diện!".
-- NẾU LÀ THI TRIỂN BÍ PHÁP (✨ [KÍCH HOẠT BÍ PHÁP]): BẮT BUỘC miêu tả uy lực huyền ảo cuồn cuộn của Bí Pháp đó (như Bích Lịch Hỏa nổ sấm thiêu rụi đối phương, Tuyệt Mệnh Cổ dán vòng độc đồng thọ tử, Càn Khôn Di Vị hoán vị chủ tướng...).
+- NẾU LÀ THI TRIỂN BÍ PHÁP (✨ [KÍCH HOẠT BÍ PHÁP]): BẮT BUỘC miêu tả uy lực huyền ảo cuồn cuộn của Bí Pháp do Chủ tướng thi triển.
 - Nước ăn quân là cuộc giao chiến tiêu diệt đối phương; nước KHÔNG ăn quân tuyệt đối không tự ý viết có quân bị chết hay bị tiêu diệt.
 
-2. QUY TẮC VIẾT "keyMoves" (NƯỚC CỜ BƯỚC NGOẶT):
-- BẮT BUỘC mô tả nước cờ bằng VĂN DIỄN GIẢI TIẾNG VIỆT RÕ RÀNG (Ví dụ: "Nước 12: Đại pháo Đỏ nổ sấm Bích Lịch Hỏa thiêu rụi kỵ binh Đen", "Nước 18: Quân Úp Đen lật ngửa lộ diện Chiến Xa bất ngờ chém hạ Pháo Đỏ").
+3. QUY TẮC VIẾT "keyMoves" (NƯỚC CỜ BƯỚC NGOẶT):
+- BẮT BUỘC mô tả nước cờ bằng VĂN DIỄN GIẢI TIẾNG VIỆT RÕ RÀNG kèm tên Chủ tướng trong ngoặc vuông [ ] (Ví dụ: "Nước 12: Đại pháo Đỏ của ${winnerName} nổ sấm Bích Lịch Hỏa thiêu rụi kỵ binh Đen của ${loserName}").
 - TUYỆT ĐỐI KHÔNG xuất ra mã ký hiệu tọa độ dạng "0,7-4,7" hay "7,1-7,4" trong keyMoves!
 
-3. PHẢI BÁM SÁT DIỄN BIẾN, KHÔNG NHẢY CÓC:
+4. PHẢI BÁM SÁT DIỄN BIẾN, KHÔNG NHẢY CÓC:
 Các nước đi tạo thành chuỗi diễn biến liên tục: Khai chiến → điều quân → thăm dò → giằng co → lật quân / thi triển bí pháp → tập kích → phản kích → cao trào → đòn quyết định → kết thúc.
-
-4. HAI NGƯỜI CHƠI LÀ HAI CHỦ TƯỚNG:
-Đưa tên hai chủ tướng (${winnerName} và ${loserName}) vào câu chuyện một cách tự nhiên.
 
 5. PHONG CÁCH VĂN:
 Hùng tráng, tàn khốc, dồn dập, có sát khí, chất cổ trang, đấu trí chiến thuật.
 
 6. CAO TRÀO VÀ KẾT THÚC:
-20–25% cuối bài phải là cao trào. BẮT BUỘC tuyên bố rõ người thắng và người bại ở cuối bài như một đoạn sử thi hùng tráng.
+20–25% cuối bài phải là cao trào. BẮT BUỘC tuyên bố rõ ${winnerName} giành chiến thắng rực rỡ và ${loserName} chịu thất bại ở cuối bài như một đoạn sử thi hùng tráng.
 
 Trả về đúng định dạng JSON có cấu trúc sau:
 {

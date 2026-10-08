@@ -41,7 +41,9 @@ export async function publishMatchToBlogger(
     const accessToken = tokenData.access_token;
 
     // 2. Build HTML Content chuẩn 2 Cột với Script Bàn cờ nhúng trực tiếp (Self-contained 100%)
-    const postTitle = `[${variantName}] ${playerWhiteName} vs ${playerBlackName} - Trận Huyết Chiến Sa Trường`;
+    const whiteTitle = playerWhiteName.startsWith('[') ? playerWhiteName : `[${playerWhiteName}]`;
+    const blackTitle = playerBlackName.startsWith('[') ? playerBlackName : `[${playerBlackName}]`;
+    const postTitle = `[${variantName}] ${whiteTitle} vs ${blackTitle} - Trận Huyết Chiến Sa Trường`;
 
     const htmlContent = `
 <div class="kybien-match-post" data-match-id="${matchId}">

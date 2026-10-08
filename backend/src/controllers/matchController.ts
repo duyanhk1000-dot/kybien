@@ -23,10 +23,29 @@ export async function createGreatMatchPost(req: Request, res: Response): Promise
       return;
     }
 
-    const whiteName = playerWhite || 'Đỏ';
-    const blackName = playerBlack || 'Đen';
-    const winner = winnerName || 'Kỳ Thủ';
-    const loser = loserName || 'Đối Thủ';
+    // Helper chuẩn hóa tên Chủ soái có ngoặc vuông [ ] và danh xưng Hành Giả / Lữ Nhân
+    const formatCommanderTitle = (name: string, defaultRole: string = 'Hành Giả'): string => {
+      if (!name) return `[${defaultRole}.Vô Danh]`;
+      let cleaned = name.trim();
+      if (cleaned.startsWith('[') && cleaned.endsWith(']')) {
+        cleaned = cleaned.slice(1, -1).trim();
+      }
+      if (cleaned === 'Bạn' || cleaned === 'Đỏ (Bạn)' || cleaned === 'Đỏ') {
+        cleaned = `${defaultRole}.Vô Danh`;
+      }
+      if (cleaned === 'Máy' || cleaned.startsWith('Máy:')) {
+        cleaned = cleaned.replace(/^Máy:\s*/, '');
+      }
+      if (!cleaned.includes('.') && !cleaned.includes('Máy') && cleaned !== 'Hòa') {
+        cleaned = `${defaultRole}.${cleaned}`;
+      }
+      return `[${cleaned}]`;
+    };
+
+    const whiteName = formatCommanderTitle(playerWhite || 'Đỏ', 'Hành Giả');
+    const blackName = formatCommanderTitle(playerBlack || 'Đen', 'Lữ Nhân');
+    const winner = winnerName === 'Hòa' ? 'Hòa' : formatCommanderTitle(winnerName || 'Kỳ Thủ', 'Hành Giả');
+    const loser = loserName === 'Hòa' ? 'Hòa' : formatCommanderTitle(loserName || 'Đối Thủ', 'Lữ Nhân');
 
     // Map mã Thể loại cờ (variantCode) -> Tên thể loại tiếng Việt & Label chuẩn có Icon
     const variantCode = (variant || 'kb').toLowerCase();

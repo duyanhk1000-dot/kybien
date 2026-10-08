@@ -638,21 +638,21 @@ return s+' '+TN[o.t]+' '+CN[c1-1]+' '+act+(cap?' (ăn quân)':'')}
 function reveal(o){
 const old=o.col,was=o.t;o.hd=false;o.t=o.tru;let spy=false;
 if(o.truCol!==o.col){P[old]=P[old].filter(q=>q!==o);o.col=o.truCol;P[o.col].push(o);spy=true}
-if(spy)say(sideTag(old)+' lật quân: <span class="spy">(GIÁN ĐIỆP !)</span> '+TN[o.t]+' thuộc về '+sideTag(o.col),'#f1c40f','log-sp',true);
-else say(sideTag(o.col)+' lật ngửa quân úp thành '+TN[o.t]+'.','#f1c40f','log-sp');
+if(spy)say((rec.length+1)+'. '+sideTag(old)+' lật quân: <span class="spy">(GIÁN ĐIỆP !)</span> '+TN[o.t]+' thuộc về '+sideTag(o.col),'#f1c40f','log-sp',true);
+else say((rec.length+1)+'. '+sideTag(o.col)+' lật ngửa quân úp thành '+TN[o.t]+'.','#f1c40f','log-sp');
 return{spy,t:o.t,col:o.col}}
 function apply(o,r,c,fast){
 const v=B[r][c],fr=o.r,fc=o.c,hadBag=!!(bag&&bag.r===r&&bag.c===c),bf=armed&&armed.o===o?armed.card.id:null,mc=o.col;
 const note=notation(o,r,c,!!v),u=mk(o,r,c);
 rec.push(fr+','+fc+'-'+r+','+c);capFlag=!!v;
-say(note,null,mc==='r'?'log-r':'log-b');
+say(rec.length+'. '+note,null,mc==='r'?'log-r':'log-b');
 if(v){merit[mc]=Math.min(10,merit[mc]+(GAIN[v.t==='k'?'p':(v.hd?v.t:v.t)]||(GAIN[v.tru]||1)));
 eaten[mc].push({col:v.col,t:v.t,tru:v.tru,truCol:v.truCol,hd:v.hd,by:mc});Snd.cap();
-if(u.d)say(sideTag(mc)+' [Tuyệt Mệnh Cổ] Kích độc bùng phát! Quân vừa ăn Mã cũng bỏ mạng!','#9b59b6','log-sp')}else Snd.move();
+if(u.d)say(rec.length+'. '+sideTag(mc)+' [Tuyệt Mệnh Cổ] Kích độc bùng phát! Quân vừa ăn Mã cũng bỏ mạng!','#9b59b6','log-sp')}else Snd.move();
 let rv=null;if(o.hd&&!o.dead){rv=reveal(o);rec.push('FLIP:'+r+','+c+'->'+rv.t)}
 let got=false;
 if(!o.dead&&hadBag){const cd={...CARDS[Math.floor(rng()*CARDS.length)]};if(hands[mc].length<5)hands[mc].push(cd);bag=null;got=true;
-if(isMine(mc)||REPLAY===false)say(sideTag(mc)+' Nhặt Túi Kỳ Mưu, nhận thẻ ['+cd.name+']!','#f1c40f','log-sp')}
+if(isMine(mc)||REPLAY===false)say(rec.length+'. '+sideTag(mc)+' Nhặt Túi Kỳ Mưu, nhận thẻ ['+cd.name+']!','#f1c40f','log-sp')}
 if(!fast)startAnim(o,fr,fc,r,c,v,!!u.d,got,bf,rv);else LASTMV={fx:PX(fc),fy:PY(fr),tx:PX(c),ty:PY(r)};
 return{v,rv}}
 function doMove(o,r,c,fast){
@@ -662,7 +662,7 @@ const res=apply(o,r,c,fast);armed=null;sel=null;VM=[];HINT=null;let L=[];
 if(res.rv&&res.rv.spy&&VAR==='g'&&inCheck(mc)&&allMoves(mc).length===0){finish('win',opp(mc),mc,'spy');return}
 if(!o.dead){
 if(bf==='CANNON_2'&&res.v){for(const[d,e]of OFF.k){const q=(B[r+d]||[])[c+e];if(q&&q.col!==o.col)q.st=1}o.st=2;
-say(sideTag(mc)+' [Bích Lịch Hỏa] Quân địch kề bên và Pháo bị định thân 1 hiệp!','#3498db','log-sp')}
+say(rec.length+'. '+sideTag(mc)+' [Bích Lịch Hỏa] Quân địch kề bên và Pháo bị định thân 1 hiệp!','#3498db','log-sp')}
 if(bf==='ROOK_1'&&res.v){const dr=Math.sign(r-r0),dc=Math.sign(c-c0);for(let k=1;k<=2;k++){const a=r+dr*k,b=c+dc*k;if(a<0||a>9||b<0||b>8||B[a][b])break;L.push([a,b])}}
 if(bf==='ROOK_2'){const ds=c===c0?[[0,1],[0,-1]]:[[1,0],[-1,0]];
 for(const[dr,dc]of ds)for(let k=1;k<=3;k++){const a=r+dr*k,b=c+dc*k;if(a<0||a>9||b<0||b>8)break;if(B[a][b]){if(B[a][b].col!==o.col)L.push([a,b]);break}L.push([a,b])}}
@@ -693,14 +693,14 @@ if(!REPLAY){ACT.push({k:'c',id:cid,r:o.r,c:o.c});rec.push('CARD:'+cid+'->'+o.r+'
 Snd.spell();
 if(cd.pas){o.p[PF[cd.id]]=1;sel=null;VM=[];armed=null;
 if(cd.id==='KNIGHT_2'){const mineView=isMine(turn);if(mineView){$('msg').innerText='Đã âm thầm hạ độc Tuyệt Mệnh Cổ lên Mã (đối thủ không hay biết).';$('msg').style.color='#9b59b6'}}
-else say(tag+' Gán giá trị nội tại ['+cd.name+'] cho '+TN[o.t]+'! Bạn có thể đi quân này hoặc quân khác.','#2ecc71',cl)}
-else if(cd.id==='KING_2'){const s=sumList(o)[0];B[s[0].r][s[0].c]=null;s[0].r=s[1];s[0].c=s[2];B[s[1]][s[2]]=s[0];say(tag+' [Cấp Cứu Cần Vương] Sĩ phi thân về hộ giá!','#2ecc71',cl);ui();draw();endTurn();return true}
+else say(rec.length+'. '+tag+' Gán giá trị nội tại ['+cd.name+'] cho '+TN[o.t]+'! Bạn có thể đi quân này hoặc quân khác.','#2ecc71',cl)}
+else if(cd.id==='KING_2'){const s=sumList(o)[0];B[s[0].r][s[0].c]=null;s[0].r=s[1];s[0].c=s[2];B[s[1]][s[2]]=s[0];say(rec.length+'. '+tag+' [Cấp Cứu Cần Vương] Sĩ phi thân về hộ giá!','#2ecc71',cl);ui();draw();endTurn();return true}
 else if(cd.id==='KING_3'){mode='dir';sel=o;VM=OFF.k.map(d=>[o.r+d[0],o.c+d[1]]).filter(q=>q[0]>=0&&q[0]<10&&q[1]>=0&&q[1]<9);say(tag+' Kim Cang: bấm ô kề Tướng để chọn hướng hộ thể!','#3498db',cl)}
 else if(cd.id==='KING_4'){mode='swap';sel=o;VM=swapList(o).map(q=>[q.r,q.c]);say(tag+' Càn Khôn Di Vị: chọn quân trong cung để hoán vị!','#3498db',cl)}
 else{armed={card:cd,o:o};sel=o;VM=legalMoves(o,cd.id);say(tag+' Khí kinh bao phủ: ['+cd.name+'] đã gán lên '+TN[o.t]+'. Nếu đổi ý chọn quân khác sẽ mất thẻ!','#f39c12',cl)}
 ui();draw();return true}
-function setDir(dr,dc){KB[turn]={d:[dr,dc],n:4};if(!REPLAY)ACT.push({k:'d',dr:dr,dc:dc});mode=null;sel=null;VM=[];say(sideTag(turn)+' Kim Cang Bất Hoại: Tướng miễn chiếu thẳng hướng đã chọn trong 3 hiệp!','#3498db',turn==='r'?'log-r':'log-b');ui();draw()}
-function doSwap(r,c){const k=K[turn],q=B[r][c],a=[k.r,k.c];if(!REPLAY)ACT.push({k:'s',r:r,c:c});B[a[0]][a[1]]=q;B[r][c]=k;k.r=b[0];k.c=b[1];q.r=a[0];q.c=a[1];say(sideTag(turn)+' [Càn Khôn Di Vị] Tướng đã hoán đổi vị trí!','#3498db',turn==='r'?'log-r':'log-b');endTurn()}
+function setDir(dr,dc){KB[turn]={d:[dr,dc],n:4};if(!REPLAY)ACT.push({k:'d',dr:dr,dc:dc});mode=null;sel=null;VM=[];say(rec.length+'. '+sideTag(turn)+' Kim Cang Bất Hoại: Tướng miễn chiếu thẳng hướng đã chọn trong 3 hiệp!','#3498db',turn==='r'?'log-r':'log-b');ui();draw()}
+function doSwap(r,c){const k=K[turn],q=B[r][c],a=[k.r,k.c];if(!REPLAY)ACT.push({k:'s',r:r,c:c});B[a[0]][a[1]]=q;B[r][c]=k;k.r=b[0];k.c=b[1];q.r=a[0];q.c=a[1];say(rec.length+'. '+sideTag(turn)+' [Càn Khôn Di Vị] Tướng đã hoán đổi vị trí!','#3498db',turn==='r'?'log-r':'log-b');endTurn()}
 function refundArmed(){if(!armed)return;const cd=armed.card,col=turn;
 if(!isFree(col)){hands[col].push({...cd});const ra=Math.max(0,cd.cost-1);merit[col]=Math.min(10,merit[col]+ra);say(sideTag(col)+' Thu hồi ['+cd.name+']: hoàn thẻ và '+ra+' Công trạng (phạt 1 điểm).','#e67e22','log-sp')}
 else say(sideTag(col)+' Hủy gán ['+cd.name+'].','#e67e22','log-sp');
@@ -740,8 +740,26 @@ if(noCap>=120){finish('draw',null,null,'nocap');return true}
 if(!hasAtk('r')&&!hasAtk('b')){finish('draw',null,null,'mat');return true}
 return false}
 const REASON={mate:'chiếu bí',stuck:'hết nước đi (bị kín đường)',timeout:'hết giờ luận chiếu',spy:'lật phải quân địch (gián điệp) tự chiếu bí',perp:'chiếu liên tục phạm luật',rep:'lặp thế cờ 3 lần',nocap:'60 nước không ăn quân',mat:'hai bên hết quân tấn công'};
+function submitGreatMatchFromModal(){
+const st=$('post-status-txt');if(st)st.innerText='⏳ Đang gửi dữ liệu để Gemini AI biên soạn bài viết...';
+let rawName='';if(currentUser&&currentUser.username)rawName=currentUser.username;
+else{const ip=$('guest-post-name');if(ip&&ip.value)rawName=ip.value.trim()}
+if(!rawName)rawName='Vô Danh';
+const pfx=(Math.random()<0.5)?'Hành Giả.':'Lữ Nhân.';
+const formattedPlayer=rawName.includes('.')?rawName:(pfx+rawName);
+const botName=ai?('Máy: '+BOTN[+$('lv').value]):'Địa Ngục Vương';
+const pWhite=online.on?names.r:formattedPlayer;
+const pBlack=online.on?names.b:(ai?botName:'Lữ Nhân.Đối Thủ');
+const lastRes=window.__lastMatchResult||{};
+const wn=lastRes.kind==='draw'?'Hòa':(lastRes.w==='r'?pWhite:pBlack);
+const ln=lastRes.kind==='draw'?'Hòa':(lastRes.l==='r'?pWhite:pBlack);
+const hd={'Content-Type':'application/json'},tk=localStorage.getItem('kybien_jwt_token');if(tk)hd.Authorization='Bearer '+tk;
+fetch(SERVER_API_ENDPOINT+'/api/matches/great-match',{method:'POST',headers:hd,body:JSON.stringify({playerWhite:pWhite,playerBlack:pBlack,moves:rec,winnerName:wn,loserName:ln,resultReason:REASON[lastRes.why||'mate'],plies:rec.length,variant:VAR})})
+.then(r=>r.json()).then(d=>{if(d.success){if(st)st.innerHTML='🎉 <b>Đã xuất bản bài viết Trận Hay thành công lên Blogger!</b>';const btn=$('btn-guest-post');if(btn)btn.disabled=true}
+else{if(st)st.innerText='❌ '+(d.message||'Lỗi khi đăng bài.')}}).catch(()=>{if(st)st.innerText='❌ Lỗi kết nối máy chủ.'})}
 function finish(kind,w,l,why){
 if(over)return;over=true;busy=false;ms=null;sel=null;VM=[];pend=null;armed=null;mode=null;setLocked(false);
+window.__lastMatchResult={kind,w,l,why};
 const me=ai?'r':online.on?online.side:null;
 const modal=$('game-over-modal');Snd.mate();
 const ic=$('go-modal-icon'),ti=$('go-modal-title'),su=$('go-modal-sub'),de=$('go-modal-desc');
@@ -751,13 +769,13 @@ su.innerText=(w==='r'?'PHE ĐỎ':'PHE ĐEN')+' giành chiến thắng!';de.inne
 $('st').innerText=kind==='draw'?'HÒA CỜ - '+REASON[why]:(w==='r'?'ĐỎ':'ĐEN')+' THẮNG - '+REASON[why];$('st').className='pill';$('st').style.color='#ffb300';
 say($('st').innerText,'#ffb300','log-sp');
 const gm=$('go-modal-greatmatch');gm.style.display='none';
-if(rec.length>=50){gm.style.display='block';gm.innerHTML='<b>TRẬN HAY ('+rec.length+' NƯỚC)!</b><br/>Đang gửi dữ liệu để biên soạn bài viết...';
-const wn=kind==='draw'?'Hòa':(w==='r'?names.r:names.b),ln=kind==='draw'?'Hòa':(l==='r'?names.r:names.b);
-const hd={'Content-Type':'application/json'},tk=localStorage.getItem('kybien_jwt_token');if(tk)hd.Authorization='Bearer '+tk;
-if(!online.on)try{fetch(SERVER_API_ENDPOINT+'/api/matches/great-match',{method:'POST',headers:hd,body:JSON.stringify({playerWhite:names.r,playerBlack:names.b,moves:rec,winnerName:wn,loserName:ln,resultReason:REASON[why],plies:rec.length,variant:VAR})})
-.then(r=>r.json()).then(d=>{if(d.success)gm.innerHTML='<b>ĐÃ ĐĂNG BÀI VIẾT TRẬN HAY!</b>'}).catch(()=>{gm.style.display='none'})}catch(e){gm.style.display='none'}}
+if(rec.length>=50){gm.style.display='block';
+if(!currentUser&&!online.on){
+gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐỦ '+rec.length+' NƯỚC!</div><div style="font-size:0.82rem;color:#e8dcc6;margin-bottom:10px;">Nhập danh xưng kỳ thủ của bạn để AI biên soạn bài Sa Trường Kiếm Hiệp lên Blog:</div><div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;"><input id="guest-post-name" type="text" placeholder="Tên danh xưng (vd: Anh Hai...)" style="background:#1a110a;border:1px solid var(--bd);color:#fff;padding:7px 12px;border-radius:6px;font-size:0.85rem;width:200px;" /><button id="btn-guest-post" onclick="submitGreatMatchFromModal()" style="background:linear-gradient(135deg,#8b0000,#4a0000);color:#fff;border:1px solid #a83a1f;padding:7px 14px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.85rem;">🔥 Đăng Bài Lên Blog</button></div><div id="post-status-txt" style="font-size:0.8rem;margin-top:8px;color:#2ecc71;"></div></div>';
+}else{
+gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐỦ '+rec.length+' NƯỚC!</div><div style="font-size:0.82rem;color:#e8dcc6;margin-bottom:10px;">Biên soạn bài viết cho danh xưng: <b>[Hành Giả.'+(currentUser?currentUser.username:'Vô Danh')+']</b></div><button id="btn-guest-post" onclick="submitGreatMatchFromModal()" style="background:linear-gradient(135deg,#8b0000,#4a0000);color:#fff;border:1px solid #a83a1f;padding:8px 18px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:0.88rem;">🔥 Đăng Bài Sa Trường Lên Blog</button><div id="post-status-txt" style="font-size:0.8rem;margin-top:8px;color:#2ecc71;"></div></div>';
+}}
 modal.style.display='flex';ui();draw()}
-function closeGameOverModal(){$('game-over-modal').style.display='none'}
 
 /* ---------- ĐỒNG HỒ ---------- */
 function clockTick(){
