@@ -6,6 +6,7 @@ export interface AIAnalysisResult {
   tacticalAnalysis: string;
   blunders: string[];
   saTruongCommentary: string;
+  matchTitlePhrase?: string;
 }
 
 function formatMovesForAI(moves: string[]): string {
@@ -123,8 +124,14 @@ Hùng tráng, tàn khốc, dồn dập, có sát khí, chất cổ trang, đấu
 6. CAO TRÀO VÀ KẾT THÚC:
 20–25% cuối bài phải là cao trào. BẮT BUỘC tuyên bố rõ ${winnerName} giành chiến thắng rực rỡ và ${loserName} chịu thất bại ở cuối bài như một đoạn sử thi hùng tráng.
 
+7. TIÊU ĐỀ PHỤ THẦN THÁI DÀNH CHO TRẬN ĐẤU ("matchTitlePhrase"):
+- BẮT BUỘC sáng tạo 1 cụm danh xưng/tiêu đề phụ ngắn gọn từ 3 đến 6 từ đặc tả thần thái & diễn biến then chốt của trận đấu.
+- Ví dụ: "Đại Chiến Càn Khôn Đổi Chủ", "Cuộc Phản Kích Xuyên Vân Tiễn", "Trận Tuyệt Mệnh Phá Vòng Vây", "Bão Lửa Thiêu Rụi Trung Quân", "Đại Pháo Đoạt Thần Kỳ", "Thiết Kỵ Càn Quét Tướng Cung", "Phá Lãng Bộ Trảm Tướng".
+- TUYỆT ĐỐI KHÔNG tự ý lặp lại cụm cố định "Trận Huyết Chiến Sa Trường" cho mọi trận đấu!
+
 Trả về đúng định dạng JSON có cấu trúc sau:
 {
+  "matchTitlePhrase": "Cụm danh xưng hùng tráng 3-6 từ đặc tả riêng cho trận đấu này",
   "keyMoves": ["Danh sách 3-5 nước cờ bước ngoặt bằng văn diễn giải tiếng Việt rõ ràng, KHÔNG dùng tọa độ ký hiệu"],
   "tacticalAnalysis": "Tóm tắt ngắn gọn 2-3 câu về mưu đồ chiến thuật & ý đồ điều quân",
   "blunders": ["Danh sách sơ hở đáng chú ý nếu có"],

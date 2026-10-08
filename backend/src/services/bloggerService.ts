@@ -40,17 +40,37 @@ export async function publishMatchToBlogger(
 
     const accessToken = tokenData.access_token;
 
-    // 2. Build HTML Content chuẩn 2 Cột với Script Bàn cờ nhúng trực tiếp (Self-contained 100%)
     const whiteTitle = playerWhiteName.startsWith('[') ? playerWhiteName : `[${playerWhiteName}]`;
     const blackTitle = playerBlackName.startsWith('[') ? playerBlackName : `[${playerBlackName}]`;
-    const postTitle = `[${variantName}] ${whiteTitle} vs ${blackTitle} (${pgnMoves.length} nước) - Trận Huyết Chiến Sa Trường`;
+
+    // Danh sách phụ đề trận đấu hùng tráng dự phòng nếu AI không trả về
+    const EPIC_MATCH_TITLES = [
+      'Đại Chiến Càn Khôn Đổi Chủ',
+      'Cuộc Phản Kích Xuyên Vân Tiễn',
+      'Trận Tuyệt Mệnh Phá Vòng Vây',
+      'Bão Lửa Thiêu Rụi Trung Quân',
+      'Quyết Chiến Sa Trường Kỳ Mưu',
+      'Đại Pháo Nổ Sấm Đoạt Thần Kỳ',
+      'Thiết Kỵ Càn Quét Tướng Cung',
+      'Trận Phá Lãng Bộ Trảm Tướng',
+      'Song Long Xuất Hải Phá Cung Cấm',
+      'Huyết Chiến Sa Trường Kiếm Hiệp',
+      'Tuyệt Mệnh Cổ Kéo Kẻ Thù Trị Tội',
+      'Càn Khôn Di Vị Xoay Chuyển Cục Diện'
+    ];
+
+    const matchPhrase = (aiResult.matchTitlePhrase && aiResult.matchTitlePhrase.trim().length >= 3 && !aiResult.matchTitlePhrase.includes('Trận Huyết Chiến Sa Trường'))
+      ? aiResult.matchTitlePhrase.trim()
+      : EPIC_MATCH_TITLES[Math.floor(Math.random() * EPIC_MATCH_TITLES.length)];
+
+    const postTitle = `[${variantName}] ${whiteTitle} vs ${blackTitle} (${pgnMoves.length} nước) - ${matchPhrase}`;
 
     const htmlContent = `
 <div class="kybien-match-post" data-match-id="${matchId}">
   <!-- Khai báo Thẻ Chế độ chơi chuẩn có Icon -->
   <div class="kybien-variant-header-badge" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
     <span style="background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #a83a1f; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-      ⚔️ TRẬN HAY
+      ⚔️ ${matchPhrase}
     </span>
     <span style="background: linear-gradient(135deg, #3a2416, #22150c); color: #f1c40f; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #5a3d22; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
       ${variantIcon} ${variantName}
