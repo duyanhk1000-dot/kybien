@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KỲ BIẾN CHESS - Nền Tảng Cờ Tướng Bí Pháp &amp; Bình Văn Sa Trường</title>
+  <meta name="description" content="Kỳ Biến Chess - Nền tảng cờ tướng bí pháp kiếm hiệp, cờ úp, cờ gián điệp và hệ thống bình văn sa trường tự động bằng AI."/>
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="KỲ BIẾN CHESS - Nền Tảng Cờ Tướng Bí Pháp"/>
+  <meta property="og:site_name" content="Kỳ Biến Chess"/>
+  <meta property="og:locale" content="vi_VN"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:description" content="Nền tảng cờ tướng bí pháp kiếm hiệp, xem lại ván cờ tương tác và bình văn sa trường bằng AI."/>
+
+  <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap" rel="stylesheet"/>
+  
+  <!-- Socket.io Client & Ky Bien Core Scripts -->
+  <script defer src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script defer src="frontend/kybien-client.js?v=2.8.0"></script>
+
+  <style>
+    /* ===== RESET & BASE STYLES ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 0, #291e14, #0d0906);
+      color: #e8dcc6;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: #e5b36a; text-decoration: none; transition: all 0.2s ease; }
+    a:hover { color: #f1c40f; }
+
+    /* ===== NAVBAR ===== */
+    .kybien-navbar {
+      background: linear-gradient(135deg, #8b0000, #4a0000);
+      color: #ffffff;
+      padding: 14px 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 10;
+      border-bottom: 2px solid #f1c40f;
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand-logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Noto Serif TC', serif;
+    }
+    .brand-logo span { color: #f1c40f; }
+    
+    .logo-general-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #c62828;
+      color: #ffffff;
+      border: 2px solid #f1c40f;
+      font-family: 'Noto Serif TC', serif;
+      font-weight: 900;
+      font-size: 1.15rem;
+      box-shadow: 0 0 10px rgba(241,196,15,0.4);
+    }
+
+    .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
+    .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.95rem; }
+    .nav-links a:hover, .nav-links a.active { color: #f1c40f; }
+
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+      background: linear-gradient(135deg, #33251a, #1a1009);
+      border: 2px solid #5a3d22;
+      border-radius: 16px;
+      padding: 35px 25px;
+      text-align: center;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #8b0000;
+      color: #f1c40f;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid #a83a1f;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .hero-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 2.2rem;
+      color: #f1c40f;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: #e8dcc6;
+      max-width: 750px;
+      margin: 0 auto 25px auto;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .btn-hero-primary {
+      background: linear-gradient(135deg, #8b0000, #500000);
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 26px;
+      border-radius: 10px;
+      border: 1px solid #f1c40f;
+      box-shadow: 0 4px 15px rgba(241,196,15,0.3);
+      transition: transform 0.2s ease;
+    }
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #a83a1f, #8b0000);
+    }
+    .btn-hero-secondary {
+      background: linear-gradient(135deg, #4a3320, #291e14);
+      color: #f1c40f !important;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 26px;
+      border-radius: 10px;
+      border: 1px solid #5a3d22;
+      transition: transform 0.2s ease;
+    }
+    .btn-hero-secondary:hover {
+      transform: translateY(-2px);
+      border-color: #f1c40f;
+      color: #fff !important;
+    }
+
+    /* ===== 4 GAME VARIANT CARDS ===== */
+    .variant-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 35px;
+    }
+    .variant-card {
+      background: linear-gradient(145deg, #271a10, #140b05);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+    .variant-card:hover {
+      transform: translateY(-4px);
+      border-color: #f1c40f;
+      box-shadow: 0 8px 20px rgba(241,196,15,0.25);
+    }
+    .variant-icon {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    .variant-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.25rem;
+      color: #f1c40f;
+      margin-bottom: 8px;
+    }
+    .variant-desc {
+      font-size: 0.88rem;
+      color: #a8947d;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .btn-play-variant {
+      background: linear-gradient(135deg, #8b0000, #5a0000);
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 9px 14px;
+      border-radius: 6px;
+      text-align: center;
+      border: 1px solid #a83a1f;
+    }
+    .btn-play-variant:hover {
+      background: linear-gradient(135deg, #a83a1f, #8b0000);
+      color: #f1c40f !important;
+    }
+
+    /* ===== DYNAMIC WIDGETS GRID ===== */
+    .kybien-dashboard-widgets {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 35px;
+    }
+    .widget-box {
+      background: linear-gradient(145deg, #271a10, #140b05);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main-wrapper {
+      max-width: 1200px;
+      margin: 20px auto 40px auto;
+      padding: 0 15px;
+    }
+
+    /* SECTION HEADER TITLE */
+    .section-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #5a3d22;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+    }
+    .section-title-bar h2 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.4rem;
+      color: #f1c40f;
+      letter-spacing: 1px;
+    }
+
+    /* GRID CÁC THẺ BÀI VIẾT BÌNH VĂN SA TRƯỜNG */
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 22px;
+    }
+    .post-card {
+      background: linear-gradient(145deg, #33251a, #20140b);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .post-card:hover {
+      transform: translateY(-4px);
+      border-color: #f1c40f;
+      box-shadow: 0 8px 25px rgba(241,196,15,0.2);
+    }
+    .post-card-tag {
+      display: inline-block;
+      background: #8b0000;
+      color: #f1c40f;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .post-card-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f1c40f;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .post-card-snippet {
+      font-size: 0.9rem;
+      color: #a8947d;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer.kybien-footer {
+      background: linear-gradient(135deg, #1f130a, #0a0604);
+      border-top: 2px solid #5a3d22;
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: 50px;
+      color: #a8947d;
+      font-size: 0.88rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER NAVBAR -->
+  <header class="kybien-navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-general-badge">帥</span>
+        <span>KỲ BIẾN</span> CHESS
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Trang Chủ</a></li>
+        <li><a href="frontend/arena-page.html">Sảnh Đấu Cờ</a></li>
+        <li><a href="index.html#library">Bình Văn Sa Trường</a></li>
+      </ul>
+      <div id="kybien-header-profile"></div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-wrapper">
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <span class="hero-badge">⚔️ Nền Tảng Cờ Tướng Tự Động Hóa AI ⚔️</span>
+      <h1 class="hero-title">BÌNH VĂN SA TRƯỜNG &amp; CỜ BÍ PHÁP KIẾM HIỆP</h1>
+      <p class="hero-subtitle">
+        Trải nghiệm 4 thể loại cờ đỉnh cao với 16 chiêu thức Bí Pháp Kiếm Hiệp. 
+        Mọi trận đại chiến $\ge 50$ nước đi đều được Gemini AI tự động biên soạn thành ký sự sa trường đẫm lửa!
+      </p>
+      <div class="hero-actions">
+        <a href="frontend/arena-page.html" class="btn-hero-primary">⚔️ Ghép Trận Online Ngay</a>
+        <a href="frontend/arena-page.html?mode=ai" class="btn-hero-secondary">🤖 Đấu Với Máy AI (5 Lv)</a>
+      </div>
+    </section>
+
+    <!-- 4 THỂ LOẠI CỜ CARDS -->
+    <section class="variant-cards-grid">
+      <div class="variant-card">
+        <div>
+          <div class="variant-icon">✨</div>
+          <h3 class="variant-title">Cờ Bí Pháp Kiếm Hiệp</h3>
+          <p class="variant-desc">Tích lũy Công trạng qua từng nước ăn quân để thi triển 16 chiêu Bí Pháp biến hóa khôn lường.</p>
+        </div>
+        <a href="frontend/arena-page.html?variant=kb" class="btn-play-variant">Chơi Ngay ➔</a>
+      </div>
+
+      <div class="variant-card">
+        <div>
+          <div class="variant-icon">🏯</div>
+          <h3 class="variant-title">Cờ Tướng Truyền Thống</h3>
+          <p class="variant-desc">Luật cờ tướng tiêu chuẩn quốc tế cổ điển, thử thách trình độ tính toán thuần túy.</p>
+        </div>
+        <a href="frontend/arena-page.html?variant=n" class="btn-play-variant">Chơi Ngay ➔</a>
+      </div>
+
+      <div class="variant-card">
+        <div>
+          <div class="variant-icon">🎴</div>
+          <h3 class="variant-title">Cờ Úp Truyền Thống</h3>
+          <p class="variant-desc">Quân cờ bị ẩn giấu dưới vỏ bọc ngụy trang, lật mở kỳ binh xoay chuyển cục diện.</p>
+        </div>
+        <a href="frontend/arena-page.html?variant=t" class="btn-play-variant">Chơi Ngay ➔</a>
+      </div>
+
+      <div class="variant-card">
+        <div>
+          <div class="variant-icon">🕵️</div>
+          <h3 class="variant-title">Cờ Úp Gián Điệp</h3>
+          <p class="variant-desc">Quân úp của hai bên xáo trộn lẫn nhau! Cảnh giác lật phải quân địch gây thảm họa chiếu bí.</p>
+        </div>
+        <a href="frontend/arena-page.html?variant=g" class="btn-play-variant">Chơi Ngay ➔</a>
+      </div>
+    </section>
+
+    <!-- DYNAMIC DASHBOARD WIDGETS (3 KHỐI ĐỘNG) -->
+    <section class="kybien-dashboard-widgets">
+      <div id="kybien-user-profile-section" class="widget-box"></div>
+      <div id="kybien-live-rooms-section" class="widget-box"></div>
+      <div id="kybien-top-elo-section" class="widget-box"></div>
+    </section>
+
+    <!-- THƯ VIỆN BÀI VIẾT BÌNH VĂN SA TRƯỜNG -->
+    <section id="library">
+      <div class="section-title-bar">
+        <h2>📜 THƯ VIỆN TRẬN HAY &amp; KÝ SỰ SA TRƯỜNG</h2>
+        <span style="font-size:0.85rem; color:#a8947d;">Biên soạn tự động bởi Gemini AI</span>
+      </div>
+
+      <div class="post-grid">
+        <article class="post-card">
+          <div>
+            <span class="post-card-tag">✨ Cờ Bí Pháp</span>
+            <h3 class="post-card-title">[Chiến Tướng.duy] vs [Địa Ngục Vương] - Huyết Chiến Sa Trường</h3>
+            <p class="post-card-snippet">
+              Cuộc chạm trán nảy lửa giữa [Chiến Tướng.duy] và [Địa Ngục Vương] tại Sa Trường Kỳ Biến. Trận đấu giằng co hơn 60 nước đi với pha nổ sấm Bích Lịch Hỏa của Pháo Đỏ làm rung chuyển trung cung...
+            </p>
+          </div>
+          <a href="frontend/arena-page.html" class="btn-read-post">Xem Chi Tiết Ký Sự &amp; Replay ➔</a>
+        </article>
+
+        <article class="post-card">
+          <div>
+            <span class="post-card-tag">🕵️ Cờ Úp Gián Điệp</span>
+            <h3 class="post-card-title">AnhHai vs Asus - Trận Gián Điệp Lật Kèo Kịch Tính</h3>
+            <p class="post-card-snippet">
+              Pha lật quân úp bất ngờ lộ diện Gián Điệp sát Tướng khiến phe Đen rơi vào thế ngàn cân treo sợi tóc. Cuộc đảo chiều ngoạn mục trong 55 nước...
+            </p>
+          </div>
+          <a href="frontend/arena-page.html" class="btn-read-post">Xem Chi Tiết Ký Sự &amp; Replay ➔</a>
+        </article>
+
+        <article class="post-card">
+          <div>
+            <span class="post-card-tag">🏯 Cờ Truyền Thống</span>
+            <h3 class="post-card-title">Cao Thủ Sa Trường - Phá Lãng Bộ Trảm Tướng</h3>
+            <p class="post-card-snippet">
+              Chiến xa bẻ góc 90 độ xuất thần xuyên thủng tuyến phòng thủ Sĩ Tượng, quyết định kết quả ván đấu xuất sắc từ nước đi 48...
+            </p>
+          </div>
+          <a href="frontend/arena-page.html" class="btn-read-post">Xem Chi Tiết Ký Sự &amp; Replay ➔</a>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="kybien-footer">
+    <p>© 2026 KỲ BIẾN CHESS PLATFORM. Tất cả quyền được bảo lưu.</p>
+    <div class="footer-links">
+      <a href="index.html">Trang Chủ</a> | 
+      <a href="frontend/arena-page.html">Sảnh Đấu Cờ</a> | 
+      <a href="https://kybien.blogspot.com" target="_blank">Blog Official</a>
+    </div>
+  </footer>
+
+</body>
+</html>
