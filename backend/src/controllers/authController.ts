@@ -217,6 +217,8 @@ export async function getLeaderboard(req: Request, res: Response): Promise<void>
         rankTitle: titles.fullTitle,
         matchesPlayed: user.matches_played,
         matchesWon: user.matches_won,
+        matches_played: user.matches_played,
+        matches_won: user.matches_won,
         winRate,
       };
     });

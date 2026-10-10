@@ -755,11 +755,18 @@
         const rankIcons = ['🥇', '🥈', '🥉'];
         listContainer.innerHTML = list.slice(0, 5).map((u, i) => {
           const rankStr = rankIcons[i] || `#${i + 1}`;
-          const winRate = u.matches_played > 0 ? Math.round((u.matches_won / u.matches_played) * 100) : 0;
+          const played = u.matchesPlayed !== undefined ? u.matchesPlayed : (u.matches_played !== undefined ? u.matches_played : 0);
+          const won = u.matchesWon !== undefined ? u.matchesWon : (u.matches_won !== undefined ? u.matches_won : 0);
+          const winRate = u.winRate !== undefined ? u.winRate : (played > 0 ? Math.round((won / played) * 100) : 0);
+
           const safeName = escapeHtml(u.username);
-          const eloTitle = window.KybienAuth ? window.KybienAuth.getEloTitle(u.elo) : 'Kỳ Đồng';
-          const expTitle = window.KybienAuth ? window.KybienAuth.getExpTitle(u.level) : 'Khởi Khai';
+          const getEloT = (window.KybienAuth && window.KybienAuth.getEloTitle) ? window.KybienAuth.getEloTitle : (r => (r<1000?'Kỳ Đồng':r<=1199?'Kỳ Đồ':r<=1399?'Kỳ Hiệp':r<=1599?'Kỳ Tướng':r<=1799?'Kỳ Vương':r<=1999?'Kỳ Tông':r<=2199?'Kỳ Thánh':'Kỳ Thần'));
+          const getExpT = (window.KybienAuth && window.KybienAuth.getExpTitle) ? window.KybienAuth.getExpTitle : (l => (l<=15?'Khởi Khai':l<=30?'Đắc Thức':l<=50?'Tri Ý':l<=70?'Thông Biến':l<=85?'Thần Cơ':l<=99?'Hóa Cảnh':'Quy Chân'));
+          
+          const eloTitle = getEloT(u.elo);
+          const expTitle = getExpT(u.level || 1);
           const fullTitle = `[${eloTitle}] ${expTitle}`;
+
           return `
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(34,21,12,0.7); border: 1px solid #5a3d22; padding: 8px 12px; border-radius: 8px;">
               <div style="display: flex; align-items: center; gap: 10px;">
@@ -775,8 +782,8 @@
                 </div>
               </div>
               <div style="text-align: right;">
-                <strong style="color: #f1c40f; font-size: 0.95rem;">${u.elo} ELO</strong>
-                <div style="font-size: 0.72rem; color: #2ecc71;">${winRate}% thắng (${u.matches_won}/${u.matches_played})</div>
+                <strong style="color: #f1c40f; font-size: 0.95rem;">${u.elo || 1200} ELO</strong>
+                <div style="font-size: 0.72rem; color: #2ecc71;">${winRate}% thắng (${won}/${played})</div>
               </div>
             </div>
           `;
