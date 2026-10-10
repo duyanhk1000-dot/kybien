@@ -401,7 +401,7 @@
         <h3>Thiết Lập Ván Đấu</h3>
         <div class="fg">
           <label>Thể loại cờ<select id="mode_variant" onchange="onVariantChange()"><option value="kb" selected>Kỳ Biến (Bí Pháp Kiếm Hiệp)</option><option value="n">Cờ Tướng Truyền Thống</option><option value="t">Cờ Úp Truyền Thống</option><option value="g">Cờ Úp Gián Điệp</option></select></label>
-          <label>Chế độ thi đấu<select id="mode" onchange="onModeChange()"><option value="2p_online" selected>Ghép Trận Kỳ Hội Online</option><option value="ai">Chơi Với Máy (AI Bot)</option><option value="2p_local">Hai Người (Cùng Máy)</option></select></label>
+          <label>Chế độ thi đấu<select id="mode" onchange="onModeChange()"><option value="ai" selected>Chơi Với Máy (AI Bot)</option><option value="2p_online" id="opt-2p-online">Ghép Trận Kỳ Hội Online</option><option value="2p_local">Hai Người (Cùng Máy)</option></select></label>
           <label id="lbl-lv">Cấp độ máy (Bot)<select id="lv" onchange="newGame()"><option value="0">Lv1 Tay Mơ</option><option value="1">Lv2 Ông Đồ</option><option value="2">Lv3 Pháo Đầu</option><option value="3">Lv4 Cao Thủ</option><option value="4" selected>Lv5 Địa Ngục Vương</option></select></label>
           <label id="lbl-bag-freq">Rơi Túi Kỳ Mưu<select id="drop_bag_freq" onchange="newGame()"><option value="10" selected>Mỗi 10 nước đi</option><option value="15">Mỗi 15 nước đi</option><option value="20">Mỗi 20 nước đi</option></select></label>
           <label id="lbl-hc">Chấp quân (máy bị chấp)<select id="hc" onchange="newGame()"><option value="0" selected>Không chấp</option><option value="N">Chấp Mã</option><option value="C">Chấp Pháo</option><option value="R">Chấp Xe</option></select></label>
@@ -978,8 +978,26 @@ lg.innerHTML=kb?'<b>Ẩn ký Kỳ Biến:</b> 🌊 Ngự Ba | 🏯 Xuất Trần
 :UB?'<b>Cờ úp:</b> 暗 = quân úp (đi theo loại quân của ô đang đứng, đi xong thì lật). '+(VAR==='g'?'<span class="spy">Quân úp có thể là quân địch (GIÁN ĐIỆP !)</span>':'Quân úp chắc chắn là quân nhà.'):'';}
 if($('tb2'))$('tb2').innerText=kb?'Bí Pháp (16 chiêu)':UB?'Quân Úp & Mắt Mèo':'Kỳ Âm & Mẹo Hay'}
 function onVariantChange(){newGame()}
+function togglePvpModeAccess(isLoggedIn){
+const opt=$('opt-2p-online');
+if(opt){
+opt.disabled=!isLoggedIn;
+opt.style.display=isLoggedIn?'':'none';
+}
+if(!isLoggedIn&&$('mode')&&$('mode').value==='2p_online'){
+$('mode').value='ai';
+if(typeof onModeChange==='function')onModeChange();
+}
+}
 function onModeChange(){
-const m=$('mode').value;$('lbl-lv').style.display=m==='ai'?'flex':'none';$('online-room-tools').style.display=m==='2p_online'?'block':'none';
+const m=$('mode').value;
+if(m==='2p_online'&&!currentUser){
+alert('Vui lòng đăng nhập tài khoản để tham gia Ghép Trận Online!');
+$('mode').value='ai';
+onModeChange();
+return;
+}
+$('lbl-lv').style.display=m==='ai'?'flex':'none';$('online-room-tools').style.display=m==='2p_online'?'block':'none';
 const b=$('btn-action');
 if(m==='2p_online'){b.innerText='GHÉP TRẬN TỰ ĐỘNG';b.style.background='#f1c40f';b.style.color='#8b0000';initSocket()}
 else{b.innerText=m==='ai'?'Khai Cuộc Ván Mới':'Khai Cuộc Ván Mới (Hai Người)';b.style.background='';b.style.color='';online.on=false;searching=false}
@@ -1026,7 +1044,6 @@ let c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);if(flipped){r=9-r;c=8-c}
 if(r>=0&&r<10&&c>=0&&c<9)onClick(r,c)});
 
 /* ---------- TÀI KHOẢN & ONLINE SOCKET ---------- */
-/* ---------- TÀI KHOẢN & ONLINE SOCKET ---------- */
 async function checkAuthUI(){
 const token=localStorage.getItem('kybien_jwt_token'),un=$('auth-unlogged'),lg=$('auth-logged');
 if(token){try{const res=await fetch(SERVER_API_ENDPOINT+'/api/auth/me',{headers:{Authorization:'Bearer '+token}});
@@ -1038,14 +1055,14 @@ if($('logged-level'))$('logged-level').innerText='['+eloT+'] '+expT+' (Lv.'+(cur
 if($('logged-elo'))$('logged-elo').innerText=currentUser.elo||1200;
 if(un)un.style.display='none';if(lg)lg.style.display='flex';
 if(window.KybienAuth){window.KybienAuth.cachedUser=currentUser;window.KybienAuth.renderUserUI(currentUser)}
+togglePvpModeAccess(true);
 return true}else if(res.status===401||res.status===403){localStorage.removeItem('kybien_jwt_token')}}catch(e){}}
-currentUser=null;if(un)un.style.display='flex';if(lg)lg.style.display='none';return false}
-async function ensureUser(){
-try{if(await checkAuthUI()&&currentUser)return true;
-const g='KyThu_'+Math.floor(10000+Math.random()*90000),pw=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
-const res=await fetch(SERVER_API_ENDPOINT+'/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:g,email:g+'@kybien.com',password:pw})});
-if(res.ok){const d=await res.json();if(d.token){localStorage.setItem('kybien_jwt_token',d.token);if(window.KybienAuth)window.KybienAuth.setToken(d.token);await checkAuthUI();return true}}}catch(e){}
+currentUser=null;if(un)un.style.display='flex';if(lg)lg.style.display='none';
+togglePvpModeAccess(false);
 return false}
+async function ensureUser(){
+return (await checkAuthUI()) && currentUser !== null;
+}
 async function authCall(path,body){
 try{const res=await fetch(SERVER_API_ENDPOINT+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),d=await res.json();
 if(res.ok){localStorage.setItem('kybien_jwt_token',d.token);if(window.KybienAuth)window.KybienAuth.setToken(d.token);checkAuthUI()}else if($('auth-err-msg'))$('auth-err-msg').innerText=d.error||'Lỗi'}catch(e){alert('Không thể kết nối máy chủ!')}}
@@ -1072,7 +1089,8 @@ if(!acts.length&&fallback){const o=B[fallback[0]][fallback[1]];if(o)doMove(o,fal
 finally{REPLAY=false}
 if(!over&&turn!==online.side&&!acts.length)endTurn()}
 async function initSocket(){
-await ensureUser();const token=localStorage.getItem('kybien_jwt_token');
+if(!await ensureUser()){alert('Vui lòng đăng nhập tài khoản để sử dụng tính năng Ghép Trận Online!');return false}
+const token=localStorage.getItem('kybien_jwt_token');
 if(!token||typeof io==='undefined'){alert('Không thể khởi tạo kết nối máy chủ!');return false}
 if(!socket){socket=io(SERVER_API_ENDPOINT,{auth:{token}});
 socket.on('connect',()=>socket.emit('get_public_rooms'));
