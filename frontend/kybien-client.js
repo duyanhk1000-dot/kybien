@@ -53,51 +53,303 @@
     check();
   }
 
-  // FR-02: Header Profile Widget (Hiển thị User, Exp bar, Elo)
-  function initHeaderProfileWidget() {
-    waitForElem('kybien-header-profile', async (container) => {
-      const token = localStorage.getItem('kybien_jwt_token');
-      if (!token) {
-        container.innerHTML = `
-          <div class="kybien-auth-buttons">
-            <a href="/p/arena.html" class="btn-login">Đăng Nhập / Đăng Ký</a>
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // Central Auth & Profile Session Manager
+  window.KybienAuth = {
+    cachedUser: null,
+    isFetching: false,
+
+    getToken: function () {
+      return localStorage.getItem('kybien_jwt_token');
+    },
+
+    setToken: function (token) {
+      if (token) {
+        localStorage.setItem('kybien_jwt_token', token);
+      } else {
+        localStorage.removeItem('kybien_jwt_token');
+      }
+      this.cachedUser = null;
+      this.fetchProfile();
+    },
+
+    clearToken: function () {
+      localStorage.removeItem('kybien_jwt_token');
+      this.cachedUser = null;
+      this.renderGuestUI();
+    },
+
+    logout: function () {
+      this.clearToken();
+      if (typeof window.checkAuthUI === 'function') {
+        window.checkAuthUI();
+      }
+    },
+
+    renderGuestUI: function () {
+      const headerElem = document.getElementById('kybien-header-profile');
+      if (headerElem) {
+        headerElem.innerHTML = `
+          <div class="kybien-auth-buttons" style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.82rem; color: #a8947d;">👤 <strong style="color: #e5b36a;">Lữ Khách</strong></span>
+            <a href="/p/arena.html" class="btn-login" style="background: #8b0000; color: #fff; font-weight: bold; font-size: 0.82rem; padding: 6px 14px; border-radius: 6px; border: 1px solid #a83a1f; text-decoration: none;">🔑 Đăng Nhập / Đăng Ký</a>
           </div>
         `;
+      }
+
+      const profileElem = document.getElementById('kybien-user-profile-section');
+      if (profileElem) {
+        profileElem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
+            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">👤 HỒ SƠ KỲ THỦ</h3>
+            <span style="background: #4a3320; color: #a8947d; font-size: 0.75rem; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid #5a3d22;">Lữ Khách</span>
+          </div>
+          <div style="text-align: center; padding: 15px 10px;">
+            <p style="color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;">
+              Bạn đang tham gia với tư cách <strong>Lữ Khách</strong>.<br/>Đăng ký tài khoản để tích lũy ELO, thăng cấp &amp; lưu lịch sử đấu!
+            </p>
+            <a href="/p/arena.html" style="display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f; text-decoration: none;">🔑 Đăng Nhập / Đăng Ký Chơi Ngay ➔</a>
+          </div>
+        `;
+      }
+    },
+
+    renderLoadingUI: function () {
+      const headerElem = document.getElementById('kybien-header-profile');
+      if (headerElem) {
+        headerElem.innerHTML = `<span style="font-size: 0.82rem; color: #a8947d;">⏳ Đang nạp tài khoản...</span>`;
+      }
+
+      const profileElem = document.getElementById('kybien-user-profile-section');
+      if (profileElem) {
+        profileElem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
+            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">👤 HỒ SƠ KỲ THỦ</h3>
+          </div>
+          <div style="text-align: center; padding: 20px 10px; color: #a8947d; font-size: 0.88rem;">
+            ⏳ Đang xác minh phiên đăng nhập và tải dữ liệu hồ sơ...
+          </div>
+        `;
+      }
+    },
+
+    renderErrorUI: function (msg) {
+      const headerElem = document.getElementById('kybien-header-profile');
+      if (headerElem) {
+        headerElem.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.78rem; color: #ff6b6b;">⚠️ ${escapeHtml(msg)}</span>
+            <button onclick="window.KybienAuth.fetchProfile()" style="background: #5a3d22; color: #fff; border: none; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Thử lại</button>
+          </div>
+        `;
+      }
+
+      const profileElem = document.getElementById('kybien-user-profile-section');
+      if (profileElem) {
+        profileElem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
+            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">👤 HỒ SƠ KỲ THỦ</h3>
+          </div>
+          <div style="text-align: center; padding: 15px 10px; color: #a8947d; font-size: 0.88rem;">
+            <p style="color: #ff6b6b; margin-bottom: 10px;">⚠️ ${escapeHtml(msg)}</p>
+            <button onclick="window.KybienAuth.fetchProfile()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.82rem;">🔄 Tải lại dữ liệu hồ sơ</button>
+          </div>
+        `;
+      }
+    },
+
+    getExpTitle: function (level) {
+      const lvl = Math.max(1, Math.floor(level));
+      if (lvl <= 15) return 'Khởi Khai';
+      if (lvl <= 30) return 'Đắc Thức';
+      if (lvl <= 50) return 'Tri Ý';
+      if (lvl <= 70) return 'Thông Biến';
+      if (lvl <= 85) return 'Thần Cơ';
+      if (lvl <= 99) return 'Hóa Cảnh';
+      return 'Quy Chân';
+    },
+
+    getEloTitle: function (elo) {
+      const rating = Number(elo) || 1200;
+      if (rating < 1000) return 'Kỳ Đồng';
+      if (rating <= 1199) return 'Kỳ Đồ';
+      if (rating <= 1399) return 'Kỳ Hiệp';
+      if (rating <= 1599) return 'Kỳ Tướng';
+      if (rating <= 1799) return 'Kỳ Vương';
+      if (rating <= 1999) return 'Kỳ Tông';
+      if (rating <= 2199) return 'Kỳ Thánh';
+      return 'Kỳ Thần';
+    },
+
+    getExpRequiredForNextLevel: function (level) {
+      const lvl = Math.max(1, Math.floor(level));
+      if (lvl >= 100) return 0;
+      return 100 + (lvl - 1) * 35;
+    },
+
+    renderUserUI: function (user) {
+      const level = Math.min(100, Math.max(1, user.level || 1));
+      const elo = user.elo || 1200;
+      const currentExp = Number(user.currentExp !== undefined ? user.currentExp : (user.exp || 0));
+      const isMaxLevel = level >= 100;
+      
+      const reqExp = isMaxLevel ? 0 : this.getExpRequiredForNextLevel(level);
+      const expPercent = isMaxLevel ? 100 : (reqExp > 0 ? Math.min(100, Math.max(0, Math.round((currentExp / reqExp) * 100))) : 0);
+
+      const expTitle = this.getExpTitle(level);
+      const eloTitle = this.getEloTitle(elo);
+      const fullTitle = `[${eloTitle}] ${expTitle}`;
+
+      const played = user.matches_played !== undefined ? user.matches_played : (user.matchesPlayed || 0);
+      const won = user.matches_won !== undefined ? user.matches_won : (user.matchesWon || 0);
+      const winRate = played > 0 ? Math.round((won / played) * 100) : 0;
+
+      const safeUsername = escapeHtml(user.username);
+      const safeFirstChar = escapeHtml((user.username || 'U')[0].toUpperCase());
+
+      // 1. Header Profile Widget (Có Thanh EXP + Tiêu đề [Danh hiệu ELO] Danh hiệu Lv.)
+      const headerElem = document.getElementById('kybien-header-profile');
+      if (headerElem) {
+        headerElem.innerHTML = `
+          <div class="kybien-user-card" style="display: flex; align-items: center; gap: 10px; font-family: sans-serif;">
+            <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8b0000, #4a0000); border: 1.5px solid #f1c40f; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.15rem; flex-shrink: 0; box-shadow: 0 0 8px rgba(241,196,15,0.4);">
+              ${safeFirstChar}
+            </div>
+            <div class="user-info" style="flex: 1; min-width: 150px;">
+              <div style="font-weight: bold; font-size: 0.88rem; color: #f1c40f; display: flex; justify-content: space-between; align-items: center;">
+                <span>${safeUsername} <span style="font-size: 0.8em; color: #e67e22;">(Lv.${level})</span></span>
+                <a href="#" onclick="window.KybienAuth.logout(); return false;" style="color: #ff6b6b; font-size: 0.72rem; text-decoration: underline; margin-left: 6px;">Thoát</a>
+              </div>
+              <div style="font-size: 0.76rem; color: #e5b36a; font-weight: 600; margin-top: 1px;">${fullTitle}</div>
+              <div style="font-size: 0.72rem; color: #a8947d; display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
+                <span>Elo: <strong style="color: #fff;">${elo}</strong></span>
+                <span style="font-family: monospace; color: #f1c40f; font-size: 0.7rem; font-weight: bold;">
+                  ${isMaxLevel ? 'MAX' : `${currentExp}/${reqExp} EXP (${expPercent}%)`}
+                </span>
+              </div>
+              <!-- Thanh EXP trong Header -->
+              <div style="background: #140b05; border: 1px solid #5a3d22; height: 5px; border-radius: 3px; overflow: hidden; width: 100%; margin-top: 3px;">
+                <div style="width: ${expPercent}%; height: 100%; background: ${isMaxLevel ? 'linear-gradient(90deg, #ff4757, #f1c40f)' : 'linear-gradient(90deg, #e67e22, #f1c40f)'}; transition: width 0.4s ease;"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. Main Profile Card Section (Có Thanh EXP số thực + Danh hiệu dạng [Danh hiệu ELO] Danh hiệu Lv.)
+      const profileElem = document.getElementById('kybien-user-profile-section');
+      if (profileElem) {
+        profileElem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
+            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.05rem; margin: 0;">
+              👤 HỒ SƠ KỲ THỦ: <span style="color: #fff;">${safeUsername}</span>
+            </h3>
+            <span style="background: linear-gradient(135deg, #8b0000, #500000); color: #f1c40f; font-size: 0.75rem; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid #a83a1f;">
+              ${fullTitle}
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 14px; align-items: center;">
+            <div style="width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #8b0000, #4a0000); border: 2px solid #f1c40f; color: #fff; font-size: 1.6rem; font-weight: bold; display: flex; align-items: center; justify-content: center; font-family: 'Noto Serif TC', serif; flex-shrink: 0; box-shadow: 0 0 10px rgba(241,196,15,0.35);">
+              ${safeFirstChar}
+            </div>
+
+            <div style="flex: 1;">
+              <div style="font-size: 0.9rem; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div>Danh hiệu: <strong style="color: #f1c40f;">${fullTitle}</strong> <span style="font-size: 0.8em; color: #e67e22;">(Lv.${level})</span></div>
+                <div>Điểm ELO: <strong style="color: #2ecc71;">${elo}</strong></div>
+              </div>
+
+              <div style="font-size: 0.78rem; color: #a8947d; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                <span>Tỉ lệ thắng: <strong style="color: #2ecc71;">${winRate}%</strong> (${won}/${played} trận)</span>
+                <span style="font-family: monospace; color: #f1c40f; font-weight: bold;">
+                  ${isMaxLevel ? 'Cực Hạn (MAX)' : `${currentExp} / ${reqExp} EXP (${expPercent}%)`}
+                </span>
+              </div>
+
+              <!-- Thanh EXP Hồ sơ Kỳ thủ -->
+              <div style="background: #140b05; border: 1px solid #5a3d22; height: 10px; border-radius: 5px; overflow: hidden; width: 100%; position: relative; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);">
+                <div style="width: ${expPercent}%; height: 100%; background: ${isMaxLevel ? 'linear-gradient(90deg, #ff4757, #f1c40f)' : 'linear-gradient(90deg, #e67e22, #f1c40f)'}; transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: #888;">Cấp bậc: <strong style="color: #e5b36a;">${fullTitle}</strong></span>
+            <a href="/p/arena.html" style="font-size: 0.82rem; color: #2ecc71; font-weight: bold; text-decoration: underline;">Vào sảnh đấu cờ ➔</a>
+          </div>
+        `;
+      }
+    },
+
+    fetchProfile: async function () {
+      const token = this.getToken();
+      if (!token) {
+        this.renderGuestUI();
         return;
       }
 
-    try {
-      const res = await fetch(`${SERVER_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) {
-        localStorage.removeItem('kybien_jwt_token');
-        return initHeaderProfileWidget();
+      if (this.cachedUser) {
+        this.renderUserUI(this.cachedUser);
+      } else {
+        this.renderLoadingUI();
       }
 
-      const user = await res.json();
-      const expPercent = Math.min(100, Math.floor((user.exp / user.nextLevelExp) * 100));
+      if (this.isFetching) return;
+      this.isFetching = true;
 
-      container.innerHTML = `
-        <div class="kybien-user-card" style="display: flex; align-items: center; gap: 10px; font-family: sans-serif;">
-          <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #8b0000; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-            ${user.username[0].toUpperCase()}
-          </div>
-          <div class="user-info">
-            <div style="font-weight: bold;">${user.username} <span style="font-size: 0.8em; color: #e67e22;">(Lv.${user.level})</span></div>
-            <div style="font-size: 0.85em; color: #555;">Elo: <strong>${user.elo}</strong></div>
-            <div class="progress-bar-bg" style="width: 120px; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-top: 3px;">
-              <div class="progress-bar-fill" style="width: ${expPercent}%; height: 100%; background: #2ecc71;"></div>
-            </div>
-          </div>
-        </div>
-      `;
-    } catch (e) {
-      console.error('[Kỳ Biến Profile Widget Error]', e);
+      try {
+        const res = await fetch(`${SERVER_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          this.cachedUser = user;
+          this.renderUserUI(user);
+        } else if (res.status === 401 || res.status === 403) {
+          console.warn('[Kỷ Biến Auth] Token không hợp lệ hoặc đã hết hạn (401/403).');
+          this.clearToken();
+        } else {
+          console.warn('[Kỷ Biến Auth] Máy chủ phản hồi lỗi tạm thời:', res.status);
+          this.renderErrorUI('Không thể nạp hồ sơ từ máy chủ.');
+        }
+      } catch (e) {
+        console.warn('[Kỷ Biến Auth] Lỗi kết nối tới máy chủ Render:', e);
+        this.renderErrorUI('Đang chờ kết nối tới máy chủ Render...');
+      } finally {
+        this.isFetching = false;
+      }
     }
+  };
+
+  // FR-02: Header Profile Widget
+  function initHeaderProfileWidget() {
+    waitForElem('kybien-header-profile', () => {
+      window.KybienAuth.fetchProfile();
     });
   }
+
+  // Inter-tab & page visibility listeners
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'kybien_jwt_token') {
+      window.KybienAuth.cachedUser = null;
+      window.KybienAuth.fetchProfile();
+    }
+  });
+
+  window.addEventListener('pageshow', () => {
+    window.KybienAuth.fetchProfile();
+  });
 
   // Window global viewer controller cho các bài đăng Blogger (Interactive Xiangqi Board)
   window.KybienViewer = {
@@ -470,56 +722,8 @@
 
   // KHỐI HỒ SƠ CÁ NHÂN KỲ THỦ TRANG CHỦ
   function initUserProfileSection() {
-    waitForElem('kybien-user-profile-section', async (container) => {
-      const token = localStorage.getItem('kybien_jwt_token');
-      if (!token) {
-        container.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
-            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem;">👤 HỒ SƠ KỲ THỦ</h3>
-          </div>
-          <div style="text-align: center; padding: 15px 10px;">
-            <p style="color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;">
-              Bạn đang tham gia với tư cách <strong>Khách Vô Danh</strong>.<br/>Đăng ký tài khoản để tích lũy ELO, thăng cấp &amp; lưu lịch sử đấu!
-            </p>
-            <a href="/p/arena.html" style="display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f;">🔑 Đăng Nhập / Đăng Ký Chơi Ngay ➔</a>
-          </div>
-        `;
-        return;
-      }
-
-      try {
-        const res = await fetch(`${SERVER_URL}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) {
-          localStorage.removeItem('kybien_jwt_token');
-          return initUserProfileSection();
-        }
-        const user = await res.json();
-        const expPercent = Math.min(100, Math.floor((user.exp / user.nextLevelExp) * 100));
-        const winRate = user.matchesPlayed > 0 ? Math.round((user.matchesWon / user.matchesPlayed) * 100) : 0;
-
-        container.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
-            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem;">👤 HỒ SƠ KỲ THỦ: <span style="color: #fff;">${user.username}</span></h3>
-            <span style="background: #8b0000; color: #f1c40f; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: bold;">Lv.${user.level}</span>
-          </div>
-          <div style="display: flex; gap: 15px; align-items: center;">
-            <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #8b0000, #4a0000); border: 2px solid #f1c40f; color: #fff; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; justify-content: center; font-family: 'Noto Serif TC', serif; flex-shrink: 0;">
-              ${user.username[0].toUpperCase()}
-            </div>
-            <div style="flex: 1;">
-              <div style="font-size: 0.9rem; margin-bottom: 3px;">Điểm ELO: <strong style="color: #f1c40f; font-size: 1.05rem;">${user.elo}</strong> | Tỉ lệ thắng: <strong style="color: #2ecc71;">${winRate}%</strong></div>
-              <div style="font-size: 0.78rem; color: #a8947d; margin-bottom: 6px;">Số trận đã đấu: <strong>${user.matchesPlayed}</strong> (Thắng: ${user.matchesWon})</div>
-              <div style="background: #140b05; border: 1px solid #5a3d22; height: 7px; border-radius: 4px; overflow: hidden; width: 100%;">
-                <div style="width: ${expPercent}%; height: 100%; background: linear-gradient(90deg, #e67e22, #f1c40f);"></div>
-              </div>
-            </div>
-          </div>
-        `;
-      } catch (e) {
-        console.error('[Profile Section Error]', e);
-      }
+    waitForElem('kybien-user-profile-section', () => {
+      window.KybienAuth.fetchProfile();
     });
   }
 
@@ -552,13 +756,22 @@
         listContainer.innerHTML = list.slice(0, 5).map((u, i) => {
           const rankStr = rankIcons[i] || `#${i + 1}`;
           const winRate = u.matches_played > 0 ? Math.round((u.matches_won / u.matches_played) * 100) : 0;
+          const safeName = escapeHtml(u.username);
+          const eloTitle = window.KybienAuth ? window.KybienAuth.getEloTitle(u.elo) : 'Kỳ Đồng';
+          const expTitle = window.KybienAuth ? window.KybienAuth.getExpTitle(u.level) : 'Khởi Khai';
+          const fullTitle = `[${eloTitle}] ${expTitle}`;
           return `
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(34,21,12,0.7); border: 1px solid #5a3d22; padding: 8px 12px; border-radius: 8px;">
               <div style="display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 1.1rem; width: 25px; text-align: center;">${rankStr}</span>
                 <div>
-                  <b style="color: #e8dcc6; font-size: 0.9rem;">${u.username}</b>
-                  <span style="font-size: 0.75rem; color: #e67e22; margin-left: 4px;">Lv.${u.level}</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <b style="color: #e8dcc6; font-size: 0.9rem;">${safeName}</b>
+                    <span style="font-size: 0.75rem; color: #e67e22;">(Lv.${u.level || 1})</span>
+                  </div>
+                  <div style="font-size: 0.74rem; color: #f1c40f; font-weight: 600; margin-top: 2px;">
+                    ${fullTitle}
+                  </div>
                 </div>
               </div>
               <div style="text-align: right;">
@@ -604,16 +817,20 @@
           `;
           return;
         }
-        listContainer.innerHTML = rooms.slice(0, 4).map(r => `
+        listContainer.innerHTML = rooms.slice(0, 4).map(r => {
+          const safeRoomCode = escapeHtml(r.roomCode);
+          const safeHostName = escapeHtml(r.hostName);
+          return `
           <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(34,21,12,0.7); border: 1px solid #5a3d22; padding: 8px 12px; border-radius: 8px;">
             <div>
-              <b style="color: #f1c40f; font-size: 0.88rem;">${r.roomCode}</b>
+              <b style="color: #f1c40f; font-size: 0.88rem;">${safeRoomCode}</b>
               <span style="font-size: 0.75rem; color: #2ecc71; margin-left: 6px;">[${variantNames[r.variant] || 'Cờ Tướng'}]</span>
-              <div style="font-size: 0.78rem; color: #a8947d;">Chủ phòng: ${r.hostName}</div>
+              <div style="font-size: 0.78rem; color: #a8947d;">Chủ phòng: ${safeHostName}</div>
             </div>
             <a href="/p/arena.html" style="background: #8b0000; color: #fff; font-size: 0.8rem; padding: 5px 12px; border-radius: 6px; font-weight: bold; border: 1px solid #a83a1f;">Vào Đấu ➔</a>
           </div>
-        `).join('');
+        `;
+        }).join('');
       };
 
       // 1. Lấy dữ liệu nhanh qua HTTP REST API

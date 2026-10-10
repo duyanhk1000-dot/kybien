@@ -1,5 +1,9 @@
 import { config } from '../config/index.js';
 import { AIAnalysisResult } from './aiService.js';
+import { escapeHtmlText, escapeHtmlAttr, escapeJsonAttr } from '../utils/sanitize.js';
+
+// In-memory set to prevent duplicate Blogger publishing
+const publishedMatchIds: Set<string> = new Set();
 
 export async function publishMatchToBlogger(
   matchId: string,
@@ -19,6 +23,11 @@ export async function publishMatchToBlogger(
     return null;
   }
 
+  if (publishedMatchIds.has(matchId)) {
+    console.warn(`[Blogger Service] Trận đấu ${matchId} đã được xuất bản trước đó, bỏ qua đăng trùng.`);
+    return null;
+  }
+
   try {
     // 1. Refresh Access Token từ Google OAuth2
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
@@ -33,15 +42,26 @@ export async function publishMatchToBlogger(
     });
 
     const tokenData = await tokenResponse.json();
-    if (!tokenData.access_token) {
-      console.error('[Blogger OAuth Error]', tokenData);
+    if (!tokenData || !tokenData.access_token) {
+      // Safe error log: DO NOT print tokenData containing potential secrets
+      console.error('[Blogger OAuth Error] Không thể lấy Access Token từ Google OAuth2:', tokenData?.error || 'Unknown token error');
       return null;
     }
 
     const accessToken = tokenData.access_token;
 
-    const whiteTitle = playerWhiteName.startsWith('[') ? playerWhiteName : `[${playerWhiteName}]`;
-    const blackTitle = playerBlackName.startsWith('[') ? playerBlackName : `[${playerBlackName}]`;
+    // Sanitize all dynamic string variables for safe HTML text & attributes
+    const safeWhiteName = escapeHtmlText(playerWhiteName);
+    const safeBlackName = escapeHtmlText(playerBlackName);
+    const whiteTitle = safeWhiteName.startsWith('[') ? safeWhiteName : `[${safeWhiteName}]`;
+    const blackTitle = safeBlackName.startsWith('[') ? safeBlackName : `[${safeBlackName}]`;
+
+    const safeVariantName = escapeHtmlText(variantName);
+    const safeVariantCode = escapeHtmlAttr(variantCode);
+    const safeVariantIcon = escapeHtmlText(variantIcon);
+    const safeVariantLabel = escapeHtmlText(variantLabel);
+    const safeMatchId = escapeHtmlAttr(matchId);
+    const safePgnMovesAttr = escapeJsonAttr(pgnMoves);
 
     // Danh sách phụ đề trận đấu hùng tráng dự phòng nếu AI không trả về
     const EPIC_MATCH_TITLES = [
@@ -59,56 +79,63 @@ export async function publishMatchToBlogger(
       'Càn Khôn Di Vị Xoay Chuyển Cục Diện'
     ];
 
-    const matchPhrase = (aiResult.matchTitlePhrase && aiResult.matchTitlePhrase.trim().length >= 3 && !aiResult.matchTitlePhrase.includes('Trận Huyết Chiến Sa Trường'))
+    const rawMatchPhrase = (aiResult.matchTitlePhrase && aiResult.matchTitlePhrase.trim().length >= 3 && !aiResult.matchTitlePhrase.includes('Trận Huyết Chiến Sa Trường'))
       ? aiResult.matchTitlePhrase.trim()
       : EPIC_MATCH_TITLES[Math.floor(Math.random() * EPIC_MATCH_TITLES.length)];
 
-    const postTitle = `[${variantName}] ${whiteTitle} vs ${blackTitle} (${pgnMoves.length} nước) - ${matchPhrase}`;
+    const safeMatchPhrase = escapeHtmlText(rawMatchPhrase);
+    const postTitle = `[${safeVariantName}] ${whiteTitle} vs ${blackTitle} (${pgnMoves.length} nước) - ${safeMatchPhrase}`;
+
+    const safeTacticalAnalysis = escapeHtmlText(aiResult.tacticalAnalysis || '');
+    const safeKeyMoves = Array.isArray(aiResult.keyMoves)
+      ? aiResult.keyMoves.map((m) => escapeHtmlText(String(m)))
+      : [];
+    const safeSaTruongCommentary = escapeHtmlText(aiResult.saTruongCommentary || '').replace(/\n/g, '<br/>');
 
     const htmlContent = `
-<div class="kybien-match-post" data-match-id="${matchId}">
+<div class="kybien-match-post" data-match-id="${safeMatchId}">
   <!-- Khai báo Thẻ Chế độ chơi chuẩn có Icon -->
   <div class="kybien-variant-header-badge" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
     <span style="background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #a83a1f; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-      ⚔️ ${matchPhrase}
+      ⚔️ ${safeMatchPhrase}
     </span>
     <span style="background: linear-gradient(135deg, #3a2416, #22150c); color: #f1c40f; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #5a3d22; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-      ${variantIcon} ${variantName}
+      ${safeVariantIcon} ${safeVariantName}
     </span>
   </div>
 
   <!-- Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ & SEO Snippet -->
   <p class="kybien-post-summary-text" style="font-weight: 600; color: #e5b36a; font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; background: rgba(229,179,106,0.08); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #f1c40f;">
-    🎯 <strong>Tóm tắt ván cờ:</strong> ${aiResult.tacticalAnalysis}
+    🎯 <strong>Tóm tắt ván cờ:</strong> ${safeTacticalAnalysis}
   </p>
 
-  <!-- Khung Bố cục 2 Cột (Desktop: Board bên trái order: 1, Story bên phải order: 2) -->
+  <!-- Khung Bố cục 2 Cột -->
   <div class="kybien-post-layout" style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
     
-    <!-- DOM ORDER #1: BÀI VIẾT KÝ SỰ SA TRƯỜNG (Thứ tự DOM đầu tiên để Blogger & Google lấy đúng mô tả sạch) -->
+    <!-- DOM ORDER #1: BÀI VIẾT KÝ SỰ SA TRƯỜNG -->
     <div class="scrollable-story-col" style="flex: 1 1 420px; order: 2; background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 14px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);">
       
       <!-- Phân tích nước cờ then chốt -->
       <section class="tactical-analysis" style="margin-bottom: 24px; border-bottom: 1px solid #3d2817; padding-bottom: 18px;">
         <h2 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.35rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">🎯 Nước Cờ Bước Ngoặt</h2>
         <ul style="padding-left: 20px; color: #e8dcc6; line-height: 1.7; font-size: 0.98rem;">
-          ${aiResult.keyMoves.map((m) => `<li style="margin-bottom: 6px;"><strong>${m}</strong></li>`).join('')}
+          ${safeKeyMoves.map((m) => `<li style="margin-bottom: 6px;"><strong>${m}</strong></li>`).join('')}
         </ul>
       </section>
 
       <!-- Ký sự Sa trường Kiếm hiệp -->
       <article class="sa-truong-article" style="line-height: 1.85; font-size: 1.05rem; color: #e8dcc6; font-family: 'Noto Serif TC', serif;">
         <h2 style="color: #f1c40f; font-size: 1.35rem; margin-bottom: 15px; border-left: 4px solid #8b0000; padding-left: 12px; display: flex; align-items: center; gap: 8px;">⚔️ Tường Thuật Sa Trường Kiếm Hiệp</h2>
-        <div class="content" style="text-align: justify;">${aiResult.saTruongCommentary.replace(/\n/g, '<br/>')}</div>
+        <div class="content" style="text-align: justify;">${safeSaTruongCommentary}</div>
       </article>
 
     </div>
 
-    <!-- DOM ORDER #2: BÀN CỜ CỐ ĐỊNH (Hiển thị bên trái màn hình nhờ order: 1) -->
+    <!-- DOM ORDER #2: BÀN CỜ CỐ ĐỊNH -->
     <div class="sticky-board-col" style="flex: 1 1 480px; max-width: 520px; order: 1; position: sticky; top: 20px; background: linear-gradient(145deg, #271a10, #180f08); padding: 18px; border-radius: 14px; border: 2px solid #5a3d22; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center;">
-      <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; margin-bottom: 12px; font-size: 1.2rem; letter-spacing: 1px;">⚔️ BÀN CỜ TƯƠNG TÁC XEM LẠI (${variantName})</h3>
+      <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; margin-bottom: 12px; font-size: 1.2rem; letter-spacing: 1px;">⚔️ BÀN CỜ TƯƠNG TÁC XEM LẠI (${safeVariantName})</h3>
       
-      <div id="kybien-board-viewer" class="kybien-viewer-container" data-variant="${variantCode}" data-moves='${JSON.stringify(pgnMoves)}'>
+      <div id="kybien-board-viewer" class="kybien-viewer-container" data-variant="${safeVariantCode}" data-moves='${safePgnMovesAttr}'>
         <div id="chess-board-canvas" style="width: 100%; max-width: 500px; height: 520px; margin: 0 auto; background: #f0d9b5; border-radius: 8px;"></div>
         
         <div class="viewer-controls" style="text-align: center; margin-top: 14px; display: flex; justify-content: center; gap: 8px;">
@@ -124,264 +151,14 @@ export async function publishMatchToBlogger(
 
   </div>
 </div>
-
-<!-- SCRIPT BÀN CỜ NHÚNG TRỰC TIẾP (SELF-CONTAINED ENGINE) -->
-<script>
-(function() {
-  window.KybienViewer = {
-    currentStep: 0,
-    moves: [],
-    variant: '${variantCode}',
-    canvas: null,
-    ctx: null,
-    pieceNames: {
-      k: { r: '帥', b: '將' },
-      a: { r: '仕', b: '士' },
-      b: { r: '相', b: '象' },
-      n: { r: '馬', b: '馬' },
-      r: { r: '車', b: '車' },
-      c: { r: '砲', b: '砲' },
-      p: { r: '兵', b: '卒' }
-    },
-    spellIcons: {
-      ROOK_1: { icon: '⚡', name: 'Thiểm Điện Trảm', badge: '⚡', color: '#2ecc71' },
-      ROOK_2: { icon: '🌊', name: 'Phá Lãng Bộ', badge: '🌊', color: '#3498db' },
-      CANNON_1: { icon: '🏹', name: 'Xuyên Vân Tiễn', badge: '🏹', color: '#e67e22' },
-      CANNON_2: { icon: '🔥', name: 'Bích Lịch Hỏa', badge: '🔥', color: '#ff4757' },
-      KNIGHT_1: { icon: '☁️', name: 'Đạp Vân Tiêu', badge: '☁️', color: '#1abc9c' },
-      KNIGHT_2: { icon: '☠️', name: 'Tuyệt Mệnh Cổ', badge: '☠️', color: '#a55eea' },
-      ELEPHANT_1: { icon: '🪞', name: 'Minh Kính Thuật', badge: '🪞', color: '#f1c40f' },
-      ELEPHANT_2: { icon: '🌊', name: 'Ngự Ba Viễn Chinh', badge: '🌊', color: '#3498db' },
-      ADVISOR_1: { icon: '🏯', name: 'Xuất Trần Hộ Pháp', badge: '🏯', color: '#e74c3c' },
-      ADVISOR_2: { icon: '🐉', name: 'Song Long Xuất Hải', badge: '🐉', color: '#9b59b6' },
-      PAWN_1: { icon: '🌪️', name: 'Tật Phong Binh', badge: '🌪️', color: '#2ecc71' },
-      PAWN_2: { icon: '↩️', name: 'Hồi Phong Binh', badge: '↩️', color: '#f39c12' },
-      KING_1: { icon: '👑', name: 'Thân Chinh Xuất Giá', badge: '👑', color: '#f1c40f' },
-      KING_2: { icon: '🛡️', name: 'Cấp Cứu Cần Vương', badge: '🛡️', color: '#e67e22' },
-      KING_3: { icon: '💎', name: 'Kim Cang Bất Hoại', badge: '💎', color: '#3498db' },
-      KING_4: { icon: '🌀', name: 'Càn Khôn Di Vị', badge: '🌀', color: '#9b59b6' }
-    },
-    init: function() {
-      var viewerElem = document.getElementById('kybien-board-viewer');
-      if (!viewerElem) return;
-      try {
-        this.variant = viewerElem.getAttribute('data-variant') || '${variantCode}';
-        var rawMoves = viewerElem.getAttribute('data-moves');
-        if (rawMoves) this.moves = JSON.parse(rawMoves);
-        var container = document.getElementById('chess-board-canvas');
-        if (container) {
-          container.innerHTML = '<canvas id="kybien-replay-canvas" width="500" height="550" style="width:100%; max-width:500px; height:auto; background:#f0d9b5; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.5); display:block; margin:0 auto;"></canvas>';
-          this.canvas = document.getElementById('kybien-replay-canvas');
-          if (this.canvas) this.ctx = this.canvas.getContext('2d');
-        }
-        var stepInfo = document.getElementById('kybien-step-info');
-        if (!stepInfo && viewerElem) {
-          stepInfo = document.createElement('div');
-          stepInfo.id = 'kybien-step-info';
-          stepInfo.style.cssText = 'text-align:center; margin-top:12px; font-weight:bold; color:#f1c40f; font-size:0.95rem; font-family:sans-serif; background:rgba(0,0,0,0.5); padding:8px 12px; border-radius:6px; border:1px solid #5a3d22; min-height:42px; display:flex; align-items:center; justify-content:center;';
-          viewerElem.appendChild(stepInfo);
-        }
-        this.render();
-      } catch (e) { console.error(e); }
-    },
-    getInitialBoard: function() {
-      var board = Array(10).fill(null).map(function() { return Array(9).fill(null); });
-      if (this.variant === 'n' || this.variant === 'kb') {
-        var bk = ['r','n','b','a','k','a','b','n','r'];
-        for (var c = 0; c < 9; c++) {
-          board[0][c] = { t: bk[c], col: 'b', hd: false };
-          board[9][c] = { t: bk[c], col: 'r', hd: false };
-        }
-        board[2][1] = { t: 'c', col: 'b', hd: false }; board[2][7] = { t: 'c', col: 'b', hd: false };
-        board[7][1] = { t: 'c', col: 'r', hd: false }; board[7][7] = { t: 'c', col: 'r', hd: false };
-        for (var c = 0; c < 9; c += 2) {
-          board[3][c] = { t: 'p', col: 'b', hd: false };
-          board[6][c] = { t: 'p', col: 'r', hd: false };
-        }
-      } else {
-        board[0][4] = { t: 'k', col: 'b', hd: false };
-        board[9][4] = { t: 'k', col: 'r', hd: false };
-        var upPositions = [
-          [0,0],[0,1],[0,2],[0,3],[0,5],[0,6],[0,7],[0,8],
-          [2,1],[2,7],[3,0],[3,2],[3,4],[3,6],[3,8],
-          [9,0],[9,1],[9,2],[9,3],[9,5],[9,6],[9,7],[9,8],
-          [7,1],[7,7],[6,0],[6,2],[6,4],[6,6],[6,8]
-        ];
-        upPositions.forEach(function(pos) {
-          var r = pos[0], c = pos[1];
-          var col = r < 5 ? 'b' : 'r';
-          board[r][c] = { t: '?', col: col, hd: true };
-        });
-      }
-      return board;
-    },
-    computeBoardAtStep: function(step) {
-      var board = this.getInitialBoard();
-      var lastMove = null;
-      var moveNote = '';
-
-      for (var i = 0; i < step && i < this.moves.length; i++) {
-        var mStr = this.moves[i];
-        if (!mStr) continue;
-
-        if (mStr.startsWith('CARD:')) {
-          var parts = mStr.replace('CARD:', '').split('->');
-          var spellId = parts[0];
-          var posStr = parts[1] || '';
-          var spellInfo = this.spellIcons[spellId] || { icon: '✨', name: spellId, badge: '✨', color: '#f1c40f' };
-          moveNote = '✨ Thi triển Bí Pháp [' + spellInfo.name + ']' + (posStr ? ' tại (' + posStr + ')' : '') + '!';
-          if (posStr) {
-            var pPos = posStr.split(',').map(Number);
-            if (pPos.length === 2 && board[pPos[0]] && board[pPos[0]][pPos[1]]) {
-              board[pPos[0]][pPos[1]].badge = spellInfo.badge;
-            }
-          }
-          continue;
-        }
-
-        if (mStr.startsWith('FLIP:')) {
-          var flipParts = mStr.replace('FLIP:', '').split('->');
-          if (flipParts.length === 2) {
-            var fPos = flipParts[0].split(',').map(Number);
-            var realType = flipParts[1];
-            if (board[fPos[0]] && board[fPos[0]][fPos[1]]) {
-              board[fPos[0]][fPos[1]].hd = false;
-              board[fPos[0]][fPos[1]].t = realType;
-              var sStr = board[fPos[0]][fPos[1]].col === 'r' ? '🔴 Đỏ' : '⚫ Đen';
-              var rName = (this.pieceNames[realType] && this.pieceNames[realType][board[fPos[0]][fPos[1]].col]) || realType;
-              moveNote = '🕵️ ' + sStr + ' Lật ngửa quân Úp tại (' + fPos[0] + ',' + fPos[1] + ') thành ' + rName + '!';
-            }
-          }
-          continue;
-        }
-
-        var parts = mStr.split('-');
-        if (parts.length === 2) {
-          var from = parts[0].split(',').map(Number);
-          var to = parts[1].split(',').map(Number);
-          if (from.length === 2 && to.length === 2 && !isNaN(from[0]) && !isNaN(to[0])) {
-            var p = board[from[0]][from[1]];
-            var cap = board[to[0]][to[1]];
-            board[from[0]][from[1]] = null;
-            board[to[0]][to[1]] = p;
-            if (p) {
-              if (p.hd) p.hd = false;
-              var sideStr = p.col === 'r' ? '🔴 Đỏ' : '⚫ Đen';
-              var pName = p.hd ? 'Quân Úp' : ((this.pieceNames[p.t] && this.pieceNames[p.t][p.col]) || p.t);
-              var capStr = cap ? (' ⚔️ ăn quân ' + (cap.hd ? 'Úp' : (this.pieceNames[cap.t]?.[cap.col] || cap.t))) : ' di chuyển';
-              moveNote = sideStr + ': ' + pName + ' (' + from[0] + ',' + from[1] + ') ➔ (' + to[0] + ',' + to[1] + ')' + capStr;
-            }
-            lastMove = { from: from, to: to, piece: p, captured: cap, note: moveNote };
-          }
-        }
-      }
-      return { board: board, lastMove: lastMove, note: moveNote };
-    },
-    render: function() {
-      if (!this.ctx || !this.canvas) return;
-      var ctx = this.ctx;
-      var W = 500, H = 550;
-      this.canvas.width = W;
-      this.canvas.height = H;
-      var OX = 45, OY = 45, CS = 51;
-
-      var res = this.computeBoardAtStep(this.currentStep);
-      var board = res.board;
-      var lastMove = res.lastMove;
-      var note = res.note;
-
-      ctx.fillStyle = '#f0d9b5';
-      ctx.fillRect(0, 0, W, H);
-      ctx.strokeStyle = '#5a3d22';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(10, 10, W - 20, H - 20);
-
-      ctx.lineWidth = 1.8;
-      ctx.strokeStyle = '#5a3d22';
-      for (var r = 0; r < 10; r++) {
-        ctx.beginPath(); ctx.moveTo(OX, OY + r * CS); ctx.lineTo(OX + 8 * CS, OY + r * CS); ctx.stroke();
-      }
-      for (var c = 0; c < 9; c++) {
-        ctx.beginPath(); ctx.moveTo(OX + c * CS, OY); ctx.lineTo(OX + c * CS, OY + 4 * CS); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(OX + c * CS, OY + 5 * CS); ctx.lineTo(OX + c * CS, OY + 9 * CS); ctx.stroke();
-      }
-      ctx.beginPath(); ctx.moveTo(OX, OY + 4 * CS); ctx.lineTo(OX, OY + 5 * CS); ctx.moveTo(OX + 8 * CS, OY + 4 * CS); ctx.lineTo(OX + 8 * CS, OY + 5 * CS); ctx.stroke();
-      ctx.fillStyle = '#8b4513'; ctx.font = 'bold 22px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText('楚 河', OX + 2 * CS, OY + 4.5 * CS); ctx.fillText('漢 界', OX + 6 * CS, OY + 4.5 * CS);
-
-      ctx.beginPath();
-      ctx.moveTo(OX + 3 * CS, OY); ctx.lineTo(OX + 5 * CS, OY + 2 * CS);
-      ctx.moveTo(OX + 5 * CS, OY); ctx.lineTo(OX + 3 * CS, OY + 2 * CS);
-      ctx.moveTo(OX + 3 * CS, OY + 7 * CS); ctx.lineTo(OX + 5 * CS, OY + 9 * CS);
-      ctx.moveTo(OX + 5 * CS, OY + 7 * CS); ctx.lineTo(OX + 3 * CS, OY + 9 * CS); ctx.stroke();
-
-      if (lastMove) {
-        ctx.fillStyle = 'rgba(241, 196, 15, 0.45)';
-        ctx.fillRect(OX + lastMove.from[1] * CS - 20, OY + lastMove.from[0] * CS - 20, 40, 40);
-        ctx.fillStyle = 'rgba(46, 204, 113, 0.55)';
-        ctx.fillRect(OX + lastMove.to[1] * CS - 20, OY + lastMove.to[0] * CS - 20, 40, 40);
-      }
-
-      for (var r = 0; r < 10; r++) {
-        for (var c = 0; c < 9; c++) {
-          var p = board[r][c];
-          if (!p) continue;
-          var x = OX + c * CS, y = OY + r * CS, rad = 20;
-
-          if (p.hd) {
-            ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fillStyle = '#3a2416'; ctx.fill();
-            ctx.lineWidth = 2.5; ctx.strokeStyle = '#d4af37'; ctx.stroke();
-            ctx.beginPath(); ctx.arc(x, y, rad - 4, 0, Math.PI * 2); ctx.lineWidth = 1; ctx.strokeStyle = '#8b5a2b'; ctx.stroke();
-            ctx.fillStyle = '#d4af37'; ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText('🎴', x, y + 1);
-          } else {
-            ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fillStyle = '#fffdfa'; ctx.fill();
-            ctx.lineWidth = 2; ctx.strokeStyle = p.col === 'r' ? '#c62828' : '#222222'; ctx.stroke();
-            ctx.beginPath(); ctx.arc(x, y, rad - 3, 0, Math.PI * 2); ctx.lineWidth = 1; ctx.stroke();
-            var char = (this.pieceNames[p.t] && this.pieceNames[p.t][p.col]) || p.t;
-            ctx.fillStyle = p.col === 'r' ? '#c62828' : '#222222';
-            ctx.font = 'bold 20px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(char, x, y + 1);
-          }
-
-          if (p.badge) {
-            ctx.fillStyle = '#ff4757';
-            ctx.font = '13px sans-serif';
-            ctx.fillText(p.badge, x + 14, y - 14);
-          }
-        }
-      }
-
-      var stepInfo = document.getElementById('kybien-step-info');
-      if (stepInfo) {
-        if (this.currentStep === 0) {
-          stepInfo.innerHTML = '🔴 <strong>Nước 0 / ' + this.moves.length + '</strong>: Khai cuộc ván đấu';
-        } else {
-          stepInfo.innerHTML = '<strong>Nước ' + this.currentStep + ' / ' + this.moves.length + '</strong>: ' + (note || 'Di chuyển quân');
-        }
-      }
-    },
-    nextMove: function() { if (this.currentStep < this.moves.length) { this.currentStep++; this.render(); } },
-    prevMove: function() { if (this.currentStep > 0) { this.currentStep--; this.render(); } },
-    firstMove: function() { this.currentStep = 0; this.render(); },
-    lastMove: function() { this.currentStep = this.moves.length; this.render(); }
-  };
-
-  setTimeout(function() { window.KybienViewer.init(); }, 100);
-  setTimeout(function() { window.KybienViewer.init(); }, 500);
-  setTimeout(function() { window.KybienViewer.init(); }, 1200);
-})();
-</script>
 `;
 
-    // 3. Chuẩn hóa đoạn tóm tắt sạch (Search Description) cho Blogger & Google SEO Snippet
-    const cleanSearchDescription = (aiResult.tacticalAnalysis || '')
+    const cleanSearchDescription = (safeTacticalAnalysis || '')
       .replace(/<[^>]*>/g, '')
       .replace(/[\r\n]+/g, ' ')
       .trim()
       .slice(0, 190);
 
-    // 4. Gọi Blogger API v3 POST bài viết
     const blogUrl = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/`;
     const postResponse = await fetch(blogUrl, {
       method: 'POST',
@@ -395,20 +172,22 @@ export async function publishMatchToBlogger(
         content: htmlContent,
         searchDescription: cleanSearchDescription,
         isDraft: false,
-        labels: ['Trận Hay', 'Phân Tích Cờ', variantLabel],
+        labels: ['Trận Hay', 'Phân Tích Cờ', safeVariantLabel],
       }),
     });
 
     const postData = await postResponse.json();
-    if (postData.id) {
+    if (postData && postData.id) {
       console.log(`[Blogger Published] Bài viết mới đã xuất bản thành công! ID: ${postData.id}`);
+      publishedMatchIds.add(matchId);
       return postData.id;
     } else {
-      console.error('[Blogger API Post Error]', postData);
+      // Safe error log: DO NOT leak token or request secrets
+      console.error('[Blogger API Post Error] Từ chối tạo bài viết Blogger:', postData?.error?.message || 'Unknown Blogger API Error');
       return null;
     }
   } catch (error) {
-    console.error('[Blogger Publish Error]', error);
+    console.error('[Blogger Publish Error] Lỗi kết nối khi gọi Blogger API.');
     return null;
   }
 }

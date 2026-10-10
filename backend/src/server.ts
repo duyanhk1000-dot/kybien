@@ -6,11 +6,16 @@ import { setupGameSocket } from './socket/gameSocket.js';
 
 const server = http.createServer(app);
 
-// Initialize Socket.io with CORS for Blogspot & Localhost
+// Initialize Socket.io with configured CORS origins
+const socketOrigins = config.clientOrigin.includes('*')
+  ? '*'
+  : config.clientOrigin;
+
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: socketOrigins,
     methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 

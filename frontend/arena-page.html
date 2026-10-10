@@ -371,7 +371,7 @@
   <!-- THANH ĐĂNG NHẬP & TÀI KHOẢN KỲ THỦ -->
   <div class="arena-auth-bar">
     <div id="auth-unlogged" style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;width:100%">
-      <span style="font-size:.88rem;color:var(--ac);font-weight:600">Kỳ Thủ Đăng Nhập:</span>
+      <span style="font-size:.88rem;color:var(--ac);font-weight:600">👤 Lữ Khách (Đăng Nhập):</span>
       <input type="text" id="arena-u" placeholder="Tên tài khoản" style="width:150px"/>
       <input type="password" id="arena-p" placeholder="Mật khẩu" style="width:140px"/>
       <button type="button" class="btn-login" onclick="arenaLogin()">Đăng Nhập</button>
@@ -401,7 +401,7 @@
         <h3>Thiết Lập Ván Đấu</h3>
         <div class="fg">
           <label>Thể loại cờ<select id="mode_variant" onchange="onVariantChange()"><option value="kb" selected>Kỳ Biến (Bí Pháp Kiếm Hiệp)</option><option value="n">Cờ Tướng Truyền Thống</option><option value="t">Cờ Úp Truyền Thống</option><option value="g">Cờ Úp Gián Điệp</option></select></label>
-          <label>Chế độ thi đấu<select id="mode" onchange="onModeChange()"><option value="ai" selected>Chơi Với Máy (AI Bot)</option><option value="2p_local">Hai Người (Cùng Máy)</option><option value="2p_online">Ghép Trận Kỳ Hội Online</option></select></label>
+          <label>Chế độ thi đấu<select id="mode" onchange="onModeChange()"><option value="2p_online" selected>Ghép Trận Kỳ Hội Online</option><option value="ai">Chơi Với Máy (AI Bot)</option><option value="2p_local">Hai Người (Cùng Máy)</option></select></label>
           <label id="lbl-lv">Cấp độ máy (Bot)<select id="lv" onchange="newGame()"><option value="0">Lv1 Tay Mơ</option><option value="1">Lv2 Ông Đồ</option><option value="2">Lv3 Pháo Đầu</option><option value="3">Lv4 Cao Thủ</option><option value="4" selected>Lv5 Địa Ngục Vương</option></select></label>
           <label id="lbl-bag-freq">Rơi Túi Kỳ Mưu<select id="drop_bag_freq" onchange="newGame()"><option value="10" selected>Mỗi 10 nước đi</option><option value="15">Mỗi 15 nước đi</option><option value="20">Mỗi 20 nước đi</option></select></label>
           <label id="lbl-hc">Chấp quân (máy bị chấp)<select id="hc" onchange="newGame()"><option value="0" selected>Không chấp</option><option value="N">Chấp Mã</option><option value="C">Chấp Pháo</option><option value="R">Chấp Xe</option></select></label>
@@ -716,7 +716,7 @@ function endTurn(){
 const prev=turn;
 if(online.on&&!REPLAY&&prev===online.side&&socket&&online.room){
 const lm=[...ACT].reverse().find(a=>a.k==='m')||{};
-socket.emit('make_move',{roomId:online.room,move:{from:lm.fr+','+lm.fc,to:lm.tr+','+lm.tc,acts:ACT},nextFen:''})}
+socket.emit('make_move',{roomId:online.room,move:{from:lm.fr+','+lm.fc,to:lm.tr+','+lm.tc,acts:ACT}})}
 ACT=[];
 for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
 if(KB[prev]&&--KB[prev].n<=0)KB[prev]=null;
@@ -1032,23 +1032,26 @@ const token=localStorage.getItem('kybien_jwt_token'),un=$('auth-unlogged'),lg=$(
 if(token){try{const res=await fetch(SERVER_API_ENDPOINT+'/api/auth/me',{headers:{Authorization:'Bearer '+token}});
 if(res.ok){currentUser=await res.json();
 if($('logged-username'))$('logged-username').innerText=currentUser.username;
-if($('logged-level'))$('logged-level').innerText=currentUser.level;
-if($('logged-elo'))$('logged-elo').innerText=currentUser.elo;
-if(un)un.style.display='none';if(lg)lg.style.display='flex';return true}}catch(e){}
-localStorage.removeItem('kybien_jwt_token')}
+const expT=window.KybienAuth?window.KybienAuth.getExpTitle(currentUser.level):'Khởi Khai';
+const eloT=window.KybienAuth?window.KybienAuth.getEloTitle(currentUser.elo):'Kỳ Đồng';
+if($('logged-level'))$('logged-level').innerText='['+eloT+'] '+expT+' (Lv.'+(currentUser.level||1)+')';
+if($('logged-elo'))$('logged-elo').innerText=currentUser.elo||1200;
+if(un)un.style.display='none';if(lg)lg.style.display='flex';
+if(window.KybienAuth){window.KybienAuth.cachedUser=currentUser;window.KybienAuth.renderUserUI(currentUser)}
+return true}else if(res.status===401||res.status===403){localStorage.removeItem('kybien_jwt_token')}}catch(e){}}
 currentUser=null;if(un)un.style.display='flex';if(lg)lg.style.display='none';return false}
 async function ensureUser(){
 try{if(await checkAuthUI()&&currentUser)return true;
 const g='KyThu_'+Math.floor(10000+Math.random()*90000),pw=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
 const res=await fetch(SERVER_API_ENDPOINT+'/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:g,email:g+'@kybien.com',password:pw})});
-if(res.ok){const d=await res.json();if(d.token){localStorage.setItem('kybien_jwt_token',d.token);await checkAuthUI();return true}}}catch(e){}
+if(res.ok){const d=await res.json();if(d.token){localStorage.setItem('kybien_jwt_token',d.token);if(window.KybienAuth)window.KybienAuth.setToken(d.token);await checkAuthUI();return true}}}catch(e){}
 return false}
 async function authCall(path,body){
 try{const res=await fetch(SERVER_API_ENDPOINT+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),d=await res.json();
-if(res.ok){localStorage.setItem('kybien_jwt_token',d.token);checkAuthUI()}else if($('auth-err-msg'))$('auth-err-msg').innerText=d.error||'Lỗi'}catch(e){alert('Không thể kết nối máy chủ!')}}
+if(res.ok){localStorage.setItem('kybien_jwt_token',d.token);if(window.KybienAuth)window.KybienAuth.setToken(d.token);checkAuthUI()}else if($('auth-err-msg'))$('auth-err-msg').innerText=d.error||'Lỗi'}catch(e){alert('Không thể kết nối máy chủ!')}}
 function arenaLogin(){const u=$('arena-u').value,p=$('arena-p').value;if(!u||!p)return alert('Vui lòng nhập tên tài khoản và mật khẩu!');authCall('/api/auth/login',{usernameOrEmail:u,password:p})}
 function arenaRegister(){const u=$('arena-u').value,p=$('arena-p').value;if(!u||!p)return alert('Vui lòng nhập tên tài khoản và mật khẩu!');authCall('/api/auth/register',{username:u,email:u+'@kybien.com',password:p})}
-function arenaLogout(){localStorage.removeItem('kybien_jwt_token');checkAuthUI()}
+function arenaLogout(){localStorage.removeItem('kybien_jwt_token');if(window.KybienAuth)window.KybienAuth.clearToken();checkAuthUI()}
 function showMatchModal(d,vt,side){
 Snd.check();if($('modal-match-variant'))$('modal-match-variant').innerText='Thể loại: '+vt;
 if($('modal-match-players'))$('modal-match-players').innerHTML='Đỏ: <b>'+d.playerWhite.username+'</b> ('+d.playerWhite.elo+' ELO)<br/>Đen: <b>'+d.playerBlack.username+'</b> ('+d.playerBlack.elo+' ELO)';
@@ -1087,10 +1090,29 @@ if(d.variant&&$('mode_variant'))$('mode_variant').value=d.variant;
 names={r:d.playerWhite.username+' ('+d.playerWhite.elo+')',b:d.playerBlack.username+' ('+d.playerBlack.elo+')'};
 if($('btn-action'))$('btn-action').innerText='Trận Đấu Đang Diễn Ra';
 newGame(d.variant||VAR,d.initialPieces,String(d.roomId));flipped=online.side==='b';setLocked(true);ui();draw();
-say('[Online] Kết nối trận thành công ['+VARS[VAR]+']! Bạn cầm quân '+(online.side==='r'?'ĐỎ':'ĐEN')+'.','#2ec4b6','log-sp');showMatchModal(d,VARS[VAR],online.side)});
+if(d.movesHistory&&Array.isArray(d.movesHistory)&&d.movesHistory.length>0){
+d.movesHistory.forEach(mStr=>{
+const parts=mStr.split('-');
+if(parts.length===2){
+const f=parts[0].split(',').map(Number),t=parts[1].split(',').map(Number);
+if(f.length===2&&t.length===2){const o=B[f[0]][f[1]];if(o)doMove(o,t[0],t[1],true)}
+}
+});
+}
+const msg=d.isReconnect?'Đã khôi phục phòng đấu thành công!':'Kết nối trận thành công ['+VARS[VAR]+']!';
+say('[Online] '+msg+' Bạn cầm quân '+(online.side==='r'?'ĐỎ':'ĐEN')+'.','#2ec4b6','log-sp');
+if(!d.isReconnect)showMatchModal(d,VARS[VAR],online.side)});
 socket.on('move_made',d=>{if(!online.on||over)return;const mineNow=d.turn===(online.side==='r'?'RED':'BLACK');if(!mineNow)return;
 const m=d.move||{};let fb=null;if(m.from&&m.to){const f=m.from.split(',').map(Number),t=m.to.split(',').map(Number);fb=[f[0],f[1],t[0],t[1]]}
 replay(m.acts||[],fb)});
+socket.on('game_ended',d=>{
+if(!online.on)return;
+const isDraw=d.winnerId===null;
+const winnerSide=d.winnerId?(d.stats?.white?.userId===d.winnerId?'r':'b'):null;
+const loserSide=winnerSide?(winnerSide==='r'?'b':'r'):null;
+finish(isDraw?'draw':'win',winnerSide,loserSide,d.reason||'mate');
+if(d.stats)checkAuthUI();
+});
 socket.on('game_error',d=>alert(d.message))}
 else if(!socket.connected)socket.connect();
 socket.emit('get_public_rooms');return true}
@@ -1118,6 +1140,8 @@ try{
   const params=new URLSearchParams(window.location.search);
   const v=params.get('variant');
   if(v&&$('mode_variant')){$('mode_variant').value=v;if(typeof onVariantChange==='function')onVariantChange()}
+  const m=params.get('mode');
+  if(m&&$('mode')){$('mode').value=m;}
 }catch(e){}
 onModeChange();syncTray();draw();
 try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw)}catch(e){}

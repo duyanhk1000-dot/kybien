@@ -15,14 +15,17 @@ app.use(
       if (config.clientOrigin.includes('*') || config.clientOrigin.includes(origin)) {
         return callback(null, true);
       }
-      return callback(null, true); // Permissive for initial dev & Blogspot cross-domain
+      if (config.nodeEnv === 'development') {
+        return callback(null, true);
+      }
+      return callback(new Error('CORS Not Allowed'));
     },
     credentials: true,
   })
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // FR-06: Silent Wake-up Endpoint & UptimeRobot Ping Endpoint
 app.get('/ping', (req: Request, res: Response) => {
@@ -47,7 +50,8 @@ app.use('/api/match', matchRoutes);
 // Global Error Handler
 app.use((err: any, req: Request, res: Response, next: any) => {
   console.error('[Global Error]', err);
-  res.status(500).json({ error: 'Đã xảy ra lỗi hệ thống nội bộ.' });
+  const status = err.message === 'CORS Not Allowed' ? 403 : 500;
+  res.status(status).json({ error: err.message || 'Đã xảy ra lỗi hệ thống nội bộ.' });
 });
 
 export default app;

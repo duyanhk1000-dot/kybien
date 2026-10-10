@@ -1,4 +1,7 @@
 import { Server, Socket } from 'socket.io';
+import { XiangqiEngine } from './xiangqiEngine.js';
+import { prisma } from '../utils/prisma.js';
+import { calculatePostMatchStats } from './levelService.js';
 
 export interface PlayerInQueue {
   socketId: string;
@@ -25,6 +28,7 @@ export interface GameRoom {
   winnerId?: number | null;
   resultReason?: string;
   createdAt: number;
+  engine?: XiangqiEngine;
 }
 
 class MatchmakingManager {
@@ -46,7 +50,6 @@ class MatchmakingManager {
     };
 
     if (variant === 'g') {
-      // CỜ ÚP GIÁN ĐIỆP: Trộn lẫn 15 quân Đỏ và 15 quân Đen vào cùng 1 pool ngẫu nhiên
       const combinedPool = [
         ...piecesList.map(t => ({ t, col: 'r' })),
         ...piecesList.map(t => ({ t, col: 'b' }))
@@ -57,7 +60,6 @@ class MatchmakingManager {
         black: combinedPool.slice(15, 30),
       };
     } else {
-      // CỜ ÚP TRUYỀN THỐNG
       return {
         red: shuffle(piecesList.slice().map(t => ({ t, col: 'r' }))),
         black: shuffle(piecesList.slice().map(t => ({ t, col: 'b' }))),
@@ -65,11 +67,19 @@ class MatchmakingManager {
     }
   }
 
-  public addToQueue(player: PlayerInQueue): { matched: boolean; room?: GameRoom } {
-    this.queue = this.queue.filter((p) => p.socketId !== player.socketId);
+  public addToQueue(player: PlayerInQueue): { matched: boolean; room?: GameRoom; error?: string } {
+    // Check if player is already in an active match
+    const activeRoom = this.getUserActiveRoom(player.userId);
+    if (activeRoom && activeRoom.status === 'PLAYING') {
+      return { matched: false, error: 'Bạn đang ở trong một trận đấu chưa kết thúc.' };
+    }
+
+    // Clean up any existing queue entries for this user / socket
+    this.removeFromQueue(player.userId);
+    this.removeFromQueue(player.socketId);
 
     const opponentIndex = this.queue.findIndex(
-      (p) => p.socketId !== player.socketId && (p.variant || 'n') === (player.variant || 'n')
+      (p) => p.userId !== player.userId && p.socketId !== player.socketId && (p.variant || 'n') === (player.variant || 'n')
     );
 
     if (opponentIndex !== -1) {
@@ -81,11 +91,14 @@ class MatchmakingManager {
       const blackPlayer = isPlayerRed ? opponent : player;
       const variant = player.variant || 'n';
 
+      const initialPieces = this.generateInitialPieces(variant);
+      const engine = new XiangqiEngine(this.INITIAL_XIANGQI_FEN, variant, initialPieces);
+
       const newRoom: GameRoom = {
         roomId,
         roomCode: `MATCH-${Math.floor(1000 + Math.random() * 9000)}`,
         variant,
-        initialPieces: this.generateInitialPieces(variant),
+        initialPieces,
         playerWhite: {
           socketId: redPlayer.socketId,
           userId: redPlayer.userId,
@@ -102,11 +115,12 @@ class MatchmakingManager {
           level: blackPlayer.level,
           exp: 0n,
         },
-        fen: this.INITIAL_XIANGQI_FEN,
+        fen: engine.getFen(),
         moves: [],
         turn: 'RED',
         status: 'PLAYING',
         createdAt: Date.now(),
+        engine,
       };
 
       this.activeRooms.set(roomId, newRoom);
@@ -137,12 +151,20 @@ class MatchmakingManager {
   }
 
   public createRoom(player: PlayerInQueue, isPrivate: boolean, variant: string = 'n'): { roomCode: string; room: GameRoom } {
-    // Hủy tất cả các phòng WAITING cũ của người chơi này trước khi tạo phòng mới
+    const existingActive = this.getUserActiveRoom(player.userId);
+    if (existingActive && existingActive.status === 'PLAYING') {
+      throw new Error('Bạn đang ở trong một trận đấu chưa kết thúc.');
+    }
+
     this.cancelAllWaitingRoomsOfUser(player.userId);
 
-    const codeNumber = Math.floor(1000 + Math.random() * 9000);
-    const roomCode = `KB-${codeNumber}`;
-    const roomId = `room_${isPrivate ? 'priv' : 'pub'}_${Date.now()}_${roomCode}`;
+    let roomCode = '';
+    let roomId = '';
+    do {
+      const codeNumber = Math.floor(1000 + Math.random() * 9000);
+      roomCode = `KB-${codeNumber}`;
+      roomId = `room_${isPrivate ? 'priv' : 'pub'}_${Date.now()}_${roomCode}`;
+    } while (this.privateCodeToRoomId.has(roomCode));
 
     const newRoom: GameRoom = {
       roomId,
@@ -171,6 +193,11 @@ class MatchmakingManager {
   }
 
   public joinRoomByCode(roomCode: string, player: PlayerInQueue): { success: boolean; room?: GameRoom; error?: string } {
+    const existingActive = this.getUserActiveRoom(player.userId);
+    if (existingActive && existingActive.status === 'PLAYING') {
+      return { success: false, error: 'Bạn đang ở trong một trận đấu chưa kết thúc.' };
+    }
+
     const roomId = this.privateCodeToRoomId.get(roomCode);
     if (!roomId) {
       return { success: false, error: 'Mã phòng không tồn tại hoặc đã bị hủy.' };
@@ -189,7 +216,6 @@ class MatchmakingManager {
       return { success: false, error: 'Bạn là chủ phòng của trận đấu này.' };
     }
 
-    // Hủy tất cả các phòng WAITING rác khác của cả 2 người chơi
     this.cancelAllWaitingRoomsOfUser(player.userId);
     this.cancelAllWaitingRoomsOfUser(room.playerWhite.userId, roomId);
 
@@ -202,6 +228,8 @@ class MatchmakingManager {
       exp: 0n,
     };
     room.status = 'PLAYING';
+    room.engine = new XiangqiEngine(this.INITIAL_XIANGQI_FEN, room.variant, room.initialPieces);
+    room.fen = room.engine.getFen();
 
     return { success: true, room };
   }
@@ -223,8 +251,10 @@ class MatchmakingManager {
     return list;
   }
 
-  public removeFromQueue(socketId: string): void {
-    this.queue = this.queue.filter((p) => p.socketId !== socketId);
+  public removeFromQueue(identifier: string | number): void {
+    this.queue = this.queue.filter(
+      (p) => p.socketId !== String(identifier) && p.userId !== Number(identifier)
+    );
   }
 
   public getRoom(roomId: string): GameRoom | undefined {
@@ -246,13 +276,104 @@ class MatchmakingManager {
 
   public async finishGame(roomId: string, winnerId: number | null, reason: string): Promise<{ stats: any } | null> {
     const room = this.activeRooms.get(roomId);
-    if (!room) return null;
+    if (!room || room.status === 'FINISHED') return null;
+
     room.status = 'FINISHED';
     room.winnerId = winnerId;
     room.resultReason = reason;
 
+    let postMatchStats: any = null;
+
+    if (room.playerBlack) {
+      try {
+        const whiteUser = await prisma.user.findUnique({ where: { id: room.playerWhite.userId } });
+        const blackUser = await prisma.user.findUnique({ where: { id: room.playerBlack.userId } });
+
+        if (whiteUser && blackUser) {
+          const calculated = calculatePostMatchStats({
+            winnerId,
+            isDraw: winnerId === null,
+            totalMoves: room.moves.length,
+            isPvP: true,
+            playerWhite: {
+              id: whiteUser.id,
+              elo: whiteUser.elo,
+              exp: whiteUser.exp,
+              level: whiteUser.level,
+              matchesPlayed: whiteUser.matches_played,
+            },
+            playerBlack: {
+              id: blackUser.id,
+              elo: blackUser.elo,
+              exp: blackUser.exp,
+              level: blackUser.level,
+              matchesPlayed: blackUser.matches_played,
+            },
+          });
+
+          const isWhiteWin = winnerId === whiteUser.id;
+          const isBlackWin = winnerId === blackUser.id;
+          const matchResultStr = isWhiteWin ? 'WHITE_WIN' : isBlackWin ? 'BLACK_WIN' : 'DRAW';
+
+          await prisma.$transaction([
+            prisma.match.create({
+              data: {
+                player_white_id: whiteUser.id,
+                player_black_id: blackUser.id,
+                pgn_moves: JSON.stringify(room.moves),
+                result: matchResultStr,
+              },
+            }),
+            prisma.user.update({
+              where: { id: whiteUser.id },
+              data: {
+                elo: calculated.white.elo,
+                exp: calculated.white.exp,
+                level: calculated.white.level,
+                matches_played: { increment: 1 },
+                matches_won: isWhiteWin ? { increment: 1 } : undefined,
+              },
+            }),
+            prisma.user.update({
+              where: { id: blackUser.id },
+              data: {
+                elo: calculated.black.elo,
+                exp: calculated.black.exp,
+                level: calculated.black.level,
+                matches_played: { increment: 1 },
+                matches_won: isBlackWin ? { increment: 1 } : undefined,
+              },
+            }),
+          ]);
+
+          postMatchStats = {
+            winnerId,
+            reason,
+            white: {
+              userId: whiteUser.id,
+              newElo: calculated.white.elo,
+              eloDelta: calculated.white.eloDelta,
+              newExp: Number(calculated.white.exp),
+              expDelta: calculated.white.expDelta,
+              newLevel: calculated.white.level,
+            },
+            black: {
+              userId: blackUser.id,
+              newElo: calculated.black.elo,
+              eloDelta: calculated.black.eloDelta,
+              newExp: Number(calculated.black.exp),
+              expDelta: calculated.black.expDelta,
+              newLevel: calculated.black.level,
+            },
+          };
+        }
+      } catch (err) {
+        console.error('[MatchmakingManager] Lỗi khi lưu kết quả trận đấu:', err);
+      }
+    }
+
     this.removeRoom(roomId);
-    return { stats: { winnerId, reason } };
+    return { stats: postMatchStats || { winnerId, reason } };
   }
 
   public tryReconnectWaitingRoom(userId: number, newSocketId: string): GameRoom | null {
@@ -282,7 +403,7 @@ class MatchmakingManager {
               this.removeRoom(roomId);
               this.pendingRoomDeletions.delete(roomId);
               if (broadcastFn) broadcastFn();
-            }, 20000); // 20s grace period cho người dùng F5 / reset trang
+            }, 20000);
             this.pendingRoomDeletions.set(roomId, timer);
           }
         }

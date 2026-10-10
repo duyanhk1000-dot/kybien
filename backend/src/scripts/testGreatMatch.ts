@@ -20,7 +20,7 @@ async function runTestMatch() {
   const resultReason = 'Chiếu Bí';
 
   console.log('[1/2] Đang gửi dữ liệu tới Gemini AI để biên soạn bài viết Sa Trường Kiếm Hiệp...');
-  const aiResult = await analyzeMatchWithGemini(sample52Moves, winner, loser, resultReason);
+  const aiResult = await analyzeMatchWithGemini(sample52Moves, 'kimlong', 'Asus', winner, loser, resultReason);
 
   if (!aiResult) {
     console.log('⚠️ Cảnh báo: Chưa cấu hình GEMINI_API_KEY trong file .env hoặc Render.');

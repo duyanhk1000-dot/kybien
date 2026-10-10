@@ -1,5 +1,6 @@
 import { config } from '../config/index.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { escapeHtmlText } from '../utils/sanitize.js';
 
 export interface AIAnalysisResult {
   keyMoves: string[];
@@ -9,7 +10,7 @@ export interface AIAnalysisResult {
   matchTitlePhrase?: string;
 }
 
-function formatMovesForAI(moves: string[], whiteName: string = '🔴 Đỏ', blackName: string = '⚫ Đen', variant: string = 'kb'): string {
+function formatMovesForAI(moves: string[], redName: string = '🔴 Đỏ', blackName: string = '⚫ Đen', variant: string = 'kb'): string {
   const pieceNames: Record<string, string> = {
     k: 'Tướng', a: 'Sĩ', b: 'Tượng', n: 'Mã', r: 'Xe', c: 'Pháo', p: 'Tốt'
   };
@@ -32,7 +33,6 @@ function formatMovesForAI(moves: string[], whiteName: string = '🔴 Đỏ', bla
     KING_4: 'Càn Khôn Di Vị (Hoán vị Tướng với quân hộ vệ trong cung)'
   };
 
-  // Khởi tạo bàn cờ ảo 10x9 để mô phỏng diễn biến quân cờ
   const board: Array<Array<{ t: string; col: 'r' | 'b'; hd: boolean } | null>> = Array(10).fill(null).map(() => Array(9).fill(null));
   if (variant === 'n' || variant === 'kb') {
     const bk = ['r','n','b','a','k','a','b','n','r'];
@@ -65,11 +65,11 @@ function formatMovesForAI(moves: string[], whiteName: string = '🔴 Đỏ', bla
   const formatted: string[] = [];
 
   for (const mStr of moves) {
-    if (!mStr) continue;
+    if (!mStr || typeof mStr !== 'string') continue;
 
     const currentSide = (plyCount % 2 === 0) ? 'r' : 'b';
     const sideLabel = currentSide === 'r' ? '🔴 Đỏ' : '⚫ Đen';
-    const currentCommander = currentSide === 'r' ? whiteName : blackName;
+    const currentCommander = currentSide === 'r' ? redName : blackName;
 
     if (mStr.startsWith('CARD:')) {
       const parts = mStr.replace('CARD:', '').split('->');
@@ -131,7 +131,7 @@ function formatMovesForAI(moves: string[], whiteName: string = '🔴 Đỏ', bla
         if (p && p.hd) p.hd = false;
 
         const moveSideStr = (plyCount % 2 !== 0) ? '🔴 Đỏ' : '⚫ Đen';
-        const moveCommander = (plyCount % 2 !== 0) ? whiteName : blackName;
+        const moveCommander = (plyCount % 2 !== 0) ? redName : blackName;
         const pName = p ? (p.hd ? 'Quân Úp' : (pieceNames[p.t] || p.t)) : 'Quân cờ';
         const capName = cap ? (cap.hd ? 'Quân Úp' : (pieceNames[cap.t] || cap.t)) : null;
         const capOwnerStr = cap ? (cap.col === 'r' ? 'Đỏ' : 'Đen') : '';
@@ -150,6 +150,8 @@ function formatMovesForAI(moves: string[], whiteName: string = '🔴 Đỏ', bla
 
 export async function analyzeMatchWithGemini(
   pgnMoves: string[],
+  playerRedName: string,
+  playerBlackName: string,
   winnerName: string,
   loserName: string,
   resultType: string,
@@ -160,28 +162,39 @@ export async function analyzeMatchWithGemini(
     return null;
   }
 
+  if (!pgnMoves || !Array.isArray(pgnMoves) || pgnMoves.length === 0) {
+    console.warn('[AI Service Warning] Danh sách nước đi rỗng hoặc không hợp lệ.');
+    return null;
+  }
+
+  const sanitizedRed = escapeHtmlText(playerRedName || '🔴 Đỏ');
+  const sanitizedBlack = escapeHtmlText(playerBlackName || '⚫ Đen');
+  const sanitizedWinner = escapeHtmlText(winnerName || 'Hòa');
+  const sanitizedLoser = escapeHtmlText(loserName || 'Hòa');
+  const sanitizedReason = escapeHtmlText(resultType || 'Chiếu Bí');
+
   const variantDesc = variant === 'kb' ? 'Cờ Bí Pháp Kiếm Hiệp (Có 16 Bí Pháp Kỳ Mưu)' :
                       variant === 't' ? 'Cờ Úp Truyền Thống' :
                       variant === 'g' ? 'Cờ Úp Gián Điệp' : 'Cờ Tướng Tiêu Chuẩn';
 
-  const formattedLog = formatMovesForAI(pgnMoves, winnerName, loserName, variant);
+  const formattedLog = formatMovesForAI(pgnMoves, sanitizedRed, sanitizedBlack, variant);
 
   const prompt = `
 Bạn là một bình luận viên chiến trận kiêm văn sĩ kiếm hiệp cho Nền tảng Cờ Tướng Kỳ Biến (kybien.blogspot.com), chuyên biến các ván cờ tướng thành những trận đại chiến đẫm lửa giữa hai đạo quân.
 
 DỮ LIỆU TRẬN ĐẤU:
-- Phe Đỏ (Chủ tướng): ${winnerName}
-- Phe Đen (Chủ tướng): ${loserName}
+- Phe Đỏ (Chủ tướng): ${sanitizedRed}
+- Phe Đen (Chủ tướng): ${sanitizedBlack}
+- Kết quả trận đấu: Bên Thắng là ${sanitizedWinner}, Bên Thua là ${sanitizedLoser} (Lý do: ${sanitizedReason})
 - Thể loại cờ: ${variantDesc}
-- Kết quả trận đấu: ${resultType}
 - Nhật ký chi tiết nước đi, lật quân úp & thi triển Bí Pháp:
 ${formattedLog}
 
 Hãy dựa chính xác vào nhật ký diễn biến trên để phân tích và viết bài tường thuật trận đấu khoảng 300–400 chữ, theo phong cách kiếm hiệp – chiến trường cổ đại – hùng tráng – tàn khốc.
 
 1. QUY TẮC BẮT BUỘC VỀ NGOẶC VUÔNG [ ] CHO TÊN CHỦ SOÁI:
-- BẮT BUỘC TẤT CẢ tên / danh xưng của hai Chủ tướng (${winnerName} và ${loserName}) trong MỌI NƠI của bài viết (từ "keyMoves", "tacticalAnalysis", "blunders", cho đến "saTruongCommentary") PHẢI ĐƯỢC ĐẶT TRONG NGOẶC VUÔNG [ ]!
-- Ví dụ đúng: "${winnerName} chủ động điều kỵ binh...", "Nước 12: Pháo Đỏ của ${winnerName} nổ sấm thiêu rụi quân Đen của ${loserName}...".
+- BẮT BUỘC TẤT CẢ tên / danh xưng của hai Chủ tướng (${sanitizedRed} và ${sanitizedBlack}) trong MỌI NƠI của bài viết (từ "keyMoves", "tacticalAnalysis", "blunders", cho đến "saTruongCommentary") PHẢI ĐƯỢC ĐẶT TRONG NGOẶC VUÔNG [ ]!
+- Ví dụ đúng: "${sanitizedRed} chủ động điều kỵ binh...", "Nước 12: Pháo Đỏ của ${sanitizedRed} nổ sấm thiêu rụi quân Đen của ${sanitizedBlack}...".
 - TUYỆT ĐỐI KHÔNG tự ý bỏ ngoặc vuông [ ], KHÔNG dùng các từ chung chung như "Bạn", "Người chơi", "Máy", "Đối thủ". Tất cả đều phải ghi đúng định danh [Tên Chủ Soái].
 
 2. NGUYÊN TẮC BÁM SÁT NƯỚC CỜ, LẬT QUÂN ÚP & BÍ PHÁP:
@@ -192,7 +205,7 @@ Hãy dựa chính xác vào nhật ký diễn biến trên để phân tích và
 - Nước ăn quân là cuộc giao chiến tiêu diệt đối phương; nước KHÔNG ăn quân tuyệt đối không tự ý viết có quân bị chết hay bị tiêu diệt.
 
 3. QUY TẮC VIẾT "keyMoves" (NƯỚC CỜ BƯỚC NGOẶT):
-- BẮT BUỘC mô tả nước cờ bằng VĂN DIỄN GIẢI TIẾNG VIỆT RÕ RÀNG kèm tên Chủ tướng trong ngoặc vuông [ ] (Ví dụ: "Nước 12: Đại pháo Đỏ của ${winnerName} nổ sấm Bích Lịch Hỏa thiêu rụi kỵ binh Đen của ${loserName}").
+- BẮT BUỘC mô tả nước cờ bằng VĂN DIỄN GIẢI TIẾNG VIỆT RÕ RÀNG kèm tên Chủ tướng trong ngoặc vuông [ ] (Ví dụ: "Nước 12: Đại pháo Đỏ của ${sanitizedRed} nổ sấm Bích Lịch Hỏa thiêu rụi kỵ binh Đen của ${sanitizedBlack}").
 - TUYỆT ĐỐI KHÔNG xuất ra mã ký hiệu tọa độ dạng "0,7-4,7" hay "7,1-7,4" trong keyMoves!
 
 4. PHẢI BÁM SÁT DIỄN BIẾN, KHÔNG NHẢY CÓC:
@@ -202,7 +215,7 @@ Các nước đi tạo thành chuỗi diễn biến liên tục: Khai chiến �
 Hùng tráng, tàn khốc, dồn dập, có sát khí, chất cổ trang, đấu trí chiến thuật.
 
 6. CAO TRÀO VÀ KẾT THÚC:
-20–25% cuối bài phải là cao trào. BẮT BUỘC tuyên bố rõ ${winnerName} giành chiến thắng rực rỡ và ${loserName} chịu thất bại ở cuối bài như một đoạn sử thi hùng tráng.
+20–25% cuối bài phải là cao trào. BẮT BUỘC tuyên bố rõ kết quả trận đấu (${sanitizedWinner} thắng và ${sanitizedLoser} thua, hoặc trận hòa) ở cuối bài như một đoạn sử thi hùng tráng.
 
 7. TIÊU ĐỀ PHỤ THẦN THÁI DÀNH CHO TRẬN ĐẤU ("matchTitlePhrase"):
 - BẮT BUỘC sáng tạo 1 cụm danh xưng/tiêu đề phụ ngắn gọn từ 3 đến 6 từ đặc tả thần thái & diễn biến then chốt của trận đấu.

@@ -3,6 +3,8 @@ import { verifyToken } from '../utils/jwt.js';
 import { matchmakingManager } from '../services/matchmakingService.js';
 import { analyzeMatchWithGemini } from '../services/aiService.js';
 import { publishMatchToBlogger } from '../services/bloggerService.js';
+import { XiangqiEngine } from '../services/xiangqiEngine.js';
+import { prisma } from '../utils/prisma.js';
 
 export function setupGameSocket(io: Server): void {
   io.use((socket: Socket, next) => {
@@ -31,7 +33,7 @@ export function setupGameSocket(io: Server): void {
     // Send public waiting rooms list immediately on connection
     socket.emit('public_rooms_list', matchmakingManager.getPublicWaitingRooms());
 
-    // Tự động khôi phục hoặc đưa người chơi vào đúng phòng đấu đang tham gia
+    // Tự động khôi phục hoặc đưa người chơi vào đúng phòng đấu đang tham gia (Task 5 Reconnection)
     const activeRoom = matchmakingManager.getUserActiveRoom(user.userId);
     if (activeRoom) {
       if (activeRoom.status === 'WAITING' && activeRoom.playerWhite.userId === user.userId) {
@@ -56,8 +58,10 @@ export function setupGameSocket(io: Server): void {
           initialPieces: activeRoom.initialPieces,
           fen: activeRoom.fen,
           turn: activeRoom.turn,
+          movesHistory: activeRoom.moves,
           playerWhite: activeRoom.playerWhite,
           playerBlack: activeRoom.playerBlack,
+          isReconnect: true,
         });
       }
     }
@@ -67,26 +71,139 @@ export function setupGameSocket(io: Server): void {
       socket.emit('public_rooms_list', matchmakingManager.getPublicWaitingRooms());
     });
 
-    // 1. Ghép trận tự động (Lọc theo Thể loại cờ variant)
-    socket.on('join_matchmaking', (data: { variant?: string; elo?: number; level?: number }) => {
-      const elo = data?.elo || 1200;
-      const level = data?.level || 1;
+    // 1. Ghép trận tự động (Lọc theo Thể loại cờ variant & lấy user info từ DB - Task 3)
+    socket.on('join_matchmaking', async (data: { variant?: string }) => {
       const variant = data?.variant || 'n';
 
-      const result = matchmakingManager.addToQueue({
-        socketId: socket.id,
-        userId: user.userId,
-        username: user.username,
-        elo,
-        level,
-        variant,
-        joinedAt: Date.now(),
-      });
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.userId },
+          select: { id: true, username: true, elo: true, level: true },
+        });
 
-      if (result.matched && result.room && result.room.playerBlack) {
+        if (!dbUser) {
+          socket.emit('game_error', { message: 'Không tìm thấy dữ liệu người dùng trong hệ thống.' });
+          return;
+        }
+
+        const result = matchmakingManager.addToQueue({
+          socketId: socket.id,
+          userId: dbUser.id,
+          username: dbUser.username,
+          elo: dbUser.elo,
+          level: dbUser.level,
+          variant,
+          joinedAt: Date.now(),
+        });
+
+        if (result.error) {
+          socket.emit('game_error', { message: result.error });
+          return;
+        }
+
+        if (result.matched && result.room && result.room.playerBlack) {
+          const room = result.room;
+          const playerBlack = result.room.playerBlack;
+
+          const socketWhite = io.sockets.sockets.get(room.playerWhite.socketId);
+          const socketBlack = io.sockets.sockets.get(playerBlack.socketId);
+
+          if (socketWhite) socketWhite.join(room.roomId);
+          if (socketBlack) socketBlack.join(room.roomId);
+
+          io.to(room.roomId).emit('match_found', {
+            roomId: room.roomId,
+            roomCode: room.roomCode,
+            variant: room.variant,
+            initialPieces: room.initialPieces,
+            fen: room.fen,
+            turn: room.turn,
+            movesHistory: room.moves,
+            playerWhite: room.playerWhite,
+            playerBlack,
+          });
+        } else {
+          socket.emit('matchmaking_queued', { message: 'Đang tìm kiếm đối thủ phù hợp thể loại cờ đã chọn...' });
+        }
+      } catch (err) {
+        console.error('[Socket Matchmaking Error]', err);
+        socket.emit('game_error', { message: 'Lỗi máy chủ khi tham gia hàng đợi ghép trận.' });
+      }
+    });
+
+    // 2. Tạo phòng theo mã (Công khai / Riêng tư + Variant - DB User authenticated - Task 3)
+    socket.on('create_room', async (data: { isPrivate?: boolean; variant?: string }) => {
+      const isPrivate = !!data?.isPrivate;
+      const variant = data?.variant || 'n';
+
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.userId },
+          select: { id: true, username: true, elo: true, level: true },
+        });
+
+        if (!dbUser) {
+          socket.emit('game_error', { message: 'Không tìm thấy dữ liệu người dùng trong hệ thống.' });
+          return;
+        }
+
+        const { roomCode, room } = matchmakingManager.createRoom({
+          socketId: socket.id,
+          userId: dbUser.id,
+          username: dbUser.username,
+          elo: dbUser.elo,
+          level: dbUser.level,
+          variant,
+          joinedAt: Date.now(),
+        }, isPrivate, variant);
+
+        socket.join(room.roomId);
+
+        socket.emit('room_created', {
+          roomCode,
+          isPrivate,
+          variant,
+          message: `Đã tạo ${isPrivate ? 'phòng riêng' : 'phòng chờ công khai'} thành công! Mã: ${roomCode}`,
+        });
+
+        if (!isPrivate) {
+          broadcastPublicRooms();
+        }
+      } catch (err: any) {
+        socket.emit('game_error', { message: err?.message || 'Lỗi khi tạo phòng đấu.' });
+      }
+    });
+
+    // 3. Tham gia phòng theo mã (Task 3)
+    socket.on('join_room_by_code', async (data: { roomCode: string }) => {
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.userId },
+          select: { id: true, username: true, elo: true, level: true },
+        });
+
+        if (!dbUser) {
+          socket.emit('game_error', { message: 'Không tìm thấy dữ liệu người dùng trong hệ thống.' });
+          return;
+        }
+
+        const result = matchmakingManager.joinRoomByCode(data.roomCode, {
+          socketId: socket.id,
+          userId: dbUser.id,
+          username: dbUser.username,
+          elo: dbUser.elo,
+          level: dbUser.level,
+          variant: '',
+          joinedAt: Date.now(),
+        });
+
+        if (!result.success || !result.room || !result.room.playerBlack) {
+          socket.emit('game_error', { message: result.error || 'Không thể tham gia phòng này.' });
+          return;
+        }
+
         const room = result.room;
         const playerBlack = result.room.playerBlack;
-
         const socketWhite = io.sockets.sockets.get(room.playerWhite.socketId);
         const socketBlack = io.sockets.sockets.get(playerBlack.socketId);
 
@@ -95,124 +212,32 @@ export function setupGameSocket(io: Server): void {
 
         io.to(room.roomId).emit('match_found', {
           roomId: room.roomId,
+          roomCode: room.roomCode,
           variant: room.variant,
           initialPieces: room.initialPieces,
           fen: room.fen,
           turn: room.turn,
-          playerWhite: {
-            socketId: room.playerWhite.socketId,
-            userId: room.playerWhite.userId,
-            username: room.playerWhite.username,
-            elo: room.playerWhite.elo,
-            level: room.playerWhite.level,
-          },
-          playerBlack: {
-            socketId: playerBlack.socketId,
-            userId: playerBlack.userId,
-            username: playerBlack.username,
-            elo: playerBlack.elo,
-            level: playerBlack.level,
-          },
+          movesHistory: room.moves,
+          playerWhite: room.playerWhite,
+          playerBlack,
         });
-      } else {
-        socket.emit('matchmaking_queued', { message: 'Đang tìm kiếm đối thủ phù hợp thể loại cờ đã chọn...' });
-      }
-    });
 
-    // 2. Tạo phòng theo mã (Công khai / Riêng tư + Variant)
-    socket.on('create_room', (data: { isPrivate?: boolean; variant?: string; elo?: number; level?: number }) => {
-      const isPrivate = !!data?.isPrivate;
-      const variant = data?.variant || 'n';
-      const elo = data?.elo || 1200;
-      const level = data?.level || 1;
-
-      const { roomCode, room } = matchmakingManager.createRoom({
-        socketId: socket.id,
-        userId: user.userId,
-        username: user.username,
-        elo,
-        level,
-        variant,
-        joinedAt: Date.now(),
-      }, isPrivate, variant);
-
-      socket.join(room.roomId);
-
-      socket.emit('room_created', {
-        roomCode,
-        isPrivate,
-        variant,
-        message: `Đã tạo ${isPrivate ? 'phòng riêng' : 'phòng chờ công khai'} thành công! Mã: ${roomCode}`,
-      });
-
-      if (!isPrivate) {
         broadcastPublicRooms();
+      } catch (err: any) {
+        socket.emit('game_error', { message: 'Lỗi khi tham gia phòng đấu.' });
       }
     });
 
-    // 3. Tham gia phòng theo mã (Đồng bộ variant từ phòng chủ)
-    socket.on('join_room_by_code', (data: { roomCode: string; elo?: number; level?: number }) => {
-      const elo = data?.elo || 1200;
-      const level = data?.level || 1;
-
-      const result = matchmakingManager.joinRoomByCode(data.roomCode, {
-        socketId: socket.id,
-        userId: user.userId,
-        username: user.username,
-        elo,
-        level,
-        variant: '',
-        joinedAt: Date.now(),
-      });
-
-      if (!result.success || !result.room || !result.room.playerBlack) {
-        socket.emit('game_error', { message: result.error || 'Không thể tham gia phòng này.' });
-        return;
-      }
-
-      const room = result.room;
-      const playerBlack = result.room.playerBlack;
-      const socketWhite = io.sockets.sockets.get(room.playerWhite.socketId);
-      const socketBlack = io.sockets.sockets.get(playerBlack.socketId);
-
-      if (socketWhite) socketWhite.join(room.roomId);
-      if (socketBlack) socketBlack.join(room.roomId);
-
-      io.to(room.roomId).emit('match_found', {
-        roomId: room.roomId,
-        roomCode: room.roomCode,
-        variant: room.variant,
-        initialPieces: room.initialPieces,
-        fen: room.fen,
-        turn: room.turn,
-        playerWhite: {
-          socketId: room.playerWhite.socketId,
-          userId: room.playerWhite.userId,
-          username: room.playerWhite.username,
-          elo: room.playerWhite.elo,
-          level: room.playerWhite.level,
-        },
-        playerBlack: {
-          socketId: playerBlack.socketId,
-          userId: playerBlack.userId,
-          username: playerBlack.username,
-          elo: playerBlack.elo,
-          level: playerBlack.level,
-        },
-      });
-
-      broadcastPublicRooms();
-    });
-
-    // 4. Hủy tìm trận
+    // 4. Hủy tìm trận (Fix Task 2)
     socket.on('cancel_matchmaking', () => {
       matchmakingManager.removeFromQueue(user.userId);
+      matchmakingManager.removeFromQueue(socket.id);
       socket.emit('matchmaking_cancelled', { message: 'Đã hủy tìm kiếm trận.' });
     });
 
-    // 5. Nước đi cờ
-    socket.on('make_move', async (data: { roomId: string; move: { from: string; to: string }; nextFen: string }) => {
-      const { roomId, move, nextFen } = data;
+    // 5. Nước đi cờ (Server-side Rule Validation & FEN Calculation - Task 1)
+    socket.on('make_move', async (data: { roomId: string; move: { from: string; to: string } }) => {
+      const { roomId, move } = data;
       const room = matchmakingManager.getRoom(roomId);
 
       if (!room || room.status !== 'PLAYING' || !room.playerBlack) {
@@ -220,73 +245,144 @@ export function setupGameSocket(io: Server): void {
         return;
       }
 
-      const isRedPlayer = socket.id === room.playerWhite.socketId;
-      const isBlackPlayer = socket.id === room.playerBlack.socketId;
+      const isRedPlayer = socket.id === room.playerWhite.socketId || user.userId === room.playerWhite.userId;
+      const isBlackPlayer = socket.id === room.playerBlack.socketId || user.userId === room.playerBlack.userId;
+
+      if (!isRedPlayer && !isBlackPlayer) {
+        socket.emit('game_error', { message: 'Bạn không phải người chơi trong phòng đấu này.' });
+        return;
+      }
 
       if ((room.turn === 'RED' && !isRedPlayer) || (room.turn === 'BLACK' && !isBlackPlayer)) {
         socket.emit('game_error', { message: 'Chưa đến lượt đi của bạn.' });
         return;
       }
 
-      const moveNotation = `${move.from}-${move.to}`;
+      if (!room.engine) {
+        room.engine = new XiangqiEngine(matchmakingManager.INITIAL_XIANGQI_FEN, room.variant, room.initialPieces);
+      }
+
+      const turnColor = room.turn === 'RED' ? 'r' : 'b';
+      const moveResult = room.engine.validateMove(move, turnColor, room.variant);
+
+      if (!moveResult.valid) {
+        socket.emit('game_error', { message: moveResult.error || 'Nước đi không hợp lệ theo luật cờ máy chủ.' });
+        return;
+      }
+
+      const moveNotation = moveResult.formattedNotation || `${move.from}-${move.to}`;
       room.moves.push(moveNotation);
-      room.fen = nextFen;
-      room.turn = room.turn === 'RED' ? 'BLACK' : 'RED';
+      room.fen = room.engine.getFen();
+      room.turn = room.engine.turn;
 
       io.to(roomId).emit('move_made', {
-        move: data.move,
+        move: { from: move.from, to: move.to },
         nextFen: room.fen,
         turn: room.turn,
         movesHistory: room.moves,
       });
     });
 
-    // 6. Kết thúc ván cờ
-    socket.on('game_over', async (data: { roomId: string; winnerId: number | null; reason: string }) => {
-      const { roomId, winnerId, reason } = data;
-      const room = matchmakingManager.getRoom(roomId);
+    const processGameOver = async (room: any, winnerId: number | null, reason: string) => {
+      const roomId = room.roomId;
+      const savedMoves = [...room.moves];
+      const playerWhite = room.playerWhite;
+      const playerBlack = room.playerBlack;
+      const variant = room.variant;
 
-      if (room && room.moves && room.moves.length >= 50) {
-        const whiteName = room.playerWhite.username || 'Đỏ';
-        const blackName = room.playerBlack?.username || 'Đen';
+      const finished = await matchmakingManager.finishGame(roomId, winnerId, reason);
+      if (!finished) {
+        return; // Already finished or inactive
+      }
+
+      io.to(roomId).emit('game_ended', {
+        winnerId,
+        reason,
+        stats: finished.stats,
+      });
+
+      // Tự động kích hoạt AI sinh bài viết Sa Trường & Đăng bài Blogger phục vụ đẩy SEO:
+      // - Ghép trận 2 người PvP Online: >= 90 nước
+      // - Chơi với Bot (Máy): >= 120 nước
+      const isBotMatch = !playerBlack || (playerBlack.username && (playerBlack.username.toLowerCase().includes('máy') || playerBlack.username.toLowerCase().includes('bot')));
+      const minPlies = isBotMatch ? 120 : 90;
+
+      if (savedMoves.length >= minPlies) {
+        const whiteName = playerWhite.username || 'Đỏ';
+        const blackName = playerBlack ? (playerBlack.username || 'Đen') : 'Máy (AI)';
         let winnerName = 'Hòa';
         let loserName = 'Hòa';
 
-        if (winnerId === room.playerWhite.userId) {
+        if (winnerId === playerWhite.userId) {
           winnerName = whiteName;
           loserName = blackName;
-        } else if (room.playerBlack && winnerId === room.playerBlack.userId) {
+        } else if (playerBlack && winnerId === playerBlack.userId) {
           winnerName = blackName;
           loserName = whiteName;
         }
 
-        // Map mã Thể loại cờ (variantCode) -> Tên thể loại tiếng Việt (variantName)
-        const variantCode = (room.variant || 'kb').toLowerCase();
+        const variantCode = (variant || 'kb').toLowerCase();
         let variantName = 'Cờ Tướng Kỳ Biến';
         if (variantCode === 'n') variantName = 'Cờ Tướng Truyền Thống';
         else if (variantCode === 't') variantName = 'Cờ Úp Truyền Thống';
         else if (variantCode === 'g') variantName = 'Cờ Úp Gián Điệp';
-        else if (variantCode === 'kb') variantName = 'Cờ Tướng Kỳ Biến';
 
-        // Tự động kích hoạt AI sinh bài viết Sa Trường & Đăng bài Blogger cho Trận Hay (>50 nước)
-        analyzeMatchWithGemini(room.moves, winnerName, loserName, reason || 'Chiếu Bí', variantCode)
+        analyzeMatchWithGemini(savedMoves, whiteName, blackName, winnerName, loserName, reason || 'Chiếu Bí', variantCode)
           .then((aiResult) => {
             if (aiResult) {
-              return publishMatchToBlogger(`match_${Date.now()}`, whiteName, blackName, room.moves, aiResult, variantName, variantCode);
+              return publishMatchToBlogger(`match_${Date.now()}`, whiteName, blackName, savedMoves, aiResult, variantName, variantCode);
             }
           })
           .catch((err) => console.error('[Socket AI Blog Post Error]', err));
       }
+    };
 
-      const finished = await matchmakingManager.finishGame(roomId, winnerId, reason);
-
-      if (finished) {
-        io.to(roomId).emit('game_ended', {
-          winnerId,
-          reason,
-          stats: finished.stats,
-        });
+    // 6. Resign (Đầu hàng)
+    socket.on('resign', async (data: { roomId: string }) => {
+      const { roomId } = data;
+      const room = matchmakingManager.getRoom(roomId);
+      if (!room || room.status !== 'PLAYING' || !room.playerBlack) {
+        socket.emit('game_error', { message: 'Phòng đấu không tồn tại hoặc đã kết thúc.' });
+        return;
       }
+
+      const isRedPlayer = socket.id === room.playerWhite.socketId || user.userId === room.playerWhite.userId;
+      const isBlackPlayer = socket.id === room.playerBlack.socketId || user.userId === room.playerBlack.userId;
+
+      if (!isRedPlayer && !isBlackPlayer) {
+        socket.emit('game_error', { message: 'Bạn không phải người chơi trong phòng đấu này.' });
+        return;
+      }
+
+      const winnerId = isRedPlayer ? room.playerBlack.userId : room.playerWhite.userId;
+      await processGameOver(room, winnerId, 'Đầu hàng');
+    });
+
+    // 7. Kết thúc ván cờ (Server Verified Game Over)
+    socket.on('game_over', async (data: { roomId: string; winnerId?: number | null; reason?: string }) => {
+      const { roomId } = data;
+      const room = matchmakingManager.getRoom(roomId);
+
+      if (!room || room.status !== 'PLAYING' || !room.playerBlack) {
+        socket.emit('game_error', { message: 'Phòng đấu không tồn tại hoặc đã kết thúc.' });
+        return;
+      }
+
+      const isRedPlayer = socket.id === room.playerWhite.socketId || user.userId === room.playerWhite.userId;
+      const isBlackPlayer = socket.id === room.playerBlack.socketId || user.userId === room.playerBlack.userId;
+
+      if (!isRedPlayer && !isBlackPlayer) {
+        socket.emit('game_error', { message: 'Bạn không phải người chơi trong phòng đấu này.' });
+        return;
+      }
+
+      let verifiedWinnerId: number | null = null;
+      if (data.winnerId === room.playerWhite.userId || data.winnerId === room.playerBlack.userId) {
+        verifiedWinnerId = data.winnerId;
+      }
+
+      const verifiedReason = data.reason || 'Chiếu Bí';
+      await processGameOver(room, verifiedWinnerId, verifiedReason);
     });
 
     socket.on('disconnect', () => {
