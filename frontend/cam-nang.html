@@ -120,19 +120,24 @@
       border-left: 3px solid #f1c40f;
     }
     
-    /* ICON MŨI TÊN ĐẸP */
+    /* ICON MŨI TÊN ĐẸP (Sử dụng mã escape CSS chuẩn để tránh lỗi mã hóa HTML Entity trong Blogger) */
     .tree-arrow {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: 16px;
       height: 16px;
-      line-height: 16px;
+      line-height: 1;
       text-align: center;
       font-size: 0.72rem;
       color: #f1c40f;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
     }
-    .tree-arrow.collapsed::before { content: '▶'; }
-    .tree-arrow.expanded::before { content: '▼'; }
-    .tree-arrow.leaf::before { content: '•'; color: #a8947d; font-size: 0.9rem; }
+    .tree-arrow.collapsed::before { content: '\25B6'; }
+    .tree-arrow.expanded::before { content: '\25BC'; }
+    .tree-arrow.leaf::before { content: '\2022'; color: #a8947d; font-size: 0.85rem; }
 
     /* CỘT 2: NỘI DUNG */
     .cn-content {
