@@ -476,8 +476,9 @@
       
       <ul class='nav-links'>
         <li><a href='/'>Trang Chủ</a></li>
-        <li><a href='/p/arena.html'>Sảnh Đấu Cờ</a></li>
-        <li><a href='/search/label/Phân%20Tích%20Cờ'>Bình Văn Sa Trường</a></li>
+        <li><a href='/p/cam-nang.html'>Cẩm Nang</a></li>
+        <li><a href='/p/arena.html'>Sàn Đấu</a></li>
+        <li><a href='/search/label/Phân%20Tích%20Cờ'>Bình Văn</a></li>
       </ul>
 
       <div id='kybien-header-profile'></div>
@@ -764,11 +765,12 @@
 
   <!-- CHÂN TRANG CHUYÊN NGHIỆP CÓ LIÊN KẾT CHÍNH SÁCH METADATA -->
   <footer class='kybien-footer'>
-    <p>© 2026 KỲ BIẾN CHESS PLATFORM. Nền tảng cờ tướng bí pháp &amp; bình văn sa trường hàng đầu.</p>
+    <p>© 2026 KỲ BIẾN CHESS PLATFORM. Bổn Trang kính chúc chư vị kỳ hữu kỳ nghệ thăng tiến.</p>
     <div style='margin-top: 10px; font-size: 0.82rem; color: #a8947d; display: flex; justify-content: center; gap: 15px;'>
-      <a href='/p/arena.html'>Sảnh Đấu</a> |
-      <a href='/search/label/Phân%20Tích%20Cờ'>Bài Phân Tích</a> |
-      <a href='/'>Trang Chủ</a>
+      <a href='/'>Trang Chủ</a> |
+      <a href='/p/cam-nang.html'>Cẩm Nang</a> |
+      <a href='/p/arena.html'>Sàn Đấu</a> |
+      <a href='/search/label/Phân%20Tích%20Cờ'>Bình Văn</a>
     </div>
   </footer>
 
