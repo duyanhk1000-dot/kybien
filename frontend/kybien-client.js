@@ -95,13 +95,76 @@
       }
     },
 
+    handleLogin: async function () {
+      const uEl = document.getElementById('hdr-auth-u');
+      const pEl = document.getElementById('hdr-auth-p');
+      const errEl = document.getElementById('hdr-auth-err');
+      if (!uEl || !pEl) return;
+      const username = uEl.value.trim();
+      const password = pEl.value;
+      if (!username || !password) {
+        if (errEl) { errEl.innerText = 'Vui lòng nhập Tên và Mật khẩu!'; errEl.style.display = 'block'; }
+        return;
+      }
+      if (errEl) { errEl.innerText = 'Đang đăng nhập...'; errEl.style.color = '#f1c40f'; errEl.style.display = 'block'; }
+      try {
+        const res = await fetch(`${SERVER_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usernameOrEmail: username, password })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          this.setToken(data.token);
+          if (typeof window.checkAuthUI === 'function') window.checkAuthUI();
+        } else {
+          if (errEl) { errEl.innerText = data.error || 'Sai tên đăng nhập hoặc mật khẩu!'; errEl.style.color = '#ff6b6b'; errEl.style.display = 'block'; }
+        }
+      } catch (e) {
+        if (errEl) { errEl.innerText = 'Lỗi kết nối máy chủ!'; errEl.style.color = '#ff6b6b'; errEl.style.display = 'block'; }
+      }
+    },
+
+    handleRegister: async function () {
+      const uEl = document.getElementById('hdr-auth-u');
+      const pEl = document.getElementById('hdr-auth-p');
+      const errEl = document.getElementById('hdr-auth-err');
+      if (!uEl || !pEl) return;
+      const username = uEl.value.trim();
+      const password = pEl.value;
+      if (!username || !password) {
+        if (errEl) { errEl.innerText = 'Vui lòng nhập Tên và Mật khẩu!'; errEl.style.display = 'block'; }
+        return;
+      }
+      if (errEl) { errEl.innerText = 'Đang tạo tài khoản...'; errEl.style.color = '#f1c40f'; errEl.style.display = 'block'; }
+      try {
+        const res = await fetch(`${SERVER_URL}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email: username + '@kybien.com', password })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          this.setToken(data.token);
+          if (typeof window.checkAuthUI === 'function') window.checkAuthUI();
+        } else {
+          if (errEl) { errEl.innerText = data.error || 'Đăng ký thất bại!'; errEl.style.color = '#ff6b6b'; errEl.style.display = 'block'; }
+        }
+      } catch (e) {
+        if (errEl) { errEl.innerText = 'Lỗi kết nối máy chủ!'; errEl.style.color = '#ff6b6b'; errEl.style.display = 'block'; }
+      }
+    },
+
     renderGuestUI: function () {
       const headerElem = document.getElementById('kybien-header-profile');
       if (headerElem) {
         headerElem.innerHTML = `
-          <div class="kybien-auth-buttons" style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 0.82rem; color: #a8947d;">👤 <strong style="color: #e5b36a;">Lữ Khách</strong></span>
-            <a href="/p/arena.html" class="btn-login" style="background: #8b0000; color: #fff; font-weight: bold; font-size: 0.82rem; padding: 6px 14px; border-radius: 6px; border: 1px solid #a83a1f; text-decoration: none;">🔑 Đăng Nhập / Đăng Ký</a>
+          <div class="kybien-nav-auth" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <input type="text" id="hdr-auth-u" placeholder="Tên kỳ thủ" style="background: #1e130a; border: 1px solid #5a3d22; color: #fff; padding: 5px 8px; border-radius: 5px; font-size: 0.78rem; width: 110px; outline: none;" onkeydown="if(event.key==='Enter')window.KybienAuth.handleLogin()"/>
+            <input type="password" id="hdr-auth-p" placeholder="Mật khẩu" style="background: #1e130a; border: 1px solid #5a3d22; color: #fff; padding: 5px 8px; border-radius: 5px; font-size: 0.78rem; width: 100px; outline: none;" onkeydown="if(event.key==='Enter')window.KybienAuth.handleLogin()"/>
+            <button type="button" onclick="window.KybienAuth.handleLogin()" style="background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 5px 10px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Nhập</button>
+            <button type="button" onclick="window.KybienAuth.handleRegister()" style="background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; padding: 5px 9px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Ký</button>
+            <div id="hdr-auth-err" style="color: #ff6b6b; font-size: 0.72rem; font-weight: bold; width: 100%; display: none;"></div>
           </div>
         `;
       }
@@ -115,9 +178,8 @@
           </div>
           <div style="text-align: center; padding: 15px 10px;">
             <p style="color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;">
-              Bạn đang tham gia với tư cách <strong>Lữ Khách</strong>.<br/>Đăng ký tài khoản để tích lũy ELO, thăng cấp &amp; lưu lịch sử đấu!
+              Bạn đang tham gia với tư cách <strong>Lữ Khách</strong>.<br/>Đăng nhập ngay ở thanh trên để tích lũy ELO, thăng cấp &amp; lưu lịch sử đấu!
             </p>
-            <a href="/p/arena.html" style="display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f; text-decoration: none;">🔑 Đăng Nhập / Đăng Ký Chơi Ngay ➔</a>
           </div>
         `;
       }
@@ -316,6 +378,7 @@
           const user = await res.json();
           this.cachedUser = user;
           this.renderUserUI(user);
+          if (typeof window.checkAuthUI === 'function') window.checkAuthUI();
         } else if (res.status === 401 || res.status === 403) {
           console.warn('[Kỷ Biến Auth] Token không hợp lệ hoặc đã hết hạn (401/403).');
           this.clearToken();

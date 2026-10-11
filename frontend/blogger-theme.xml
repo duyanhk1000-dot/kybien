@@ -72,7 +72,7 @@
   
   <!-- Socket.io Client & Ky Bien Core Scripts (Không chặn hiển thị với defer) -->
   <script defer='defer' src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.1.0'></script>
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.0'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -137,6 +137,31 @@
     .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
     .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.95rem; }
     .nav-links a:hover { color: #f1c40f; }
+
+    /* KHUNG ĐĂNG NHẬP HEADER */
+    .kybien-nav-auth {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .kybien-nav-auth input {
+      background: #1e130a;
+      border: 1px solid #5a3d22;
+      color: #fff;
+      padding: 6px 9px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .kybien-nav-auth input:focus {
+      border-color: #f1c40f;
+    }
+    .kybien-nav-auth button {
+      cursor: pointer;
+      font-family: inherit;
+    }
 
     /* ===== HERO SECTION (TRANG CHỦ) ===== */
     .hero-section {
@@ -481,7 +506,15 @@
         <li><a href='/search/label/Phân%20Tích%20Cờ'>Bình Văn</a></li>
       </ul>
 
-      <div id='kybien-header-profile'></div>
+      <div id='kybien-header-profile'>
+        <div class='kybien-nav-auth'>
+          <input id='hdr-auth-u' placeholder='Tên kỳ thủ' style='width: 110px;' type='text'/>
+          <input id='hdr-auth-p' placeholder='Mật khẩu' style='width: 100px;' type='password'/>
+          <button onclick='if(window.KybienAuth)window.KybienAuth.handleLogin()' style='background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.78rem;' type='button'>Đăng Nhập</button>
+          <button onclick='if(window.KybienAuth)window.KybienAuth.handleRegister()' style='background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.78rem;' type='button'>Đăng Ký</button>
+          <div id='hdr-auth-err' style='color: #ff6b6b; font-size: 0.72rem; font-weight: bold; width: 100%; display: none;'/>
+        </div>
+      </div>
     </div>
   </header>
 
