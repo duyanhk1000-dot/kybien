@@ -213,9 +213,9 @@ export function calculateMatchExp(params: CalculateMatchExpParams): CalculateMat
   let canWriteBlog = false;
 
   if (mode === 'PVP') {
-    // PvP: Thắng +50, Hòa +30, Thua +20
+    // PvP: Thắng +60, Hòa +30, Thua +20
     if (result === 'WIN') {
-      baseExp = 50;
+      baseExp = 60;
       if (winStreak >= 3) {
         baseExp += 20; // Thưởng chuỗi thắng >= 3 ván: +20 EXP
       }
@@ -232,15 +232,15 @@ export function calculateMatchExp(params: CalculateMatchExpParams): CalculateMat
     }
   } else {
     // PvE (Đánh máy) theo cấp độ AI:
-    // Dễ (EASY): Thắng +20 | Hòa +10 | Thua +5
-    // Trung bình (NORMAL): Thắng +40 | Hòa +20 | Thua +10
-    // Khó (HARD): Thắng +60 | Hòa +30 | Thua +15
+    // Dễ (EASY): Thắng +15 | Hòa +8 | Thua +4
+    // Trung bình (NORMAL): Thắng +30 | Hòa +15 | Thua +8
+    // Khó (HARD): Thắng +45 | Hòa +22 | Thua +10
     if (aiDifficulty === 'EASY') {
-      baseExp = result === 'WIN' ? 20 : result === 'DRAW' ? 10 : 5;
+      baseExp = result === 'WIN' ? 15 : result === 'DRAW' ? 8 : 4;
     } else if (aiDifficulty === 'HARD') {
-      baseExp = result === 'WIN' ? 60 : result === 'DRAW' ? 30 : 15;
+      baseExp = result === 'WIN' ? 45 : result === 'DRAW' ? 22 : 10;
     } else {
-      baseExp = result === 'WIN' ? 40 : result === 'DRAW' ? 20 : 10;
+      baseExp = result === 'WIN' ? 30 : result === 'DRAW' ? 15 : 8;
     }
 
     // PvE Ván hay: > 120 nước (Thắng máy +15 EXP, Thua/Hòa máy +5 EXP)
