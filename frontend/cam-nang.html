@@ -578,19 +578,19 @@
 /* DỮ LIỆU 16 BÍ PHÁP CHUẨN KỲ BIẾN (KÈM ICON ỐNG NGẮM & THỜI GIAN TÁC DỤNG) */
 const CARDS_DATA = [
   // HÀNG 1: 4 QUÂN (XE, PHÁO, MÃ, TƯỢNG) - MỖI QUÂN 2 BÍ PHÁP
-  { id: 'ROOK_1', t: 'r', tName: 'Xe', cost: 3, name: 'Thiểm Điện Trảm', type: 'Một lượt', duration: '1 lượt đi (Ngay sau khi ăn quân)', badge: '⚡', desc: 'Sau khi ăn quân địch, Xe được phép tiến thẳng thêm 1-2 ô cùng hướng ngay trong lượt đó.' },
-  { id: 'ROOK_2', t: 'r', tName: 'Xe', cost: 3, name: 'Phá Lãng Bộ', type: 'Một lượt', duration: '1 lượt đi (Bẻ góc ngay sau khi di chuyển)', badge: '↪', desc: 'Sau khi đi 1 nước, Xe được bẻ vuông góc 90° đi thêm 1-3 ô (không được ăn quân ở nước bẻ).' },
-  { id: 'CANNON_1', t: 'c', tName: 'Pháo', cost: 2, name: 'Xuyên Vân Tiễn', type: 'Một lượt', duration: '1 lượt đi (Trong lượt bắn)', badge: '🎯', desc: 'Pháo được phép bắn ăn quân qua 2 ngòi (cấm ăn Tướng nếu qua 2 ngòi).' },
-  { id: 'CANNON_2', t: 'c', tName: 'Pháo', cost: 3, name: 'Bích Lịch Hỏa', type: 'Một lượt', duration: 'Choáng 1 lượt (Hồi phục sau 1 lượt)', badge: '💥', desc: 'Bắn ăn quân gây nổ chấn động: 4 ô kề xung quanh ô đích và chính Pháo bị choáng 💫 1 lượt.' },
-  { id: 'KNIGHT_1', t: 'n', tName: 'Mã', cost: 2, name: 'Đạp Vân Tiêu', type: 'Một lượt', duration: '1 lượt đi (Trong lượt nhảy)', badge: '🦘', desc: 'Khinh công tuyệt kỹ: Mã nhảy qua ô cản chân (bỏ qua hoàn toàn quy tắc cản chân Mã).' },
+  { id: 'ROOK_1', t: 'r', tName: 'Xe', cost: 3, name: 'Thiểm Điện Trảm', type: 'Một lượt', duration: '1 lượt (trong lượt đi)', badge: '⚡', desc: 'Sau khi ăn quân địch, Xe được phép tiến thẳng thêm 1-2 ô cùng hướng ngay trong lượt đó.' },
+  { id: 'ROOK_2', t: 'r', tName: 'Xe', cost: 3, name: 'Phá Lãng Bộ', type: 'Một lượt', duration: '1 lượt (trong lượt đi)', badge: '↪', desc: 'Sau khi đi 1 nước, Xe được bẻ vuông góc 90° đi thêm 1-3 ô (không được ăn quân ở nước bẻ).' },
+  { id: 'CANNON_1', t: 'c', tName: 'Pháo', cost: 2, name: 'Xuyên Vân Tiễn', type: 'Một lượt', duration: '1 lượt (trong lượt đi)', badge: '🎯', desc: 'Pháo được phép bắn ăn quân qua 2 ngòi (cấm ăn Tướng nếu qua 2 ngòi).' },
+  { id: 'CANNON_2', t: 'c', tName: 'Pháo', cost: 3, name: 'Bích Lịch Hỏa', type: 'Một lượt', duration: '1 lượt (trong lượt đi)', badge: '💥', desc: 'Bắn ăn quân gây nổ chấn động: 4 ô kề xung quanh ô đích và chính Pháo bị choáng 💫 1 lượt.' },
+  { id: 'KNIGHT_1', t: 'n', tName: 'Mã', cost: 2, name: 'Đạp Vân Tiêu', type: 'Một lượt', duration: '1 lượt (trong lượt đi)', badge: '🦘', desc: 'Khinh công tuyệt kỹ: Mã nhảy qua ô cản chân (bỏ qua hoàn toàn quy tắc cản chân Mã).' },
   { id: 'KNIGHT_2', t: 'n', tName: 'Mã', cost: 3, name: 'Tuyệt Mệnh Cổ', type: 'Nội tại ẩn', duration: 'Vĩnh viễn (Kích nổ khi bị đối phương ăn)', badge: '💣', desc: 'Gán mìn độc ẩn vào Mã. Khi quân địch ăn Mã này, cả hai quân đều phát nổ tử trận!' },
-  { id: 'ELEPHANT_1', t: 'b', tName: 'Tượng', cost: 1, name: 'Minh Kính Thuật', type: 'Một lượt', duration: '1 lượt đi (Trong lượt đi)', badge: '👁️', desc: 'Tượng bay chéo mà không bị cản mắt Tượng trong 1 nước.' },
+  { id: 'ELEPHANT_1', t: 'b', tName: 'Tượng', cost: 1, name: 'Minh Kính Thuật', type: 'Một lượt', duration: '1 lượt (trong lượt đi)', badge: '👁️', desc: 'Tượng bay chéo mà không bị cản mắt Tượng trong 1 nước.' },
   { id: 'ELEPHANT_2', t: 'b', tName: 'Tượng', cost: 2, name: 'Ngự Ba Viễn Chinh', type: 'Nội tại', duration: 'Vĩnh viễn (Suốt phần còn lại của ván đấu)', badge: '🌊', desc: 'Nội tại gán vĩnh viễn: Tượng được phép bay chéo qua sông sang trận địa đối phương.' },
 
   // HÀNG 2: 3 QUÂN (SĨ, TỐT, TƯỚNG) - SĨ 2, TỐT 2, TƯỚNG 4 (CHIA 2 CỘT X 2 THẺ)
   { id: 'ADVISOR_1', t: 'a', tName: 'Sĩ', cost: 2, name: 'Xuất Trần Hộ Pháp', type: 'Nội tại', duration: 'Vĩnh viễn (Suốt phần còn lại của ván đấu)', badge: '🏯', desc: 'Nội tại gán vĩnh viễn: Sĩ được xuất khỏi Cung, tự do qua sông tấn công.' },
-  { id: 'ADVISOR_2', t: 'a', tName: 'Sĩ', cost: 3, name: 'Song Long Xuất Hải', type: 'Một lượt', duration: '1 lượt đi (Đi tiếp nước thứ 2 trong lượt)', badge: '🐉', desc: 'Sĩ được đi tiếp nước thứ hai ngay trong cùng một lượt.' },
-  { id: 'PAWN_1', t: 'p', tName: 'Tốt', cost: 2, name: 'Tật Phong Binh', type: 'Một lượt', duration: '1 lượt đi (Đi tiếp nước thứ 2 trong lượt)', badge: '⏩', desc: 'Tốt được phép đi tiếp nước thứ hai trong cùng một lượt.' },
+  { id: 'ADVISOR_2', t: 'a', tName: 'Sĩ', cost: 3, name: 'Song Long Xuất Hải', type: 'Một lượt', duration: '1 lượt (trong lượt đi)', badge: '🐉', desc: 'Sĩ được đi tiếp nước thứ hai ngay trong cùng một lượt.' },
+  { id: 'PAWN_1', t: 'p', tName: 'Tốt', cost: 2, name: 'Tật Phong Binh', type: 'Một lượt', duration: '1 lượt (trong lượt đi)', badge: '⏩', desc: 'Tốt được phép đi tiếp nước thứ hai trong cùng một lượt.' },
   { id: 'PAWN_2', t: 'p', tName: 'Tốt', cost: 2, name: 'Hồi Phong Binh', type: 'Nội tại', duration: 'Vĩnh viễn (Suốt phần còn lại của ván đấu)', badge: '↩', desc: 'Nội tại gán vĩnh viễn: Tốt được phép đi lùi và ăn quân lùi 1 ô phía sau.' },
   { id: 'KING_1', t: 'k', tName: 'Tướng', cost: 3, name: 'Thân Chinh Xuất Giá', type: 'Nội tại', duration: 'Vĩnh viễn (Suốt phần còn lại của ván đấu)', badge: '👑', desc: 'Nội tại gán vĩnh viễn: Tướng được ra khỏi Cung 1 ô (vẫn tuân thủ cấm lộ mặt Tướng).' },
   { id: 'KING_2', t: 'k', tName: 'Tướng', cost: 2, name: 'Cấp Cứu Cần Vương', type: 'Tức thì', duration: 'Tức thì (Triệu hồi xong hết lượt)', badge: '🆘', desc: 'Triệu hồi ngay 1 quân Sĩ về ô trống bên cạnh Tướng để hộ giá (hết lượt).' },
@@ -902,16 +902,16 @@ function renderCardsGrid(){
   const tuongK = CARDS_DATA.filter(c => c.t === 'k');
 
   const row1Html = `<div class="cards-row-1">
-    ${renderGroup('Quân Xe (2)', xe)}
-    ${renderGroup('Quân Pháo (2)', phao)}
-    ${renderGroup('Quân Mã (2)', ma)}
-    ${renderGroup('Quân Tượng (2)', tuongB)}
+    ${renderGroup('Quân Xe (2 bí pháp)', xe)}
+    ${renderGroup('Quân Pháo (2 bí pháp)', phao)}
+    ${renderGroup('Quân Mã (2 bí pháp)', ma)}
+    ${renderGroup('Quân Tượng (2 bí pháp)', tuongB)}
   </div>`;
 
   const row2Html = `<div class="cards-row-2">
-    ${renderGroup('Quân Sĩ (2)', si)}
-    ${renderGroup('Quân Tốt (2)', tot)}
-    ${renderGroup('Quân Tướng (4 Bí Pháp - 2 Cột)', tuongK, true)}
+    ${renderGroup('Quân Sĩ (2 bí pháp)', si)}
+    ${renderGroup('Quân Tốt (2 bí pháp)', tot)}
+    ${renderGroup('Quân Tướng (4 bí pháp)', tuongK, true)}
   </div>`;
 
   container.innerHTML = `<div class="cards-grid-compact">${row1Html}${row2Html}</div>`;
@@ -1071,9 +1071,38 @@ function startDemoAnimation(){
     }
     else if(id === 'KING_1'){ // Thân Chinh Xuất Giá (Tướng ra cung 1 ô)
       drawBuffAura(7, 4);
-      drawMarkerDotCustom(ctx, 6, 4, 'buff', 'Ra cung');
+
+      // 1. Tô xanh mờ các ô xung quanh cung (khu vực Tướng được mở rộng vươn ra)
+      const palaceOutSquares = [
+        [6,3], [6,4], [6,5], // mép trên ngoài cung
+        [7,2], [8,2], [9,2], // mép trái ngoài cung
+        [7,6], [8,6], [9,6]  // mép phải ngoài cung
+      ];
+      palaceOutSquares.forEach(([pr, pc]) => {
+        const px = OX + pc*CS, py = OY + pr*CS;
+        ctx.save();
+        ctx.fillStyle = 'rgba(46, 204, 113, 0.22)';
+        ctx.strokeStyle = 'rgba(46, 204, 113, 0.65)';
+        ctx.lineWidth = 1.2;
+        ctx.fillRect(px - CS/2 + 2, py - CS/2 + 2, CS - 4, CS - 4);
+        ctx.strokeRect(px - CS/2 + 2, py - CS/2 + 2, CS - 4, CS - 4);
+        ctx.restore();
+        // Đánh dấu các điểm quân Tướng có thể đi và ăn quân
+        drawMarkerDotCustom(ctx, pr, pc, 'buff', (pr===6 && pc===4) ? 'Ra cung' : '');
+      });
+
+      // 2. Quân địch (Tốt đen) ở ô (6, 4) ngoài cung bị Tướng xuất cung ăn
+      if(step < 12){
+        drawPieceCustom(ctx, 'b', '卒', 6, 4);
+        drawMarkerDotCustom(ctx, 6, 4, 'target', 'Ăn quân');
+      }
+
       const kr = step > 10 ? 6 : 7;
       drawPieceCustom(ctx, 'r', '帥', kr, 4, '👑');
+      if(step >= 12){
+        ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = '#f1c40f'; ctx.textAlign = 'center';
+        ctx.fillText('👑 TƯỚNG RA CUNG ĂN QUÂN!', OX+4*CS, OY+5.2*CS);
+      }
     }
     else if(id === 'KING_2'){ // Cấp Cứu Cần Vương (Triệu hồi Sĩ về cạnh Tướng)
       drawBuffAura(8, 4);
