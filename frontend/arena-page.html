@@ -129,12 +129,11 @@
     .pips i.on { background: #f1c40f; border-color: #f1c40f; }
     .mm b { color: #f1c40f; }
     
-    .bc {
-      padding: 11px;
-      background: linear-gradient(145deg, #6a4420, #3e2610);
-      border-radius: 14px;
-      box-shadow: 0 12px 35px rgba(0,0,0,.6);
-      width: 100%;
+    .bc, .bc * {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
     }
     #cv {
       display: block;
@@ -145,6 +144,11 @@
       touch-action: manipulation;
       cursor: pointer;
       margin: 0 auto;
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      outline: none !important;
     }
     
     @keyframes kshake {
@@ -365,6 +369,22 @@
         <div id="go-modal-greatmatch" style="display:none;margin-top:12px;font-size:.86rem;color:#f1c40f;background:rgba(241,196,15,.1);border:1px solid #f1c40f;border-radius:8px;padding:10px"></div>
       </div>
       <button type="button" class="mbtn" onclick="closeGameOverModal()">ĐÓNG VÀ XEM BÀN CỜ</button>
+    </div>
+  </div>
+
+  <!-- MODAL THÔNG BÁO CHƯA TẠO PHÒNG ONLINE -->
+  <div class="modal" id="online-not-created-modal">
+    <div class="mbox" style="text-align:center;max-width:380px;">
+      <div style="font-size:3rem;line-height:1;margin-bottom:8px">⚠️</div>
+      <h3 style="color:#f1c40f;margin-bottom:8px;font-size:1.1rem">Chưa Tạo Phòng Chơi Online</h3>
+      <p style="font-size:.88rem;color:#e8dcc6;margin-bottom:16px;line-height:1.5">
+        Bạn đang ở chế độ <b>Ghép Trận Kỳ Hội Online</b> nhưng chưa tạo hoặc gia nhập phòng đấu nào.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button type="button" onclick="actionCreateOnlineRoomFromModal()" style="background:#27ae60!important;color:#fff!important;border:none!important;padding:10px;font-weight:bold;font-size:.9rem;border-radius:6px">Tạo Phòng Chơi Online</button>
+        <button type="button" onclick="actionSwitchToAiFromModal()" style="background:#e67e22!important;color:#fff!important;border:none!important;padding:10px;font-weight:bold;font-size:.9rem;border-radius:6px">Đấu Với Máy (PvE)</button>
+        <button type="button" onclick="closeOnlineNotCreatedModal()" style="background:#7f8c8d!important;color:#fff!important;border:none!important;padding:6px;font-size:.8rem;border-radius:6px;margin-top:4px">Hủy / Đóng</button>
+      </div>
     </div>
   </div>
 
@@ -1096,7 +1116,31 @@ if(sel){if(p===sel){sel=null;VM=[];draw();return}if(hit){doMove(sel,r,c);return}
 if(p&&p.col===turn){if(armed&&armed.o!==p)refundArmed();selectPiece(p)}}
 else if(p&&p.col===turn)selectPiece(p)}
 function selectPiece(o){sel=o;VM=o.st>0?[]:legalMoves(o,armed&&armed.o===o?armed.card.id:null);if(o.st>0)say('Quân đang trúng Định Thân Thuật','#3498db');ui();draw()}
-cv.addEventListener('click',e=>{const b=cv.getBoundingClientRect(),X=(e.clientX-b.left)*600/b.width,Y=(e.clientY-b.top)*660/b.height;
+function showOnlineNotCreatedModal(){
+const m=$('online-not-created-modal');
+if(m)m.style.display='flex';
+}
+function closeOnlineNotCreatedModal(){
+const m=$('online-not-created-modal');
+if(m)m.style.display='none';
+}
+function actionCreateOnlineRoomFromModal(){
+closeOnlineNotCreatedModal();
+createRoom();
+}
+function actionSwitchToAiFromModal(){
+closeOnlineNotCreatedModal();
+if($('mode')){
+$('mode').value='ai';
+if(typeof onModeChange==='function')onModeChange();
+}
+}
+cv.addEventListener('click',e=>{
+if($('mode')&&$('mode').value==='2p_online'&&!online.on){
+showOnlineNotCreatedModal();
+return;
+}
+const b=cv.getBoundingClientRect(),X=(e.clientX-b.left)*600/b.width,Y=(e.clientY-b.top)*660/b.height;
 let c=Math.round((X-OX)/CS),r=Math.round((Y-OY)/CS);if(flipped){r=9-r;c=8-c}
 if(r>=0&&r<10&&c>=0&&c<9)onClick(r,c)});
 
@@ -1203,7 +1247,8 @@ else{online.on=false;newGame()}}
 /* ---------- KHỞI ĐỘNG KHI TẢI TRANG ---------- */
 Object.assign(window,{onVariantChange,onModeChange,newGame,switchTab,selCard,skipAction,undoAction,hintAction,flipBoardAction,draw,ui,closeMatchModal,closeGameOverModal,
 arenaLogin,arenaRegister,arenaLogout,createRoom,joinRoomByCode,refreshPublicRooms,handleGameAction,submitGreatMatchFromModal,
-showGuestRegisterModal,submitGuestRegAndPost,cancelGuestPost});
+showGuestRegisterModal,submitGuestRegAndPost,cancelGuestPost,
+showOnlineNotCreatedModal,closeOnlineNotCreatedModal,actionCreateOnlineRoomFromModal,actionSwitchToAiFromModal});
 window.__kb={get s(){return{turn,over,B,P,K,VM,ms,mode,pend,armed,hands,merit,used,bag,plies,ai,VAR,online,names,flipped,ANIM,eaten,snaps:snaps.length,rec:rec.length}},onClick,selCard,skipAction,undoAction,hintAction,allMoves,facing,inCheck,draw,aiRun,clockTick,finish,flip:()=>{flipped=!flipped;ui()},bars,docs,
 setLIM:v=>{LIM=v;tleft=v*1000},busyAnim:()=>!!ANIM,legal:legalMoves,precheck,sig};
 function syncTray(){const box=$('card-tray-wrapper');if(!box)return;
