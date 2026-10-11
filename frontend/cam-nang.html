@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cẩm Nang Kỳ Biến Chess - Hướng Dẫn & Bí Pháp</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d0906;
+      color: #e8dcc6;
+      font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+      padding: 16px;
+      line-height: 1.6;
+    }
+    
+    #camnang-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      background: radial-gradient(circle at 50% 0, #291e14, #0d0906);
+      border: 1px solid #5a3d22;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    
+    .cn-header {
+      border-bottom: 2px solid #5a3d22;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .cn-header h1 {
+      font-family: 'Noto Serif TC', serif;
+      color: #e5b36a;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cn-header .badge {
+      background: #4a3320;
+      color: #f1c40f;
+      border: 1px solid #e5b36a;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-family: sans-serif;
+    }
+
+    /* BỐ CỤC 2 CỘT */
+    .cn-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .cn-layout { grid-template-columns: 1fr; }
+    }
+    
+    /* CỘT 1: CÂY MENU */
+    .cn-sidebar {
+      background: #22150c;
+      border: 1px solid #5a3d22;
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .cn-sidebar h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #e5b36a;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #5a3d22;
+      padding-bottom: 8px;
+    }
+    
+    /* MENU CÂY DẠNG TẦNG */
+    .tree-menu, .tree-menu ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .tree-menu ul {
+      padding-left: 16px;
+      display: none; /* Mặc định ẩn con */
+      margin-top: 4px;
+    }
+    .tree-menu ul.open { display: block; }
+    
+    .tree-item {
+      margin: 4px 0;
+    }
+    .tree-node {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #c9a874;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .tree-node:hover {
+      background: #33251a;
+      color: #fff;
+    }
+    .tree-node.active {
+      background: #5a3d22;
+      color: #f1c40f;
+      border-left: 3px solid #f1c40f;
+    }
+    
+    /* ICON MŨI TÊN ĐẸP (> cho đóng, v cho mở) */
+    .tree-arrow {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      line-height: 18px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #f1c40f;
+      transition: transform 0.2s ease;
+    }
+    .tree-arrow.collapsed::before { content: '▶'; } /* Mũi tên ngang đẹp */
+    .tree-arrow.expanded::before { content: '▼'; }  /* Mũi tên trỏ xuống đẹp */
+    .tree-arrow.leaf::before { content: '•'; color: #a8947d; }
+
+    /* CỘT 2: NỘI DUNG */
+    .cn-content {
+      background: #1a110a;
+      border: 1px solid #5a3d22;
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 550px;
+    }
+    .cn-section { display: none; }
+    .cn-section.active { display: block; }
+    
+    .cn-title {
+      font-size: 1.35rem;
+      color: #f1c40f;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #5a3d22;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cn-box {
+      background: #26190f;
+      border: 1px solid #4a3320;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    /* BẢNG LƯỚI BÍ PHÁP PHÍA TRÊN (GRID CÁC KHỐI QUÂN CỜ) */
+    .cards-grid-wrapper {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .piece-group-card {
+      background: #2b1c11;
+      border: 1px solid #5a3d22;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .piece-header {
+      background: #4a3320;
+      color: #f1c40f;
+      font-weight: bold;
+      text-align: center;
+      padding: 6px;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #5a3d22;
+    }
+    .card-chips-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 6px;
+    }
+    .card-chip {
+      background: #1a110a;
+      border: 1px solid #4a3320;
+      color: #e8dcc6;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+    .card-chip:hover {
+      border-color: #f1c40f;
+      color: #fff;
+    }
+    .card-chip.selected {
+      background: #a83a1f;
+      border-color: #f1c40f;
+      color: #fff;
+      font-weight: bold;
+    }
+    .card-chip .cost-tag {
+      background: #f1c40f;
+      color: #8b0000;
+      font-weight: bold;
+      font-size: 0.7rem;
+      padding: 1px 5px;
+      border-radius: 10px;
+    }
+
+    /* CHI TIẾT BÍ PHÁP CHỌN (KHU VỰC DƯỚI CHIA 2 CỘT) */
+    .card-detail-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+      background: #20140b;
+      border: 1px solid #f1c40f;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    @media (max-width: 768px) {
+      .card-detail-split { grid-template-columns: 1fr; }
+    }
+    
+    .detail-left h3 {
+      color: #f1c40f;
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+    }
+    .detail-meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.86rem;
+      margin-bottom: 12px;
+    }
+    .detail-meta-item {
+      display: flex;
+      gap: 8px;
+    }
+    .detail-meta-item strong {
+      color: #e5b36a;
+      min-width: 120px;
+    }
+    .detail-desc {
+      background: #150d07;
+      border-left: 3px solid #f1c40f;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      color: #fff;
+    }
+
+    /* BÀN CỜ DEMO CANVAS BÊN PHẢI */
+    .detail-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #150d07;
+      border: 1px solid #4a3320;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .demo-canvas-box {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      aspect-ratio: 9/10;
+    }
+    #demo-canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+      display: block;
+      background: #c8985c;
+    }
+    .btn-replay-demo {
+      margin-top: 10px;
+      background: #27ae60!important;
+      color: #fff!important;
+      border: none!important;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .btn-replay-demo:hover { background: #2ecc71!important; }
+  </style>
+</head>
+<body>
+
+<div id="camnang-container">
+  <div class="cn-header">
+    <h1>📖 CẨM NANG KỲ BIẾN CHESS <span class="badge">Bản Chuẩn 2026</span></h1>
+    <span style="font-size:0.85rem;color:#a8947d">Hướng dẫn Luật Chơi, Chế Độ & Bảng 16 Bí Pháp Kiếm Hiệp</span>
+  </div>
+
+  <div class="cn-layout">
+    <!-- CỘT 1: CÂY MENU PHÂN TẦNG -->
+    <aside class="cn-sidebar">
+      <h3>Mục Lục Cẩm Nang</h3>
+      <ul class="tree-menu" id="main-tree">
+        <!-- NÚT 1: CHẾ ĐỘ CHƠI (CÓ MENU CON) -->
+        <li class="tree-item">
+          <div class="tree-node" onclick="toggleTreeNode(this)">
+            <span class="tree-arrow expanded"></span>
+            <span>🎮 Chế Độ Thi Đấu</span>
+          </div>
+          <ul class="open">
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('mode-traditional', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>Cờ Tướng Truyền Thống</span>
+              </div>
+            </li>
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('mode-co-up', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>Cờ Úp Truyền Thống</span>
+              </div>
+            </li>
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('mode-spy', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>Cờ Úp Gián Điệp</span>
+              </div>
+            </li>
+            <!-- NÚT CON: CỜ BÍ PHÁP (CÓ SUB-MENU 16 BÍ PHÁP) -->
+            <li class="tree-item">
+              <div class="tree-node" onclick="toggleTreeNode(this)">
+                <span class="tree-arrow expanded"></span>
+                <span>⚔️ Cờ Bí Pháp (Kỳ Biến)</span>
+              </div>
+              <ul class="open">
+                <li class="tree-item">
+                  <div class="tree-node active" onclick="showSection('cards-16-detail', this)">
+                    <span class="tree-arrow leaf"></span>
+                    <span>✨ Bảng 16 Bí Pháp & Demo</span>
+                  </div>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- CỘT 2: KHU VỰC HIỂN THỊ NỘI DUNG -->
+    <main class="cn-content">
+      
+      <!-- NỘI DUNG 1: CỜ TƯỚNG TRUYỀN THỐNG -->
+      <section class="cn-section" id="mode-traditional">
+        <h2 class="cn-title">🔴 Cờ Tướng Truyền Thống</h2>
+        <div class="cn-box">
+          <p>Luật chơi Cờ Tướng chuẩn quốc tế cổ điển:</p>
+          <ul style="margin-left: 20px; margin-top: 8px;">
+            <li>Đỏ đi trước. Bị chiếu bí hoặc kín đường là thua.</li>
+            <li>Chống hai Tướng đối mặt nhau trên cùng 1 cột.</li>
+            <li>Không chiếu lặp quá 3 lần cùng 1 thế cờ (vi phạm xử thua).</li>
+            <li>60 nước (120 lượt) không ăn quân: Hòa.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 2: CỜ ÚP TRUYỀN THỐNG -->
+      <section class="cn-section" id="mode-co-up">
+        <h2 class="cn-title">🎭 Cờ Úp Truyền Thống</h2>
+        <div class="cn-box">
+          <p>Chỉ 2 Tướng ngửa, 30 quân còn lại úp xuống:</p>
+          <ul style="margin-left: 20px; margin-top: 8px;">
+            <li>Nước đầu tiên đi theo loại quân của ô đang đứng. Đi xong lật ngửa hiện quân thật.</li>
+            <li>Sĩ/Tượng lật ngửa được ra khỏi cung và qua sông.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 3: CỜ ÚP GIÁN ĐIỆP -->
+      <section class="cn-section" id="mode-spy">
+        <h2 class="cn-title">🕵️ Cờ Úp Gián Điệp</h2>
+        <div class="cn-box">
+          <p>Thể loại độc đáo nhất trên Kỳ Biến Chess:</p>
+          <ul style="margin-left: 20px; margin-top: 8px;">
+            <li>30 quân úp của hai bên được xáo trộn ngẫu nhiên toàn bộ.</li>
+            <li>Khi lật quân, có xác suất lật trúng quân địch! Quân đó ngay lập tức đổi phe thành <b>GIÁN ĐIỆP</b>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 4: BẢNG 16 BÍ PHÁP & DEMO TRỰC QUAN (MẶC ĐỊNH HIỂN THỊ) -->
+      <section class="cn-section active" id="cards-16-detail">
+        <h2 class="cn-title">⚔️ Bí Pháp Kỳ Biến & Bàn Cờ Demo Trực Quan</h2>
+        
+        <div class="cn-box" style="font-size:0.88rem">
+          <b>Bí pháp là gì?</b> Mỗi bên bắt đầu với <b>3 Công trạng</b> (tối đa 10) và <b>3 thẻ ngẫu nhiên</b> trên tay. Ăn quân địch nhận thêm Công trạng (Tốt +1, Sĩ/Tượng +2, Mã/Pháo +3, Xe +5). Bấm chọn 1 Bí pháp ở bảng bên dưới để xem thông tin chi tiết và bàn cờ demo hoạt họa bên phải!
+        </div>
+
+        <!-- BẢNG LƯỚI CÁC KHỐI BÍ PHÁP CHIA THEO QUÂN CỜ (NỬA MÀN HÌNH TRÊN) -->
+        <div class="cards-grid-wrapper" id="cards-grid">
+          <!-- Render tự động bởi JS -->
+        </div>
+
+        <!-- KHU VỰC CHI TIẾT & BÀN CỜ DEMO (NỬA MÀN HÌNH DƯỚI - CHIA 2 CỘT) -->
+        <div class="card-detail-split">
+          <!-- CỘT TRÁI: CHI TIẾT BÍ PHÁP -->
+          <div class="detail-left">
+            <h3 id="det-name">Hồi Phong Binh ↩</h3>
+            <div class="detail-meta-list">
+              <div class="detail-meta-item"><strong>Quân áp dụng:</strong> <span id="det-piece">Tốt (Binh/卒)</span></div>
+              <div class="detail-meta-item"><strong>Phí Công trạng:</strong> <span id="det-cost">2 điểm</span></div>
+              <div class="detail-meta-item"><strong>Loại thẻ:</strong> <span id="det-type">Nội tại gán vĩnh viễn</span></div>
+              <div class="detail-meta-item"><strong>Icon quân cờ:</strong> <span id="det-badge">↩</span></div>
+            </div>
+            <div class="detail-desc" id="det-desc">
+              Gán nội tại vĩnh viễn lên quân Tốt. Tốt được phép đi và ăn quân lùi lại 1 ô phía sau.
+            </div>
+          </div>
+
+          <!-- CỘT PHẢI: BÀN CỜ DEMO CÓ HIỆU ỨNG -->
+          <div class="detail-right">
+            <div style="font-size:0.82rem;font-weight:bold;color:#f1c40f;margin-bottom:6px">🎬 BÀN CỜ DEMO NƯỚC ĐI BÍ PHÁP</div>
+            <div class="demo-canvas-box">
+              <canvas id="demo-canvas" width="320" height="352"></canvas>
+            </div>
+            <button class="btn-replay-demo" onclick="replayCurrentDemo()">▶ Phát Lại Demo</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+//<![CDATA[
+(function(){
+"use strict";
+
+/* DỮ LIỆU 16 BÍ PHÁP CHUẨN KỲ BIẾN */
+const CARDS_DATA = [
+  { id: 'ROOK_1', t: 'r', tName: 'Xe', cost: 3, name: 'Thiểm Điện Trảm', type: 'Một lượt', badge: '⚡', desc: 'Sau khi ăn quân địch, Xe được phép tiến thẳng thêm 1-2 ô cùng hướng ngay trong lượt đó.' },
+  { id: 'ROOK_2', t: 'r', tName: 'Xe', cost: 3, name: 'Phá Lãng Bộ', type: 'Một lượt', badge: '↪', desc: 'Sau khi đi 1 nước, Xe được bẻ vuông góc 90° đi thêm 1-3 ô (không được ăn quân ở nước bẻ).' },
+  { id: 'CANNON_1', t: 'c', tName: 'Pháo', cost: 2, name: 'Xuyên Vân Tiễn', type: 'Một lượt', badge: '🌊', desc: 'Pháo được phép bắn ăn quân qua 2 ngòi (cấm ăn Tướng nếu qua 2 ngòi).' },
+  { id: 'CANNON_2', t: 'c', tName: 'Pháo', cost: 3, name: 'Bích Lịch Hỏa', type: 'Một lượt', badge: '💥', desc: 'Bắn ăn quân gây nổ: 4 ô kề xung quanh ô đích và chính Pháo bị choáng 💫 1 lượt.' },
+  { id: 'KNIGHT_1', t: 'n', tName: 'Mã', cost: 2, name: 'Đạp Vân Tiêu', type: 'Một lượt', badge: '🦘', desc: 'Khinh công: Mã nhảy qua ô cản chân (bỏ qua quy tắc cản chân Mã).' },
+  { id: 'KNIGHT_2', t: 'n', tName: 'Mã', cost: 3, name: 'Tuyệt Mệnh Cổ', type: 'Nội tại ẩn', badge: '💣', desc: 'Gán mìn độc ẩn vào Mã. Khi quân địch ăn Mã này, cả hai quân đều phát nổ tử trận!' },
+  { id: 'ELEPHANT_1', t: 'b', tName: 'Tượng', cost: 1, name: 'Minh Kính Thuật', type: 'Một lượt', badge: '👁️', desc: 'Tượng bay chéo mà không bị cản mắt Tượng.' },
+  { id: 'ELEPHANT_2', t: 'b', tName: 'Tượng', cost: 2, name: 'Ngự Ba Viễn Chinh', type: 'Nội tại', badge: '🌊', desc: 'Nội tại: Tượng được phép bay chéo qua sông sang sân đối phương.' },
+  { id: 'ADVISOR_1', t: 'a', tName: 'Sĩ', cost: 2, name: 'Xuất Trần Hộ Pháp', type: 'Nội tại', badge: '🏯', desc: 'Nội tại: Sĩ được xuất khỏi Cung, tự do qua sông tấn công.' },
+  { id: 'ADVISOR_2', t: 'a', tName: 'Sĩ', cost: 3, name: 'Song Long Xuất Hải', type: 'Một lượt', badge: '🐉', desc: 'Sĩ được đi tiếp nước thứ hai ngay trong 1 lượt.' },
+  { id: 'PAWN_1', t: 'p', tName: 'Tốt', cost: 2, name: 'Tật Phong Binh', type: 'Một lượt', badge: '⏩', desc: 'Tốt được phép đi tiếp nước thứ hai trong cùng 1 lượt.' },
+  { id: 'PAWN_2', t: 'p', tName: 'Tốt', cost: 2, name: 'Hồi Phong Binh', type: 'Nội tại', badge: '↩', desc: 'Nội tại: Tốt được phép đi lùi và ăn quân lùi 1 ô phía sau.' },
+  { id: 'KING_1', t: 'k', tName: 'Tướng', cost: 3, name: 'Thân Chinh Xuất Giá', type: 'Nội tại', badge: '👑', desc: 'Nội tại: Tướng được ra khỏi Cung 1 ô (vẫn tuân thủ cấm lộ mặt Tướng).' },
+  { id: 'KING_2', t: 'k', tName: 'Tướng', cost: 2, name: 'Cấp Cứu Cần Vương', type: 'Tức thì', badge: '🆘', desc: 'Triệu hồi ngay 1 quân Sĩ về ô trống bên cạnh Tướng để hộ giá.' },
+  { id: 'KING_3', t: 'k', tName: 'Tướng', cost: 3, name: 'Kim Cang Bất Hoại', type: '3 lượt', badge: '🛡️', desc: 'Kích hoạt giáp kim cang: Miễn nhiễm chiếu thẳng từ 1 hướng trong 3 lượt.' },
+  { id: 'KING_4', t: 'k', tName: 'Tướng', cost: 4, name: 'Càn Khôn Di Vị', type: 'Tức thì', badge: '🔄', desc: 'Hoán đổi vị trí ngay lập tức giữa Tướng và 1 quân nhà trong Cung.' }
+];
+
+let selectedCard = CARDS_DATA.find(c => c.id === 'PAWN_2') || CARDS_DATA[0];
+let animTimer = null;
+
+/* RENDER BẢNG NỬA TRÊN: CÁC KHỐI CHIA THEO QUÂN CỜ */
+function renderCardsGrid(){
+  const container = document.getElementById('cards-grid');
+  if(!container) return;
+  
+  // Nhóm thẻ theo quân cờ
+  const groups = {};
+  CARDS_DATA.forEach(c => {
+    if(!groups[c.tName]) groups[c.tName] = [];
+    groups[c.tName].push(c);
+  });
+
+  let html = '';
+  for(const pieceName in groups){
+    html += `<div class="piece-group-card">
+      <div class="piece-header">Quân ${pieceName}</div>
+      <div class="card-chips-list">`;
+    groups[pieceName].forEach(card => {
+      const isSel = card.id === selectedCard.id ? ' selected' : '';
+      html += `<div class="card-chip${isSel}" onclick="selectCard('${card.id}')">
+        <span>${card.badge} ${card.name}</span>
+        <span class="cost-tag">${card.cost}⚡</span>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+  container.innerHTML = html;
+}
+
+/* XỬ LÝ KHI CLICK CHỌN 1 BÍ PHÁP */
+window.selectCard = function(cardId){
+  const found = CARDS_DATA.find(c => c.id === cardId);
+  if(!found) return;
+  selectedCard = found;
+  renderCardsGrid();
+  updateDetailView();
+  startDemoAnimation();
+};
+
+/* CẬP NHẬT CHI TIẾT BÊN TRÁI */
+function updateDetailView(){
+  document.getElementById('det-name').innerText = selectedCard.name + ' ' + selectedCard.badge;
+  document.getElementById('det-piece').innerText = selectedCard.tName;
+  document.getElementById('det-cost').innerText = selectedCard.cost + ' Công trạng';
+  document.getElementById('det-type').innerText = selectedCard.type;
+  document.getElementById('det-badge').innerText = selectedCard.badge;
+  document.getElementById('det-desc').innerText = selectedCard.desc;
+}
+
+/* ---------- BÀN CỜ DEMO CANVAS (CỘT PHẢI) ---------- */
+const cv = document.getElementById('demo-canvas');
+const ctx = cv ? cv.getContext('2d') : null;
+const CS = 32, OX = 20, OY = 20;
+
+function drawBoardGrid(){
+  if(!ctx) return;
+  ctx.fillStyle = '#c8985c';
+  ctx.fillRect(0,0,320,352);
+  ctx.strokeStyle = '#54361c';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for(let r=0; r<10; r++){ ctx.moveTo(OX, OY+r*CS); ctx.lineTo(OX+8*CS, OY+r*CS); }
+  for(let c=0; c<9; c++){
+    if(c===0||c===8){ ctx.moveTo(OX+c*CS, OY); ctx.lineTo(OX+c*CS, OY+9*CS); }
+    else { ctx.moveTo(OX+c*CS, OY); ctx.lineTo(OX+c*CS, OY+4*CS); ctx.moveTo(OX+c*CS, OY+5*CS); ctx.lineTo(OX+c*CS, OY+9*CS); }
+  }
+  // Cung Tướng
+  [[3,0,5,2],[5,0,3,2],[3,7,5,9],[5,7,3,9]].forEach(([a,b,c,d])=>{ ctx.moveTo(OX+a*CS, OY+b*CS); ctx.lineTo(OX+c*CS, OY+d*CS); });
+  ctx.stroke();
+  ctx.font = '12px "Noto Serif TC", serif';
+  ctx.fillStyle = '#6b431e';
+  ctx.textAlign = 'center';
+  ctx.fillText('SỞ HÀ', OX+2*CS, OY+4.5*CS);
+  ctx.fillText('HÁN GIỚI', OX+6*CS, OY+4.5*CS);
+}
+
+function drawPiece(col, txt, r, c, badge){
+  if(!ctx) return;
+  const X = OX + c*CS, Y = OY + r*CS;
+  ctx.beginPath(); ctx.arc(X, Y, 13, 0, 7);
+  ctx.fillStyle = col==='r'?'#f1dcb8':'#444';
+  ctx.fill();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = col==='r'?'#b71c1c':'#111'; ctx.stroke();
+  ctx.font = 'bold 12px "Noto Serif TC", serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = col==='r'?'#b71c1c':'#fff';
+  ctx.fillText(txt, X, Y);
+  if(badge){
+    ctx.font = '10px sans-serif';
+    ctx.fillText(badge, X+10, Y-10);
+  }
+}
+
+/* BẮT ĐẦU HOẠT HỌA DEMO THEO BÍ PHÁP ĐƯỢC CHỌN */
+function startDemoAnimation(){
+  if(animTimer) clearInterval(animTimer);
+  let step = 0;
+  
+  function frame(){
+    drawBoardGrid();
+    const id = selectedCard.id;
+    
+    if(id === 'PAWN_2'){ // Hồi Phong Binh (Tốt đi lùi)
+      drawPiece('r', '兵', 4 - (step > 15 ? (step-15)*0.08 : 0), 4, '↩');
+      drawPiece('b', '卒', 2, 4);
+    } else if(id === 'CANNON_1' || id === 'CANNON_2'){ // Pháo ngòi / Bích lịch hỏa
+      const px = step > 10 ? 4 : 4;
+      const py = step > 10 ? 2 + (step-10)*0.15 : 7;
+      drawPiece('r', '炮', Math.min(2, py), px, '💥');
+      drawPiece('b', '象', 5, 4);
+      if(step < 10) drawPiece('b', '將', 2, 4);
+    } else if(id === 'KNIGHT_2'){ // Tuyệt Mệnh Cổ (Mã Độc)
+      drawPiece('r', '傌', 4, 3, '💣');
+      if(step < 12) drawPiece('b', '車', 6 - step*0.16, 3);
+      else {
+        // Vụ nổ
+        ctx.font = '16px sans-serif'; ctx.fillText('💥 BÙM!', OX+3*CS, OY+4*CS);
+      }
+    } else if(id === 'ELEPHANT_2'){ // Ngự ba viễn chinh (Tượng qua sông)
+      const er = step > 10 ? 5 - (step-10)*0.1 : 7;
+      const ec = step > 10 ? 4 + (step-10)*0.1 : 2;
+      drawPiece('r', '相', er, ec, '🌊');
+    } else if(id === 'ADVISOR_1'){ // Xuất trần hộ pháp (Sĩ qua sông)
+      const ar = step > 10 ? 9 - (step-10)*0.2 : 9;
+      drawPiece('r', '仕', ar, 4, '🏯');
+    } else { // Mặc định hiển thị Tướng/Quân đi nước đẹp
+      const r = step > 10 ? 8 - (step-10)*0.1 : 9;
+      drawPiece('r', '帥', r, 4, selectedCard.badge);
+    }
+    
+    step = (step + 1) % 30;
+  }
+  
+  frame();
+  animTimer = setInterval(frame, 100);
+}
+
+window.replayCurrentDemo = function(){
+  startDemoAnimation();
+};
+
+/* CÂY MENU ĐÓNG/MỞ */
+window.toggleTreeNode = function(nodeElem){
+  const ul = nodeElem.nextElementSibling;
+  const arrow = nodeElem.querySelector('.tree-arrow');
+  if(ul && ul.tagName === 'UL'){
+    if(ul.classList.contains('open')){
+      ul.classList.remove('open');
+      if(arrow) arrow.className = 'tree-arrow collapsed';
+    } else {
+      ul.classList.add('open');
+      if(arrow) arrow.className = 'tree-arrow expanded';
+    }
+  }
+};
+
+/* CHUYỂN NỘI DUNG */
+window.showSection = function(secId, nodeElem){
+  document.querySelectorAll('.cn-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tree-node').forEach(n => n.classList.remove('active'));
+  
+  const target = document.getElementById(secId);
+  if(target) target.classList.add('active');
+  if(nodeElem) nodeElem.classList.add('active');
+
+  if(secId === 'cards-16-detail'){
+    renderCardsGrid();
+    updateDetailView();
+    startDemoAnimation();
+  }
+};
+
+// INITIALIZE
+renderCardsGrid();
+updateDetailView();
+startDemoAnimation();
+
+})();
+//]]>
+</script>
+</body>
+</html>
