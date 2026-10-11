@@ -207,7 +207,7 @@
 
       const expTitle = this.getExpTitle(level);
       const eloTitle = this.getEloTitle(elo);
-      const fullTitle = `[${eloTitle}] ${expTitle}`;
+      const fullTitle = `[${expTitle}] ${eloTitle}`;
 
       const played = user.matches_played !== undefined ? user.matches_played : (user.matchesPlayed || 0);
       const won = user.matches_won !== undefined ? user.matches_won : (user.matchesWon || 0);

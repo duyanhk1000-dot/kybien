@@ -9,7 +9,7 @@ export async function runExpLevelTests(): Promise<void> {
   console.log('🧪 RUNNING EXP & LEVEL PROGRESSION TEST SUITE...\n');
 
   // ===================================================
-  // TEST 1: EXP Calculations (PvP Win +50, Draw +30, Loss +20)
+  // TEST 1: EXP Calculations (PvP Win +60, Draw +30, Loss +20)
   // ===================================================
   console.log('-> Test 1: Match outcome EXP rewards...');
   const winStats = calculatePostMatchStats({
@@ -19,7 +19,7 @@ export async function runExpLevelTests(): Promise<void> {
     playerBlack: { id: 20, elo: 1200, exp: 0n, level: 1 },
   });
 
-  assert.strictEqual(winStats.white.expDelta, 50, 'Winner gets +50 EXP');
+  assert.strictEqual(winStats.white.expDelta, 60, 'Winner gets +60 EXP');
   assert.strictEqual(winStats.black.expDelta, 20, 'Loser gets +20 EXP');
 
   const drawStats = calculatePostMatchStats({

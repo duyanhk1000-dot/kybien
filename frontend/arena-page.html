@@ -27,6 +27,77 @@
     }
     #kybien-arena-app * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    /* NAVBAR CHUNG */
+    .kybien-navbar {
+      background: linear-gradient(135deg, #8b0000, #4a0000);
+      color: #ffffff;
+      padding: 12px 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      border-bottom: 2px solid #f1c40f;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      width: 100%;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand-logo {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: 'Noto Serif TC', serif;
+    }
+    .brand-logo span { color: #f1c40f; }
+    .logo-general-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #c62828;
+      color: #ffffff;
+      border: 2px solid #f1c40f;
+      font-family: 'Noto Serif TC', serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px rgba(241,196,15,0.4);
+    }
+    .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; margin: 0; padding: 0; }
+    .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: color 0.2s ease; }
+    .nav-links a:hover, .nav-links a.active { color: #f1c40f; }
+    
+    /* FOOTER CHUNG */
+    .kybien-footer {
+      border-top: 2px solid #5a3d22;
+      background: #140b05;
+      padding: 24px 20px;
+      text-align: center;
+      margin-top: 20px;
+      border-radius: 10px;
+      color: #a8947d;
+      font-size: 0.88rem;
+      width: 100%;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+    .footer-links a { color: #e5b36a; text-decoration: none; }
+    .footer-links a:hover { color: #f1c40f; }
+
     .arena-auth-bar {
       background: var(--pn);
       border: 1px solid var(--bd);
@@ -388,6 +459,23 @@
     </div>
   </div>
 
+  <!-- HEADER NAVBAR -->
+  <header class="kybien-navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-general-badge">帥</span>
+        <span>KỲ BIẾN</span> CHESS
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="cam-nang.html">Cẩm Nang</a></li>
+        <li><a href="arena-page.html" class="active">Sàn Đấu</a></li>
+        <li><a href="index.html#library">Bình Văn</a></li>
+      </ul>
+      <div id="kybien-header-profile"></div>
+    </div>
+  </header>
+
   <!-- THANH ĐĂNG NHẬP & TÀI KHOẢN KỲ THỦ -->
   <div class="arena-auth-bar">
     <div id="auth-unlogged" style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;width:100%">
@@ -482,6 +570,17 @@
     <div class="tab-content show" id="tab-1"></div>
     <div class="tab-content" id="tab-2"></div>
   </div>
+
+  <!-- FOOTER -->
+  <footer class="kybien-footer">
+    <p>© 2026 KỲ BIẾN CHESS PLATFORM. Bổn Trang kính chúc chư vị kỳ hữu kỳ nghệ thăng tiến.</p>
+    <div class="footer-links">
+      <a href="index.html">Trang Chủ</a> | 
+      <a href="cam-nang.html">Cẩm Nang</a> | 
+      <a href="arena-page.html">Sàn Đấu</a> | 
+      <a href="index.html#library">Bình Văn</a>
+    </div>
+  </footer>
 </div>
 
 <script>if(typeof io==='undefined'){document.write('<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"><\/script>')}</script>
@@ -1152,7 +1251,7 @@ if(res.ok){currentUser=await res.json();
 if($('logged-username'))$('logged-username').innerText=currentUser.username;
 const expT=window.KybienAuth?window.KybienAuth.getExpTitle(currentUser.level):'Khởi Khai';
 const eloT=window.KybienAuth?window.KybienAuth.getEloTitle(currentUser.elo):'Kỳ Đồng';
-if($('logged-level'))$('logged-level').innerText='['+eloT+'] '+expT+' (Lv.'+(currentUser.level||1)+')';
+if($('logged-level'))$('logged-level').innerText='['+expT+'] '+eloT+' (Lv.'+(currentUser.level||1)+')';
 if($('logged-elo'))$('logged-elo').innerText=currentUser.elo||1200;
 if(un)un.style.display='none';if(lg)lg.style.display='flex';
 if(window.KybienAuth){window.KybienAuth.cachedUser=currentUser;window.KybienAuth.renderUserUI(currentUser)}

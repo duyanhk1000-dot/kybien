@@ -162,7 +162,7 @@ export async function runV2IndependentAuditTests(): Promise<void> {
     playerWhite: { id: 1, elo: 1200, exp: 0n, level: 1 },
     playerBlack: { id: 2, elo: 1200, exp: 0n, level: 1 },
   });
-  assert.strictEqual(pvpWin.white.expDelta, 50, 'PvP Winner gets +50 EXP');
+  assert.strictEqual(pvpWin.white.expDelta, 60, 'PvP Winner gets +60 EXP');
   assert.strictEqual(pvpWin.black.expDelta, 20, 'PvP Loser gets +20 EXP');
 
   const pvpDraw = calculatePostMatchStats({

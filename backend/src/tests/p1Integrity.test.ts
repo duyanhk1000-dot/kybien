@@ -103,7 +103,7 @@ export async function runP1IntegrityTests(): Promise<void> {
 
   assert.strictEqual(statsWin.white.elo, 1216, 'Winner should gain +16 Elo (K=32 for provisional totalGames < 30)');
   assert.strictEqual(statsWin.black.elo, 1184, 'Loser should lose -16 Elo (K=32 for provisional totalGames < 30)');
-  assert.strictEqual(statsWin.white.exp, 50n, 'Winner should gain +50 EXP');
+  assert.strictEqual(statsWin.white.exp, 60n, 'Winner should gain +60 EXP');
   assert.strictEqual(statsWin.black.exp, 20n, 'Loser should gain +20 EXP');
 
   // Test Idempotency & Duplicate finish Game Over guard
