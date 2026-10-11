@@ -355,6 +355,75 @@
       cursor: pointer;
     }
     .btn-replay-demo:hover { background: #2ecc71!important; }
+
+    /* BẢNG BIỂU & HỘP VÍ DỤ PHONG CÁCH KIẾM HIỆP */
+    .cn-table-wrap {
+      overflow-x: auto;
+      margin: 10px 0 14px 0;
+      border-radius: 6px;
+      border: 1px solid #5a3d22;
+    }
+    .cn-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      background: #170e08;
+    }
+    .cn-table th, .cn-table td {
+      border: 1px solid #4a3320;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .cn-table th {
+      background: #382210;
+      color: #f1c40f;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .cn-table tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .cn-table tr:hover {
+      background: rgba(241, 196, 15, 0.05);
+    }
+    .cn-badge-rank {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.76rem;
+      letter-spacing: 0.3px;
+    }
+    .rank-dong { background: #37474f; color: #eceff1; border: 1px solid #78909c; }
+    .rank-do { background: #4e342e; color: #ffccbc; border: 1px solid #8d6e63; }
+    .rank-hiep { background: #1b5e20; color: #c8e6c9; border: 1px solid #43a047; }
+    .rank-tuong { background: #0d47a1; color: #bbdefb; border: 1px solid #1e88e5; }
+    .rank-vuong { background: #4a148c; color: #e1bee7; border: 1px solid #8e24aa; }
+    .rank-tong { background: #bf360c; color: #ffccbc; border: 1px solid #f4511e; }
+    .rank-thanh { background: #880e4f; color: #f8bbd0; border: 1px solid #d81b60; }
+    .rank-than { background: linear-gradient(135deg, #f1c40f, #e67e22); color: #210e02; border: 1px solid #fff; font-weight: 800; }
+
+    .cn-example-box {
+      background: #191008;
+      border-left: 4px solid #e67e22;
+      border-radius: 4px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+    .cn-example-box .ex-title {
+      color: #f39c12;
+      font-weight: bold;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cn-highlight { color: #f1c40f; font-weight: 600; }
+    .cn-green { color: #2ecc71; font-weight: 600; }
+    .cn-red { color: #e74c3c; font-weight: 600; }
+    .cn-blue { color: #3498db; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -371,7 +440,7 @@
       <h3>Mục Lục Cẩm Nang</h3>
       <ul class="tree-menu" id="main-tree">
         
-        <!-- NÚT 1: CHẾ ĐỘ THI ĐẤU -->
+        <!-- MỤC 1: CHẾ ĐỘ THI ĐẤU -->
         <li class="tree-item">
           <div class="tree-node" onclick="toggleTreeNode(this)">
             <span class="tree-arrow expanded"></span>
@@ -412,27 +481,93 @@
                 </li>
               </ul>
             </li>
-
           </ul>
         </li>
+
+        <!-- MỤC 2: ĐẲNG CẤP & BẬC VỊ GIANG HỒ -->
+        <li class="tree-item">
+          <div class="tree-node" onclick="toggleTreeNode(this)">
+            <span class="tree-arrow expanded"></span>
+            <span>🏆 Đẳng Cấp & Bậc Vị</span>
+          </div>
+          <ul class="open">
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('rank-elo', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>🎖️ Bậc Vị Thực Chiến (Elo)</span>
+              </div>
+            </li>
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('rank-exp', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>🌟 Cảnh Giới Tu Vi (EXP)</span>
+              </div>
+            </li>
+          </ul>
+        </li>
+
+        <!-- MỤC 3: TÍNH ĐIỂM ELO & TU VI -->
+        <li class="tree-item">
+          <div class="tree-node" onclick="toggleTreeNode(this)">
+            <span class="tree-arrow expanded"></span>
+            <span>⚖️ Tính Điểm Elo & Tu Vi</span>
+          </div>
+          <ul class="open">
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('calc-elo', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>📈 Biến Động Điểm Elo</span>
+              </div>
+            </li>
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('calc-exp', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>📜 Tích Lũy EXP & Thăng Cấp</span>
+              </div>
+            </li>
+          </ul>
+        </li>
+
+        <!-- MỤC 4: TỶ THÍ & SA TRƯỜNG ONLINE -->
+        <li class="tree-item">
+          <div class="tree-node" onclick="toggleTreeNode(this)">
+            <span class="tree-arrow expanded"></span>
+            <span>🌐 Tỷ Thí & Sa Trường</span>
+          </div>
+          <ul class="open">
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('online-match', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>⚡ Ghép Trận & Mở Phòng</span>
+              </div>
+            </li>
+            <li class="tree-item">
+              <div class="tree-node" onclick="showSection('rules-arena', this)">
+                <span class="tree-arrow leaf"></span>
+                <span>⏳ Thiết Quy Sa Trường</span>
+              </div>
+            </li>
+          </ul>
+        </li>
+
       </ul>
     </aside>
 
     <!-- CỘT 2: KHU VỰC HIỂN THỊ NỘI DUNG -->
     <main class="cn-content">
       
-      <!-- NỘI DUNG 1: CỜ TƯỚNG TRUYỀN THỐNG (CHIA 2 CỘT CÓ DEMO BÀN CỜ) -->
+      <!-- NỘI DUNG 1: CỜ TƯỚNG TRUYỀN THỐNG -->
       <section class="cn-section" id="mode-traditional">
-        <h2 class="cn-title">🔴 Cờ Tướng Truyền Thống</h2>
+        <h2 class="cn-title">🔴 Cờ Tướng Truyền Thống — Chính Đạo Kỳ Nghệ</h2>
         <div class="mode-split-layout">
           <div class="cn-box">
-            <p><b>Luật chơi Cờ Tướng chuẩn quốc tế cổ điển:</b></p>
-            <ul style="margin-left: 20px; margin-top: 6px;">
-              <li>Đỏ đi trước. Bị chiếu bí hoặc kín đường (hết nước đi hợp lệ) là thua.</li>
-              <li>Chống hai Tướng đối mặt nhau trên cùng một cột khi không có quân che chắn.</li>
-              <li>Không chiếu lặp quá 3 lần cùng một thế cờ (vi phạm bị xử thua). Lặp thế cờ 3 lần hòa.</li>
-              <li>60 nước (120 lượt) không ăn quân: Hòa cờ.</li>
-              <li><b>Khai cuộc nổi tiếng:</b> Bàn cờ bên phải mô phỏng thế trận kinh điển <i>Thuận Pháo Phá Trận</i> (Đỏ Pháo 2 bình 5, Đen Mã 8 tiến 7).</li>
+            <p><b>Bổn Trang kính cáo chư vị kỳ hữu:</b> Cờ Tướng vốn là kỳ nghệ ngàn năm lưu truyền chốn giang hồ, lấy bàn cờ 64 ô 90 giao điểm làm sa trường, lấy sông Sở Hà - Hán Giới phân định ranh giới sinh tử. Nơi đây anh hùng hào kiệt thi thố tài ba mưu lược qua từng nước đi chính đạo:</p>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+              <li><b>Quyền tiên phong:</b> Quân Đỏ nắm giữ tiên cơ đi trước. Bị đối phương vây hãm chiếu bí hoặc tắc nghẽn mọi sinh lộ (vô phương ứng biến) thì nhận lấy thất bại.</li>
+              <li><b>Hai Tướng bất kiến:</b> Nghiêm cấm hai Chủ Tướng nhìn thẳng mặt nhau trên cùng một cột mà không có quân cờ che chắn ở giữa.</li>
+              <li><b>Cấm bức bách lặp chiêu:</b> Không được dùng một nước chiếu lặp quá 3 lần cùng một thế cờ (vi phạm xử thua ngay). Nếu hai bên lặp thế cờ hòa hoãn 3 lần không đổi thế thì Bổn Trang xử hòa.</li>
+              <li><b>60 nước nghị hòa:</b> Hai bên kịch chiến 60 nước (120 lượt đi) mà không bên nào ăn quân thì xem như bất phân thắng bại, bắt tay kết tình bằng hữu.</li>
+              <li><b>Khai cuộc danh chấn sa trường:</b> Bàn cờ bên phải mô phỏng thế trận kinh điển <i>Thuận Pháo Phá Trận</i> (Đỏ Pháo 2 bình 5, Đen Mã 8 tiến 7) cùng Mã đội oai phong.</li>
             </ul>
           </div>
           <div class="mode-demo-panel">
@@ -445,18 +580,18 @@
         </div>
       </section>
 
-      <!-- NỘI DUNG 2: CỜ ÚP TRUYỀN THỐNG (CHIA 2 CỘT CÓ DEMO BÀN CỜ) -->
+      <!-- NỘI DUNG 2: CỜ ÚP TRUYỀN THỐNG -->
       <section class="cn-section" id="mode-co-up">
-        <h2 class="cn-title">🎭 Cờ Úp Truyền Thống</h2>
+        <h2 class="cn-title">🎭 Cờ Úp Truyền Thống — Phong Vân Biến Ảo</h2>
         <div class="mode-split-layout">
           <div class="cn-box">
-            <p><b>Quy tắc Cờ Úp Cổ Điển:</b></p>
-            <ul style="margin-left: 20px; margin-top: 6px;">
-              <li>Chỉ có 2 quân Tướng ngửa, 30 quân còn lại úp xuống bàn cờ.</li>
-              <li><b>Màu quân úp:</b> Quân úp bên Đỏ có màu hồng mờ, quân úp bên Đen có màu xám mờ.</li>
-              <li><b>Nước đi đầu tiên:</b> Quân úp đi theo loại quân của ô đang đứng (ô Pháo đi như Pháo, ô Xe đi như Xe...). Đi xong thì lật ngửa hiện quân thật.</li>
-              <li><b>Xuất cung & qua sông:</b> Sau khi lật ngửa, quân Sĩ và Tượng được tự do xuất Cung, qua sông tấn công hoặc đi lùi.</li>
-              <li><b>Demo bên phải:</b> Mô phỏng nước đi đầu tiên mở màn: Quân úp ở ô Pháo Đỏ bình vào trung lộ, lật lên hóa ra là quân Tốt Đỏ!</li>
+            <p><b>Bổn Trang thiết lập bàn cờ sương mờ khôn lường:</b> Trong cõi phong vân biến huyễn, 30 quân cờ đều ẩn mình úp mặt nơi sa trường, chỉ duy nhất hai vị Chủ Tướng tỏ tường tọa trấn trung quân:</p>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+              <li><b>Bàn cờ khởi trận:</b> 2 Tướng ngửa mặt trông nhau, 30 quân còn lại úp mặt giấu kín thân phận.</li>
+              <li><b>Sắc ấn nhận diện:</b> Quân úp bên Đỏ phủ ánh hồng mờ, quân úp bên Đen mang sắc xám mờ để phân định ranh giới hai phe.</li>
+              <li><b>Nước cờ mở màn:</b> Quân úp đóng tại vị trí nào phải xuất chiêu theo quy tắc của vị trí ấy (ở ô Pháo phóng như Pháo, ở ô Xe phi như Xe...). Ngay sau khi hạ nước đi, quân cờ mới được lật mở để hiển lộ chân thân!</li>
+              <li><b>Phá vỡ gông cùm:</b> Sau khi hiển lộ chân thân, Sĩ và Tượng rũ bỏ mọi giới hạn chốn hoàng cung, được tự do xuất cung, vượt sông tung hoành trận mạc và đi lùi tùy ý.</li>
+              <li><b>Hoạt cảnh bên phải:</b> Mô phỏng nước mở màn: Quân úp ô Pháo Đỏ bình vào trung lộ, lật lên hóa ra là dũng tướng Tốt Đỏ tiến chiếm địa bàn!</li>
             </ul>
           </div>
           <div class="mode-demo-panel">
@@ -469,18 +604,17 @@
         </div>
       </section>
 
-      <!-- NỘI DUNG 3: CỜ ÚP GIÁN ĐIỆP (CHIA 2 CỘT CÓ DEMO BÀN CỜ) -->
+      <!-- NỘI DUNG 3: CỜ ÚP GIÁN ĐIỆP -->
       <section class="cn-section" id="mode-spy">
-        <h2 class="cn-title">🕵️ Cờ Úp Gián Điệp</h2>
+        <h2 class="cn-title">🕵️ Cờ Úp Gián Điệp — Binh Bất Yếm Trá</h2>
         <div class="mode-split-layout">
           <div class="cn-box">
-            <p><b>Thể loại đấu trí gián điệp độc nhất vô nhị:</b></p>
-            <ul style="margin-left: 20px; margin-top: 6px;">
-              <li>30 quân úp của hai bên được xáo trộn chung toàn bộ.</li>
-              <li><b>Màu quân úp:</b> Tất cả các quân úp của cả hai bên đều mang chung một màu xám mờ (không biết quân của phe nào!).</li>
-              <li><b>Cơ chế Gián Điệp:</b> Khi lật quân úp, nếu lật ra quân địch thì quân đó ngay lập tức đổi phe thành <b>GIÁN ĐIỆP ĐỊCH</b> trên sân nhà của bạn!</li>
-              <li>Nếu nước lật gián điệp khiến Tướng nhà bạn bị chiếu bí, bạn thua ngay!</li>
-              <li><b>Demo bên phải:</b> Quân úp ở ô Pháo Đỏ bình 5, lật ra lại là quân <b>XE ĐEN (GIÁN ĐIỆP)</b> đổi phe đe dọa ngay trung lộ!</li>
+            <p><b>Bổn Trang sáng chế thể thức Gián Điệp độc nhất thiên hạ:</b> Binh pháp dạy rằng: <i>"Biết người biết ta, trăm trận trăm thắng"</i>. Song tại sa trường Gián Điệp của Bổn Trang, chính quân cờ của chư vị có thể là sát thủ trá hàng của địch nhân cài cắm:</p>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+              <li><b>Hỗn nguyên càn khôn:</b> Toàn bộ 30 quân úp của hai phe được xáo trộn đồng nhất, đều mang chung một sắc xám mờ. Không ai hay biết quân cờ dưới tay mình thực chất thuộc về phe nào!</li>
+              <li><b>Cơ chế Gián Điệp tráo phe:</b> Khi lật mở một quân úp trên sân nhà, nếu hiển lộ là quân của địch nhân, quân cờ đó lập tức trở thành <b>GIÁN ĐIỆP ĐỊCH</b> quay mũi đao phản trắc, uy hiếp trực tiếp vào trung quân!</li>
+              <li><b>Sinh tử trong gang tấc:</b> Nếu nước đi mở quân gián điệp vô tình tạo thế chiếu bí Chủ Tướng nhà mình, chư vị lập tức thảm bại (tự rước họa diệt vong)!</li>
+              <li><b>Hoạt cảnh bên phải:</b> Quân úp tại ô Pháo Đỏ bình 5, khi lật mở chân thân kinh hãi phát hiện lại là <b>XE ĐEN (GIÁN ĐIỆP)</b> tráo phe uy hiếp trung lộ!</li>
             </ul>
           </div>
           <div class="mode-demo-panel">
@@ -493,23 +627,23 @@
         </div>
       </section>
 
-      <!-- NỘI DUNG 4: GIỚI THIỆU CHUNG VỀ CỜ BÍ PHÁP (CHIA 2 CỘT CÓ DEMO VÁN ĐẤU THỰC TẾ) -->
+      <!-- NỘI DUNG 4: GIỚI THIỆU CHUNG VỀ CỜ BÍ PHÁP -->
       <section class="cn-section" id="mode-ky-bien">
-        <h2 class="cn-title">⚔️ Cờ Bí Pháp (Kỳ Biến Kiếm Hiệp)</h2>
+        <h2 class="cn-title">⚔️ Cờ Bí Pháp (Kỳ Biến Kiếm Hiệp) — Đỉnh Phong Võ Học</h2>
         <div class="mode-split-layout">
           <div class="cn-box">
-            <p><b>Kỳ Biến (Bí Pháp Kiếm Hiệp)</b> là chế độ thi đấu đỉnh cao kết hợp luật cờ cổ điển cùng hệ thống <b>Công Trạng</b> và <b>16 Bí Pháp Võ Học</b>:</p>
+            <p><b>Bổn Trang kết hợp tinh hoa kỳ đạo cổ điển cùng 16 bộ tuyệt kỹ võ học trấn phái:</b> Tạo nên chế độ Kỳ Biến Kiếm Hiệp danh bất hư truyền. Vừa đấu trí mưu lược cờ bàn, vừa kích hoạt bí kíp thi triển thần thông biến hóa khôn lường:</p>
             <ul style="margin-left: 20px; margin-top: 8px;">
-              <li><b>Khởi đầu:</b> Mỗi bên khởi đầu với <b>3 Công trạng</b> (tối đa 10) và <b>3 thẻ Bí pháp ngẫu nhiên</b> trên tay.</li>
-              <li><b>Tích lũy Công trạng:</b> Ăn quân địch nhận thêm Công trạng: <i>Tốt +1, Sĩ/Tượng +2, Mã/Pháo +3, Xe +5</i>.</li>
-              <li><b>Quy tắc dùng thẻ:</b> Mỗi lượt chỉ được dùng tối đa <b>1 thẻ</b>. Công trạng trừ ngay khi chọn quân kích hoạt.</li>
-              <li><b>Thẻ Một lượt:</b> Gán lên quân rồi phải đi quân đó; đổi ý chọn quân khác sẽ thu hồi thẻ, hoàn Công trạng nhưng bị phạt 1 điểm.</li>
-              <li><b>Thẻ Nội tại:</b> Gán vĩnh viễn lên quân (như Tốt lùi ↩, Tượng qua sông 🌊, Sĩ ra cung 🏯, Tướng xuất cung 👑). Sau khi gán vẫn được đi quân khác tùy ý.</li>
-              <li><b>Túi Kỳ Mưu (🎒):</b> Rơi ngẫu nhiên xuống ô trống theo chu kỳ. Quân nào tiến vào ô đó sẽ nhặt thêm 1 thẻ mới (tối đa 5 thẻ trên tay).</li>
-              <li><b>Thuật Định Thân (💫):</b> Bị trúng định thân sẽ không thể di chuyển hoặc chiếu Tướng trong 1 lượt của chủ quân.</li>
+              <li><b>Khởi đầu công lực:</b> Mỗi bên khởi đầu nắm giữ <b>3 điểm Công trạng</b> (nội lực tối đa 10) và <b>3 thẻ Bí pháp ngẫu nhiên</b> trong tay nải.</li>
+              <li><b>Trảm tướng đoạt Công trạng:</b> Tiêu diệt quân địch lập đại công sẽ thu nạp chân khí: <i>Tốt +1, Sĩ/Tượng +2, Mã/Pháo +3, Xe +5 Công trạng</i>.</li>
+              <li><b>Quy tắc xuất chiêu:</b> Mỗi lượt xuất kỳ chỉ được dùng tối đa <b>1 thẻ Bí pháp</b>. Điểm Công trạng sẽ được tiêu hao ngay khi niệm chú chọn quân.</li>
+              <li><b>Thẻ Một Lượt (Tung Chiêu Tức Thì):</b> Tụ lực xuất kích trong một nước đi (Xe chém bão táp, Pháo bắn 2 ngòi, Mã đạp mây...). Gán vào quân nào phải điều động quân đó; nếu đổi ý chọn quân khác sẽ bị Bổn Trang thu hồi thẻ, hoàn Công trạng nhưng phạt trừ 1 điểm.</li>
+              <li><b>Thẻ Nội Tại (Đả Thông Kinh Mạch):</b> Gán vĩnh viễn suốt phần còn lại của ván cờ (Tốt đi lùi ↩, Tượng vượt sông 🌊, Sĩ xuất cung 🏯, Tướng thân chinh 👑). Sau khi kích hoạt vẫn tự do điều động quân cờ khác tùy ý.</li>
+              <li><b>Cơ duyên Túi Kỳ Mưu (🎒):</b> Rơi ngẫu nhiên xuống ô trống sa trường theo chu kỳ. Quân cờ nào bước vào sẽ lĩnh hội thêm 1 thẻ bí pháp mới (tay nải chứa tối đa 5 thẻ).</li>
+              <li><b>Thuật Định Thân (💫):</b> Bị trúng bùa định thân sẽ bị phong tỏa huyệt đạo, không thể di chuyển hay chiếu Tướng trong 1 lượt đi của chủ quân.</li>
             </ul>
             <div style="margin-top: 14px;">
-              <button type="button" onclick="showSection('cards-16-detail', document.getElementById('node-16-cards'))" style="background:#27ae60;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer">👉 Xem Bảng 16 Bí Pháp & Bàn Cờ Hoạt Họa Chi Tiết</button>
+              <button type="button" onclick="showSection('cards-16-detail', document.getElementById('node-16-cards'))" style="background:#27ae60;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer">👉 Lĩnh Hội Bảng 16 Bí Pháp & Xem Bàn Cờ Hoạt Họa</button>
             </div>
           </div>
           <div class="mode-demo-panel">
@@ -524,10 +658,10 @@
 
       <!-- NỘI DUNG 5: BẢNG 16 BÍ PHÁP & DEMO TRỰC QUAN (MẶC ĐỊNH HIỂN THỊ) -->
       <section class="cn-section active" id="cards-16-detail">
-        <h2 class="cn-title">✨ Bảng 16 Bí Pháp & Bàn Cờ Hoạt Họa Demo</h2>
+        <h2 class="cn-title">✨ Bảng 16 Bí Pháp Võ Học & Sa Trường Hoạt Họa</h2>
         
-        <div style="font-size:0.8rem;color:#a8947d;margin-bottom:8px">
-          ⚡ Khởi đầu 3 Công trạng (tối đa 10). Bấm vào từng Bí pháp ở bảng trên để xem mô tả & bàn cờ hoạt họa demo ở dưới:
+        <div style="font-size:0.82rem;color:#d5c29d;margin-bottom:8px">
+          📜 <b>Bổn Trang lưu ý:</b> Khởi trận nắm 3 Công trạng (tích lũy tối đa 10). Nhấp chọn từng Bí pháp ở bảng trên để tường tận công dụng & thưởng lãm sa trường hoạt họa demo bên dưới:
         </div>
 
         <!-- BẢNG LƯỚI BÍ PHÁP THU GỌN TỐI ĐA (HÀNG TRÊN 4 LOẠI 2 THẺ, HÀNG DƯỚI 3 LOẠI, TƯỚNG 2 CỘT) -->
@@ -562,6 +696,348 @@
               🟡 <b>Chấm vàng:</b> Điểm nước đi do Bí Pháp mở rộng | 🔴 <b>Vòng đỏ:</b> Mục tiêu ăn quân
             </div>
             <button class="btn-replay-demo" onclick="replayCurrentDemo()">▶ Phát Lại Demo</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 6: BẬC VỊ THỰC CHIẾN (ELO) -->
+      <section class="cn-section" id="rank-elo">
+        <h2 class="cn-title">🎖️ Bảng Vàng Bậc Vị Kỳ Đạo (Thực Chiến Elo)</h2>
+        <div class="cn-box">
+          <p><b>Bổn Trang thiết lập Bảng Vàng Bậc Vị</b> nhằm phân định ngôi thứ chốn võ lâm kỳ đạo. Điểm Tinh Anh (Elo) đo lường thực lực thực chiến qua từng trận thư hùng sinh tử trên bàn cờ. Khởi đầu mỗi vị kỳ hữu nắm giữ <b>1000 điểm</b>, dựa vào thắng bại mà thăng giáng qua 8 bậc vị:</p>
+          
+          <div class="cn-table-wrap">
+            <table class="cn-table">
+              <thead>
+                <tr>
+                  <th style="width:130px">Bậc Vị Giang Hồ</th>
+                  <th style="width:120px">Khoảng Điểm Elo</th>
+                  <th>Khí Phách & Mô Tả Kỳ Nghệ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="cn-badge-rank rank-dong">🐣 Kỳ Đồng</span></td>
+                  <td><b class="cn-red">&lt; 1000</b></td>
+                  <td>Mới bước chân vào chốn giang hồ, tầm sư học đạo, làm quen với đường đi nước bước.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-do">📜 Kỳ Đồ</span></td>
+                  <td><b>1000 – 1199</b></td>
+                  <td>Đã nắm vững căn bản kỳ nghệ, bắt đầu xuống núi hành hiệp trượng nghĩa.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-hiep">🗡️ Kỳ Hiệp</span></td>
+                  <td><b>1200 – 1399</b></td>
+                  <td>Kiếm khí sơ thành, xuất chiêu lanh lẹ, danh tiếng bắt đầu vang xa khắp các tửu quán.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-tuong">🛡️ Kỳ Tướng</span></td>
+                  <td><b>1400 – 1599</b></td>
+                  <td>Thống lĩnh sa trường, trung kiên vững chãi, bố trận thâm sâu, công thủ toàn diện.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-vuong">👑 Kỳ Vương</span></td>
+                  <td><b>1600 – 1799</b></td>
+                  <td>Xưng hùng một cõi, kỳ nghệ đạt độ thâm sâu khó lường, thường định đoạt ván cờ bằng tàn cuộc sắc bén.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-tong">🌪️ Kỳ Tông</span></td>
+                  <td><b>1800 – 1999</b></td>
+                  <td>Bậc tông sư khai môn lập phái, chiêu số xuất quỷ nhập thần, nhìn trước hàng chục nước đi.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-thanh">🌟 Kỳ Thánh</span></td>
+                  <td><b>2000 – 2199</b></td>
+                  <td>Kỳ nghệ nhập đạo xuất chúng, thông thiên triệt địa, vạn người ngưỡng vọng.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-than">⚡ Kỳ Thần</span></td>
+                  <td><b class="cn-highlight">≥ 2200</b></td>
+                  <td>Đỉnh phong tuyệt đối của võ lâm kỳ đạo, thần cơ diệu toán, thiên hạ vô địch!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cn-example-box">
+            <div class="ex-title">🛡️ Thiết Quy Bảo Hiểm của Bổn Trang: Sàn Điểm 500</div>
+            <p>Bổn Trang đặt ra giới hạn bảo hộ: Dù trải qua chuỗi thất bại cay đắng đến đâu, điểm Tinh Anh của chư vị <b>không bao giờ tụt xuống dưới 500 điểm</b>. Giang hồ còn dài, chư vị hãy giữ vững tâm thế phục thù!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 7: CẢNH GIỚI TU VI (EXP) -->
+      <section class="cn-section" id="rank-exp">
+        <h2 class="cn-title">🌟 Cảnh Giới Tu Vi & Cấp Độ Kỳ Ý (Cấp 1 – 100)</h2>
+        <div class="cn-box">
+          <p><b>Bổn Trang phân định thâm niên khổ luyện</b> của chư vị qua 100 tầng Cấp Độ (Level) và 7 tầng Cảnh Giới Tu Vi. Càng thi đấu nhiều ván cờ, nội công tâm pháp càng tích lũy sâu dày:</p>
+
+          <div class="cn-table-wrap">
+            <table class="cn-table">
+              <thead>
+                <tr>
+                  <th style="width:130px">Cảnh Giới Kỳ Ý</th>
+                  <th style="width:110px">Cấp Độ (Level)</th>
+                  <th>Ý Nghĩa Tu Vi Võ Học</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="cn-badge-rank rank-dong">🍃 Khởi Khai</span></td>
+                  <td><b>Cấp 1 – 15</b></td>
+                  <td>Khởi đầu khai mở kỳ trí, tôi luyện tâm tính trước khi xung trận.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-do">🌿 Đắc Thức</span></td>
+                  <td><b>Cấp 16 – 30</b></td>
+                  <td>Nắm rõ căn nguyên, lĩnh hội được các quy luật biến hóa của kỳ đạo.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-hiep">🔮 Tri Ý</span></td>
+                  <td><b>Cấp 31 – 50</b></td>
+                  <td>Thấu suốt ý đồ đối phương, nhìn xa trông rộng, công thủ có trật tự.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-tuong">🌊 Thông Biến</span></td>
+                  <td><b>Cấp 51 – 70</b></td>
+                  <td>Tùy cơ ứng biến, phong ba bão táp ập tới vẫn điềm tĩnh xuất chiêu hóa giải.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-vuong">⚡ Thần Cơ</span></td>
+                  <td><b>Cấp 71 – 85</b></td>
+                  <td>Mưu tính như thần, liệu sự như thần, xuất chiêu biến hóa hư hư thực thực.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-tong">🔥 Hóa Cảnh</span></td>
+                  <td><b>Cấp 86 – 99</b></td>
+                  <td>Hóa thân vào kỳ đạo, tâm kiếm hợp nhất, cờ và người hòa làm một.</td>
+                </tr>
+                <tr>
+                  <td><span class="cn-badge-rank rank-than">🌌 Quy Chân</span></td>
+                  <td><b class="cn-highlight">Cấp 100 (Max)</b></td>
+                  <td>Vạn pháp quy tông, phản phác quy chân, vô chiêu thắng hữu chiêu!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cn-example-box">
+            <div class="ex-title">🏷️ Danh Hiệu Hợp Thể Oai Trấn Giang Hồ</div>
+            <p>Bổn Trang kết hợp giữa <b>Cảnh Giới Tu Vi</b> và <b>Bậc Vị Thực Chiến</b> để đúc nên danh hiệu hiển thị oai vệ cho chư vị:</p>
+            <p style="margin-top:4px"><span class="cn-highlight">[Cảnh Giới EXP] Bậc Vị Elo</span> — Ví dụ: <span class="cn-green">[Thông Biến] Kỳ Hiệp</span>, <span class="cn-blue">[Thần Cơ] Kỳ Tướng</span>, hay bậc tôn giả tuyệt đỉnh <span class="cn-highlight">[Quy Chân] Kỳ Thần</span>!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 8: BIẾN ĐỘNG ĐIỂM ELO -->
+      <section class="cn-section" id="calc-elo">
+        <h2 class="cn-title">📈 Quy Tắc Biến Động Điểm Tinh Anh (Elo)</h2>
+        <div class="cn-box">
+          <p><b>Bổn Trang ban bố quy tắc cộng trừ điểm Tinh Anh vô cùng giản dị, công tâm.</b> Chư vị chớ bận tâm đến những công thức toán học rối rắm, chỉ cần ghi nhớ nguyên lý thực chiến theo các khoảng điểm dưới đây:</p>
+
+          <div class="cn-table-wrap">
+            <table class="cn-table">
+              <thead>
+                <tr>
+                  <th>Tình Huống Đối Đầu</th>
+                  <th>Khi Thắng Trận</th>
+                  <th>Khi Thua Trận</th>
+                  <th>Khi Hòa Cờ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Hai bên ngang cơ</b><br><span style="color:#aaa;font-size:0.75rem">(Điểm số xêm xêm nhau, lệch &lt; 50đ)</span></td>
+                  <td><b class="cn-green">+10 đến +16 điểm</b></td>
+                  <td><b class="cn-red">-10 đến -16 điểm</b></td>
+                  <td>Điểm gần như giữ nguyên (0 đến 1đ)</td>
+                </tr>
+                <tr>
+                  <td><b>Kẻ yếu thắng Cao thủ</b><br><span style="color:#aaa;font-size:0.75rem">(Lập kỳ tích, lệch 100 – 300đ)</span></td>
+                  <td><b class="cn-green">+18 đến +30 điểm</b><br><small style="color:#2ecc71">Lập đại công, thưởng cực lớn!</small></td>
+                  <td><b class="cn-red">-4 đến -8 điểm</b><br><small style="color:#aaa">Thua cao thủ chỉ trừ nhẹ</small></td>
+                  <td><b class="cn-green">+5 đến +10 điểm</b><br><small style="color:#2ecc71">Hòa được cao thủ là có công</small></td>
+                </tr>
+                <tr>
+                  <td><b>Cao thủ đấu kẻ dưới cơ</b><br><span style="color:#aaa;font-size:0.75rem">(Thuận theo lẽ thường)</span></td>
+                  <td><b class="cn-green">+2 đến +8 điểm</b><br><small style="color:#aaa">Thắng kẻ yếu chỉ cộng ít</small></td>
+                  <td><b class="cn-red">-18 đến -30 điểm</b><br><small style="color:#e74c3c">Sẩy chân mất điểm rất nặng!</small></td>
+                  <td><b class="cn-red">-5 đến -10 điểm</b><br><small style="color:#e74c3c">Để kẻ dưới cơ cầm hòa bị trừ nhẹ</small></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cn-example-box">
+            <div class="ex-title">💡 Ví Dụ Minh Họa Dễ Hiểu</div>
+            <ul style="margin-left: 18px; margin-top: 4px;">
+              <li><b>Ví dụ 1 (Ngang tài ngang sức):</b> Huynh đài A (1200đ) gặp Huynh đài B (1210đ). Nếu A thắng, A nhận <b>+14 điểm</b> (lên 1214đ), B bị trừ <b>-14 điểm</b> (xuống 1196đ).</li>
+              <li><b>Ví dụ 2 (Dưới cơ thắng trên cơ):</b> Huynh đài C (1100đ - Kỳ Đồ) xuất sắc đánh bại Cao thủ D (1450đ - Kỳ Tướng). Bổn Trang lập tức thưởng đậm cho C <b>+26 điểm</b>! Cao thủ D sơ suất bị giáng trừ <b>-26 điểm</b>.</li>
+            </ul>
+          </div>
+
+          <div class="cn-example-box" style="border-left-color:#3498db">
+            <div class="ex-title" style="color:#3498db">⚡ Hai Giai Đoạn Đặc Thù Cần Lưu Ý</div>
+            <ul style="margin-left: 18px; margin-top: 4px;">
+              <li><b>Tân Thủ Khảo Nghiệm (&lt; 30 ván đầu):</b> Điểm số tăng giảm mạnh hơn (khoảng <b>±16 đến ±32 điểm/ván</b>) để Bổn Trang nhanh chóng nhận diện chân tài thực học của chư vị.</li>
+              <li><b>Bậc Thầy Tông Sư (Elo ≥ 1800 - Kỳ Tông trở lên):</b> Điểm số biến thiên trầm ổn, chắc chắn hơn (khoảng <b>±5 đến ±10 điểm/ván</b>) nhằm giữ vững trật tự giang sơn.</li>
+            </ul>
+          </div>
+
+          <div class="cn-example-box" style="border-left-color:#e74c3c">
+            <div class="ex-title" style="color:#e74c3c">⚠️ Thiết Quy Chống Bơm Điểm của Bổn Trang</div>
+            <p>1. <b>Ván cờ phải đủ 20 nước đi trở lên:</b> Những ván đấu dưới 20 nước mà xin hàng sẽ không được Bổn Trang tính điểm Elo, nhằm ngăn chặn kẻ gian gian lận buff bẩn.<br>
+            2. <b>Đấu luyện cùng Mộc Nhân (AI):</b> Chỉ dùng để rèn luyện công phu, không áp dụng tính điểm Elo.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 9: TÍCH LŨY EXP & THĂNG CẤP -->
+      <section class="cn-section" id="calc-exp">
+        <h2 class="cn-title">📜 Tích Lũy Tu Vi (EXP) & Thăng Cấp Kỳ Ý</h2>
+        <div class="cn-box">
+          <p><b>Bổn Trang luôn trân trọng từng giọt mồ hôi</b> chư vị đổ xuống sa trường. Dù thắng hay bại, mỗi ván đấu đều đem lại chân khí tu vi giúp chư vị sớm ngày đột phá cảnh giới:</p>
+
+          <div class="cn-table-wrap">
+            <table class="cn-table">
+              <thead>
+                <tr>
+                  <th>Hình Thức Tỷ Thí</th>
+                  <th>Kết Quả Thắng</th>
+                  <th>Kết Quả Hòa</th>
+                  <th>Kết Quả Thua</th>
+                  <th>Phần Thưởng Hào Khí Đặc Biệt</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Người đấu Người (PvP)</b><br><span style="color:#aaa;font-size:0.75rem">Sa trường thực chiến chính thức</span></td>
+                  <td><b class="cn-green">+50 EXP</b></td>
+                  <td><b class="cn-blue">+30 EXP</b></td>
+                  <td><b class="cn-highlight">+20 EXP</b></td>
+                  <td>
+                    🔥 <b>Chuỗi Thắng (≥ 3 ván):</b> Thưởng thêm <b class="cn-green">+20 EXP</b> mỗi ván.<br>
+                    ⚔️ <b>Ván Cờ Hay (&gt; 70 nước):</b> Kịch chiến gay cấn, thưởng thêm <b class="cn-green">+35 EXP</b> (thắng) hoặc <b class="cn-blue">+15 EXP</b> (thua/hòa)!
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Đấu Mộc Nhân Dễ (PvE)</b></td>
+                  <td><b>+20 EXP</b></td>
+                  <td><b>+10 EXP</b></td>
+                  <td><b>+5 EXP</b></td>
+                  <td rowspan="3">
+                    ⚠️ <b>Giới hạn luyện công:</b> Tối đa <b class="cn-highlight">300 EXP/ngày</b> khi đấu với máy để khuyến khích chư vị xuống núi tỷ thí cùng người thật.<br>
+                    ⚔️ <b>Ván Cờ Hay máy (&gt; 120 nước):</b> Thưởng thêm <b>+15 EXP</b> (thắng) hoặc <b>+5 EXP</b> (hòa/thua).
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Đấu Mộc Nhân Vừa (PvE)</b></td>
+                  <td><b>+40 EXP</b></td>
+                  <td><b>+20 EXP</b></td>
+                  <td><b>+10 EXP</b></td>
+                </tr>
+                <tr>
+                  <td><b>Đấu Mộc Nhân Khó (PvE)</b></td>
+                  <td><b>+60 EXP</b></td>
+                  <td><b>+30 EXP</b></td>
+                  <td><b>+15 EXP</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cn-example-box">
+            <div class="ex-title">📈 Quy Tắc Lượng EXP Cần Để Thăng Cấp</div>
+            <p>Bổn Trang áp dụng quy tắc tăng dần cực kỳ rõ ràng:</p>
+            <ul style="margin-left: 18px; margin-top: 4px;">
+              <li>Từ <b>Cấp 1 lên Cấp 2</b> chỉ cần đúng <b>100 EXP</b> (chỉ cần thắng 2 ván PvP là thăng cấp ngay!).</li>
+              <li>Mỗi cấp tiếp theo, lượng EXP cần thiết chỉ cộng thêm đúng <b>35 EXP</b>:
+                <br>• Cấp 2 lên Cấp 3: Cần <b>135 EXP</b>
+                <br>• Cấp 3 lên Cấp 4: Cần <b>170 EXP</b>
+                <br>• Cấp 4 lên Cấp 5: Cần <b>205 EXP</b> ...
+              </li>
+              <li>Khi tích lũy vượt ngưỡng, lượng EXP dư thừa sẽ tự động dồn tiếp vào cấp sau, không bị mất đi dù chỉ 1 điểm!</li>
+            </ul>
+          </div>
+
+          <div class="cn-example-box" style="border-left-color:#9b59b6">
+            <div class="ex-title" style="color:#9b59b6">✍️ Đặc Quyền Ghi Chép Kỳ Đạo Sử Sách (Đăng Blog)</div>
+            <p>Sau mỗi trận kịch chiến được công nhận là <b>Ván Cờ Hay</b> (PvP &gt; 70 nước hoặc PvE &gt; 120 nước), chư vị sẽ được Bổn Trang ban đặc quyền xuất bản biên bản ván cờ lên hệ thống Blog để giang hồ muôn đời chiêm ngưỡng (tối đa 5 bài viết mỗi ngày)!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 10: GHÉP TRẬN & MỞ PHÒNG TỶ THÍ -->
+      <section class="cn-section" id="online-match">
+        <h2 class="cn-title">⚡ Ghép Trận Nhanh & Mở Phòng Tỷ Thí Trực Tuyến</h2>
+        <div class="cn-box">
+          <p><b>Bổn Trang thiết lập hệ thống kết nối tức thời</b> (Truyền tin Websocket hiện đại) giúp chư vị anh hùng khắp bốn bể dễ dàng tao ngộ, phân tài cao thấp chỉ trong chớp mắt:</p>
+
+          <div class="cn-example-box" style="border-left-color:#2ecc71">
+            <div class="ex-title" style="color:#2ecc71">1. ⚡ Ghép Trận Tự Động (Tìm Đối Thủ Ngang Cơ)</div>
+            <p>Chỉ cần lựa chọn thể thức muốn tranh tài (Cờ Truyền Thống, Cờ Úp, Gián Điệp, hoặc Kỳ Biến) rồi nhấn <b>Tìm Trận Nhanh</b>. Bổn Trang sẽ tự động quét sa trường và ghép chư vị với đối thủ có điểm Elo tương đương nhất để đảm bảo cuộc đấu cân tài cân sức.</p>
+          </div>
+
+          <div class="cn-example-box" style="border-left-color:#f1c40f">
+            <div class="ex-title" style="color:#f1c40f">2. 🗝️ Mở Phòng Tỷ Thí Riêng (Gửi Mã Chiến Thư)</div>
+            <p>Muốn tỷ thí cùng bằng hữu tâm giao? Chư vị hãy chọn <b>Tạo Phòng Mới</b>. Bổn Trang sẽ cấp cho phòng đấu một <b>Mã Phòng gồm các chữ số độc nhất</b> (Ví dụ: <i>KB-8823</i>). Hãy sao chép Mã Phòng gửi qua tin nhắn cho bằng hữu, người ấy chỉ cần nhập mã là lập tức cùng chư vị tọa đàm luận cờ!</p>
+          </div>
+
+          <div class="cn-example-box" style="border-left-color:#3498db">
+            <div class="ex-title" style="color:#3498db">3. 🚪 Danh Sách Phòng Chờ Công Khai</div>
+            <p>Chư vị có thể chọn mở phòng ở chế độ <b>Công Khai</b>. Phòng đấu sẽ hiển thị ngay tại sảnh chờ của Bổn Trang để bất kỳ lãng khách giang hồ nào ghé ngang cũng có thể bước vào tỷ thí giao lưu.</p>
+          </div>
+
+          <div class="cn-example-box" style="border-left-color:#e67e22">
+            <div class="ex-title" style="color:#e67e22">4. 🔄 Tự Động Nối Lại Khi Rớt Mạng (Reconnection)</div>
+            <p>Nếu chẳng may xảy ra sự cố mất kết nối mạng internet hoặc vô tình tải lại trang, hệ thống của Bổn Trang sẽ <b>tự động khôi phục bàn cờ nguyên vẹn</b> và đưa chư vị trở lại đúng vị trí đang thi đấu mà không bị mất ván cờ!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- NỘI DUNG 11: THIẾT QUY SA TRƯỜNG -->
+      <section class="cn-section" id="rules-arena">
+        <h2 class="cn-title">⏳ Thiết Quy Đấu Trường & Kỷ Luật Sa Trường</h2>
+        <div class="cn-box">
+          <p><b>Nhập môn sa trường của Bổn Trang</b>, chư vị kỳ hữu ắt phải tuân thủ nghiêm minh các quy ước để giữ tròn phong thái trượng phu quân tử:</p>
+
+          <div class="cn-table-wrap">
+            <table class="cn-table">
+              <thead>
+                <tr>
+                  <th style="width:180px">Quy Ước Sa Trường</th>
+                  <th>Nội Dung Chi Tiết & Biện Pháp Xử Lý Của Bổn Trang</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>⏱️ Thời Gian Mỗi Nước Đi</b></td>
+                  <td>Mỗi lượt đi có thời gian quy định suy nghĩ (ví dụ <b>60 giây / nước</b>). Đồng hồ đếm ngược hết giờ mà chưa ra chiêu sẽ bị xử thua do cháy giờ!</td>
+                </tr>
+                <tr>
+                  <td><b>⌛ Thời Gian Cả Ván Cờ</b></td>
+                  <td>Mỗi bên có quỹ thời gian tổng cho toàn trận (ví dụ <b>10 phút đến 15 phút</b>). Bên nào cạn kiệt tổng thời gian trước sẽ bị xử thua ngay lập tức.</td>
+                </tr>
+                <tr>
+                  <td><b>📡 Gián Đoạn Kết Nối</b></td>
+                  <td>Khi đối thủ bị rớt mạng, Bổn Trang dành ra <b>60 giây chờ đợi</b> để người đó kết nối lại. Quá thời gian chờ mà không quay lại sa trường thì người ở lại được xử thắng ván đấu.</td>
+                </tr>
+                <tr>
+                  <td><b>🚪 Nghiêm Phạt Đào Tẩu</b></td>
+                  <td>Đang thi đấu mà cố tình đóng ứng dụng, rời bàn bỏ chạy sẽ bị Bổn Trang <b>xử thua ngay lập tức</b> và trừ điểm Elo như một trận thảm bại!</td>
+                </tr>
+                <tr>
+                  <td><b>🤝 Cầu Hòa & Xin Thua</b></td>
+                  <td>Khi cùng đường mạt lộ, chư vị có thể nhấn nút <b>Xin Thua</b> để giữ tròn khí tiết quân tử; khi thế trận giằng co không lối thoát, có thể gửi lời <b>Cầu Hòa</b>, đối phương đồng thuận thì ván cờ kết thúc hòa nhã.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cn-example-box" style="border-left-color:#27ae60">
+            <div class="ex-title" style="color:#27ae60">🌸 Lời Nhắn Nhủ Của Bổn Trang</div>
+            <p><i>"Cờ là đạo, thắng bại là chuyện thường tình của binh gia. Thắng không kiêu, bại không nản, giữ tâm thanh tịnh thì kỳ nghệ tự khắc tinh thông!"</i> Bổn Trang chúc toàn thể chư vị kỳ hữu sớm ngày vang danh bảng vàng, đoạt lấy ngôi vị Kỳ Thần tôn kính!</p>
           </div>
         </div>
       </section>
@@ -1180,6 +1656,9 @@ window.showSection = function(secId, nodeElem){
   if(target) target.classList.add('active');
   if(nodeElem) nodeElem.classList.add('active');
 
+  // Xóa timer hoạt họa chế độ cũ để tiết kiệm hiệu năng
+  if(modeAnimTimer){ clearInterval(modeAnimTimer); modeAnimTimer = null; }
+
   // Khởi động hoạt họa tương ứng cho tab được chọn
   if(secId === 'mode-traditional'){
     startTraditionalAnimation();
@@ -1190,7 +1669,6 @@ window.showSection = function(secId, nodeElem){
   } else if(secId === 'mode-ky-bien'){
     startKyBienAnimation();
   } else if(secId === 'cards-16-detail'){
-    if(modeAnimTimer) clearInterval(modeAnimTimer);
     renderCardsGrid();
     updateDetailView();
     startDemoAnimation();
