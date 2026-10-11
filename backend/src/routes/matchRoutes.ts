@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createGreatMatchPost, getPublicRooms } from '../controllers/matchController.js';
+import { createGreatMatchPost, getPublicRooms, finishPveMatch } from '../controllers/matchController.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 
 const router = Router();
@@ -9,5 +9,8 @@ router.post('/great-match', authenticateToken, createGreatMatchPost);
 
 // Endpoint công khai lấy danh sách các phòng chờ trực tiếp
 router.get('/public-rooms', getPublicRooms);
+
+// Endpoint ghi nhận kết quả và cộng EXP trận đấu với máy (PvE)
+router.post('/pve-finish', authenticateToken, finishPveMatch);
 
 export default router;

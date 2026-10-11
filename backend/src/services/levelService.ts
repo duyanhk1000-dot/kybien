@@ -232,15 +232,15 @@ export function calculateMatchExp(params: CalculateMatchExpParams): CalculateMat
     }
   } else {
     // PvE (Đánh máy) theo cấp độ AI:
-    // Dễ (EASY): Thắng +15 | Hòa +8 | Thua +4
-    // Trung bình (NORMAL): Thắng +30 | Hòa +15 | Thua +8
-    // Khó (HARD): Thắng +45 | Hòa +22 | Thua +10
+    // Dễ (EASY): Thắng +10 | Hòa +5 | Thua +2
+    // Trung bình (NORMAL): Thắng +20 | Hòa +10 | Thua +5
+    // Khó (HARD): Thắng +30 | Hòa +15 | Thua +7
     if (aiDifficulty === 'EASY') {
-      baseExp = result === 'WIN' ? 15 : result === 'DRAW' ? 8 : 4;
+      baseExp = result === 'WIN' ? 10 : result === 'DRAW' ? 5 : 2;
     } else if (aiDifficulty === 'HARD') {
-      baseExp = result === 'WIN' ? 45 : result === 'DRAW' ? 22 : 10;
+      baseExp = result === 'WIN' ? 30 : result === 'DRAW' ? 15 : 7;
     } else {
-      baseExp = result === 'WIN' ? 30 : result === 'DRAW' ? 15 : 8;
+      baseExp = result === 'WIN' ? 20 : result === 'DRAW' ? 10 : 5;
     }
 
     // PvE Ván hay: > 120 nước (Thắng máy +15 EXP, Thua/Hòa máy +5 EXP)
