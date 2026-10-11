@@ -54,7 +54,7 @@
       font-family: sans-serif;
     }
 
-    /* BỐ CỤC 2 CỘT */
+    /* BỐ CỤC 2 CỘT TỔNG THỂ */
     .cn-layout {
       display: grid;
       grid-template-columns: 260px 1fr;
@@ -140,7 +140,7 @@
       border: 1px solid #5a3d22;
       border-radius: 8px;
       padding: 16px;
-      min-height: 540px;
+      min-height: 560px;
     }
     .cn-section { display: none; }
     .cn-section.active { display: block; }
@@ -164,12 +164,54 @@
       font-size: 0.88rem;
     }
 
+    /* BỐ CỤC 2 CỘT CHO MỖI CHẾ ĐỘ CHƠI */
+    .mode-split-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .mode-split-layout { grid-template-columns: 1fr; }
+    }
+    
+    .mode-demo-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #150d07;
+      border: 1px solid #4a3320;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .mode-canvas-box {
+      position: relative;
+      width: 320px;
+      height: 352px;
+      margin: 0 auto;
+    }
+    .mode-canvas-box canvas {
+      width: 320px;
+      height: 352px;
+      border-radius: 4px;
+      display: block;
+      background: #c8985c;
+    }
+    .demo-status-banner {
+      font-size: 0.76rem;
+      color: #f1c40f;
+      margin-top: 6px;
+      text-align: center;
+      min-height: 20px;
+      font-weight: 600;
+    }
+
     /* BẢNG LƯỚI BÍ PHÁP THU GỌN TỐI ĐA (2 HÀNG GỌN GÀNG) */
     .cards-grid-compact {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .cards-row-1 {
       display: grid;
@@ -289,7 +331,7 @@
     }
     .detail-meta-item strong {
       color: #e5b36a;
-      min-width: 110px;
+      min-width: 140px;
     }
     .detail-desc {
       background: #150d07;
@@ -301,30 +343,6 @@
       line-height: 1.5;
     }
 
-    /* BÀN CỜ DEMO CANVAS BÊN PHẢI */
-    .detail-right {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #150d07;
-      border: 1px solid #4a3320;
-      border-radius: 6px;
-      padding: 10px;
-    }
-    .demo-canvas-box {
-      position: relative;
-      width: 320px;
-      height: 352px;
-      margin: 0 auto;
-    }
-    #demo-canvas {
-      width: 320px;
-      height: 352px;
-      border-radius: 4px;
-      display: block;
-      background: #c8985c;
-    }
     .btn-replay-demo {
       margin-top: 8px;
       background: #27ae60!important;
@@ -403,62 +421,103 @@
     <!-- CỘT 2: KHU VỰC HIỂN THỊ NỘI DUNG -->
     <main class="cn-content">
       
-      <!-- NỘI DUNG 1: CỜ TƯỚNG TRUYỀN THỐNG -->
+      <!-- NỘI DUNG 1: CỜ TƯỚNG TRUYỀN THỐNG (CHIA 2 CỘT CÓ DEMO BÀN CỜ) -->
       <section class="cn-section" id="mode-traditional">
         <h2 class="cn-title">🔴 Cờ Tướng Truyền Thống</h2>
-        <div class="cn-box">
-          <p>Luật chơi Cờ Tướng chuẩn quốc tế cổ điển:</p>
-          <ul style="margin-left: 20px; margin-top: 6px;">
-            <li>Đỏ đi trước. Bị chiếu bí hoặc kín đường là thua.</li>
-            <li>Chống hai Tướng đối mặt nhau trên cùng 1 cột khi không có quân che chắn.</li>
-            <li>Không chiếu lặp quá 3 lần cùng 1 thế cờ (vi phạm xử thua). Lặp thế cờ 3 lần hòa.</li>
-            <li>60 nước (120 lượt) không ăn quân: Hòa cờ.</li>
-          </ul>
+        <div class="mode-split-layout">
+          <div class="cn-box">
+            <p><b>Luật chơi Cờ Tướng chuẩn quốc tế cổ điển:</b></p>
+            <ul style="margin-left: 20px; margin-top: 6px;">
+              <li>Đỏ đi trước. Bị chiếu bí hoặc kín đường (hết nước đi hợp lệ) là thua.</li>
+              <li>Chống hai Tướng đối mặt nhau trên cùng một cột khi không có quân che chắn.</li>
+              <li>Không chiếu lặp quá 3 lần cùng một thế cờ (vi phạm bị xử thua). Lặp thế cờ 3 lần hòa.</li>
+              <li>60 nước (120 lượt) không ăn quân: Hòa cờ.</li>
+              <li><b>Khai cuộc nổi tiếng:</b> Bàn cờ bên phải mô phỏng thế trận kinh điển <i>Thuận Pháo Phá Trận</i> (Đỏ Pháo 2 bình 5, Đen Mã 8 tiến 7).</li>
+            </ul>
+          </div>
+          <div class="mode-demo-panel">
+            <div style="font-size:0.8rem;font-weight:bold;color:#f1c40f;margin-bottom:6px">🎬 THẾ CỜ TRUYỀN THỐNG ĐẶC TRƯNG</div>
+            <div class="mode-canvas-box">
+              <canvas id="cv-traditional" width="320" height="352"></canvas>
+            </div>
+            <div class="demo-status-banner" id="status-traditional">Thế trận: Pháo đầu & Mã đội kinh điển</div>
+          </div>
         </div>
       </section>
 
-      <!-- NỘI DUNG 2: CỜ ÚP TRUYỀN THỐNG -->
+      <!-- NỘI DUNG 2: CỜ ÚP TRUYỀN THỐNG (CHIA 2 CỘT CÓ DEMO BÀN CỜ) -->
       <section class="cn-section" id="mode-co-up">
         <h2 class="cn-title">🎭 Cờ Úp Truyền Thống</h2>
-        <div class="cn-box">
-          <p>Chỉ 2 Tướng ngửa, 30 quân còn lại úp xuống:</p>
-          <ul style="margin-left: 20px; margin-top: 6px;">
-            <li>Nước đầu tiên đi theo loại quân của ô đang đứng (ô Xe đi như Xe...). Đi xong lật ngửa hiện quân thật.</li>
-            <li>Sĩ, Tượng sau khi lật ngửa được tự do xuất Cung, qua sông tấn công hoặc đi lùi.</li>
-            <li>Khay quân đã ăn: Quân úp bị ăn chỉ hiện chữ 暗 trừ khi bật xem quân úp bí ẩn.</li>
-          </ul>
+        <div class="mode-split-layout">
+          <div class="cn-box">
+            <p><b>Quy tắc Cờ Úp Cổ Điển:</b></p>
+            <ul style="margin-left: 20px; margin-top: 6px;">
+              <li>Chỉ có 2 quân Tướng ngửa, 30 quân còn lại úp xuống bàn cờ.</li>
+              <li><b>Màu quân úp:</b> Quân úp bên Đỏ có màu hồng mờ, quân úp bên Đen có màu xám mờ.</li>
+              <li><b>Nước đi đầu tiên:</b> Quân úp đi theo loại quân của ô đang đứng (ô Pháo đi như Pháo, ô Xe đi như Xe...). Đi xong thì lật ngửa hiện quân thật.</li>
+              <li><b>Xuất cung & qua sông:</b> Sau khi lật ngửa, quân Sĩ và Tượng được tự do xuất Cung, qua sông tấn công hoặc đi lùi.</li>
+              <li><b>Demo bên phải:</b> Mô phỏng nước đi đầu tiên mở màn: Quân úp ở ô Pháo Đỏ bình vào trung lộ, lật lên hóa ra là quân Tốt Đỏ!</li>
+            </ul>
+          </div>
+          <div class="mode-demo-panel">
+            <div style="font-size:0.8rem;font-weight:bold;color:#f1c40f;margin-bottom:6px">🎬 DEMO CỜ ÚP TRUYỀN THỐNG</div>
+            <div class="mode-canvas-box">
+              <canvas id="cv-co-up" width="320" height="352"></canvas>
+            </div>
+            <div class="demo-status-banner" id="status-co-up">Quân úp ô Pháo đỏ bình 5 lật ra Tốt!</div>
+          </div>
         </div>
       </section>
 
-      <!-- NỘI DUNG 3: CỜ ÚP GIÁN ĐIỆP -->
+      <!-- NỘI DUNG 3: CỜ ÚP GIÁN ĐIỆP (CHIA 2 CỘT CÓ DEMO BÀN CỜ) -->
       <section class="cn-section" id="mode-spy">
         <h2 class="cn-title">🕵️ Cờ Úp Gián Điệp</h2>
-        <div class="cn-box">
-          <p>Thể loại đấu trí kịch tính độc nhất vô nhị trên Kỳ Biến Chess:</p>
-          <ul style="margin-left: 20px; margin-top: 6px;">
-            <li>30 quân úp của hai bên được xáo trộn ngẫu nhiên toàn bộ vào nhau.</li>
-            <li>Khi lật quân úp, có xác suất quân đó chính là quân địch! Quân đó sẽ ngay lập tức đổi phe thành <b>GIÁN ĐIỆP</b>.</li>
-            <li>Nếu nước lật gián điệp khiến Tướng của bạn bị chiếu bí, bạn sẽ thua ngay lập tức!</li>
-          </ul>
+        <div class="mode-split-layout">
+          <div class="cn-box">
+            <p><b>Thể loại đấu trí gián điệp độc nhất vô nhị:</b></p>
+            <ul style="margin-left: 20px; margin-top: 6px;">
+              <li>30 quân úp của hai bên được xáo trộn chung toàn bộ.</li>
+              <li><b>Màu quân úp:</b> Tất cả các quân úp của cả hai bên đều mang chung một màu xám mờ (không biết quân của phe nào!).</li>
+              <li><b>Cơ chế Gián Điệp:</b> Khi lật quân úp, nếu lật ra quân địch thì quân đó ngay lập tức đổi phe thành <b>GIÁN ĐIỆP ĐỊCH</b> trên sân nhà của bạn!</li>
+              <li>Nếu nước lật gián điệp khiến Tướng nhà bạn bị chiếu bí, bạn thua ngay!</li>
+              <li><b>Demo bên phải:</b> Quân úp ở ô Pháo Đỏ bình 5, lật ra lại là quân <b>XE ĐEN (GIÁN ĐIỆP)</b> đổi phe đe dọa ngay trung lộ!</li>
+            </ul>
+          </div>
+          <div class="mode-demo-panel">
+            <div style="font-size:0.8rem;font-weight:bold;color:#f1c40f;margin-bottom:6px">🎬 DEMO CỜ ÚP GIÁN ĐIỆP</div>
+            <div class="mode-canvas-box">
+              <canvas id="cv-spy" width="320" height="352"></canvas>
+            </div>
+            <div class="demo-status-banner" id="status-spy" style="color:#ff5252">Lật ô Pháo đỏ ra Xe Đen (GIÁN ĐIỆP)!</div>
+          </div>
         </div>
       </section>
 
-      <!-- NỘI DUNG 4: GIỚI THIỆU CHUNG VỀ CỜ BÍ PHÁP (KỲ BIẾN) -->
+      <!-- NỘI DUNG 4: GIỚI THIỆU CHUNG VỀ CỜ BÍ PHÁP (CHIA 2 CỘT CÓ DEMO VÁN ĐẤU THỰC TẾ) -->
       <section class="cn-section" id="mode-ky-bien">
         <h2 class="cn-title">⚔️ Cờ Bí Pháp (Kỳ Biến Kiếm Hiệp)</h2>
-        <div class="cn-box">
-          <p><b>Kỳ Biến (Bí Pháp Kiếm Hiệp)</b> là chế độ thi đấu đỉnh cao kết hợp luật cờ cổ điển cùng hệ thống <b>Công Trạng</b> và <b>16 Bí Pháp Võ Học</b>:</p>
-          <ul style="margin-left: 20px; margin-top: 8px;">
-            <li><b>Khởi đầu:</b> Mỗi bên khởi đầu với <b>3 Công trạng</b> (tối đa 10) và <b>3 thẻ Bí pháp ngẫu nhiên</b> trên tay.</li>
-            <li><b>Tích lũy Công trạng:</b> Ăn quân địch nhận thêm Công trạng: <i>Tốt +1, Sĩ/Tượng +2, Mã/Pháo +3, Xe +5</i>.</li>
-            <li><b>Quy tắc dùng thẻ:</b> Mỗi lượt chỉ được dùng tối đa <b>1 thẻ</b>. Công trạng trừ ngay khi chọn quân kích hoạt.</li>
-            <li><b>Thẻ Một lượt:</b> Gán lên quân rồi phải đi quân đó; đổi ý chọn quân khác sẽ thu hồi thẻ, hoàn Công trạng nhưng bị phạt 1 điểm.</li>
-            <li><b>Thẻ Nội tại:</b> Gán vĩnh viễn lên quân (như Tốt lùi ↩, Tượng qua sông 🌊, Sĩ ra cung 🏯, Tướng xuất cung 👑). Sau khi gán vẫn được đi quân khác tùy ý.</li>
-            <li><b>Túi Kỳ Mưu (🎒):</b> Rơi ngẫu nhiên xuống ô trống theo chu kỳ. Quân nào tiến vào ô đó sẽ nhặt thêm 1 thẻ mới (tối đa 5 thẻ trên tay).</li>
-            <li><b>Thuật Định Thân (💫):</b> Bị trúng định thân sẽ không thể di chuyển hoặc chiếu Tướng trong 1 lượt của chủ quân.</li>
-          </ul>
-          <div style="margin-top: 14px;">
-            <button type="button" onclick="showSection('cards-16-detail', document.getElementById('node-16-cards'))" style="background:#27ae60;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer">👉 Xem Bảng 16 Bí Pháp & Bàn Cờ Hoạt Họa Demo</button>
+        <div class="mode-split-layout">
+          <div class="cn-box">
+            <p><b>Kỳ Biến (Bí Pháp Kiếm Hiệp)</b> là chế độ thi đấu đỉnh cao kết hợp luật cờ cổ điển cùng hệ thống <b>Công Trạng</b> và <b>16 Bí Pháp Võ Học</b>:</p>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+              <li><b>Khởi đầu:</b> Mỗi bên khởi đầu với <b>3 Công trạng</b> (tối đa 10) và <b>3 thẻ Bí pháp ngẫu nhiên</b> trên tay.</li>
+              <li><b>Tích lũy Công trạng:</b> Ăn quân địch nhận thêm Công trạng: <i>Tốt +1, Sĩ/Tượng +2, Mã/Pháo +3, Xe +5</i>.</li>
+              <li><b>Quy tắc dùng thẻ:</b> Mỗi lượt chỉ được dùng tối đa <b>1 thẻ</b>. Công trạng trừ ngay khi chọn quân kích hoạt.</li>
+              <li><b>Thẻ Một lượt:</b> Gán lên quân rồi phải đi quân đó; đổi ý chọn quân khác sẽ thu hồi thẻ, hoàn Công trạng nhưng bị phạt 1 điểm.</li>
+              <li><b>Thẻ Nội tại:</b> Gán vĩnh viễn lên quân (như Tốt lùi ↩, Tượng qua sông 🌊, Sĩ ra cung 🏯, Tướng xuất cung 👑). Sau khi gán vẫn được đi quân khác tùy ý.</li>
+              <li><b>Túi Kỳ Mưu (🎒):</b> Rơi ngẫu nhiên xuống ô trống theo chu kỳ. Quân nào tiến vào ô đó sẽ nhặt thêm 1 thẻ mới (tối đa 5 thẻ trên tay).</li>
+              <li><b>Thuật Định Thân (💫):</b> Bị trúng định thân sẽ không thể di chuyển hoặc chiếu Tướng trong 1 lượt của chủ quân.</li>
+            </ul>
+            <div style="margin-top: 14px;">
+              <button type="button" onclick="showSection('cards-16-detail', document.getElementById('node-16-cards'))" style="background:#27ae60;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer">👉 Xem Bảng 16 Bí Pháp & Bàn Cờ Hoạt Họa Chi Tiết</button>
+            </div>
+          </div>
+          <div class="mode-demo-panel">
+            <div style="font-size:0.8rem;font-weight:bold;color:#f1c40f;margin-bottom:6px">🎬 BÀN CỜ CHIẾN TRƯỜNG KỲ BIẾN ĐANG ĐẤU</div>
+            <div class="mode-canvas-box">
+              <canvas id="cv-kybien" width="320" height="352"></canvas>
+            </div>
+            <div class="demo-status-banner" id="status-kybien">Túi Kỳ Mưu 🎒 rơi trên sông | Các ẩn ký kích hoạt</div>
           </div>
         </div>
       </section>
@@ -485,6 +544,7 @@
               <div class="detail-meta-item"><strong>Quân áp dụng:</strong> <span id="det-piece">Tốt (Binh/卒)</span></div>
               <div class="detail-meta-item"><strong>Phí Công trạng:</strong> <span id="det-cost">2 điểm</span></div>
               <div class="detail-meta-item"><strong>Loại thẻ:</strong> <span id="det-type">Nội tại gán vĩnh viễn</span></div>
+              <div class="detail-meta-item"><strong>Thời gian tác dụng:</strong> <span id="det-dur" style="color:#2ecc71;font-weight:600">Vĩnh viễn (Suốt phần còn lại của ván đấu)</span></div>
               <div class="detail-meta-item"><strong>Icon quân cờ:</strong> <span id="det-badge">↩</span></div>
             </div>
             <div class="detail-desc" id="det-desc">
@@ -494,7 +554,7 @@
 
           <!-- CỘT PHẢI: BÀN CỜ DEMO CÓ HIỆU ỨNG HOẠT HỌA -->
           <div class="detail-right">
-            <div style="font-size:0.8rem;font-weight:bold;color:#f1c40f;margin-bottom:6px">🎬 BÀN CỜ DEMO HOẠT HỌA</div>
+            <div style="font-size:0.8rem;font-weight:bold;color:#f1c40f;margin-bottom:6px">🎬 BÀN CỜ DEMO HOẠT HỌA BÍ PHÁP</div>
             <div class="demo-canvas-box">
               <canvas id="demo-canvas" width="320" height="352"></canvas>
             </div>
@@ -515,33 +575,285 @@
 (function(){
 "use strict";
 
-/* DỮ LIỆU 16 BÍ PHÁP CHUẨN KỲ BIẾN */
+/* DỮ LIỆU 16 BÍ PHÁP CHUẨN KỲ BIẾN (KÈM ICON ỐNG NGẮM & THỜI GIAN TÁC DỤNG) */
 const CARDS_DATA = [
   // HÀNG 1: 4 QUÂN (XE, PHÁO, MÃ, TƯỢNG) - MỖI QUÂN 2 BÍ PHÁP
-  { id: 'ROOK_1', t: 'r', tName: 'Xe', cost: 3, name: 'Thiểm Điện Trảm', type: 'Một lượt', badge: '⚡', desc: 'Sau khi ăn quân địch, Xe được phép tiến thẳng thêm 1-2 ô cùng hướng ngay trong lượt đó.' },
-  { id: 'ROOK_2', t: 'r', tName: 'Xe', cost: 3, name: 'Phá Lãng Bộ', type: 'Một lượt', badge: '↪', desc: 'Sau khi đi 1 nước, Xe được bẻ vuông góc 90° đi thêm 1-3 ô (không được ăn quân ở nước bẻ).' },
-  { id: 'CANNON_1', t: 'c', tName: 'Pháo', cost: 2, name: 'Xuyên Vân Tiễn', type: 'Một lượt', badge: '🌊', desc: 'Pháo được phép bắn ăn quân qua 2 ngòi (cấm ăn Tướng nếu qua 2 ngòi).' },
-  { id: 'CANNON_2', t: 'c', tName: 'Pháo', cost: 3, name: 'Bích Lịch Hỏa', type: 'Một lượt', badge: '💥', desc: 'Bắn ăn quân gây nổ chấn động: 4 ô kề xung quanh ô đích và chính Pháo bị choáng 💫 1 lượt.' },
-  { id: 'KNIGHT_1', t: 'n', tName: 'Mã', cost: 2, name: 'Đạp Vân Tiêu', type: 'Một lượt', badge: '🦘', desc: 'Khinh công tuyệt kỹ: Mã nhảy qua ô cản chân (bỏ qua hoàn toàn quy tắc cản chân Mã).' },
-  { id: 'KNIGHT_2', t: 'n', tName: 'Mã', cost: 3, name: 'Tuyệt Mệnh Cổ', type: 'Nội tại ẩn', badge: '💣', desc: 'Gán mìn độc ẩn vào Mã. Khi quân địch ăn Mã này, cả hai quân đều phát nổ tử trận!' },
-  { id: 'ELEPHANT_1', t: 'b', tName: 'Tượng', cost: 1, name: 'Minh Kính Thuật', type: 'Một lượt', badge: '👁️', desc: 'Tượng bay chéo mà không bị cản mắt Tượng trong 1 nước.' },
-  { id: 'ELEPHANT_2', t: 'b', tName: 'Tượng', cost: 2, name: 'Ngự Ba Viễn Chinh', type: 'Nội tại', badge: '🌊', desc: 'Nội tại gán vĩnh viễn: Tượng được phép bay chéo qua sông sang trận địa đối phương.' },
+  { id: 'ROOK_1', t: 'r', tName: 'Xe', cost: 3, name: 'Thiểm Điện Trảm', type: 'Một lượt', duration: '1 lượt đi (Ngay sau khi ăn quân)', badge: '⚡', desc: 'Sau khi ăn quân địch, Xe được phép tiến thẳng thêm 1-2 ô cùng hướng ngay trong lượt đó.' },
+  { id: 'ROOK_2', t: 'r', tName: 'Xe', cost: 3, name: 'Phá Lãng Bộ', type: 'Một lượt', duration: '1 lượt đi (Bẻ góc ngay sau khi di chuyển)', badge: '↪', desc: 'Sau khi đi 1 nước, Xe được bẻ vuông góc 90° đi thêm 1-3 ô (không được ăn quân ở nước bẻ).' },
+  { id: 'CANNON_1', t: 'c', tName: 'Pháo', cost: 2, name: 'Xuyên Vân Tiễn', type: 'Một lượt', duration: '1 lượt đi (Trong lượt bắn)', badge: '🎯', desc: 'Pháo được phép bắn ăn quân qua 2 ngòi (cấm ăn Tướng nếu qua 2 ngòi).' },
+  { id: 'CANNON_2', t: 'c', tName: 'Pháo', cost: 3, name: 'Bích Lịch Hỏa', type: 'Một lượt', duration: 'Choáng 1 lượt (Hồi phục sau 1 lượt)', badge: '💥', desc: 'Bắn ăn quân gây nổ chấn động: 4 ô kề xung quanh ô đích và chính Pháo bị choáng 💫 1 lượt.' },
+  { id: 'KNIGHT_1', t: 'n', tName: 'Mã', cost: 2, name: 'Đạp Vân Tiêu', type: 'Một lượt', duration: '1 lượt đi (Trong lượt nhảy)', badge: '🦘', desc: 'Khinh công tuyệt kỹ: Mã nhảy qua ô cản chân (bỏ qua hoàn toàn quy tắc cản chân Mã).' },
+  { id: 'KNIGHT_2', t: 'n', tName: 'Mã', cost: 3, name: 'Tuyệt Mệnh Cổ', type: 'Nội tại ẩn', duration: 'Vĩnh viễn (Kích nổ khi bị đối phương ăn)', badge: '💣', desc: 'Gán mìn độc ẩn vào Mã. Khi quân địch ăn Mã này, cả hai quân đều phát nổ tử trận!' },
+  { id: 'ELEPHANT_1', t: 'b', tName: 'Tượng', cost: 1, name: 'Minh Kính Thuật', type: 'Một lượt', duration: '1 lượt đi (Trong lượt đi)', badge: '👁️', desc: 'Tượng bay chéo mà không bị cản mắt Tượng trong 1 nước.' },
+  { id: 'ELEPHANT_2', t: 'b', tName: 'Tượng', cost: 2, name: 'Ngự Ba Viễn Chinh', type: 'Nội tại', duration: 'Vĩnh viễn (Suốt phần còn lại của ván đấu)', badge: '🌊', desc: 'Nội tại gán vĩnh viễn: Tượng được phép bay chéo qua sông sang trận địa đối phương.' },
 
   // HÀNG 2: 3 QUÂN (SĨ, TỐT, TƯỚNG) - SĨ 2, TỐT 2, TƯỚNG 4 (CHIA 2 CỘT X 2 THẺ)
-  { id: 'ADVISOR_1', t: 'a', tName: 'Sĩ', cost: 2, name: 'Xuất Trần Hộ Pháp', type: 'Nội tại', badge: '🏯', desc: 'Nội tại gán vĩnh viễn: Sĩ được xuất khỏi Cung, tự do qua sông tấn công.' },
-  { id: 'ADVISOR_2', t: 'a', tName: 'Sĩ', cost: 3, name: 'Song Long Xuất Hải', type: 'Một lượt', badge: '🐉', desc: 'Sĩ được đi tiếp nước thứ hai ngay trong cùng một lượt.' },
-  { id: 'PAWN_1', t: 'p', tName: 'Tốt', cost: 2, name: 'Tật Phong Binh', type: 'Một lượt', badge: '⏩', desc: 'Tốt được phép đi tiếp nước thứ hai trong cùng một lượt.' },
-  { id: 'PAWN_2', t: 'p', tName: 'Tốt', cost: 2, name: 'Hồi Phong Binh', type: 'Nội tại', badge: '↩', desc: 'Nội tại gán vĩnh viễn: Tốt được phép đi lùi và ăn quân lùi 1 ô phía sau.' },
-  { id: 'KING_1', t: 'k', tName: 'Tướng', cost: 3, name: 'Thân Chinh Xuất Giá', type: 'Nội tại', badge: '👑', desc: 'Nội tại gán vĩnh viễn: Tướng được ra khỏi Cung 1 ô (vẫn tuân thủ cấm lộ mặt Tướng).' },
-  { id: 'KING_2', t: 'k', tName: 'Tướng', cost: 2, name: 'Cấp Cứu Cần Vương', type: 'Tức thì', badge: '🆘', desc: 'Triệu hồi ngay 1 quân Sĩ về ô trống bên cạnh Tướng để hộ giá (hết lượt).' },
-  { id: 'KING_3', t: 'k', tName: 'Tướng', cost: 3, name: 'Kim Cang Bất Hoại', type: '3 lượt', badge: '🛡️', desc: 'Kích hoạt giáp kim cang: Miễn nhiễm chiếu thẳng từ 1 hướng trong 3 lượt.' },
-  { id: 'KING_4', t: 'k', tName: 'Tướng', cost: 4, name: 'Càn Khôn Di Vị', type: 'Tức thì', badge: '🔄', desc: 'Hoán đổi vị trí ngay lập tức giữa Tướng và 1 quân nhà trong Cung (hết lượt).' }
+  { id: 'ADVISOR_1', t: 'a', tName: 'Sĩ', cost: 2, name: 'Xuất Trần Hộ Pháp', type: 'Nội tại', duration: 'Vĩnh viễn (Suốt phần còn lại của ván đấu)', badge: '🏯', desc: 'Nội tại gán vĩnh viễn: Sĩ được xuất khỏi Cung, tự do qua sông tấn công.' },
+  { id: 'ADVISOR_2', t: 'a', tName: 'Sĩ', cost: 3, name: 'Song Long Xuất Hải', type: 'Một lượt', duration: '1 lượt đi (Đi tiếp nước thứ 2 trong lượt)', badge: '🐉', desc: 'Sĩ được đi tiếp nước thứ hai ngay trong cùng một lượt.' },
+  { id: 'PAWN_1', t: 'p', tName: 'Tốt', cost: 2, name: 'Tật Phong Binh', type: 'Một lượt', duration: '1 lượt đi (Đi tiếp nước thứ 2 trong lượt)', badge: '⏩', desc: 'Tốt được phép đi tiếp nước thứ hai trong cùng một lượt.' },
+  { id: 'PAWN_2', t: 'p', tName: 'Tốt', cost: 2, name: 'Hồi Phong Binh', type: 'Nội tại', duration: 'Vĩnh viễn (Suốt phần còn lại của ván đấu)', badge: '↩', desc: 'Nội tại gán vĩnh viễn: Tốt được phép đi lùi và ăn quân lùi 1 ô phía sau.' },
+  { id: 'KING_1', t: 'k', tName: 'Tướng', cost: 3, name: 'Thân Chinh Xuất Giá', type: 'Nội tại', duration: 'Vĩnh viễn (Suốt phần còn lại của ván đấu)', badge: '👑', desc: 'Nội tại gán vĩnh viễn: Tướng được ra khỏi Cung 1 ô (vẫn tuân thủ cấm lộ mặt Tướng).' },
+  { id: 'KING_2', t: 'k', tName: 'Tướng', cost: 2, name: 'Cấp Cứu Cần Vương', type: 'Tức thì', duration: 'Tức thì (Triệu hồi xong hết lượt)', badge: '🆘', desc: 'Triệu hồi ngay 1 quân Sĩ về ô trống bên cạnh Tướng để hộ giá (hết lượt).' },
+  { id: 'KING_3', t: 'k', tName: 'Tướng', cost: 3, name: 'Kim Cang Bất Hoại', type: '3 lượt', duration: '3 lượt đi của chủ quân', badge: '🛡️', desc: 'Kích hoạt giáp kim cang: Miễn nhiễm chiếu thẳng từ 1 hướng trong 3 lượt.' },
+  { id: 'KING_4', t: 'k', tName: 'Tướng', cost: 4, name: 'Càn Khôn Di Vị', type: 'Tức thì', duration: 'Tức thì (Đổi vị trí xong hết lượt)', badge: '🔄', desc: 'Hoán đổi vị trí ngay lập tức giữa Tướng và 1 quân nhà trong Cung (hết lượt).' }
 ];
 
 let selectedCard = CARDS_DATA.find(c => c.id === 'PAWN_2') || CARDS_DATA[0];
 let animTimer = null;
+let modeAnimTimer = null;
 
-/* RENDER BẢNG BÍ PHÁP THU GỌN: HÀNG 1 (4 LOẠI x 2), HÀNG 2 (SĨ 2, TỐT 2, TƯỚNG 2 CỘT x 2) */
+const CS = 32, OX = 20, OY = 20;
+
+/* VẼ LƯỚI BÀN CỜ CƠ BẢN LÊN MỌI CANVAS */
+function drawBoardBase(cCtx){
+  if(!cCtx) return;
+  cCtx.fillStyle = '#c8985c';
+  cCtx.fillRect(0,0,320,352);
+  cCtx.strokeStyle = '#54361c';
+  cCtx.lineWidth = 1.5;
+  cCtx.beginPath();
+  for(let r=0; r<10; r++){ cCtx.moveTo(OX, OY+r*CS); cCtx.lineTo(OX+8*CS, OY+r*CS); }
+  for(let c=0; c<9; c++){
+    if(c===0||c===8){ cCtx.moveTo(OX+c*CS, OY); cCtx.lineTo(OX+c*CS, OY+9*CS); }
+    else { cCtx.moveTo(OX+c*CS, OY); cCtx.lineTo(OX+c*CS, OY+4*CS); cCtx.moveTo(OX+c*CS, OY+5*CS); cCtx.lineTo(OX+c*CS, OY+9*CS); }
+  }
+  // Cung Tướng
+  [[3,0,5,2],[5,0,3,2],[3,7,5,9],[5,7,3,9]].forEach(([a,b,c,d])=>{ cCtx.moveTo(OX+a*CS, OY+b*CS); cCtx.lineTo(OX+c*CS, OY+d*CS); });
+  cCtx.stroke();
+  cCtx.font = '12px "Noto Serif TC", serif';
+  cCtx.fillStyle = '#6b431e';
+  cCtx.textAlign = 'center';
+  cCtx.fillText('SỞ HÀ', OX+2*CS, OY+4.5*CS);
+  cCtx.fillText('HÁN GIỚI', OX+6*CS, OY+4.5*CS);
+}
+
+/* VẼ QUÂN CỜ LÊN CANVAS BẤT KỲ */
+function drawPieceCustom(cCtx, col, txt, r, c, badge, isDarkPiece, darkCol){
+  if(!cCtx) return;
+  const X = OX + c*CS, Y = OY + r*CS;
+  cCtx.beginPath(); cCtx.arc(X, Y, 13, 0, 7);
+  
+  if(isDarkPiece){
+    // Quân úp
+    cCtx.fillStyle = darkCol || (col==='r' ? 'rgba(255, 182, 193, 0.45)' : 'rgba(160, 160, 160, 0.45)');
+    cCtx.fill();
+    cCtx.lineWidth = 1.5; 
+    cCtx.strokeStyle = col==='r' ? '#e57373' : '#78909c'; 
+    cCtx.stroke();
+    cCtx.font = 'bold 12px "Noto Serif TC", serif';
+    cCtx.textAlign = 'center'; cCtx.textBaseline = 'middle';
+    cCtx.fillStyle = col==='r' ? '#c2185b' : '#37474f';
+    cCtx.fillText(txt, X, Y);
+  } else {
+    // Quân ngửa
+    cCtx.fillStyle = col==='r' ? '#f1dcb8' : '#444';
+    cCtx.fill();
+    cCtx.lineWidth = 1.5; 
+    cCtx.strokeStyle = col==='r' ? '#b71c1c' : '#111'; 
+    cCtx.stroke();
+    cCtx.font = 'bold 12px "Noto Serif TC", serif';
+    cCtx.textAlign = 'center'; cCtx.textBaseline = 'middle';
+    cCtx.fillStyle = col==='r' ? '#b71c1c' : '#fff';
+    cCtx.fillText(txt, X, Y);
+  }
+
+  if(badge){
+    cCtx.font = '11px sans-serif';
+    cCtx.fillText(badge, X+10, Y-10);
+  }
+}
+
+function drawMarkerDotCustom(cCtx, r, c, type = 'buff', label = ''){
+  if(!cCtx) return;
+  const X = OX + c*CS, Y = OY + r*CS;
+  cCtx.save();
+  if(type === 'buff'){
+    cCtx.beginPath(); cCtx.arc(X, Y, 6.5, 0, 7);
+    cCtx.fillStyle = '#f1c40f'; cCtx.shadowColor = '#f39c12'; cCtx.shadowBlur = 8; cCtx.fill();
+    cCtx.lineWidth = 1.8; cCtx.strokeStyle = '#fff'; cCtx.stroke();
+  } else if(type === 'target'){
+    cCtx.beginPath(); cCtx.arc(X, Y, 13, 0, 7);
+    cCtx.lineWidth = 2.5; cCtx.strokeStyle = '#e74c3c'; cCtx.shadowColor = '#c0392b'; cCtx.shadowBlur = 6; cCtx.stroke();
+  } else {
+    cCtx.beginPath(); cCtx.arc(X, Y, 5, 0, 7);
+    cCtx.fillStyle = 'rgba(39, 174, 96, 0.85)'; cCtx.fill();
+  }
+  if(label){
+    cCtx.font = 'bold 9px sans-serif'; cCtx.fillStyle = '#fff'; cCtx.textAlign = 'center'; cCtx.textBaseline = 'middle';
+    cCtx.fillText(label, X, Y - 11);
+  }
+  cCtx.restore();
+}
+
+/* ========================================================
+   HOẠT HỌA DEMO CHO 4 CHẾ ĐỘ THI ĐẤU
+======================================================== */
+
+// 1. CỜ TRUYỀN THỐNG: Thế cờ Thuận Pháo Khởi Cuộc
+function startTraditionalAnimation(){
+  const cvTrad = document.getElementById('cv-traditional');
+  if(!cvTrad) return;
+  const tCtx = cvTrad.getContext('2d');
+  let step = 0;
+  if(modeAnimTimer) clearInterval(modeAnimTimer);
+  modeAnimTimer = setInterval(()=>{
+    drawBoardBase(tCtx);
+    // Bố trí quân ban đầu cơ bản
+    drawPieceCustom(tCtx, 'b', '車', 0, 0); drawPieceCustom(tCtx, 'b', '馬', 0, 1); drawPieceCustom(tCtx, 'b', '象', 0, 2); drawPieceCustom(tCtx, 'b', '士', 0, 3);
+    drawPieceCustom(tCtx, 'b', '將', 0, 4); drawPieceCustom(tCtx, 'b', '士', 0, 5); drawPieceCustom(tCtx, 'b', '象', 0, 6); drawPieceCustom(tCtx, 'b', '馬', 0, 7); drawPieceCustom(tCtx, 'b', '車', 0, 8);
+    drawPieceCustom(tCtx, 'b', '卒', 3, 0); drawPieceCustom(tCtx, 'b', '卒', 3, 2); drawPieceCustom(tCtx, 'b', '卒', 3, 4); drawPieceCustom(tCtx, 'b', '卒', 3, 6); drawPieceCustom(tCtx, 'b', '卒', 3, 8);
+    drawPieceCustom(tCtx, 'b', '砲', 2, 1); drawPieceCustom(tCtx, 'b', '砲', 2, 7);
+
+    drawPieceCustom(tCtx, 'r', '俥', 9, 0); drawPieceCustom(tCtx, 'r', '傌', 9, 1); drawPieceCustom(tCtx, 'r', '相', 9, 2); drawPieceCustom(tCtx, 'r', '仕', 9, 3);
+    drawPieceCustom(tCtx, 'r', '帥', 9, 4); drawPieceCustom(tCtx, 'r', '仕', 9, 5); drawPieceCustom(tCtx, 'r', '相', 9, 6); drawPieceCustom(tCtx, 'r', '傌', 9, 7); drawPieceCustom(tCtx, 'r', '俥', 9, 8);
+    drawPieceCustom(tCtx, 'r', '兵', 6, 0); drawPieceCustom(tCtx, 'r', '兵', 6, 2); drawPieceCustom(tCtx, 'r', '兵', 6, 4); drawPieceCustom(tCtx, 'r', '兵', 6, 6); drawPieceCustom(tCtx, 'r', '兵', 6, 8);
+    drawPieceCustom(tCtx, 'r', '炮', 7, 1);
+
+    // Nước cờ hoạt họa: Pháo đỏ (7,7) vào trung lộ (7,4), sau đó Mã đen (0,1) nhảy lên (2,2)
+    let pCol = 7;
+    if(step > 6 && step <= 15) pCol = 7 - (step-6)*0.33;
+    else if(step > 15) pCol = 4;
+    drawPieceCustom(tCtx, 'r', '炮', 7, pCol);
+    drawMarkerDotCustom(tCtx, 7, 4, 'buff', 'Pháo 2 bình 5');
+
+    let mR = 0, mC = 1;
+    if(step > 18){
+      mR = 0 + (step-18)*0.2; mC = 1 + (step-18)*0.1;
+      drawMarkerDotCustom(tCtx, 2, 2, 'buff', 'Mã 8 tiến 7');
+    }
+    drawPieceCustom(tCtx, 'b', '馬', Math.min(2, mR), Math.min(2, mC));
+
+    step = (step + 1) % 30;
+  }, 100);
+}
+
+// 2. CỜ ÚP TRUYỀN THỐNG: Úp Đỏ hồng mờ, Úp Đen xám mờ. Ô Pháo đỏ bình 5 lật ra Tốt đỏ
+function startCoUpAnimation(){
+  const cvUp = document.getElementById('cv-co-up');
+  if(!cvUp) return;
+  const uCtx = cvUp.getContext('2d');
+  let step = 0;
+  if(modeAnimTimer) clearInterval(modeAnimTimer);
+  modeAnimTimer = setInterval(()=>{
+    drawBoardBase(uCtx);
+    // Tướng ngửa
+    drawPieceCustom(uCtx, 'b', '將', 0, 4);
+    drawPieceCustom(uCtx, 'r', '帥', 9, 4);
+
+    // Quân úp đen (xám mờ)
+    for(let c=0; c<9; c++) if(c!==4) drawPieceCustom(uCtx, 'b', '暗', 0, c, null, true, 'rgba(160, 160, 160, 0.45)');
+    drawPieceCustom(uCtx, 'b', '暗', 2, 1, null, true, 'rgba(160, 160, 160, 0.45)');
+    drawPieceCustom(uCtx, 'b', '暗', 2, 7, null, true, 'rgba(160, 160, 160, 0.45)');
+    for(let c=0; c<9; c+=2) drawPieceCustom(uCtx, 'b', '暗', 3, c, null, true, 'rgba(160, 160, 160, 0.45)');
+
+    // Quân úp đỏ (hồng mờ)
+    for(let c=0; c<9; c++) if(c!==4) drawPieceCustom(uCtx, 'r', '暗', 9, c, null, true, 'rgba(255, 182, 193, 0.45)');
+    drawPieceCustom(uCtx, 'r', '暗', 7, 7, null, true, 'rgba(255, 182, 193, 0.45)');
+    for(let c=0; c<9; c+=2) drawPieceCustom(uCtx, 'r', '暗', 6, c, null, true, 'rgba(255, 182, 193, 0.45)');
+
+    // Quân ô Pháo đỏ (7, 1) bình vào (7, 4) và lật
+    let col = 1, isFlipped = false;
+    if(step > 6 && step <= 16) col = 1 + (step-6)*0.3;
+    else if(step > 16) { col = 4; isFlipped = true; }
+
+    drawMarkerDotCustom(uCtx, 7, 4, 'buff', 'Đi như Pháo');
+    if(!isFlipped){
+      drawPieceCustom(uCtx, 'r', '暗', 7, col, null, true, 'rgba(255, 182, 193, 0.45)');
+    } else {
+      // Lật ngửa ra Tốt đỏ!
+      drawPieceCustom(uCtx, 'r', '兵', 7, 4);
+      uCtx.font = 'bold 13px sans-serif'; uCtx.fillStyle = '#f1c40f'; uCtx.fillText('✨ LẬT RA: TỐT ĐỎ!', OX+4*CS, OY+6*CS);
+    }
+
+    step = (step + 1) % 30;
+  }, 100);
+}
+
+// 3. CỜ ÚP GIÁN ĐIỆP: Tất cả quân úp chung 1 màu xám mờ. Ô Pháo đỏ bình 5 lật ra Xe Đen (Gián điệp)
+function startSpyAnimation(){
+  const cvSpy = document.getElementById('cv-spy');
+  if(!cvSpy) return;
+  const sCtx = cvSpy.getContext('2d');
+  let step = 0;
+  if(modeAnimTimer) clearInterval(modeAnimTimer);
+  modeAnimTimer = setInterval(()=>{
+    drawBoardBase(sCtx);
+    // Tướng ngửa
+    drawPieceCustom(sCtx, 'b', '將', 0, 4);
+    drawPieceCustom(sCtx, 'r', '帥', 9, 4);
+
+    // Toàn bộ quân úp hai bên dùng CHUNG 1 màu xám mờ trung tính
+    const neutralGray = 'rgba(140, 140, 140, 0.5)';
+    for(let c=0; c<9; c++) if(c!==4) drawPieceCustom(sCtx, 'b', '暗', 0, c, null, true, neutralGray);
+    drawPieceCustom(sCtx, 'b', '暗', 2, 1, null, true, neutralGray);
+    drawPieceCustom(sCtx, 'b', '暗', 2, 7, null, true, neutralGray);
+    for(let c=0; c<9; c+=2) drawPieceCustom(sCtx, 'b', '暗', 3, c, null, true, neutralGray);
+
+    for(let c=0; c<9; c++) if(c!==4) drawPieceCustom(sCtx, 'r', '暗', 9, c, null, true, neutralGray);
+    drawPieceCustom(sCtx, 'r', '暗', 7, 7, null, true, neutralGray);
+    for(let c=0; c<9; c+=2) drawPieceCustom(sCtx, 'r', '暗', 6, c, null, true, neutralGray);
+
+    // Quân ô Pháo đỏ (7, 1) bình vào (7, 4) và lật ra XE ĐEN
+    let col = 1, isFlipped = false;
+    if(step > 6 && step <= 16) col = 1 + (step-6)*0.3;
+    else if(step > 16) { col = 4; isFlipped = true; }
+
+    drawMarkerDotCustom(sCtx, 7, 4, 'buff', 'Đi như Pháo');
+    if(!isFlipped){
+      drawPieceCustom(sCtx, 'r', '暗', 7, col, null, true, neutralGray);
+    } else {
+      // Lật ngửa ra XE ĐEN (Gián điệp)!
+      drawPieceCustom(sCtx, 'b', '車', 7, 4, '🕵️');
+      sCtx.font = 'bold 13px sans-serif'; sCtx.fillStyle = '#ff5252'; 
+      sCtx.fillText('🚨 GIÁN ĐIỆP: XE ĐEN ĐỔI PHE!', OX+4*CS, OY+6*CS);
+    }
+
+    step = (step + 1) % 30;
+  }, 100);
+}
+
+// 4. CỜ BÍ PHÁP (KỲ BIẾN): Ván cờ chiến trường, icon ẩn ký, Túi Kỳ Mưu rơi trên sông
+function startKyBienAnimation(){
+  const cvKB = document.getElementById('cv-kybien');
+  if(!cvKB) return;
+  const kCtx = cvKB.getContext('2d');
+  let step = 0;
+  if(modeAnimTimer) clearInterval(modeAnimTimer);
+  modeAnimTimer = setInterval(()=>{
+    drawBoardBase(kCtx);
+    // Ván cờ đang diễn ra sống động
+    drawPieceCustom(kCtx, 'b', '將', 0, 4);
+    drawPieceCustom(kCtx, 'b', '車', 1, 0);
+    drawPieceCustom(kCtx, 'b', '馬', 2, 6, '💫'); // Quân bị choáng
+    drawPieceCustom(kCtx, 'b', '卒', 4, 6);
+
+    drawPieceCustom(kCtx, 'r', '帥', 9, 4);
+    drawPieceCustom(kCtx, 'r', '兵', 4, 4, '↩'); // Tốt Hồi Phong
+    drawPieceCustom(kCtx, 'r', '仕', 7, 3, '🏯'); // Sĩ Xuất Trần
+    drawPieceCustom(kCtx, 'r', '相', 3, 2, '🌊'); // Tượng Ngự Ba qua sông
+    drawPieceCustom(kCtx, 'r', '傌', 5, 1, '💣'); // Mã Tuyệt Mệnh Cổ
+
+    // Túi Kỳ Mưu rơi lơ lửng trên sông (r=4, c=2)
+    const bagPulse = Math.sin(step*0.3)*3;
+    const bx = OX + 2*CS, by = OY + 4.5*CS + bagPulse;
+    kCtx.save();
+    kCtx.beginPath(); kCtx.arc(bx, by, 16, 0, 7);
+    kCtx.fillStyle = 'rgba(241, 196, 15, 0.25)'; kCtx.fill();
+    kCtx.strokeStyle = '#f1c40f'; kCtx.lineWidth = 2; kCtx.stroke();
+    kCtx.font = '16px sans-serif'; kCtx.textAlign = 'center'; kCtx.textBaseline = 'middle';
+    kCtx.fillText('🎒', bx, by);
+    kCtx.font = '10px sans-serif'; kCtx.fillStyle = '#fff';
+    kCtx.fillText('✨ Túi Mưu', bx, by - 14);
+    kCtx.restore();
+
+    step = (step + 1) % 30;
+  }, 100);
+}
+
+/* ========================================================
+   BẢNG 16 BÍ PHÁP & DEMO CHI TIẾT
+======================================================== */
+
 function renderCardsGrid(){
   const container = document.getElementById('cards-grid');
   if(!container) return;
@@ -605,7 +917,6 @@ function renderCardsGrid(){
   container.innerHTML = `<div class="cards-grid-compact">${row1Html}${row2Html}</div>`;
 }
 
-/* XỬ LÝ KHI CLICK CHỌN 1 BÍ PHÁP */
 window.selectCard = function(cardId){
   const found = CARDS_DATA.find(c => c.id === cardId);
   if(!found) return;
@@ -615,253 +926,168 @@ window.selectCard = function(cardId){
   startDemoAnimation();
 };
 
-/* CẬP NHẬT CHI TIẾT BÊN TRÁI */
 function updateDetailView(){
   document.getElementById('det-name').innerText = selectedCard.name + ' ' + selectedCard.badge;
   document.getElementById('det-piece').innerText = selectedCard.tName;
   document.getElementById('det-cost').innerText = selectedCard.cost + ' Công trạng';
   document.getElementById('det-type').innerText = selectedCard.type;
+  document.getElementById('det-dur').innerText = selectedCard.duration;
   document.getElementById('det-badge').innerText = selectedCard.badge;
   document.getElementById('det-desc').innerText = selectedCard.desc;
 }
 
-/* ---------- BÀN CỜ DEMO CANVAS (CỘT PHẢI) ---------- */
 const cv = document.getElementById('demo-canvas');
 const ctx = cv ? cv.getContext('2d') : null;
-const CS = 32, OX = 20, OY = 20;
-
-function drawBoardGrid(){
-  if(!ctx) return;
-  ctx.fillStyle = '#c8985c';
-  ctx.fillRect(0,0,320,352);
-  ctx.strokeStyle = '#54361c';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  for(let r=0; r<10; r++){ ctx.moveTo(OX, OY+r*CS); ctx.lineTo(OX+8*CS, OY+r*CS); }
-  for(let c=0; c<9; c++){
-    if(c===0||c===8){ ctx.moveTo(OX+c*CS, OY); ctx.lineTo(OX+c*CS, OY+9*CS); }
-    else { ctx.moveTo(OX+c*CS, OY); ctx.lineTo(OX+c*CS, OY+4*CS); ctx.moveTo(OX+c*CS, OY+5*CS); ctx.lineTo(OX+c*CS, OY+9*CS); }
-  }
-  // Cung Tướng
-  [[3,0,5,2],[5,0,3,2],[3,7,5,9],[5,7,3,9]].forEach(([a,b,c,d])=>{ ctx.moveTo(OX+a*CS, OY+b*CS); ctx.lineTo(OX+c*CS, OY+d*CS); });
-  ctx.stroke();
-  ctx.font = '12px "Noto Serif TC", serif';
-  ctx.fillStyle = '#6b431e';
-  ctx.textAlign = 'center';
-  ctx.fillText('SỞ HÀ', OX+2*CS, OY+4.5*CS);
-  ctx.fillText('HÁN GIỚI', OX+6*CS, OY+4.5*CS);
-}
-
-function drawPiece(col, txt, r, c, badge){
-  if(!ctx) return;
-  const X = OX + c*CS, Y = OY + r*CS;
-  ctx.beginPath(); ctx.arc(X, Y, 13, 0, 7);
-  ctx.fillStyle = col==='r'?'#f1dcb8':'#444';
-  ctx.fill();
-  ctx.lineWidth = 1.5; ctx.strokeStyle = col==='r'?'#b71c1c':'#111'; ctx.stroke();
-  ctx.font = 'bold 12px "Noto Serif TC", serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = col==='r'?'#b71c1c':'#fff';
-  ctx.fillText(txt, X, Y);
-  if(badge){
-    ctx.font = '11px sans-serif';
-    ctx.fillText(badge, X+10, Y-10);
-  }
-}
-
-function drawMarkerDot(r, c, type = 'buff', label = ''){
-  if(!ctx) return;
-  const X = OX + c*CS, Y = OY + r*CS;
-  ctx.save();
-  if(type === 'buff'){
-    ctx.beginPath();
-    ctx.arc(X, Y, 6.5, 0, 7);
-    ctx.fillStyle = '#f1c40f';
-    ctx.shadowColor = '#f39c12';
-    ctx.shadowBlur = 8;
-    ctx.fill();
-    ctx.lineWidth = 1.8;
-    ctx.strokeStyle = '#fff';
-    ctx.stroke();
-  } else if(type === 'target'){
-    ctx.beginPath();
-    ctx.arc(X, Y, 13, 0, 7);
-    ctx.lineWidth = 2.5;
-    ctx.strokeStyle = '#e74c3c';
-    ctx.shadowColor = '#c0392b';
-    ctx.shadowBlur = 6;
-    ctx.stroke();
-  } else {
-    ctx.beginPath();
-    ctx.arc(X, Y, 5, 0, 7);
-    ctx.fillStyle = 'rgba(39, 174, 96, 0.85)';
-    ctx.fill();
-  }
-  if(label){
-    ctx.font = 'bold 9px sans-serif';
-    ctx.fillStyle = '#fff';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(label, X, Y - 11);
-  }
-  ctx.restore();
-}
 
 function drawBuffAura(r, c, col = '#f1c40f'){
   if(!ctx) return;
   const X = OX + c*CS, Y = OY + r*CS;
   ctx.save();
-  ctx.beginPath();
-  ctx.arc(X, Y, 16, 0, 7);
-  ctx.lineWidth = 2.2;
-  ctx.strokeStyle = col;
-  ctx.shadowColor = col;
-  ctx.shadowBlur = 8;
-  ctx.setLineDash([4, 3]);
-  ctx.stroke();
+  ctx.beginPath(); ctx.arc(X, Y, 16, 0, 7);
+  ctx.lineWidth = 2.2; ctx.strokeStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 8;
+  ctx.setLineDash([4, 3]); ctx.stroke();
   ctx.restore();
 }
 
-/* BẮT ĐẦU HOẠT HỌA DEMO CHO TỪNG BÍ PHÁP */
 function startDemoAnimation(){
   if(animTimer) clearInterval(animTimer);
   let step = 0;
   
   function frame(){
-    drawBoardGrid();
+    drawBoardBase(ctx);
     const id = selectedCard.id;
     
     if(id === 'PAWN_2'){ // Hồi Phong Binh (Tốt đi lùi)
       drawBuffAura(4, 4);
-      drawMarkerDot(3, 4, 'normal');
-      drawMarkerDot(4, 3, 'normal');
-      drawMarkerDot(4, 5, 'normal');
-      drawMarkerDot(5, 4, 'buff', 'Lùi'); // Điểm buff bí pháp lùi
+      drawMarkerDotCustom(ctx, 3, 4, 'normal');
+      drawMarkerDotCustom(ctx, 4, 3, 'normal');
+      drawMarkerDotCustom(ctx, 4, 5, 'normal');
+      drawMarkerDotCustom(ctx, 5, 4, 'buff', 'Lùi');
       const r = step > 14 ? 4 + (step-14)*0.1 : 4;
-      drawPiece('r', '兵', Math.min(5, r), 4, '↩');
-      drawPiece('b', '卒', 2, 4);
+      drawPieceCustom(ctx, 'r', '兵', Math.min(5, r), 4, '↩');
+      drawPieceCustom(ctx, 'b', '卒', 2, 4);
     } 
     else if(id === 'PAWN_1'){ // Tật Phong Binh (Tốt đi 2 nước liên tiếp)
       drawBuffAura(4, 4);
-      drawMarkerDot(3, 4, 'normal', '1');
-      drawMarkerDot(2, 4, 'buff', 'Bước 2'); // Điểm buff bước 2
+      drawMarkerDotCustom(ctx, 3, 4, 'normal', '1');
+      drawMarkerDotCustom(ctx, 2, 4, 'buff', 'Bước 2');
       const r = step > 15 ? 4 - 1 - (step-15)*0.08 : (step > 6 ? 4 - (step-6)*0.1 : 4);
-      drawPiece('r', '兵', Math.max(2, r), 4, '⏩');
+      drawPieceCustom(ctx, 'r', '兵', Math.max(2, r), 4, '⏩');
     }
     else if(id === 'ROOK_1'){ // Thiểm Điện Trảm (Xe ăn xong tiến tiếp 1-2 ô)
       drawBuffAura(6, 4);
-      drawMarkerDot(3, 4, 'target', 'Ăn');
-      drawMarkerDot(2, 4, 'buff', '+1 ô');
-      drawMarkerDot(1, 4, 'buff', '+2 ô');
-      if(step < 10) { drawPiece('r', '俥', 6 - step*0.3, 4, '⚡'); drawPiece('b', '卒', 3, 4); }
-      else { drawPiece('r', '俥', Math.max(1, 3 - (step-10)*0.15), 4, '⚡'); }
+      drawMarkerDotCustom(ctx, 3, 4, 'target', 'Ăn');
+      drawMarkerDotCustom(ctx, 2, 4, 'buff', '+1 ô');
+      drawMarkerDotCustom(ctx, 1, 4, 'buff', '+2 ô');
+      if(step < 10) { drawPieceCustom(ctx, 'r', '俥', 6 - step*0.3, 4, '⚡'); drawPieceCustom(ctx, 'b', '卒', 3, 4); }
+      else { drawPieceCustom(ctx, 'r', '俥', Math.max(1, 3 - (step-10)*0.15), 4, '⚡'); }
     }
     else if(id === 'ROOK_2'){ // Phá Lãng Bộ (Xe bẻ góc 90 độ)
       drawBuffAura(7, 4);
-      drawMarkerDot(4, 4, 'normal');
-      drawMarkerDot(4, 5, 'buff', 'Bẻ +1');
-      drawMarkerDot(4, 6, 'buff', '+2');
-      drawMarkerDot(4, 7, 'buff', '+3');
+      drawMarkerDotCustom(ctx, 4, 4, 'normal');
+      drawMarkerDotCustom(ctx, 4, 5, 'buff', 'Bẻ +1');
+      drawMarkerDotCustom(ctx, 4, 6, 'buff', '+2');
+      drawMarkerDotCustom(ctx, 4, 7, 'buff', '+3');
       let r = 7, c = 4;
       if(step < 12) r = Math.max(4, 7 - step*0.25);
       else { r = 4; c = Math.min(7, 4 + (step-12)*0.25); }
-      drawPiece('r', '俥', r, c, '↪');
+      drawPieceCustom(ctx, 'r', '俥', r, c, '↪');
     }
-    else if(id === 'CANNON_1'){ // Xuyên Vân Tiễn (Bắn qua 2 ngòi)
+    else if(id === 'CANNON_1'){ // Xuyên Vân Tiễn (Bắn qua 2 ngòi - Icon ống ngắm 🎯)
       drawBuffAura(7, 4);
-      drawPiece('r', '炮', 7, 4, '🌊');
-      drawPiece('b', '卒', 5, 4); // ngòi 1
-      drawPiece('r', '仕', 3, 4); // ngòi 2
-      drawMarkerDot(1, 4, 'target', 'Ngòi 2'); // Điểm bắn xuyên 2 ngòi
-      if(step < 15) drawPiece('b', '馬', 1, 4);
+      drawPieceCustom(ctx, 'r', '炮', 7, 4, '🎯');
+      drawPieceCustom(ctx, 'b', '卒', 5, 4); // ngòi 1
+      drawPieceCustom(ctx, 'r', '仕', 3, 4); // ngòi 2
+      drawMarkerDotCustom(ctx, 1, 4, 'target', '🎯 Ngòi 2');
+      if(step < 15) drawPieceCustom(ctx, 'b', '馬', 1, 4);
       else { ctx.font = '16px sans-serif'; ctx.fillText('💥', OX+4*CS, OY+1*CS); }
     }
     else if(id === 'CANNON_2'){ // Bích Lịch Hỏa (Bắn nổ choáng 4 ô kề)
       drawBuffAura(6, 4);
-      drawPiece('r', '炮', 6, 4, '💥');
-      drawPiece('b', '卒', 4, 4); // ngòi
-      drawMarkerDot(2, 4, 'target', 'Đích');
-      drawMarkerDot(1, 4, 'buff', 'Choáng');
-      drawMarkerDot(3, 4, 'buff', 'Choáng');
-      drawMarkerDot(2, 3, 'buff', 'Choáng');
-      drawMarkerDot(2, 5, 'buff', 'Choáng');
-      if(step < 12) drawPiece('b', '馬', 2, 4);
+      drawPieceCustom(ctx, 'r', '炮', 6, 4, '💥');
+      drawPieceCustom(ctx, 'b', '卒', 4, 4);
+      drawMarkerDotCustom(ctx, 2, 4, 'target', 'Đích');
+      drawMarkerDotCustom(ctx, 1, 4, 'buff', 'Choáng');
+      drawMarkerDotCustom(ctx, 3, 4, 'buff', 'Choáng');
+      drawMarkerDotCustom(ctx, 2, 3, 'buff', 'Choáng');
+      drawMarkerDotCustom(ctx, 2, 5, 'buff', 'Choáng');
+      if(step < 12) drawPieceCustom(ctx, 'b', '馬', 2, 4);
       else {
         ctx.font = '16px sans-serif'; ctx.fillText('💥 NỔ CHOÁNG!', OX+4*CS, OY+2*CS);
-        drawPiece('b', '卒', 2, 3, '💫');
-        drawPiece('b', '卒', 2, 5, '💫');
-        drawPiece('b', '卒', 1, 4, '💫');
+        drawPieceCustom(ctx, 'b', '卒', 2, 3, '💫');
+        drawPieceCustom(ctx, 'b', '卒', 2, 5, '💫');
+        drawPieceCustom(ctx, 'b', '卒', 1, 4, '💫');
       }
     }
     else if(id === 'KNIGHT_1'){ // Đạp Vân Tiêu (Bỏ cản chân Mã)
       drawBuffAura(7, 4);
-      drawPiece('b', '卒', 6, 4); // cản chân
-      drawMarkerDot(5, 3, 'buff', 'Khinh công');
-      drawMarkerDot(5, 5, 'buff', 'Khinh công');
+      drawPieceCustom(ctx, 'b', '卒', 6, 4);
+      drawMarkerDotCustom(ctx, 5, 3, 'buff', 'Khinh công');
+      drawMarkerDotCustom(ctx, 5, 5, 'buff', 'Khinh công');
       const mr = step > 10 ? 5 : 7, mc = step > 10 ? 3 : 4;
-      drawPiece('r', '傌', mr, mc, '🦘');
+      drawPieceCustom(ctx, 'r', '傌', mr, mc, '🦘');
     }
     else if(id === 'KNIGHT_2'){ // Tuyệt Mệnh Cổ (Mã Độc nổ cả hai)
       drawBuffAura(4, 3, '#9b59b6');
-      drawMarkerDot(4, 3, 'target', 'Ăn = Chết');
+      drawMarkerDotCustom(ctx, 4, 3, 'target', 'Ăn = Chết');
       if(step < 14){
-        drawPiece('r', '傌', 4, 3, '💣');
-        drawPiece('b', '車', 7 - step*0.2, 3);
+        drawPieceCustom(ctx, 'r', '傌', 4, 3, '💣');
+        drawPieceCustom(ctx, 'b', '車', 7 - step*0.2, 3);
       } else {
         ctx.font = '18px sans-serif'; ctx.fillText('💥 BÙM! CÙNG CHẾT', OX+3*CS, OY+4*CS);
       }
     }
     else if(id === 'ELEPHANT_1'){ // Minh Kính Thuật (Bỏ cản mắt Tượng)
       drawBuffAura(7, 2);
-      drawPiece('b', '卒', 6, 3); // cản mắt
-      drawMarkerDot(5, 4, 'buff', 'Thông mắt');
+      drawPieceCustom(ctx, 'b', '卒', 6, 3);
+      drawMarkerDotCustom(ctx, 5, 4, 'buff', 'Thông mắt');
       const er = step > 10 ? 5 : 7, ec = step > 10 ? 4 : 2;
-      drawPiece('r', '相', er, ec, '👁️');
+      drawPieceCustom(ctx, 'r', '相', er, ec, '👁️');
     }
     else if(id === 'ELEPHANT_2'){ // Ngự Ba Viễn Chinh (Tượng qua sông)
       drawBuffAura(5, 2);
-      drawMarkerDot(3, 0, 'buff', 'Qua sông');
-      drawMarkerDot(3, 4, 'buff', 'Qua sông');
+      drawMarkerDotCustom(ctx, 3, 0, 'buff', 'Qua sông');
+      drawMarkerDotCustom(ctx, 3, 4, 'buff', 'Qua sông');
       const er = step > 10 ? 3 : 5, ec = step > 10 ? 4 : 2;
-      drawPiece('r', '相', er, ec, '🌊');
+      drawPieceCustom(ctx, 'r', '相', er, ec, '🌊');
     }
     else if(id === 'ADVISOR_1'){ // Xuất Trần Hộ Pháp (Sĩ ra cung)
       drawBuffAura(8, 3);
-      drawMarkerDot(7, 4, 'buff', 'Ra cung');
-      drawMarkerDot(6, 3, 'buff', 'Tiến');
-      drawMarkerDot(5, 4, 'buff', 'Qua sông');
+      drawMarkerDotCustom(ctx, 7, 4, 'buff', 'Ra cung');
+      drawMarkerDotCustom(ctx, 6, 3, 'buff', 'Tiến');
+      drawMarkerDotCustom(ctx, 5, 4, 'buff', 'Qua sông');
       const ar = step > 10 ? 6 : 8, ac = step > 10 ? 4 : 3;
-      drawPiece('r', '仕', ar, ac, '🏯');
+      drawPieceCustom(ctx, 'r', '仕', ar, ac, '🏯');
     }
     else if(id === 'ADVISOR_2'){ // Song Long Xuất Hải (Sĩ đi 2 nước)
       drawBuffAura(9, 3);
-      drawMarkerDot(8, 4, 'normal', '1');
-      drawMarkerDot(7, 3, 'buff', 'Bước 2');
-      drawMarkerDot(7, 5, 'buff', 'Bước 2');
+      drawMarkerDotCustom(ctx, 8, 4, 'normal', '1');
+      drawMarkerDotCustom(ctx, 7, 3, 'buff', 'Bước 2');
+      drawMarkerDotCustom(ctx, 7, 5, 'buff', 'Bước 2');
       let ar = 9, ac = 3;
       if(step > 15) { ar = 7; ac = 3; }
       else if(step > 8) { ar = 8; ac = 4; }
-      drawPiece('r', '仕', ar, ac, '🐉');
+      drawPieceCustom(ctx, 'r', '仕', ar, ac, '🐉');
     }
     else if(id === 'KING_1'){ // Thân Chinh Xuất Giá (Tướng ra cung 1 ô)
       drawBuffAura(7, 4);
-      drawMarkerDot(6, 4, 'buff', 'Ra cung');
+      drawMarkerDotCustom(ctx, 6, 4, 'buff', 'Ra cung');
       const kr = step > 10 ? 6 : 7;
-      drawPiece('r', '帥', kr, 4, '👑');
+      drawPieceCustom(ctx, 'r', '帥', kr, 4, '👑');
     }
     else if(id === 'KING_2'){ // Cấp Cứu Cần Vương (Triệu hồi Sĩ về cạnh Tướng)
       drawBuffAura(8, 4);
-      drawMarkerDot(8, 3, 'buff', 'Hộ giá');
-      drawMarkerDot(8, 5, 'buff', 'Hộ giá');
-      drawPiece('r', '帥', 8, 4);
+      drawMarkerDotCustom(ctx, 8, 3, 'buff', 'Hộ giá');
+      drawMarkerDotCustom(ctx, 8, 5, 'buff', 'Hộ giá');
+      drawPieceCustom(ctx, 'r', '帥', 8, 4);
       const sr = step > 10 ? 8 : 2;
-      drawPiece('r', '仕', sr, 3, '🆘');
+      drawPieceCustom(ctx, 'r', '仕', sr, 3, '🆘');
     }
     else if(id === 'KING_3'){ // Kim Cang Bất Hoại (Khiên kim cang miễn chiếu)
       drawBuffAura(8, 4);
-      drawMarkerDot(7, 4, 'buff', 'Khiên chắn');
-      drawPiece('r', '帥', 8, 4, '🛡️');
-      drawPiece('b', '車', 4, 4);
+      drawMarkerDotCustom(ctx, 7, 4, 'buff', 'Khiên chắn');
+      drawPieceCustom(ctx, 'r', '帥', 8, 4, '🛡️');
+      drawPieceCustom(ctx, 'b', '車', 4, 4);
       if(step > 10){
         ctx.strokeStyle = '#f1c40f'; ctx.lineWidth = 4;
         ctx.strokeRect(OX+4*CS-15, OY+7*CS-5, 30, 8);
@@ -871,12 +1097,12 @@ function startDemoAnimation(){
     else if(id === 'KING_4'){ // Càn Khôn Di Vị (Hoán đổi Tướng và Sĩ)
       drawBuffAura(8, 4);
       drawBuffAura(9, 3, '#3498db');
-      drawMarkerDot(8, 4, 'buff', 'Đổi vị');
-      drawMarkerDot(9, 3, 'buff', 'Đổi vị');
+      drawMarkerDotCustom(ctx, 8, 4, 'buff', 'Đổi vị');
+      drawMarkerDotCustom(ctx, 9, 3, 'buff', 'Đổi vị');
       const kr = step > 12 ? 9 : 8, kc = step > 12 ? 3 : 4;
       const sr = step > 12 ? 8 : 9, sc = step > 12 ? 4 : 3;
-      drawPiece('r', '帥', kr, kc, '🔄');
-      drawPiece('r', '仕', sr, sc);
+      drawPieceCustom(ctx, 'r', '帥', kr, kc, '🔄');
+      drawPieceCustom(ctx, 'r', '仕', sr, sc);
     }
     
     step = (step + 1) % 30;
@@ -925,7 +1151,17 @@ window.showSection = function(secId, nodeElem){
   if(target) target.classList.add('active');
   if(nodeElem) nodeElem.classList.add('active');
 
-  if(secId === 'cards-16-detail'){
+  // Khởi động hoạt họa tương ứng cho tab được chọn
+  if(secId === 'mode-traditional'){
+    startTraditionalAnimation();
+  } else if(secId === 'mode-co-up'){
+    startCoUpAnimation();
+  } else if(secId === 'mode-spy'){
+    startSpyAnimation();
+  } else if(secId === 'mode-ky-bien'){
+    startKyBienAnimation();
+  } else if(secId === 'cards-16-detail'){
+    if(modeAnimTimer) clearInterval(modeAnimTimer);
     renderCardsGrid();
     updateDetailView();
     startDemoAnimation();
