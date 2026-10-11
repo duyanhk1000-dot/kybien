@@ -498,6 +498,9 @@
             <div class="demo-canvas-box">
               <canvas id="demo-canvas" width="320" height="352"></canvas>
             </div>
+            <div style="font-size:0.75rem;color:#f1c40f;margin-top:6px;text-align:center">
+              🟡 <b>Chấm vàng:</b> Điểm nước đi do Bí Pháp mở rộng | 🔴 <b>Vòng đỏ:</b> Mục tiêu ăn quân
+            </div>
             <button class="btn-replay-demo" onclick="replayCurrentDemo()">▶ Phát Lại Demo</button>
           </div>
         </div>
@@ -666,6 +669,59 @@ function drawPiece(col, txt, r, c, badge){
   }
 }
 
+function drawMarkerDot(r, c, type = 'buff', label = ''){
+  if(!ctx) return;
+  const X = OX + c*CS, Y = OY + r*CS;
+  ctx.save();
+  if(type === 'buff'){
+    ctx.beginPath();
+    ctx.arc(X, Y, 6.5, 0, 7);
+    ctx.fillStyle = '#f1c40f';
+    ctx.shadowColor = '#f39c12';
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = '#fff';
+    ctx.stroke();
+  } else if(type === 'target'){
+    ctx.beginPath();
+    ctx.arc(X, Y, 13, 0, 7);
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = '#e74c3c';
+    ctx.shadowColor = '#c0392b';
+    ctx.shadowBlur = 6;
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.arc(X, Y, 5, 0, 7);
+    ctx.fillStyle = 'rgba(39, 174, 96, 0.85)';
+    ctx.fill();
+  }
+  if(label){
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, X, Y - 11);
+  }
+  ctx.restore();
+}
+
+function drawBuffAura(r, c, col = '#f1c40f'){
+  if(!ctx) return;
+  const X = OX + c*CS, Y = OY + r*CS;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(X, Y, 16, 0, 7);
+  ctx.lineWidth = 2.2;
+  ctx.strokeStyle = col;
+  ctx.shadowColor = col;
+  ctx.shadowBlur = 8;
+  ctx.setLineDash([4, 3]);
+  ctx.stroke();
+  ctx.restore();
+}
+
 /* BẮT ĐẦU HOẠT HỌA DEMO CHO TỪNG BÍ PHÁP */
 function startDemoAnimation(){
   if(animTimer) clearInterval(animTimer);
@@ -676,34 +732,59 @@ function startDemoAnimation(){
     const id = selectedCard.id;
     
     if(id === 'PAWN_2'){ // Hồi Phong Binh (Tốt đi lùi)
+      drawBuffAura(4, 4);
+      drawMarkerDot(3, 4, 'normal');
+      drawMarkerDot(4, 3, 'normal');
+      drawMarkerDot(4, 5, 'normal');
+      drawMarkerDot(5, 4, 'buff', 'Lùi'); // Điểm buff bí pháp lùi
       const r = step > 14 ? 4 + (step-14)*0.1 : 4;
       drawPiece('r', '兵', Math.min(5, r), 4, '↩');
       drawPiece('b', '卒', 2, 4);
     } 
     else if(id === 'PAWN_1'){ // Tật Phong Binh (Tốt đi 2 nước liên tiếp)
+      drawBuffAura(4, 4);
+      drawMarkerDot(3, 4, 'normal', '1');
+      drawMarkerDot(2, 4, 'buff', 'Bước 2'); // Điểm buff bước 2
       const r = step > 15 ? 4 - 1 - (step-15)*0.08 : (step > 6 ? 4 - (step-6)*0.1 : 4);
       drawPiece('r', '兵', Math.max(2, r), 4, '⏩');
     }
-    else if(id === 'ROOK_1'){ // Thiểm Điện Trảm (Xe ăn xong tiến tiếp)
+    else if(id === 'ROOK_1'){ // Thiểm Điện Trảm (Xe ăn xong tiến tiếp 1-2 ô)
+      drawBuffAura(6, 4);
+      drawMarkerDot(3, 4, 'target', 'Ăn');
+      drawMarkerDot(2, 4, 'buff', '+1 ô');
+      drawMarkerDot(1, 4, 'buff', '+2 ô');
       if(step < 10) { drawPiece('r', '俥', 6 - step*0.3, 4, '⚡'); drawPiece('b', '卒', 3, 4); }
       else { drawPiece('r', '俥', Math.max(1, 3 - (step-10)*0.15), 4, '⚡'); }
     }
     else if(id === 'ROOK_2'){ // Phá Lãng Bộ (Xe bẻ góc 90 độ)
+      drawBuffAura(7, 4);
+      drawMarkerDot(4, 4, 'normal');
+      drawMarkerDot(4, 5, 'buff', 'Bẻ +1');
+      drawMarkerDot(4, 6, 'buff', '+2');
+      drawMarkerDot(4, 7, 'buff', '+3');
       let r = 7, c = 4;
       if(step < 12) r = Math.max(4, 7 - step*0.25);
       else { r = 4; c = Math.min(7, 4 + (step-12)*0.25); }
       drawPiece('r', '俥', r, c, '↪');
     }
     else if(id === 'CANNON_1'){ // Xuyên Vân Tiễn (Bắn qua 2 ngòi)
+      drawBuffAura(7, 4);
       drawPiece('r', '炮', 7, 4, '🌊');
       drawPiece('b', '卒', 5, 4); // ngòi 1
       drawPiece('r', '仕', 3, 4); // ngòi 2
+      drawMarkerDot(1, 4, 'target', 'Ngòi 2'); // Điểm bắn xuyên 2 ngòi
       if(step < 15) drawPiece('b', '馬', 1, 4);
       else { ctx.font = '16px sans-serif'; ctx.fillText('💥', OX+4*CS, OY+1*CS); }
     }
     else if(id === 'CANNON_2'){ // Bích Lịch Hỏa (Bắn nổ choáng 4 ô kề)
+      drawBuffAura(6, 4);
       drawPiece('r', '炮', 6, 4, '💥');
       drawPiece('b', '卒', 4, 4); // ngòi
+      drawMarkerDot(2, 4, 'target', 'Đích');
+      drawMarkerDot(1, 4, 'buff', 'Choáng');
+      drawMarkerDot(3, 4, 'buff', 'Choáng');
+      drawMarkerDot(2, 3, 'buff', 'Choáng');
+      drawMarkerDot(2, 5, 'buff', 'Choáng');
       if(step < 12) drawPiece('b', '馬', 2, 4);
       else {
         ctx.font = '16px sans-serif'; ctx.fillText('💥 NỔ CHOÁNG!', OX+4*CS, OY+2*CS);
@@ -713,11 +794,16 @@ function startDemoAnimation(){
       }
     }
     else if(id === 'KNIGHT_1'){ // Đạp Vân Tiêu (Bỏ cản chân Mã)
+      drawBuffAura(7, 4);
       drawPiece('b', '卒', 6, 4); // cản chân
+      drawMarkerDot(5, 3, 'buff', 'Khinh công');
+      drawMarkerDot(5, 5, 'buff', 'Khinh công');
       const mr = step > 10 ? 5 : 7, mc = step > 10 ? 3 : 4;
       drawPiece('r', '傌', mr, mc, '🦘');
     }
     else if(id === 'KNIGHT_2'){ // Tuyệt Mệnh Cổ (Mã Độc nổ cả hai)
+      drawBuffAura(4, 3, '#9b59b6');
+      drawMarkerDot(4, 3, 'target', 'Ăn = Chết');
       if(step < 14){
         drawPiece('r', '傌', 4, 3, '💣');
         drawPiece('b', '車', 7 - step*0.2, 3);
@@ -726,34 +812,54 @@ function startDemoAnimation(){
       }
     }
     else if(id === 'ELEPHANT_1'){ // Minh Kính Thuật (Bỏ cản mắt Tượng)
+      drawBuffAura(7, 2);
       drawPiece('b', '卒', 6, 3); // cản mắt
+      drawMarkerDot(5, 4, 'buff', 'Thông mắt');
       const er = step > 10 ? 5 : 7, ec = step > 10 ? 4 : 2;
       drawPiece('r', '相', er, ec, '👁️');
     }
     else if(id === 'ELEPHANT_2'){ // Ngự Ba Viễn Chinh (Tượng qua sông)
+      drawBuffAura(5, 2);
+      drawMarkerDot(3, 0, 'buff', 'Qua sông');
+      drawMarkerDot(3, 4, 'buff', 'Qua sông');
       const er = step > 10 ? 3 : 5, ec = step > 10 ? 4 : 2;
       drawPiece('r', '相', er, ec, '🌊');
     }
     else if(id === 'ADVISOR_1'){ // Xuất Trần Hộ Pháp (Sĩ ra cung)
+      drawBuffAura(8, 3);
+      drawMarkerDot(7, 4, 'buff', 'Ra cung');
+      drawMarkerDot(6, 3, 'buff', 'Tiến');
+      drawMarkerDot(5, 4, 'buff', 'Qua sông');
       const ar = step > 10 ? 6 : 8, ac = step > 10 ? 4 : 3;
       drawPiece('r', '仕', ar, ac, '🏯');
     }
     else if(id === 'ADVISOR_2'){ // Song Long Xuất Hải (Sĩ đi 2 nước)
+      drawBuffAura(9, 3);
+      drawMarkerDot(8, 4, 'normal', '1');
+      drawMarkerDot(7, 3, 'buff', 'Bước 2');
+      drawMarkerDot(7, 5, 'buff', 'Bước 2');
       let ar = 9, ac = 3;
       if(step > 15) { ar = 7; ac = 3; }
       else if(step > 8) { ar = 8; ac = 4; }
       drawPiece('r', '仕', ar, ac, '🐉');
     }
     else if(id === 'KING_1'){ // Thân Chinh Xuất Giá (Tướng ra cung 1 ô)
-      const kr = step > 10 ? 6 : 8;
+      drawBuffAura(7, 4);
+      drawMarkerDot(6, 4, 'buff', 'Ra cung');
+      const kr = step > 10 ? 6 : 7;
       drawPiece('r', '帥', kr, 4, '👑');
     }
     else if(id === 'KING_2'){ // Cấp Cứu Cần Vương (Triệu hồi Sĩ về cạnh Tướng)
+      drawBuffAura(8, 4);
+      drawMarkerDot(8, 3, 'buff', 'Hộ giá');
+      drawMarkerDot(8, 5, 'buff', 'Hộ giá');
       drawPiece('r', '帥', 8, 4);
       const sr = step > 10 ? 8 : 2;
       drawPiece('r', '仕', sr, 3, '🆘');
     }
     else if(id === 'KING_3'){ // Kim Cang Bất Hoại (Khiên kim cang miễn chiếu)
+      drawBuffAura(8, 4);
+      drawMarkerDot(7, 4, 'buff', 'Khiên chắn');
       drawPiece('r', '帥', 8, 4, '🛡️');
       drawPiece('b', '車', 4, 4);
       if(step > 10){
@@ -763,6 +869,10 @@ function startDemoAnimation(){
       }
     }
     else if(id === 'KING_4'){ // Càn Khôn Di Vị (Hoán đổi Tướng và Sĩ)
+      drawBuffAura(8, 4);
+      drawBuffAura(9, 3, '#3498db');
+      drawMarkerDot(8, 4, 'buff', 'Đổi vị');
+      drawMarkerDot(9, 3, 'buff', 'Đổi vị');
       const kr = step > 12 ? 9 : 8, kc = step > 12 ? 3 : 4;
       const sr = step > 12 ? 8 : 9, sc = step > 12 ? 4 : 3;
       drawPiece('r', '帥', kr, kc, '🔄');
