@@ -72,7 +72,7 @@
   
   <!-- Socket.io Client & Ky Bien Core Scripts (Không chặn hiển thị với defer) -->
   <script defer='defer' src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.1'></script>
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.2'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -914,6 +914,22 @@
       <a href='/p/arena.html'>Sàn Đấu</a> |
       <a href='/search/label/Phân%20Tích%20Cờ'>Bình Văn</a>
     </div>
+    <script>//<![CDATA[
+    (function(){
+      function renderStats(s){
+        if(!s)return;
+        var el=document.getElementById('online-stats-text');
+        if(el){
+          var t=s.total!=null?s.total:0,m=s.members!=null?s.members:0,g=s.guests!=null?s.guests:0;
+          el.innerHTML='Tề tựu: <b>'+t+'</b> vị (<b>'+m+'</b> Kỳ thủ • <b>'+g+'</b> Lữ khách)';
+        }
+      }
+      fetch('https://kybien-backend.onrender.com/api/stats/online')
+        .then(function(r){return r.json();})
+        .then(function(d){if(d&&d.data)renderStats(d.data);})
+        .catch(function(){});
+    })();
+    //]]></script>
   </footer>
 
 </body>
