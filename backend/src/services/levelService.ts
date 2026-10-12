@@ -17,6 +17,7 @@ export interface MatchResultData {
   playerBlack: PlayerStatsInput;
   totalMoves?: number;
   isPvP?: boolean;
+  isTestMode?: boolean;
 }
 
 export interface PlayerTitles {
@@ -48,6 +49,7 @@ export interface CalculateMatchExpParams {
   aiDifficulty?: 'EASY' | 'NORMAL' | 'HARD';
   winStreak?: number;
   currentDailyPveExp?: number;
+  isTestMode?: boolean;
 }
 
 export interface CalculateMatchExpResult {
@@ -225,6 +227,18 @@ export function calculateMatchExp(params: CalculateMatchExpParams): CalculateMat
     currentDailyPveExp = 0,
   } = params;
 
+  // 0. Chế độ thử nghiệm: Dùng miễn phí tất cả Bí Pháp - KHÔNG cộng EXP và ELO trong tất cả các chế độ chơi
+  if (params.isTestMode) {
+    return {
+      baseExp: 0,
+      greatGameBonus: 0,
+      totalEarnedExp: 0,
+      newDailyPveExp: currentDailyPveExp,
+      canWriteBlog: false,
+      reason: 'Chế độ thử nghiệm không cộng EXP và ELO.',
+    };
+  }
+
   // 1. Chống cày ảo (Anti-abuse): Ván đấu phải từ 20 nước trở lên mới được tính nhận EXP
   if (totalMoves < 20) {
     return {
@@ -315,8 +329,21 @@ export function calculateEloChange(
   playerB: PlayerEloData,
   result: MatchOutcome,
   totalMoves: number,
-  isPvP: boolean = true
+  isPvP: boolean = true,
+  isTestMode: boolean = false
 ): EloChangeResult {
+  // 0. Chế độ thử nghiệm: KHÔNG áp dụng tính Elo
+  if (isTestMode) {
+    return {
+      isValid: false,
+      deltaA: 0,
+      deltaB: 0,
+      newEloA: playerA.currentElo,
+      newEloB: playerB.currentElo,
+      reason: 'Chế độ thử nghiệm (dùng miễn phí Bí Pháp) không áp dụng biến động điểm Elo.',
+    };
+  }
+
   // 1. Chế độ PvE (Đánh với máy): KHÔNG áp dụng tính Elo
   if (!isPvP) {
     return {
@@ -393,6 +420,7 @@ export function calculatePostMatchStats(data: MatchResultData) {
   const { winnerId, isDraw, playerWhite, playerBlack } = data;
   const totalMoves = data.totalMoves ?? 20;
   const isPvP = data.isPvP ?? true;
+  const isTestMode = !!data.isTestMode;
 
   const matchOutcome: MatchOutcome = isDraw
     ? 'DRAW'
@@ -405,7 +433,8 @@ export function calculatePostMatchStats(data: MatchResultData) {
     { currentElo: playerBlack.elo, totalGames: playerBlack.matchesPlayed ?? 0 },
     matchOutcome,
     totalMoves,
-    isPvP
+    isPvP,
+    isTestMode
   );
 
   const newWhiteElo = eloResult.newEloA;
@@ -417,12 +446,14 @@ export function calculatePostMatchStats(data: MatchResultData) {
     mode: isPvP ? 'PVP' : 'PVE',
     result: isDraw ? 'DRAW' : winnerId === playerWhite.id ? 'WIN' : 'LOSS',
     totalMoves,
+    isTestMode,
   });
 
   const blackExpRes = calculateMatchExp({
     mode: isPvP ? 'PVP' : 'PVE',
     result: isDraw ? 'DRAW' : winnerId === playerBlack.id ? 'WIN' : 'LOSS',
     totalMoves,
+    isTestMode,
   });
 
   const whiteExpDelta = BigInt(whiteExpRes.totalEarnedExp);

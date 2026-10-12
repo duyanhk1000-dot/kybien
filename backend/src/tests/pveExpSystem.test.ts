@@ -280,7 +280,55 @@ export async function runPveExpSystemTests(): Promise<void> {
   assert.strictEqual(secondResBody.message, 'Kết quả ván đấu đã được ghi nhận trước đó.');
   console.log('✅ Scenario 10 Passed!');
 
+  // =========================================================================
+  // SCENARIO 11: Chế độ thử nghiệm (isTestMode = true) KHÔNG cộng EXP
+  // =========================================================================
+  console.log('\n-> Scenario 11: Test mode (isTestMode = true) yields 0 EXP in all modes...');
+  const testExpResult = calculateMatchExp({
+    mode: 'PVE',
+    result: 'WIN',
+    totalMoves: 130,
+    aiDifficulty: 'HARD',
+    isTestMode: true,
+  });
+  assert.strictEqual(testExpResult.totalEarnedExp, 0, 'PvE test mode earnedExp must be 0');
+  assert.strictEqual(testExpResult.baseExp, 0, 'PvE test mode baseExp must be 0');
+  assert.strictEqual(testExpResult.greatGameBonus, 0, 'PvE test mode greatGameBonus must be 0');
+  assert.strictEqual(testExpResult.canWriteBlog, false, 'PvE test mode canWriteBlog must be false');
+
+  const testPvpExpResult = calculateMatchExp({
+    mode: 'PVP',
+    result: 'WIN',
+    totalMoves: 80,
+    isTestMode: true,
+  });
+  assert.strictEqual(testPvpExpResult.totalEarnedExp, 0, 'PvP test mode earnedExp must be 0');
+  assert.strictEqual(testPvpExpResult.canWriteBlog, false, 'PvP test mode canWriteBlog must be false');
+
+  const testModeReq: any = {
+    body: {
+      matchId: 'match_pve_test_mode_999',
+      result: 'WIN',
+      totalMoves: 130,
+      aiDifficulty: 'HARD',
+      moves: Array.from({ length: 130 }, (_, i) => `${i % 9},0-${(i % 9) + 1},0`),
+      isTestMode: true,
+    },
+    user: { userId: 9999, username: 'Tester', email: 't@k.com' },
+  };
+  let testModeResBody: any = null;
+  const mockRes3: any = {
+    status: () => mockRes3,
+    json: (b: any) => { testModeResBody = b; return mockRes3; },
+  };
+  await finishPveMatch(testModeReq, mockRes3);
+  assert.strictEqual(testModeResBody.success, true);
+  assert.strictEqual(testModeResBody.isTestMode, true);
+  assert.strictEqual(testModeResBody.earnedExp, 0, 'finishPveMatch must yield 0 earnedExp in test mode');
+  assert.strictEqual(testModeResBody.canWriteBlog, false, 'finishPveMatch must have canWriteBlog false in test mode');
+  console.log('✅ Scenario 11 Passed!');
+
   console.log('\n==================================================');
-  console.log('🎉 ALL 10 MANDATORY PVE EXP SYSTEM SCENARIOS PASSED 100%!');
+  console.log('🎉 ALL 11 MANDATORY PVE EXP SYSTEM SCENARIOS PASSED 100%!');
   console.log('==================================================\n');
 }

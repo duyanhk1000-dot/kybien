@@ -112,6 +112,26 @@ export async function runEloChangeSystemTests(): Promise<void> {
   assert.strictEqual(resFloor.newEloB, 500, 'Player B final ELO must be clamped at 500');
   console.log('✅ Test 5 Passed!');
 
+  // ===================================================
+  // TEST 6: Chế độ thử nghiệm (isTestMode = true) KHÔNG áp dụng tính Elo
+  // ===================================================
+  console.log('\n-> Test 6: Test Mode (isTestMode = true) does NOT calculate Elo...');
+  const resTestMode = calculateEloChange(
+    { currentElo: 1200, totalGames: 10 },
+    { currentElo: 1200, totalGames: 10 },
+    'WIN_A',
+    30,
+    true,
+    true // isTestMode = true
+  );
+
+  assert.strictEqual(resTestMode.isValid, false, 'Elo calculation is invalid in test mode');
+  assert.strictEqual(resTestMode.deltaA, 0, 'Player A delta must be 0 in test mode');
+  assert.strictEqual(resTestMode.deltaB, 0, 'Player B delta must be 0 in test mode');
+  assert.strictEqual(resTestMode.newEloA, 1200, 'Player A ELO unchanged');
+  assert.strictEqual(resTestMode.newEloB, 1200, 'Player B ELO unchanged');
+  console.log('✅ Test 6 Passed!');
+
   console.log('\n==================================================');
   console.log('🎉 ALL ELO CHANGE SYSTEM TESTS PASSED 100%!');
   console.log('==================================================\n');

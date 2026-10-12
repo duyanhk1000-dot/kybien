@@ -25,6 +25,7 @@ export interface GameRoom {
   turn: 'RED' | 'BLACK';
   status: 'WAITING' | 'PLAYING' | 'FINISHED';
   isPrivate?: boolean;
+  isTestMode?: boolean;
   winnerId?: number | null;
   resultReason?: string;
   createdAt: number;
@@ -150,7 +151,7 @@ class MatchmakingManager {
     return null;
   }
 
-  public createRoom(player: PlayerInQueue, isPrivate: boolean, variant: string = 'n'): { roomCode: string; room: GameRoom } {
+  public createRoom(player: PlayerInQueue, isPrivate: boolean, variant: string = 'n', isTestMode: boolean = false): { roomCode: string; room: GameRoom } {
     const existingActive = this.getUserActiveRoom(player.userId);
     if (existingActive && existingActive.status === 'PLAYING') {
       throw new Error('Bạn đang ở trong một trận đấu chưa kết thúc.');
@@ -184,6 +185,7 @@ class MatchmakingManager {
       turn: 'RED',
       status: 'WAITING',
       isPrivate,
+      isTestMode: !!isTestMode,
       createdAt: Date.now(),
     };
 
@@ -295,6 +297,7 @@ class MatchmakingManager {
             isDraw: winnerId === null,
             totalMoves: room.moves.length,
             isPvP: true,
+            isTestMode: !!room.isTestMode,
             playerWhite: {
               id: whiteUser.id,
               elo: whiteUser.elo,
@@ -315,40 +318,43 @@ class MatchmakingManager {
           const isBlackWin = winnerId === blackUser.id;
           const matchResultStr = isWhiteWin ? 'WHITE_WIN' : isBlackWin ? 'BLACK_WIN' : 'DRAW';
 
-          await prisma.$transaction([
-            prisma.match.create({
-              data: {
-                player_white_id: whiteUser.id,
-                player_black_id: blackUser.id,
-                pgn_moves: JSON.stringify(room.moves),
-                result: matchResultStr,
-              },
-            }),
-            prisma.user.update({
-              where: { id: whiteUser.id },
-              data: {
-                elo: calculated.white.elo,
-                exp: calculated.white.exp,
-                level: calculated.white.level,
-                matches_played: { increment: 1 },
-                matches_won: isWhiteWin ? { increment: 1 } : undefined,
-              },
-            }),
-            prisma.user.update({
-              where: { id: blackUser.id },
-              data: {
-                elo: calculated.black.elo,
-                exp: calculated.black.exp,
-                level: calculated.black.level,
-                matches_played: { increment: 1 },
-                matches_won: isBlackWin ? { increment: 1 } : undefined,
-              },
-            }),
-          ]);
+          if (!room.isTestMode) {
+            await prisma.$transaction([
+              prisma.match.create({
+                data: {
+                  player_white_id: whiteUser.id,
+                  player_black_id: blackUser.id,
+                  pgn_moves: JSON.stringify(room.moves),
+                  result: matchResultStr,
+                },
+              }),
+              prisma.user.update({
+                where: { id: whiteUser.id },
+                data: {
+                  elo: calculated.white.elo,
+                  exp: calculated.white.exp,
+                  level: calculated.white.level,
+                  matches_played: { increment: 1 },
+                  matches_won: isWhiteWin ? { increment: 1 } : undefined,
+                },
+              }),
+              prisma.user.update({
+                where: { id: blackUser.id },
+                data: {
+                  elo: calculated.black.elo,
+                  exp: calculated.black.exp,
+                  level: calculated.black.level,
+                  matches_played: { increment: 1 },
+                  matches_won: isBlackWin ? { increment: 1 } : undefined,
+                },
+              }),
+            ]);
+          }
 
           postMatchStats = {
             winnerId,
             reason,
+            isTestMode: !!room.isTestMode,
             white: {
               userId: whiteUser.id,
               newElo: calculated.white.elo,

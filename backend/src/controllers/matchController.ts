@@ -222,7 +222,7 @@ export async function finishPveMatch(req: AuthenticatedRequest, res: Response): 
       return;
     }
 
-    const { matchId, result, totalMoves, aiDifficulty, moves, variant, reason } = req.body;
+    const { matchId, result, totalMoves, aiDifficulty, moves, variant, reason, isTestMode } = req.body;
     const outcome: 'WIN' | 'DRAW' | 'LOSS' = (result === 'WIN' || result === 'DRAW') ? result : 'LOSS';
     const difficulty: 'EASY' | 'NORMAL' | 'HARD' = (aiDifficulty === 'EASY' || aiDifficulty === 'HARD') ? aiDifficulty : 'NORMAL';
 
@@ -269,6 +269,29 @@ export async function finishPveMatch(req: AuthenticatedRequest, res: Response): 
 
     if (!user) {
       res.status(404).json({ success: false, message: 'Không tìm thấy người dùng trong hệ thống.' });
+      return;
+    }
+
+    // 3.5. Chế độ thử nghiệm: Dùng miễn phí tất cả Bí Pháp - KHÔNG cộng EXP và ELO trong tất cả các chế độ chơi
+    if (isTestMode === true) {
+      const titles = getPlayerTitles(user.level, user.elo);
+      const responsePayload = {
+        success: true,
+        earnedExp: 0,
+        baseExp: 0,
+        greatGameBonus: 0,
+        isTestMode: true,
+        totalMoves: actualMovesCount,
+        leveledUp: false,
+        newLevel: user.level,
+        currentExp: Number(user.exp),
+        rankTitle: titles.fullTitle,
+        canWriteBlog: false,
+        dailyPveExp: getUserDailyPveExp(userId),
+        message: 'Chế độ thử nghiệm (dùng miễn phí Bí Pháp): Không tính cộng EXP và ELO.',
+      };
+      processedPveMatches.set(dedupeKey, responsePayload);
+      res.json(responsePayload);
       return;
     }
 

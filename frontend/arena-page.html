@@ -389,7 +389,7 @@
           <label>Thời gian luận chiếu<select id="tm" onchange="newGame()"><option value="0" selected>Vô hạn</option><option value="30">30 giây / nước</option><option value="60">1 phút / nước</option><option value="180">3 phút / nước</option><option value="300">5 phút / nước</option></select></label>
           <label>Kiểu bàn cờ<select id="vw" onchange="draw()"><option value="2">2D Phẳng</option><option value="3" selected>3D Khối</option></select></label>
         </div>
-        <label class="ckrow" id="lbl-test"><input type="checkbox" id="chk_test_mode" onchange="ui()"/> Chế độ thử nghiệm (dùng miễn phí tất cả Bí Pháp)</label>
+        <label class="ckrow" id="lbl-test"><input type="checkbox" id="chk_test_mode" onchange="onTestModeChange()"/> Chế độ thử nghiệm (dùng miễn phí tất cả Bí Pháp - không tính EXP/ELO)</label>
         <label class="ckrow" id="lbl-see"><input type="checkbox" id="chk_see" onchange="ui()"/> Xem quân úp bí ẩn (khóa từ nước đầu tiên)</label>
         <div class="acts">
           <button type="button" id="btn-undo" onclick="undoAction()">Đi lại</button>
@@ -505,8 +505,11 @@ let names={r:'Đỏ',b:'Đen'},online={on:false,room:null,side:'r'};
 let socket=null,searching=false,currentUser=null,modalTimer=null,uid=0,currentMatchId='pve_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
 const aiCol='b',opp=c=>c==='r'?'b':'r';
 const isMine=c=>ai?c==='r':online.on?c===online.side:true;
-const tstOn=()=>VAR==='kb'&&$('chk_test_mode').checked;
-const isFree=v=>tstOn()&&isMine(v);
+let matchTestModeUsed=false;
+const tstOn=()=>VAR==='kb'&&!!($('chk_test_mode')&&$('chk_test_mode').checked);
+const isMatchTestMode=()=>VAR==='kb'&&(tstOn()||matchTestModeUsed);
+function onTestModeChange(){if(tstOn())matchTestModeUsed=true;ui()}
+const isFree=v=>{if(tstOn()&&isMine(v)){matchTestModeUsed=true;return true}return false};
 const handOf=v=>isFree(v)?CARDS.map(c=>({...c})):hands[v];
 const pips=n=>Array.from({length:10},(_,i)=>'<i class="'+(i<n?'on':'')+'"></i>').join('');
 const fmt=ms=>{const s=Math.ceil(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
@@ -569,7 +572,7 @@ const hc=$('hc').value;
 if(hc!=='0'&&$('mode').value==='ai'&&(VAR==='n'||VAR==='kb')){const q={N:[0,1],C:[2,1],R:[0,0]}[hc],o=B[q[0]][q[1]];if(o){o.dead=true;B[q[0]][q[1]]=null}}
 turn='r';merit={r:3,b:3};hands=VAR==='kb'?{r:pick(3),b:pick(3)}:{r:[],b:[]};
 sel=null;VM=[];pend=null;armed=null;used=false;ms=null;mode=null;KB={r:null,b:null};bag=null;plies=0;over=false;busy=false;
-ANIM=null;FX=[];LASTMV=null;HINT=null;eaten={r:[],b:[]};snaps=[];ACT=[];rec=[];keys=[sig()];movers=[];chks=[];noCap=0;capFlag=false;currentMatchId='pve_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+ANIM=null;FX=[];LASTMV=null;HINT=null;eaten={r:[],b:[]};snaps=[];ACT=[];rec=[];keys=[sig()];movers=[];chks=[];noCap=0;capFlag=false;currentMatchId='pve_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);matchTestModeUsed=tstOn();
 LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
 const md=$('mode').value;ai=md==='ai'&&!online.on;
 if(!online.on){flipped=false;names={r:(currentUser&&currentUser.username)?currentUser.username:'Đỏ (Bạn)',b:ai?'Đen (Máy: '+BOTN[+$('lv').value]+')':'Đen'};if(md==='2p_local')names.r='Đỏ'}
@@ -578,7 +581,7 @@ onVariantChangeUIOnly();docs();
 say('Khai cuộc: '+VARS[VAR]+'.','#a8947d');
 pushSnap();stat();ui();draw();
 if(ai&&turn===aiCol){busy=true;setTimeout(aiRun,400)}}
-function setLocked(l){['mode_variant','mode','lv','hc','tm','drop_bag_freq'].forEach(id=>{const e=$(id);if(e)e.disabled=l});
+function setLocked(l){['mode_variant','mode','lv','hc','tm','drop_bag_freq','chk_test_mode'].forEach(id=>{const e=$(id);if(e)e.disabled=l});
 ['btn-undo','btn-hint','btn-flip'].forEach(id=>{const e=$(id);if(e)e.disabled=online.on})}
 
 /* ---------- LỊCH SỬ / ĐI LẠI (UNDO) ---------- */
@@ -746,8 +749,15 @@ async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId)
     de.appendChild(expBox);
   }
 
+  const testModeActive = isMatchTestMode();
+  if (testModeActive && expBox) {
+    expBox.style.borderColor = '#f39c12';
+    expBox.innerHTML = '<div style="color:#f39c12;font-weight:bold;">🧪 Chế độ thử nghiệm: Ván cờ sử dụng miễn phí Bí Pháp nên không tính tích lũy EXP và Chiến Lực (ELO).</div>';
+  }
+
   const tk=localStorage.getItem('kybien_jwt_token');
   if(!tk){
+    if (testModeActive) return;
     console.log('[PvE EXP] Trận đấu hoàn thành ở chế độ Khách (chưa có JWT token).');
     if(expBox){
       expBox.style.borderColor='#f39c12';
@@ -761,7 +771,7 @@ async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId)
     if(window.KybienAuth && window.KybienAuth.cachedUser){
       currentUser=window.KybienAuth.cachedUser;
     } else {
-      if(expBox) expBox.innerHTML='⏳ Đang đồng bộ phiên đăng nhập của bạn...';
+      if(expBox && !testModeActive) expBox.innerHTML='⏳ Đang đồng bộ phiên đăng nhập của bạn...';
       try {
         await checkAuthUI();
       } catch(e){
@@ -771,6 +781,7 @@ async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId)
   }
 
   if(!currentUser){
+    if (testModeActive) return;
     console.warn('[PvE EXP] Không thể xác thực tài khoản từ token.');
     if(expBox){
       expBox.style.borderColor='#e74c3c';
@@ -779,7 +790,7 @@ async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId)
     return;
   }
 
-  if(expBox) expBox.innerHTML='⏳ Đang đồng bộ kết quả và tính điểm EXP...';
+  if(expBox && !testModeActive) expBox.innerHTML='⏳ Đang đồng bộ kết quả và tính điểm EXP...';
 
   try {
     const res = await fetch(SERVER_API_ENDPOINT+'/api/matches/pve-finish', {
@@ -795,7 +806,8 @@ async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId)
         aiDifficulty: diff,
         moves: rec,
         variant: VAR,
-        reason: REASON[whyCode] || whyCode
+        reason: REASON[whyCode] || whyCode,
+        isTestMode: testModeActive
       })
     });
 
@@ -803,7 +815,10 @@ async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId)
     if(!expBox) return;
 
     if(res.ok && d.success){
-      if(d.duplicate){
+      if(d.isTestMode){
+        expBox.style.borderColor='#f39c12';
+        expBox.innerHTML='<div style="color:#f39c12;font-weight:bold;">🧪 Chế độ thử nghiệm (dùng miễn phí Bí Pháp): Không tính tích lũy EXP và ELO.</div>';
+      } else if(d.duplicate){
         expBox.innerHTML='<div style="color:#f1c40f;font-weight:bold;">ℹ️ Kết quả ván đấu này đã được lưu trước đó.</div>';
       } else if(d.earnedExp > 0){
         let msg = '<div style="color:#2ecc71;font-weight:bold;">⚔️ Nhận +' + d.earnedExp + ' EXP';
@@ -847,6 +862,12 @@ else{const mine=me?w===me:null;ic.innerText=mine===null?'👑':mine?'🏆':'💀
 su.innerText=(w==='r'?'PHE ĐỎ':'PHE ĐEN')+' giành chiến thắng!';de.innerText='Phe '+(l==='r'?'ĐỎ':'ĐEN')+' thua do '+REASON[why]+'.'}
 $('st').innerText=kind==='draw'?'HÒA CỜ - '+REASON[why]:(w==='r'?'ĐỎ':'ĐEN')+' THẮNG - '+REASON[why];$('st').className='pill';$('st').style.color='#ffb300';
 say($('st').innerText,'#ffb300','log-sp');
+if(isMatchTestMode()&&de){
+  const tbNotice=document.createElement('div');
+  tbNotice.style.cssText='margin-top:6px;padding:6px 10px;background:rgba(230,126,34,0.15);border:1px solid #e67e22;border-radius:6px;color:#f39c12;font-size:0.82rem;font-weight:bold;text-align:center;';
+  tbNotice.innerText='🧪 Chế độ thử nghiệm (dùng miễn phí Bí Pháp): Không tính tích lũy EXP và ELO.';
+  de.appendChild(tbNotice);
+}
 const gm=$('go-modal-greatmatch');if(gm)gm.style.display='none';
 const isPve=ai&&!online.on;
 if(isPve){
@@ -855,13 +876,13 @@ if(isPve){
   const diff=(lvVal<=1)?'EASY':(lvVal>=3?'HARD':'NORMAL');
   const actualMovesCount=rec.filter(m=>typeof m==='string'&&/^\d+,\d+-\d+,\d+$/.test(m)).length;
   submitPveMatchResult(pveOutcome,diff,actualMovesCount,why,currentMatchId);
-  if(actualMovesCount>=120&&gm&&(currentUser||localStorage.getItem('kybien_jwt_token'))){
+  if(actualMovesCount>=120&&gm&&(currentUser||localStorage.getItem('kybien_jwt_token'))&&!isMatchTestMode()){
     gm.style.display='block';
     gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY KHIÊU CHIẾN MỘC NHÂN KÉO DÀI '+actualMovesCount+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">✨ Đã kích hoạt thưởng Trận Hay (+15 EXP) & Quân Sư khởi thảo Ký Sự khắc lên Kỳ Phổ!</div></div>';
   }
 }else{
   if(currentUser){
-    if(rec.length>=50){
+    if(rec.length>=50&&!isMatchTestMode()){
       if(gm){
         gm.style.display='block';
         gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 CHIẾN TÍCH SA TRƯỜNG KÉO DÀI '+rec.length+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">⏳ Quân Sư đang khởi thảo & xuất bản Ký Sự Sa Trường lên Kỳ Phổ...</div></div>';
@@ -869,7 +890,7 @@ if(isPve){
       setTimeout(submitGreatMatchFromModal,400);
     }
   }else{
-    if(rec.length>170){
+    if(rec.length>170&&!isMatchTestMode()){
       if(gm){
         gm.style.display='block';
         gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;">'+
@@ -1278,6 +1299,10 @@ d.innerHTML='<div><b style="color:var(--ac);font-size:.78rem">'+r.roomCode+'</b>
 d.addEventListener('click',()=>joinRoomByCode(r.roomCode));l.appendChild(d)})});
 socket.on('match_found',d=>{
 online.on=true;online.room=d.roomId;searching=false;
+if(d.isTestMode){
+  matchTestModeUsed=true;
+  if($('chk_test_mode'))$('chk_test_mode').checked=true;
+}
 const isRed=(socket&&socket.id===d.playerWhite.socketId)||(currentUser&&currentUser.username===d.playerWhite.username);online.side=isRed?'r':'b';
 if(d.variant&&$('mode_variant'))$('mode_variant').value=d.variant;
 names={r:d.playerWhite.username+' ('+d.playerWhite.elo+')',b:d.playerBlack.username+' ('+d.playerBlack.elo+')'};
@@ -1309,7 +1334,7 @@ if(d.stats)checkAuthUI();
 socket.on('game_error',d=>alert(d.message))}
 else if(!socket.connected)socket.connect();
 socket.emit('get_public_rooms');return true}
-async function createRoom(){if(!await initSocket())return;socket.emit('create_room',{isPrivate:$('chk-private-room').checked,variant:$('mode_variant').value})}
+async function createRoom(){if(!await initSocket())return;socket.emit('create_room',{isPrivate:$('chk-private-room').checked,variant:$('mode_variant').value,isTestMode:isMatchTestMode()})}
 async function joinRoomByCode(code){const c=(typeof code==='string'&&code)||$('room-code-input').value;if(!c)return alert('Vui lòng nhập mã phòng (vd: KB-8899)');if(!await initSocket())return;socket.emit('join_room_by_code',{roomCode:c})}
 function refreshPublicRooms(){if(socket)socket.emit('get_public_rooms')}
 async function handleGameAction(){
@@ -1319,7 +1344,7 @@ else{searching=false;if($('btn-action'))$('btn-action').innerText='GHÉP TRẬN 
 else{online.on=false;newGame()}}
 
 /* ---------- KHỞI ĐỘNG KHI TẢI TRANG ---------- */
-Object.assign(window,{onVariantChange,onModeChange,newGame,switchTab,selCard,skipAction,undoAction,hintAction,flipBoardAction,draw,ui,closeMatchModal,closeGameOverModal,
+Object.assign(window,{onVariantChange,onModeChange,onTestModeChange,newGame,switchTab,selCard,skipAction,undoAction,hintAction,flipBoardAction,draw,ui,closeMatchModal,closeGameOverModal,
 arenaLogin,arenaRegister,arenaLogout,createRoom,joinRoomByCode,refreshPublicRooms,handleGameAction,submitGreatMatchFromModal,
 showGuestRegisterModal,submitGuestRegAndPost,cancelGuestPost,
 showOnlineNotCreatedModal,closeOnlineNotCreatedModal,actionCreateOnlineRoomFromModal,actionSwitchToAiFromModal});

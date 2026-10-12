@@ -132,9 +132,10 @@ export function setupGameSocket(io: Server): void {
     });
 
     // 2. Tạo phòng theo mã (Công khai / Riêng tư + Variant - DB User authenticated - Task 3)
-    socket.on('create_room', async (data: { isPrivate?: boolean; variant?: string }) => {
+    socket.on('create_room', async (data: { isPrivate?: boolean; variant?: string; isTestMode?: boolean }) => {
       const isPrivate = !!data?.isPrivate;
       const variant = data?.variant || 'n';
+      const isTestMode = !!data?.isTestMode;
 
       try {
         const dbUser = await prisma.user.findUnique({
@@ -155,7 +156,7 @@ export function setupGameSocket(io: Server): void {
           level: dbUser.level,
           variant,
           joinedAt: Date.now(),
-        }, isPrivate, variant);
+        }, isPrivate, variant, isTestMode);
 
         socket.join(room.roomId);
 
@@ -163,6 +164,7 @@ export function setupGameSocket(io: Server): void {
           roomCode,
           isPrivate,
           variant,
+          isTestMode,
           message: `Đã tạo ${isPrivate ? 'phòng riêng' : 'phòng chờ công khai'} thành công! Mã: ${roomCode}`,
         });
 
@@ -218,6 +220,7 @@ export function setupGameSocket(io: Server): void {
           fen: room.fen,
           turn: room.turn,
           movesHistory: room.moves,
+          isTestMode: !!room.isTestMode,
           playerWhite: room.playerWhite,
           playerBlack,
         });
@@ -307,7 +310,7 @@ export function setupGameSocket(io: Server): void {
       const isBotMatch = !playerBlack || (playerBlack.username && (playerBlack.username.toLowerCase().includes('máy') || playerBlack.username.toLowerCase().includes('bot')));
       const minPlies = isBotMatch ? 120 : 90;
 
-      if (savedMoves.length >= minPlies) {
+      if (savedMoves.length >= minPlies && !room.isTestMode) {
         const whiteName = playerWhite.username || 'Đỏ';
         const blackName = playerBlack ? (playerBlack.username || 'Đen') : 'Máy (AI)';
         let winnerName = 'Hòa';
