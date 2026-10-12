@@ -1071,14 +1071,6 @@
   </div>
 </div>
 
-<footer style="text-align:center;padding:24px 15px;margin:30px auto 10px auto;border-top:1px solid #4a331f;font-size:0.85rem;color:#a8947d;max-width:1200px;">
-  <div id="kybien-online-footer" style="margin-bottom:8px;font-size:0.88rem;color:#f1c40f;display:flex;align-items:center;justify-content:center;gap:8px;">
-    <span style="display:inline-block;width:8px;height:8px;background:#2ecc71;border-radius:50%;box-shadow:0 0 8px #2ecc71;"></span>
-    <span id="online-stats-text">Tề tựu: <b>--</b> vị (<b>--</b> Kỳ thủ • <b>--</b> Lữ khách)</span>
-  </div>
-  <p>© 2026 KỲ BIẾN CHESS — Cẩm Nang Hướng Dẫn &amp; Thập Lục Bí Pháp</p>
-</footer>
-
 <script>
 //<![CDATA[
 (function(){
@@ -1712,23 +1704,6 @@ window.showSection = function(secId, nodeElem){
 renderCardsGrid();
 updateDetailView();
 startDemoAnimation();
-
-// Cập nhật số người online chân trang
-try {
-  const SERVER_API_ENDPOINT = 'https://kybien-backend.onrender.com';
-  fetch(SERVER_API_ENDPOINT + '/api/stats/online')
-    .then(r => r.json())
-    .then(d => {
-      if (d && d.data) {
-        const el = document.getElementById('online-stats-text');
-        if (el) {
-          const total = d.data.total ?? 0, members = d.data.members ?? 0, guests = d.data.guests ?? 0;
-          el.innerHTML = 'Tề tựu: <b>' + total + '</b> vị (<b>' + members + '</b> Kỳ thủ • <b>' + guests + '</b> Lữ khách)';
-        }
-      }
-    })
-    .catch(() => {});
-} catch(e) {}
 
 })();
 //]]>
