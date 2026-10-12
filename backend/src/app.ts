@@ -3,6 +3,7 @@ import cors from 'cors';
 import { config } from './config/index.js';
 import authRoutes from './routes/authRoutes.js';
 import matchRoutes from './routes/matchRoutes.js';
+import { onlineTracker } from './services/onlineTracker.js';
 
 const app = express();
 
@@ -40,6 +41,14 @@ app.get('/ping', (req: Request, res: Response) => {
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok' });
+});
+
+// Thống kê số lượng Kỳ thủ và Lữ khách trực tuyến (Real-time Online Stats)
+app.get('/api/stats/online', (req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    data: onlineTracker.getStats(),
+  });
 });
 
 // API Routes

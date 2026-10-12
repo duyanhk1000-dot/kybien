@@ -443,6 +443,14 @@
     <div class="tab-content show" id="tab-1"></div>
     <div class="tab-content" id="tab-2"></div>
   </div>
+
+  <footer class="arena-footer" style="text-align:center;padding:18px 12px;margin:25px auto 10px auto;border-top:1px solid #4a331f;font-size:0.85rem;color:#a8947d;max-width:1120px;">
+    <div id="kybien-online-footer" style="margin-bottom:8px;font-size:0.88rem;color:#f1c40f;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <span style="display:inline-block;width:8px;height:8px;background:#2ecc71;border-radius:50%;box-shadow:0 0 8px #2ecc71;"></span>
+      <span id="online-stats-text">Tề tựu: <b>--</b> vị (<b>--</b> Kỳ thủ • <b>--</b> Lữ khách)</span>
+    </div>
+    <p>© 2026 KỲ BIẾN CHESS — Đệ Nhất Kỳ Đạo Bí Truyền Giang Hồ</p>
+  </footer>
 </div>
 
 <script>if(typeof io==='undefined'){document.write('<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"><\/script>')}</script>
@@ -1350,12 +1358,35 @@ showGuestRegisterModal,submitGuestRegAndPost,cancelGuestPost,
 showOnlineNotCreatedModal,closeOnlineNotCreatedModal,actionCreateOnlineRoomFromModal,actionSwitchToAiFromModal});
 window.__kb={get s(){return{turn,over,B,P,K,VM,ms,mode,pend,armed,hands,merit,used,bag,plies,ai,VAR,online,names,flipped,ANIM,eaten,snaps:snaps.length,rec:rec.length}},onClick,selCard,skipAction,undoAction,hintAction,allMoves,facing,inCheck,draw,aiRun,clockTick,finish,flip:()=>{flipped=!flipped;ui()},bars,docs,
 setLIM:v=>{LIM=v;tleft=v*1000},busyAnim:()=>!!ANIM,legal:legalMoves,precheck,sig};
+function updateOnlineStatsUI(stats){
+  if(!stats)return;
+  const el=$('online-stats-text');
+  if(el){
+    const total=stats.total??0,members=stats.members??0,guests=stats.guests??0;
+    el.innerHTML='Tề tựu: <b>'+total+'</b> vị (<b>'+members+'</b> Kỳ thủ • <b>'+guests+'</b> Lữ khách)';
+  }
+}
+function initOnlineFooterTracker(){
+  fetch(SERVER_API_ENDPOINT+'/api/stats/online')
+    .then(r=>r.json())
+    .then(d=>{if(d&&d.data)updateOnlineStatsUI(d.data)})
+    .catch(()=>{});
+  if(typeof io!=='undefined'){
+    const tk=localStorage.getItem('kybien_jwt_token')||'';
+    try{
+      const sock=io(SERVER_API_ENDPOINT,{auth:{token:tk},transports:['websocket','polling']});
+      sock.on('online_stats',updateOnlineStatsUI);
+      window._kybienGlobalSocket=sock;
+    }catch(e){}
+  }
+}
 function syncTray(){const box=$('card-tray-wrapper');if(!box)return;
 if(window.innerWidth<=950){const h=$('mobile-tray-placeholder');if(h&&box.parentNode!==h)h.appendChild(box)}
 else{const a=$('sec-aside'),l=$('log-card-wrapper');if(a&&l&&box.parentNode!==a)a.insertBefore(box,l)}}
 window.addEventListener('resize',syncTray);
 setInterval(clockTick,250);
 checkAuthUI();
+initOnlineFooterTracker();
 try{
   const params=new URLSearchParams(window.location.search);
   const v=params.get('variant');

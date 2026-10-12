@@ -30,6 +30,9 @@
     // Đảm bảo responsive mobile cho các bài viết (1 cột, không cố định bàn cờ)
     applyMobilePostResponsive();
     window.addEventListener('resize', applyMobilePostResponsive);
+
+    // Khởi tạo hiển thị số người online chân trang (Tề tựu: ... vị (... Kỳ thủ • ... Lữ khách))
+    initOnlineFooterWidget();
   });
 
   function applyMobilePostResponsive() {
@@ -73,6 +76,47 @@
     });
   }
 
+  function updateOnlineStatsUI(stats) {
+    if (!stats) return;
+    const textEls = document.querySelectorAll('#online-stats-text');
+    const total = stats.total ?? 0;
+    const members = stats.members ?? 0;
+    const guests = stats.guests ?? 0;
+    const htmlStr = `Tề tựu: <b>${total}</b> vị (<b>${members}</b> Kỳ thủ • <b>${guests}</b> Lữ khách)`;
+    textEls.forEach((el) => {
+      el.innerHTML = htmlStr;
+    });
+  }
+
+  function initOnlineFooterWidget() {
+    // 1. Fetch REST API để cập nhật tức thì khi tải trang
+    fetch(SERVER_URL + '/api/stats/online')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success && data.data) {
+          updateOnlineStatsUI(data.data);
+        }
+      })
+      .catch(() => {});
+
+    // 2. Lắng nghe real-time qua Socket
+    if (typeof io !== 'undefined') {
+      const token = localStorage.getItem('kybien_jwt_token') || '';
+      try {
+        const clientSocket = io(SERVER_URL, {
+          auth: { token },
+          transports: ['websocket', 'polling'],
+        });
+        clientSocket.on('online_stats', (stats) => {
+          updateOnlineStatsUI(stats);
+        });
+        window._kybienGlobalSocket = clientSocket;
+      } catch (e) {
+        console.warn('[Online Tracker Socket]', e);
+      }
+    }
+  }
+
   // Helper chờ phần tử DOM xuất hiện (chống Race Condition với Blogger Gadgets)
   function waitForElem(id, callback, maxRetries = 20, delayMs = 250) {
     let count = 0;
@@ -112,6 +156,9 @@
     setToken: function (token) {
       if (token) {
         localStorage.setItem('kybien_jwt_token', token);
+        if (window._kybienGlobalSocket) {
+          window._kybienGlobalSocket.emit('auth_identify', token);
+        }
       } else {
         localStorage.removeItem('kybien_jwt_token');
       }

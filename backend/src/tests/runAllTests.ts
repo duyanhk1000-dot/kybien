@@ -9,6 +9,7 @@ import { runLeaderboardStatsTests } from './leaderboardStats.test.js';
 import { runV2IndependentAuditTests } from './v2IndependentAudit.test.js';
 import { runEloChangeSystemTests } from './eloChangeSystem.test.js';
 import { runPveExpSystemTests } from './pveExpSystem.test.js';
+import { runOnlineTrackerTests } from './onlineTracker.test.js';
 
 async function run() {
   try {
@@ -23,8 +24,9 @@ async function run() {
     await runV2IndependentAuditTests();
     await runEloChangeSystemTests();
     await runPveExpSystemTests();
+    await runOnlineTrackerTests();
     console.log('\n==================================================');
-    console.log('🏆 ALL KYBIEN SYSTEM TESTS (SECURITY, ENGINE, ELO, EXP, PVE SYSTEM, LEADERBOARD, V2 AUDIT, ELO CHANGE) PASSED 100%!');
+    console.log('🏆 ALL KYBIEN SYSTEM TESTS (SECURITY, ENGINE, ELO, EXP, PVE SYSTEM, LEADERBOARD, V2 AUDIT, ELO CHANGE, ONLINE TRACKER) PASSED 100%!');
     console.log('==================================================\n');
     process.exit(0);
   } catch (err) {

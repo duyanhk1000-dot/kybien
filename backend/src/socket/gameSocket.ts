@@ -5,20 +5,22 @@ import { analyzeMatchWithGemini } from '../services/aiService.js';
 import { publishMatchToBlogger } from '../services/bloggerService.js';
 import { XiangqiEngine } from '../services/xiangqiEngine.js';
 import { prisma } from '../utils/prisma.js';
+import { onlineTracker } from '../services/onlineTracker.js';
 
 export function setupGameSocket(io: Server): void {
+  // Cho phép cả Kỳ thủ (có token) và Lữ khách (chưa có token) kết nối để nhận thông tin trực tuyến
   io.use((socket: Socket, next) => {
-    const token = socket.handshake.auth.token || socket.handshake.query.token;
-    if (!token || typeof token !== 'string') {
-      return next(new Error('Yêu cầu Token xác thực Socket.'));
+    const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+    if (token && typeof token === 'string') {
+      const payload = verifyToken(token);
+      if (payload) {
+        socket.data.user = payload;
+      } else {
+        socket.data.user = null;
+      }
+    } else {
+      socket.data.user = null;
     }
-
-    const payload = verifyToken(token);
-    if (!payload) {
-      return next(new Error('Token Socket không hợp lệ hoặc đã hết hạn.'));
-    }
-
-    socket.data.user = payload;
     next();
   });
 
@@ -30,39 +32,63 @@ export function setupGameSocket(io: Server): void {
   io.on('connection', (socket: Socket) => {
     const user = socket.data.user;
 
+    // Ghi nhận số lượng người online: Kỳ thủ (nếu đã đăng nhập) hoặc Lữ khách (nếu chưa đăng nhập)
+    if (user && user.userId) {
+      onlineTracker.addMember(user.userId, socket.id);
+    } else {
+      onlineTracker.addGuest(socket.id);
+    }
+
+    // Phát thông báo số lượng người trực tuyến tới toàn bộ máy khách
+    io.emit('online_stats', onlineTracker.getStats());
+
+    // Cho phép máy khách cập nhật xác thực sau khi đăng nhập mà không cần ngắt kết nối
+    socket.on('auth_identify', (token: string) => {
+      if (token && typeof token === 'string') {
+        const payload = verifyToken(token);
+        if (payload) {
+          socket.data.user = payload;
+          onlineTracker.addMember(payload.userId, socket.id);
+          io.emit('online_stats', onlineTracker.getStats());
+        }
+      }
+    });
+
     // Send public waiting rooms list immediately on connection
     socket.emit('public_rooms_list', matchmakingManager.getPublicWaitingRooms());
 
     // Tự động khôi phục hoặc đưa người chơi vào đúng phòng đấu đang tham gia (Task 5 Reconnection)
-    const activeRoom = matchmakingManager.getUserActiveRoom(user.userId);
-    if (activeRoom) {
-      if (activeRoom.status === 'WAITING' && activeRoom.playerWhite.userId === user.userId) {
-        activeRoom.playerWhite.socketId = socket.id;
-        socket.join(activeRoom.roomId);
-        socket.emit('room_created', {
-          roomCode: activeRoom.roomCode,
-          isPrivate: activeRoom.isPrivate || false,
-          variant: activeRoom.variant,
-          message: `Đã khôi phục phòng chờ thành công! Mã: ${activeRoom.roomCode}`,
-        });
-        broadcastPublicRooms();
-      } else if (activeRoom.status === 'PLAYING' && activeRoom.playerBlack) {
-        if (activeRoom.playerWhite.userId === user.userId) activeRoom.playerWhite.socketId = socket.id;
-        if (activeRoom.playerBlack.userId === user.userId) activeRoom.playerBlack.socketId = socket.id;
-        socket.join(activeRoom.roomId);
+    if (user && user.userId) {
+      const activeRoom = matchmakingManager.getUserActiveRoom(user.userId);
+      if (activeRoom) {
+        if (activeRoom.status === 'WAITING' && activeRoom.playerWhite.userId === user.userId) {
+          activeRoom.playerWhite.socketId = socket.id;
+          socket.join(activeRoom.roomId);
+          socket.emit('room_created', {
+            roomCode: activeRoom.roomCode,
+            isPrivate: activeRoom.isPrivate || false,
+            variant: activeRoom.variant,
+            message: `Đã khôi phục phòng chờ thành công! Mã: ${activeRoom.roomCode}`,
+          });
+          broadcastPublicRooms();
+        } else if (activeRoom.status === 'PLAYING' && activeRoom.playerBlack) {
+          if (activeRoom.playerWhite.userId === user.userId) activeRoom.playerWhite.socketId = socket.id;
+          if (activeRoom.playerBlack.userId === user.userId) activeRoom.playerBlack.socketId = socket.id;
+          socket.join(activeRoom.roomId);
 
-        socket.emit('match_found', {
-          roomId: activeRoom.roomId,
-          roomCode: activeRoom.roomCode,
-          variant: activeRoom.variant,
-          initialPieces: activeRoom.initialPieces,
-          fen: activeRoom.fen,
-          turn: activeRoom.turn,
-          movesHistory: activeRoom.moves,
-          playerWhite: activeRoom.playerWhite,
-          playerBlack: activeRoom.playerBlack,
-          isReconnect: true,
-        });
+          socket.emit('match_found', {
+            roomId: activeRoom.roomId,
+            roomCode: activeRoom.roomCode,
+            variant: activeRoom.variant,
+            initialPieces: activeRoom.initialPieces,
+            fen: activeRoom.fen,
+            turn: activeRoom.turn,
+            movesHistory: activeRoom.moves,
+            playerWhite: activeRoom.playerWhite,
+            playerBlack: activeRoom.playerBlack,
+            isReconnect: true,
+          });
+        }
       }
     }
 
@@ -73,6 +99,11 @@ export function setupGameSocket(io: Server): void {
 
     // 1. Ghép trận tự động (Lọc theo Thể loại cờ variant & lấy user info từ DB - Task 3)
     socket.on('join_matchmaking', async (data: { variant?: string }) => {
+      if (!user || !user.userId) {
+        socket.emit('game_error', { message: 'Vui lòng đăng nhập tài khoản để tham gia ghép trận online.' });
+        return;
+      }
+
       const variant = data?.variant || 'n';
 
       try {
@@ -133,6 +164,11 @@ export function setupGameSocket(io: Server): void {
 
     // 2. Tạo phòng theo mã (Công khai / Riêng tư + Variant - DB User authenticated - Task 3)
     socket.on('create_room', async (data: { isPrivate?: boolean; variant?: string; isTestMode?: boolean }) => {
+      if (!user || !user.userId) {
+        socket.emit('game_error', { message: 'Vui lòng đăng nhập tài khoản để lập kỳ đài online.' });
+        return;
+      }
+
       const isPrivate = !!data?.isPrivate;
       const variant = data?.variant || 'n';
       const isTestMode = !!data?.isTestMode;
@@ -178,6 +214,11 @@ export function setupGameSocket(io: Server): void {
 
     // 3. Tham gia phòng theo mã (Task 3)
     socket.on('join_room_by_code', async (data: { roomCode: string }) => {
+      if (!user || !user.userId) {
+        socket.emit('game_error', { message: 'Vui lòng đăng nhập tài khoản để tham gia kỳ đài.' });
+        return;
+      }
+
       try {
         const dbUser = await prisma.user.findUnique({
           where: { id: user.userId },
@@ -233,7 +274,9 @@ export function setupGameSocket(io: Server): void {
 
     // 4. Hủy tìm trận (Fix Task 2)
     socket.on('cancel_matchmaking', () => {
-      matchmakingManager.removeFromQueue(user.userId);
+      if (user && user.userId) {
+        matchmakingManager.removeFromQueue(user.userId);
+      }
       matchmakingManager.removeFromQueue(socket.id);
       socket.emit('matchmaking_cancelled', { message: 'Đã hủy tìm kiếm trận.' });
     });
@@ -248,8 +291,8 @@ export function setupGameSocket(io: Server): void {
         return;
       }
 
-      const isRedPlayer = socket.id === room.playerWhite.socketId || user.userId === room.playerWhite.userId;
-      const isBlackPlayer = socket.id === room.playerBlack.socketId || user.userId === room.playerBlack.userId;
+      const isRedPlayer = socket.id === room.playerWhite.socketId || (user && user.userId === room.playerWhite.userId);
+      const isBlackPlayer = socket.id === room.playerBlack.socketId || (user && user.userId === room.playerBlack.userId);
 
       if (!isRedPlayer && !isBlackPlayer) {
         socket.emit('game_error', { message: 'Bạn không phải người chơi trong phòng đấu này.' });
@@ -349,8 +392,8 @@ export function setupGameSocket(io: Server): void {
         return;
       }
 
-      const isRedPlayer = socket.id === room.playerWhite.socketId || user.userId === room.playerWhite.userId;
-      const isBlackPlayer = socket.id === room.playerBlack.socketId || user.userId === room.playerBlack.userId;
+      const isRedPlayer = socket.id === room.playerWhite.socketId || (user && user.userId === room.playerWhite.userId);
+      const isBlackPlayer = socket.id === room.playerBlack.socketId || (user && user.userId === room.playerBlack.userId);
 
       if (!isRedPlayer && !isBlackPlayer) {
         socket.emit('game_error', { message: 'Bạn không phải người chơi trong phòng đấu này.' });
@@ -371,8 +414,8 @@ export function setupGameSocket(io: Server): void {
         return;
       }
 
-      const isRedPlayer = socket.id === room.playerWhite.socketId || user.userId === room.playerWhite.userId;
-      const isBlackPlayer = socket.id === room.playerBlack.socketId || user.userId === room.playerBlack.userId;
+      const isRedPlayer = socket.id === room.playerWhite.socketId || (user && user.userId === room.playerWhite.userId);
+      const isBlackPlayer = socket.id === room.playerBlack.socketId || (user && user.userId === room.playerBlack.userId);
 
       if (!isRedPlayer && !isBlackPlayer) {
         socket.emit('game_error', { message: 'Bạn không phải người chơi trong phòng đấu này.' });
@@ -389,6 +432,8 @@ export function setupGameSocket(io: Server): void {
     });
 
     socket.on('disconnect', () => {
+      onlineTracker.removeSocket(socket.id);
+      io.emit('online_stats', onlineTracker.getStats());
       matchmakingManager.handleSocketDisconnect(socket.id, broadcastPublicRooms);
     });
   });
