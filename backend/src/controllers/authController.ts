@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import { generateToken } from '../utils/jwt.js';
 import { AuthenticatedRequest } from '../middlewares/authMiddleware.js';
-import { calculateExpForNextLevel, getPlayerTitles, getRankTitle } from '../services/levelService.js';
+import { calculateExpForNextLevel, getPlayerTitles, getRankTitle, getLevelProgress } from '../services/levelService.js';
 
 const prisma = new PrismaClient();
 
@@ -155,10 +155,9 @@ export async function getProfile(req: AuthenticatedRequest, res: Response): Prom
       return;
     }
 
-    const currentLevelExp = calculateExpForNextLevel(user.level - 1 > 0 ? user.level - 1 : 1);
-    const nextLevelExp = calculateExpForNextLevel(user.level);
+    const progress = getLevelProgress(user.exp, user.level);
     const winRate = user.matches_played > 0 ? parseFloat(((user.matches_won / user.matches_played) * 100).toFixed(1)) : 0;
-    const titles = getPlayerTitles(user.level, user.elo);
+    const titles = getPlayerTitles(progress.level, user.elo);
 
     res.json({
       id: user.id,
@@ -169,9 +168,10 @@ export async function getProfile(req: AuthenticatedRequest, res: Response): Prom
       eloTitle: titles.eloTitle,
       rankTitle: titles.fullTitle,
       exp: Number(user.exp),
-      level: user.level,
-      currentLevelExp: Number(currentLevelExp),
-      nextLevelExp: Number(nextLevelExp),
+      currentExp: progress.currentExp,
+      level: progress.level,
+      currentLevelExp: Number(calculateExpForNextLevel(progress.level - 1 > 0 ? progress.level - 1 : 1)),
+      nextLevelExp: progress.nextLevelExp,
       matchesPlayed: user.matches_played,
       matchesWon: user.matches_won,
       winRate,

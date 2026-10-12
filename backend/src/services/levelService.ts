@@ -167,8 +167,8 @@ export function addExpAndCheckLevelUp(
   };
 }
 
-export function calculateLevelFromExp(exp: bigint, currentLevel: number): number {
-  let level = Math.max(1, currentLevel);
+export function calculateLevelFromExp(exp: bigint, currentLevel?: number): number {
+  let level = 1;
   let totalExp = Number(exp);
   let accumulatedReq = 0;
   while (level < 100) {
@@ -180,7 +180,36 @@ export function calculateLevelFromExp(exp: bigint, currentLevel: number): number
       break;
     }
   }
-  return Math.min(100, level);
+  return Math.min(100, Math.max(level, currentLevel || 1));
+}
+
+export function getLevelProgress(exp: bigint, currentLevel: number = 1): {
+  level: number;
+  currentExp: number;
+  nextLevelExp: number;
+  accumulatedReq: number;
+} {
+  let level = 1;
+  let totalExp = Number(exp);
+  let accumulatedReq = 0;
+  while (level < 100) {
+    const req = getExpRequiredForNextLevel(level);
+    if (totalExp >= accumulatedReq + req) {
+      accumulatedReq += req;
+      level++;
+    } else {
+      break;
+    }
+  }
+  const effectiveLevel = Math.min(100, Math.max(level, currentLevel || 1));
+  const nextLevelExp = getExpRequiredForNextLevel(effectiveLevel);
+  const currentExp = Math.max(0, totalExp - accumulatedReq);
+  return {
+    level: effectiveLevel,
+    currentExp,
+    nextLevelExp,
+    accumulatedReq,
+  };
 }
 
 /**

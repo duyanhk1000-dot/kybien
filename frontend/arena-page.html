@@ -502,7 +502,7 @@ let ANIM=null,FX=[],LASTMV=null,HINT=null,raf=0,lastT=0,lastFx=0,flipped=false;
 let LIM=0,tleft=0,lastBeep=0,lastTick=0;
 let eaten={r:[],b:[]},snaps=[],ACT=[],REPLAY=false,rec=[],keys=[],movers=[],chks=[],noCap=0,capFlag=false;
 let names={r:'Đỏ',b:'Đen'},online={on:false,room:null,side:'r'};
-let socket=null,searching=false,currentUser=null,modalTimer=null,uid=0;
+let socket=null,searching=false,currentUser=null,modalTimer=null,uid=0,currentMatchId='pve_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
 const aiCol='b',opp=c=>c==='r'?'b':'r';
 const isMine=c=>ai?c==='r':online.on?c===online.side:true;
 const tstOn=()=>VAR==='kb'&&$('chk_test_mode').checked;
@@ -569,7 +569,7 @@ const hc=$('hc').value;
 if(hc!=='0'&&$('mode').value==='ai'&&(VAR==='n'||VAR==='kb')){const q={N:[0,1],C:[2,1],R:[0,0]}[hc],o=B[q[0]][q[1]];if(o){o.dead=true;B[q[0]][q[1]]=null}}
 turn='r';merit={r:3,b:3};hands=VAR==='kb'?{r:pick(3),b:pick(3)}:{r:[],b:[]};
 sel=null;VM=[];pend=null;armed=null;used=false;ms=null;mode=null;KB={r:null,b:null};bag=null;plies=0;over=false;busy=false;
-ANIM=null;FX=[];LASTMV=null;HINT=null;eaten={r:[],b:[]};snaps=[];ACT=[];rec=[];keys=[sig()];movers=[];chks=[];noCap=0;capFlag=false;
+ANIM=null;FX=[];LASTMV=null;HINT=null;eaten={r:[],b:[]};snaps=[];ACT=[];rec=[];keys=[sig()];movers=[];chks=[];noCap=0;capFlag=false;currentMatchId='pve_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
 LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
 const md=$('mode').value;ai=md==='ai'&&!online.on;
 if(!online.on){flipped=false;names={r:(currentUser&&currentUser.username)?currentUser.username:'Đỏ (Bạn)',b:ai?'Đen (Máy: '+BOTN[+$('lv').value]+')':'Đen'};if(md==='2p_local')names.r='Đỏ'}
@@ -736,36 +736,76 @@ const hd={'Content-Type':'application/json'},tk=localStorage.getItem('kybien_jwt
 fetch(SERVER_API_ENDPOINT+'/api/matches/great-match',{method:'POST',headers:hd,body:JSON.stringify({playerWhite:pWhite,playerBlack:pBlack,moves:rec,winnerName:wn,loserName:ln,resultReason:REASON[lastRes.why||'mate'],plies:rec.length,variant:VAR})})
 .then(r=>r.json()).then(d=>{if(d.success){if(st)st.innerHTML='🎉 <b>Đã tự động xuất bản bài viết Trận Hay thành công lên Blogger!</b>'}
 else{if(st)st.innerText='❌ '+(d.message||'Lỗi khi đăng bài.')}}).catch(()=>{if(st)st.innerText='❌ Lỗi kết nối máy chủ.'})}
-function submitPveMatchResult(outcome, diff, movesCount, whyCode){
-  const tk=localStorage.getItem('kybien_jwt_token');
-  if(!tk || !currentUser) return;
+async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId){
   const de=$('go-modal-desc');
-  const expBox=document.createElement('div');
-  expBox.id='pve-exp-reward-box';
-  expBox.style.cssText='margin-top:10px;padding:8px 12px;background:rgba(0,0,0,0.35);border:1px dashed #d4af37;border-radius:6px;font-size:0.88rem;';
-  expBox.innerHTML='⏳ Đang đồng bộ kết quả và tính điểm EXP...';
-  if(de) de.appendChild(expBox);
+  let expBox=$('pve-exp-reward-box');
+  if(!expBox && de){
+    expBox=document.createElement('div');
+    expBox.id='pve-exp-reward-box';
+    expBox.style.cssText='margin-top:10px;padding:8px 12px;background:rgba(0,0,0,0.35);border:1px dashed #d4af37;border-radius:6px;font-size:0.88rem;';
+    de.appendChild(expBox);
+  }
 
-  fetch(SERVER_API_ENDPOINT+'/api/matches/pve-finish', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + tk
-    },
-    body: JSON.stringify({
-      result: outcome,
-      totalMoves: movesCount,
-      aiDifficulty: diff,
-      moves: rec,
-      variant: VAR,
-      reason: REASON[whyCode] || whyCode
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
+  const tk=localStorage.getItem('kybien_jwt_token');
+  if(!tk){
+    console.log('[PvE EXP] Trận đấu hoàn thành ở chế độ Khách (chưa có JWT token).');
+    if(expBox){
+      expBox.style.borderColor='#f39c12';
+      expBox.innerHTML='💡 <b>Khách vãng lai:</b> Vui lòng đăng nhập tài khoản ở thanh trên để được tích lũy EXP (+'+(diff==='HARD'?30:diff==='NORMAL'?20:10)+' EXP) và thăng cấp Kỳ Thủ khi đấu với Máy!';
+    }
+    return;
+  }
+
+  // Nếu đã có token nhưng currentUser chưa được khởi tạo (do tải trang hoặc cold-start)
+  if(!currentUser){
+    if(window.KybienAuth && window.KybienAuth.cachedUser){
+      currentUser=window.KybienAuth.cachedUser;
+    } else {
+      if(expBox) expBox.innerHTML='⏳ Đang đồng bộ phiên đăng nhập của bạn...';
+      try {
+        await checkAuthUI();
+      } catch(e){
+        console.warn('[PvE EXP] Lỗi khi đồng bộ tài khoản trước khi gửi EXP:', e);
+      }
+    }
+  }
+
+  if(!currentUser){
+    console.warn('[PvE EXP] Không thể xác thực tài khoản từ token.');
+    if(expBox){
+      expBox.style.borderColor='#e74c3c';
+      expBox.innerHTML='⚠️ <b>Phiên đăng nhập hết hạn:</b> Vui lòng đăng nhập lại để nhận điểm EXP.';
+    }
+    return;
+  }
+
+  if(expBox) expBox.innerHTML='⏳ Đang đồng bộ kết quả và tính điểm EXP...';
+
+  try {
+    const res = await fetch(SERVER_API_ENDPOINT+'/api/matches/pve-finish', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + tk
+      },
+      body: JSON.stringify({
+        matchId: matchId || currentMatchId,
+        result: outcome,
+        totalMoves: movesCount,
+        aiDifficulty: diff,
+        moves: rec,
+        variant: VAR,
+        reason: REASON[whyCode] || whyCode
+      })
+    });
+
+    const d = await res.json();
     if(!expBox) return;
-    if(d.success){
-      if(d.earnedExp > 0){
+
+    if(res.ok && d.success){
+      if(d.duplicate){
+        expBox.innerHTML='<div style="color:#f1c40f;font-weight:bold;">ℹ️ Kết quả ván đấu này đã được lưu trước đó.</div>';
+      } else if(d.earnedExp > 0){
         let msg = '<div style="color:#2ecc71;font-weight:bold;">⚔️ Nhận +' + d.earnedExp + ' EXP';
         msg += ' <span style="font-size:0.8rem;color:#bdc3c7;">(Cơ bản: ' + d.baseExp;
         if(d.greatGameBonus > 0) msg += ', Thưởng Trận Hay: +' + d.greatGameBonus;
@@ -773,18 +813,28 @@ function submitPveMatchResult(outcome, diff, movesCount, whyCode){
         if(d.leveledUp){
           msg += '<div style="color:#f1c40f;font-weight:bold;margin-top:4px;">🎉 Chúc mừng bạn đã thăng cấp: Cấp ' + d.newLevel + ' - ' + (d.rankTitle || '') + '!</div>';
         }
+        if(d.dailyPveCapRemaining !== undefined && d.dailyPveCapRemaining <= 60){
+          msg += '<div style="color:#e67e22;font-size:0.78rem;margin-top:2px;">(Hạn mức PvE hôm nay còn: ' + d.dailyPveCapRemaining + ' EXP)</div>';
+        }
         expBox.innerHTML = msg;
       } else {
-        expBox.innerHTML = '<div style="color:#95a5a6;font-size:0.82rem;">' + (d.message || 'Ván dưới 20 nước không tính điểm EXP.') + '</div>';
+        expBox.innerHTML = '<div style="color:#95a5a6;font-size:0.82rem;">' + (d.message || 'Ván đấu dưới 20 nước đi thực tế không được tính nhận EXP.') + '</div>';
       }
       checkAuthUI();
+      if(window.KybienAuth && typeof window.KybienAuth.fetchProfile === 'function'){
+        window.KybienAuth.fetchProfile();
+      }
     } else {
+      expBox.style.borderColor='#e74c3c';
       expBox.innerHTML = '<div style="color:#e74c3c;font-size:0.82rem;">⚠️ ' + (d.message || 'Không thể đồng bộ điểm EXP.') + '</div>';
     }
-  })
-  .catch(() => {
-    if(expBox) expBox.innerHTML = '<div style="color:#e74c3c;font-size:0.82rem;">⚠️ Mất kết nối tới máy chủ khi lưu EXP.</div>';
-  });
+  } catch(err){
+    console.error('[PvE EXP] Lỗi kết nối tới máy chủ:', err);
+    if(expBox){
+      expBox.style.borderColor='#e74c3c';
+      expBox.innerHTML = '<div style="color:#e74c3c;font-size:0.82rem;">⚠️ Mất kết nối tới máy chủ khi lưu EXP.</div>';
+    }
+  }
 }
 function finish(kind,w,l,why){
 if(over)return;over=true;busy=false;ms=null;sel=null;VM=[];pend=null;armed=null;mode=null;setLocked(false);
@@ -803,17 +853,11 @@ if(isPve){
   const pveOutcome=kind==='draw'?'DRAW':(w==='r'?'WIN':'LOSS');
   const lvVal=parseInt(($('lv')&&$('lv').value)||'2',10);
   const diff=(lvVal<=1)?'EASY':(lvVal>=3?'HARD':'NORMAL');
-  if(currentUser){
-    submitPveMatchResult(pveOutcome,diff,rec.length,why);
-    if(rec.length>=120&&gm){
-      gm.style.display='block';
-      gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐẤU MÁY KÉO DÀI '+rec.length+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">✨ Đã kích hoạt thưởng Trận Hay (+15 EXP) & AI tự động biên soạn ký sự lên Blog!</div></div>';
-    }
-  }else{
-    const guestTip=document.createElement('div');
-    guestTip.style.cssText='margin-top:10px;padding:6px 10px;background:rgba(212,175,55,0.1);border:1px dashed #f39c12;border-radius:6px;font-size:0.82rem;color:#f39c12;';
-    guestTip.innerHTML='💡 <b>Mẹo:</b> Đăng nhập tài khoản để được tích lũy EXP, thăng cấp Kỳ Thủ và ghi danh kỷ lục khi đấu với Máy!';
-    if(de)de.appendChild(guestTip);
+  const actualMovesCount=rec.filter(m=>typeof m==='string'&&/^\d+,\d+-\d+,\d+$/.test(m)).length;
+  submitPveMatchResult(pveOutcome,diff,actualMovesCount,why,currentMatchId);
+  if(actualMovesCount>=120&&gm&&(currentUser||localStorage.getItem('kybien_jwt_token'))){
+    gm.style.display='block';
+    gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐẤU MÁY KÉO DÀI '+actualMovesCount+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">✨ Đã kích hoạt thưởng Trận Hay (+15 EXP) & AI tự động biên soạn ký sự lên Blog!</div></div>';
   }
 }else{
   if(currentUser){

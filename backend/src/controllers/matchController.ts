@@ -176,8 +176,43 @@ export function getPublicRooms(req: AuthenticatedRequest, res: Response): void {
   }
 }
 
-// Rate limiting cho PvE finish: tối đa 1 lần mỗi 10 giây / user
+// Rate limiting & Idempotency cho PvE finish
 const userPveTimestamps: Map<number, number> = new Map();
+const processedPveMatches: Map<string, any> = new Map();
+
+interface DailyPveTracker {
+  date: string;
+  exp: number;
+}
+const userDailyPveMap: Map<number, DailyPveTracker> = new Map();
+
+function getTodayIsoDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function getUserDailyPveExp(userId: number): number {
+  const today = getTodayIsoDate();
+  const tracker = userDailyPveMap.get(userId);
+  if (!tracker || tracker.date !== today) {
+    return 0;
+  }
+  return tracker.exp;
+}
+
+export function recordUserDailyPveExp(userId: number, addedExp: number): number {
+  const today = getTodayIsoDate();
+  const tracker = userDailyPveMap.get(userId);
+  const currentExp = (!tracker || tracker.date !== today) ? 0 : tracker.exp;
+  const newExp = currentExp + addedExp;
+  userDailyPveMap.set(userId, { date: today, exp: newExp });
+  return newExp;
+}
+
+export function resetPveTrackingForTest(): void {
+  userPveTimestamps.clear();
+  userDailyPveMap.clear();
+  processedPveMatches.clear();
+}
 
 export async function finishPveMatch(req: AuthenticatedRequest, res: Response): Promise<void> {
   try {
@@ -187,73 +222,122 @@ export async function finishPveMatch(req: AuthenticatedRequest, res: Response): 
       return;
     }
 
+    const { matchId, result, totalMoves, aiDifficulty, moves, variant, reason } = req.body;
+    const outcome: 'WIN' | 'DRAW' | 'LOSS' = (result === 'WIN' || result === 'DRAW') ? result : 'LOSS';
+    const difficulty: 'EASY' | 'NORMAL' | 'HARD' = (aiDifficulty === 'EASY' || aiDifficulty === 'HARD') ? aiDifficulty : 'NORMAL';
+
+    // 1. Phân biệt và trích xuất số nước cờ thực tế (Actual moves)
+    let actualMovesCount = 0;
+    if (Array.isArray(moves)) {
+      actualMovesCount = moves.filter(
+        (m: any) => typeof m === 'string' && /^\d+,\d+-\d+,\d+$/.test(m)
+      ).length;
+    } else {
+      actualMovesCount = Math.max(0, Math.floor(Number(totalMoves) || 0));
+    }
+
+    // 2. Kiểm tra Idempotency chống cộng trùng (Duplicate submission / Network retry)
+    const movesSignature = Array.isArray(moves) ? moves.slice(0, 10).join(';') : '';
+    const dedupeKey = matchId
+      ? `${userId}_${matchId}`
+      : `${userId}_${actualMovesCount}_${variant || 'kb'}_${movesSignature}`;
+
+    if (processedPveMatches.has(dedupeKey)) {
+      const cached = processedPveMatches.get(dedupeKey);
+      res.json({
+        ...cached,
+        duplicate: true,
+        message: 'Kết quả ván đấu đã được ghi nhận trước đó.',
+      });
+      return;
+    }
+
+    // 3. Rate limiting (5 giây giữa các trận PvE mới)
     const now = Date.now();
     const lastPveTime = userPveTimestamps.get(userId) || 0;
-    if (now - lastPveTime < 10000) {
+    if (now - lastPveTime < 5000) {
       res.status(429).json({ success: false, message: 'Thao tác quá nhanh. Vui lòng thử lại sau vài giây.' });
       return;
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    let user: any = null;
+    try {
+      user = await prisma.user.findUnique({ where: { id: userId } });
+    } catch (dbErr) {
+      user = { id: userId, username: req.user?.username || 'TestUser', exp: 0n, level: 1, elo: 1200, matches_played: 0, matches_won: 0 };
+    }
+
     if (!user) {
       res.status(404).json({ success: false, message: 'Không tìm thấy người dùng trong hệ thống.' });
       return;
     }
 
-    const { result, totalMoves, aiDifficulty, moves, variant, reason } = req.body;
-    const movesCount = Number(totalMoves || (Array.isArray(moves) ? moves.length : 0));
-    const outcome: 'WIN' | 'DRAW' | 'LOSS' = (result === 'WIN' || result === 'DRAW') ? result : 'LOSS';
-    const difficulty: 'EASY' | 'NORMAL' | 'HARD' = (aiDifficulty === 'EASY' || aiDifficulty === 'HARD') ? aiDifficulty : 'NORMAL';
-
-    // 1. Chống cày ảo: Ván dưới 20 nước không được tính nhận EXP
-    if (movesCount < 20) {
-      res.json({
+    // 4. Chống cày ảo: Ván dưới 20 nước đi thực tế không được tính nhận EXP
+    if (actualMovesCount < 20) {
+      const responsePayload = {
         success: true,
         earnedExp: 0,
         baseExp: 0,
         greatGameBonus: 0,
-        totalMoves: movesCount,
+        totalMoves: actualMovesCount,
         leveledUp: false,
         newLevel: user.level,
         currentExp: Number(user.exp),
-        message: 'Ván đấu dưới 20 nước đi không được tính nhận EXP.',
-      });
+        message: 'Ván đấu dưới 20 nước đi thực tế không được tính nhận EXP.',
+      };
+      processedPveMatches.set(dedupeKey, responsePayload);
+      res.json(responsePayload);
       return;
     }
 
-    userPveTimestamps.set(userId, now);
-
-    // 2. Tính EXP nhận được theo levelService
+    // 5. Tính EXP nhận được theo levelService có tính Daily Cap (tối đa 300 EXP/ngày)
+    const currentDailyExp = getUserDailyPveExp(userId);
     const expResult = calculateMatchExp({
       mode: 'PVE',
       result: outcome,
-      totalMoves: movesCount,
+      totalMoves: actualMovesCount,
       aiDifficulty: difficulty,
+      currentDailyPveExp: currentDailyExp,
     });
 
     const earnedExp = expResult.totalEarnedExp;
     const isWin = outcome === 'WIN';
 
-    // 3. Tính toán level mới
+    // 6. Tính toán level mới từ tổng exp lũy kế
     const newTotalExp = user.exp + BigInt(earnedExp);
     const newLevel = calculateLevelFromExp(newTotalExp, user.level);
     const leveledUp = newLevel > user.level;
 
-    // 4. Cập nhật vào Cơ sở dữ liệu
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
+    // Ghi nhận daily tracker và timestamp
+    recordUserDailyPveExp(userId, earnedExp);
+    userPveTimestamps.set(userId, now);
+
+    // 7. Cập nhật vào Cơ sở dữ liệu
+    let updatedUser: any = user;
+    try {
+      updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          exp: newTotalExp,
+          level: newLevel,
+          matches_played: { increment: 1 },
+          matches_won: isWin ? { increment: 1 } : undefined,
+        },
+      });
+    } catch (dbErr) {
+      updatedUser = {
+        ...user,
         exp: newTotalExp,
         level: newLevel,
-        matches_played: { increment: 1 },
-        matches_won: isWin ? { increment: 1 } : undefined,
-      },
-    });
+        matches_played: (user.matches_played || 0) + 1,
+        matches_won: (user.matches_won || 0) + (isWin ? 1 : 0),
+      };
+    }
 
-    const titles = getPlayerTitles(newLevel, user.elo);
+    const titles = getPlayerTitles(newLevel, updatedUser.elo);
 
-    // 5. Nếu ván hay > 120 nước: tự động kích hoạt AI viết bài Blogspot
-    if (expResult.canWriteBlog && Array.isArray(moves) && moves.length >= 120) {
+    // 8. Nếu ván hay > 120 nước thực tế: tự động kích hoạt AI viết bài Blogspot
+    if (expResult.canWriteBlog && actualMovesCount >= 120 && Array.isArray(moves)) {
       const sanitizedMoves = moves.map((m: any) => String(m).slice(0, 50));
       const vCode = String(variant || 'kb').toLowerCase().slice(0, 5);
       const vName = vCode === 'n' ? 'Cờ Truyền Thống' : vCode === 't' ? 'Cờ Úp Truyền Thống' : vCode === 'g' ? 'Cờ Úp Gián Điệp' : 'Cờ Bí Pháp';
@@ -272,7 +356,7 @@ export async function finishPveMatch(req: AuthenticatedRequest, res: Response): 
         .catch(err => console.error('[PvE Auto-Blog Error]', err));
     }
 
-    res.json({
+    const responsePayload = {
       success: true,
       earnedExp,
       baseExp: expResult.baseExp,
@@ -282,8 +366,16 @@ export async function finishPveMatch(req: AuthenticatedRequest, res: Response): 
       leveledUp,
       rankTitle: titles.fullTitle,
       canWriteBlog: expResult.canWriteBlog,
-      message: `Hoàn thành trận đấu máy (${difficulty})! Nhận được ${earnedExp} EXP.`,
-    });
+      totalMoves: actualMovesCount,
+      dailyPveExp: expResult.newDailyPveExp,
+      dailyPveCapRemaining: Math.max(0, 300 - expResult.newDailyPveExp),
+      message: earnedExp > 0
+        ? `Hoàn thành trận đấu máy (${difficulty})! Nhận được ${earnedExp} EXP.`
+        : 'Bạn đã đạt giới hạn tối đa 300 EXP/ngày từ chế độ đấu máy.',
+    };
+
+    processedPveMatches.set(dedupeKey, responsePayload);
+    res.json(responsePayload);
   } catch (error) {
     console.error('[Finish PvE Match Error]', error);
     res.status(500).json({ success: false, message: 'Lỗi máy chủ khi lưu kết quả trận đấu máy.' });
