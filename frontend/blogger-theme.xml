@@ -26,13 +26,13 @@
   <b:if cond='data:blog.metaDescription'>
     <meta expr:content='data:blog.metaDescription' name='description'/>
   <b:else/>
-    <meta content='Kỳ Biến Chess - Nền tảng cờ tướng bí pháp kiếm hiệp, cờ úp, cờ gián điệp và hệ thống bình văn sa trường tự động bằng AI.' name='description'/>
+    <meta content='Kỳ Biến - Đệ nhất kỳ đạo bí truyền giang hồ, hội tụ cờ tướng bí pháp thập lục kỳ mưu, cờ úp gián điệp, khiêu chiến Mộc Nhân trận và kho tàng bình văn sa trường luận chiếu thiên cổ.' name='description'/>
   </b:if>
 
   <!-- Open Graph Meta Tags (Facebook, Zalo share) -->
   <meta expr:content='data:blog.pageTitle' property='og:title'/>
   <meta expr:content='data:blog.canonicalUrl' property='og:url'/>
-  <meta content='Kỳ Biến Chess' property='og:site_name'/>
+  <meta content='Kỳ Biến' property='og:site_name'/>
   <meta content='vi_VN' property='og:locale'/>
   <b:if cond='data:blog.pageType == "item"'>
     <meta content='article' property='og:type'/>
@@ -42,7 +42,7 @@
   <b:if cond='data:blog.metaDescription'>
     <meta expr:content='data:blog.metaDescription' property='og:description'/>
   <b:else/>
-    <meta content='Nền tảng cờ tướng bí pháp kiếm hiệp, xem lại ván cờ tương tác và bình văn sa trường bằng AI.' property='og:description'/>
+    <meta content='Đệ nhất kỳ đạo bí truyền giang hồ, kỳ hội đối ẩm bí pháp thập lục kỳ mưu, tái hiện ván cờ tương tác và bình văn sa trường thiên cổ.' property='og:description'/>
   </b:if>
 
   <!-- Twitter Card Tags -->
@@ -548,14 +548,14 @@
               <b:if cond='!data:blog.searchLabel and !data:blog.searchQuery'>
                 <!-- KHỐI HERO BANNER CHÀO MỪNG TRANG CHỦ -->
                 <div class='hero-section'>
-                  <span class='hero-badge'>⚔️ NỀN TẢNG CỜ TƯỚNG BÍ PHÁP KIẾM HIỆP #1</span>
-                  <h1 class='hero-title'>KỲ BIẾN CHESS PLATFORM</h1>
+                  <span class='hero-badge'>⚔️ ĐỆ NHẤT KỲ ĐẠO BÍ TRUYỀN GIANG HỒ</span>
+                  <h1 class='hero-title'>KỲ BIẾN THIÊN THƯ SA TRƯỜNG</h1>
                   <p class='hero-subtitle'>
-                    Trải nghiệm cờ tướng bí pháp với 16 thẻ kỳ mưu, cờ úp gián điệp, thi đấu AI Smart Engine &amp; hệ thống bình văn sa trường tự động bằng Gemini AI.
+                    Hội tụ tinh hoa cờ tướng bí pháp thập lục kỳ mưu, cờ úp gián điệp thiên biến vạn hóa, tôi luyện kỳ nghệ cùng Mộc Nhân Cơ Quan trận và thưởng lãm kho tàng bình văn thiên cổ sa trường luận chiếu.
                   </p>
                   <div class='hero-actions'>
-                    <a class='btn-hero-primary' href='/p/arena.html'>🎮 Đấu Với Máy &amp; Online</a>
-                    <a class='btn-hero-secondary' href='/search/label/Phân%20Tích%20Cờ'>📜 Thư Viện Bình Văn Sa Trường</a>
+                    <a class='btn-hero-primary' href='/p/arena.html'>⚔️ Vào Sàn Đấu &amp; Khiêu Chiến</a>
+                    <a class='btn-hero-secondary' href='/search/label/Phân%20Tích%20Cờ'>📜 Thưởng Lãm Bình Văn Sa Trường</a>
                   </div>
                 </div>
 
@@ -565,88 +565,89 @@
                     <div>
                       <div class='variant-icon'>✨</div>
                       <h3 class='variant-title'>Cờ Kỳ Biến</h3>
-                      <p class='variant-desc'>Đột phá cờ tướng cổ điển với 16 thẻ Bí pháp kiếm hiệp, điểm Công trạng &amp; Túi Kỳ Mưu ngẫu nhiên.</p>
+                      <p class='variant-desc'>Đột phá quy củ cổ truyền với Thập lục Bí Pháp giang hồ, tích lũy Công Trạng thi triển thần thông nghịch chuyển càn khôn.</p>
                     </div>
-                    <a class='btn-play-variant' href='/p/arena.html?variant=kb'>⚔️ Chơi Ngay (Bí Pháp)</a>
+                    <a class='btn-play-variant' href='/p/arena.html?variant=kb'>⚔️ Khai Cuộc Bí Pháp</a>
                   </div>
 
                   <div class='variant-card'>
                     <div>
                       <div class='variant-icon'>🕵️</div>
                       <h3 class='variant-title'>Cờ Úp Truyền Thống</h3>
-                      <p class='variant-desc'>15 quân úp ẩn số bí ẩn. Lật ngửa quân theo ô đứng, thử thách tài đoán quân và lật kèo kịch tính.</p>
+                      <p class='variant-desc'>Mười lăm ám quân mai phục nơi chiến địa. Thử thách nhãn lực đoán quân, biến hóa khôn lường chuyển bại thành thắng.</p>
                     </div>
-                    <a class='btn-play-variant' href='/p/arena.html?variant=t'>🕵️ Chơi Ngay (Cờ Úp)</a>
+                    <a class='btn-play-variant' href='/p/arena.html?variant=t'>🕵️ Khai Cuộc Cờ Úp</a>
                   </div>
 
                   <div class='variant-card'>
                     <div>
                       <div class='variant-icon'>⚔️</div>
                       <h3 class='variant-title'>Cờ Úp Gián Điệp</h3>
-                      <p class='variant-desc'>Cơ chế lật quân độc đáo! Quân địch có thể ẩn núp ngụy trang phía bàn cờ nhà bạn, tạo bất ngờ cực lớn.</p>
+                      <p class='variant-desc'>Ám tiễn khó phòng! Quân gián điệp ngụy trang cài cắm giữa trận địa đối phương, một nước lật cờ kinh thiên động địa.</p>
                     </div>
-                    <a class='btn-play-variant' href='/p/arena.html?variant=g'>🗡️ Chơi Ngay (Gián Điệp)</a>
+                    <a class='btn-play-variant' href='/p/arena.html?variant=g'>🗡️ Khai Cuộc Gián Điệp</a>
                   </div>
 
                   <div class='variant-card'>
                     <div>
                       <div class='variant-icon'>👑</div>
-                      <h3 class='variant-title'>Cờ Tướng Tiêu Chuẩn</h3>
-                      <p class='variant-desc'>Luật cờ tướng cổ điển chuẩn mực 9x10. Thể hiện bản lĩnh và chiều sâu thuật điều binh khiển tướng.</p>
+                      <h3 class='variant-title'>Cờ Tướng Chuẩn Mực</h3>
+                      <p class='variant-desc'>Chính tông kỳ đạo cửu cung thập lộ. Thể hiện bản lĩnh túc trí đa mưu và nghệ thuật điều binh khiển tướng đỉnh cao.</p>
                     </div>
-                    <a class='btn-play-variant' href='/p/arena.html?variant=n'>👑 Chơi Ngay (Truyền Thống)</a>
+                    <a class='btn-play-variant' href='/p/arena.html?variant=n'>👑 Khai Cuộc Cổ Điển</a>
                   </div>
                 </div>
 
-                <!-- KHỐI WIDGET ĐỘNG TRANG CHỦ: HỒ SƠ, PHÒNG ĐẤU TRỰC TIẾP & TOP ELO LEADERBOARD -->
+                <!-- KHỐI WIDGET ĐỘNG TRANG CHỦ: HỒ SƠ, KỲ ĐÀI LUẬN KIẾM & BẢNG VÀNG MINH CHỦ -->
                 <div class='kybien-dashboard-widgets' style='display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; margin-bottom: 35px;'>
                   
-                  <!-- CỘT 1: HỒ SƠ KỲ THỦ & PHÒNG CHỜ TRỰC TIẾP -->
+                  <!-- CỘT 1: HỒ SƠ HIỆP KHÁCH & KỲ ĐÀI LUẬN KIẾM -->
                   <div style='display: flex; flex-direction: column; gap: 20px;'>
                     <!-- Widget Hồ Sơ Cá Nhân -->
                     <div id='kybien-user-profile-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
                       <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
-                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.1rem;'>👤 HỒ SƠ KỲ THỦ</h3>
+                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.1rem;'>📜 HỒ SƠ HIỆP KHÁCH</h3>
+                        <span style='background: #4a3320; color: #a8947d; font-size: 0.75rem; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid #5a3d22;'>Vô Danh Lữ Khách</span>
                       </div>
                       <div style='text-align: center; padding: 15px 10px;'>
                         <p style='color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;'>
-                          Bạn đang tham gia với tư cách <strong>Khách Vô Danh</strong>.<br/>Đăng ký tài khoản để tích lũy ELO, thăng cấp &amp; lưu lịch sử đấu!
+                          Chư vị đang hành tẩu với danh xưng <strong>Vô Danh Lữ Khách</strong>.<br/>Đăng nhập tài khoản để tích lũy Chiến Lực (ELO), thăng tiến Cảnh Giới &amp; lưu danh sử sách!
                         </p>
-                        <a href='/p/arena.html' style='display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f;'>🔑 Đăng Nhập / Đăng Ký Chơi Ngay ➔</a>
+                        <a href='/p/arena.html' style='display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f;'>🔑 Đăng Nhập / Ghi Danh Nhập Trận ➔</a>
                       </div>
                     </div>
                     
-                    <!-- Widget Phòng Chờ Trực Tiếp -->
+                    <!-- Widget Kỳ Đài Luận Kiếm -->
                     <div id='kybien-live-rooms-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
                       <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
-                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem;'>⚔️ PHÒNG ĐẤU TRỰC TIẾP</h3>
-                        <a href='/p/arena.html' style='font-size: 0.8rem; color: #2ecc71; font-weight: bold;'>+ Tạo Phòng</a>
+                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem;'>⚔️ KỲ ĐÀI LUẬN KIẾM</h3>
+                        <a href='/p/arena.html' style='font-size: 0.8rem; color: #2ecc71; font-weight: bold;'>+ Lập Kỳ Đài</a>
                       </div>
                       <div id='kybien-rooms-list' style='display: flex; flex-direction: column; gap: 8px;'>
                         <div style='text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;'>
-                          Đang kết nối sảnh cờ... <br/>
-                          <a href='/p/arena.html' style='color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;'>Bấm vào đây để vào Sảnh Đấu ngay! ➔</a>
+                          Đang kết nối sảnh luận kiếm... <br/>
+                          <a href='/p/arena.html' style='color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;'>Tiến vào Sàn Đấu khiêu chiến ngay! ➔</a>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <!-- CỘT 2: BẢNG XẾP HẠNG TOP ELO -->
+                  <!-- CỘT 2: BẢNG VÀNG MINH CHỦ KỲ ĐẠO -->
                   <div id='kybien-top-elo-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
                     <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
-                      <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem;'>🏆 BẢNG XẾP HẠNG TOP ELO</h3>
-                      <span style='font-size: 0.78rem; color: #a8947d;'>Cao Thủ Kỳ Biến</span>
+                      <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem;'>🏆 BẢNG VÀNG MINH CHỦ KỲ ĐẠO</h3>
+                      <span style='font-size: 0.78rem; color: #a8947d;'>Tuyệt Đỉnh Cao Thủ</span>
                     </div>
                     <div id='kybien-elo-list' style='display: flex; flex-direction: column; gap: 8px;'>
-                      <div style='text-align: center; color: #a8947d; font-size: 0.85rem; padding: 15px;'>Đang tải bảng xếp hạng...</div>
+                      <div style='text-align: center; color: #a8947d; font-size: 0.85rem; padding: 15px;'>Đang thỉnh bảng vàng minh chủ...</div>
                     </div>
                   </div>
 
                 </div>
 
                 <div class='section-title-bar'>
-                  <h2>⚔️ BÌNH VĂN SA TRƯỜNG &amp; TRẬN HAY MỚI NHẤT</h2>
-                  <span><a href='/search/label/Phân%20Tích%20Cờ' style='font-size: 0.9rem; color: #f1c40f;'>Xem Tất Cả Bài ➔</a></span>
+                  <h2>⚔️ THIÊN THƯ BÌNH VĂN &amp; CHIẾN TÍCH SA TRƯỜNG</h2>
+                  <span><a href='/search/label/Phân%20Tích%20Cờ' style='font-size: 0.9rem; color: #f1c40f;'>Thưởng Lãm Toàn Bộ ➔</a></span>
                 </div>
                 
                 <div class='post-grid'>
@@ -673,12 +674,12 @@
                           <b:if cond='data:post.snippet'>
                             <data:post.snippet/>
                           <b:else/>
-                            Nhấp bên dưới để đọc bài tường thuật sa trường kiếm hiệp và xem lại bàn cờ tương tác...
+                            Thưởng lãm hồi ký sa trường kiếm hiệp và tái hiện ván cờ tương tác...
                           </b:if>
                         </div>
                       </div>
                       <a class='btn-read-post' expr:href='data:post.url'>
-                        📖 Đọc Bài Tường Thuật &amp; Xem Ván Cờ ➔
+                        📖 Thưởng Lãm Hồi Ký &amp; Khám Phá Ván Cờ ➔
                       </a>
                     </div>
                   </b:loop>
@@ -692,17 +693,17 @@
                 <div class='section-title-bar'>
                   <h2>
                     <b:if cond='data:blog.searchLabel'>
-                      ⚔️ THƯ VIỆN BÀI VIẾT: <data:blog.searchLabel/>
+                      📜 THIÊN THƯ BÌNH VĂN: <data:blog.searchLabel/>
                     <b:else/>
-                      🔍 KẾT QUẢ TÌM KIẾM: <data:blog.searchQuery/>
+                      🔍 KẾT QUẢ TẦM KIẾM: <data:blog.searchQuery/>
                     </b:if>
                   </h2>
-                  <span><a href='/p/arena.html' style='font-size: 0.9rem; color: #f1c40f;'>+ Vào Sảnh Đấu Cờ</a></span>
+                  <span><a href='/p/arena.html' style='font-size: 0.9rem; color: #f1c40f;'>+ Nhập Kỳ Đài Luận Kiếm</a></span>
                 </div>
 
                 <!-- THANH BỘ LỌC NHANH DÀNH CHO THƯ VIỆN BÀI VIẾT -->
                 <div class='label-filter-bar'>
-                  <a class='filter-btn' href='/search/label/Phân%20Tích%20Cờ'>Tất Cả Bài</a>
+                  <a class='filter-btn' href='/search/label/Phân%20Tích%20Cờ'>Toàn Bộ Thiên Thư</a>
                   <a class='filter-btn' href='/search/label/Cờ%20Bí%20Pháp'>Cờ Bí Pháp</a>
                   <a class='filter-btn' href='/search/label/Cờ%20Úp'>Cờ Úp</a>
                   <a class='filter-btn' href='/search/label/Cờ%20Gián%20Điệp'>Cờ Gián Điệp</a>
@@ -734,12 +735,12 @@
                           <b:if cond='data:post.snippet'>
                             <data:post.snippet/>
                           <b:else/>
-                            Nhấp bên dưới để đọc bài tường thuật sa trường kiếm hiệp và xem lại bàn cờ tương tác...
+                            Thưởng lãm hồi ký sa trường kiếm hiệp và tái hiện ván cờ tương tác...
                           </b:if>
                         </div>
                       </div>
                       <a class='btn-read-post' expr:href='data:post.url'>
-                        📖 Đọc Bài Tường Thuật &amp; Xem Ván Cờ ➔
+                        📖 Thưởng Lãm Hồi Ký &amp; Khám Phá Ván Cờ ➔
                       </a>
                     </div>
                   </b:loop>
@@ -798,7 +799,7 @@
 
   <!-- CHÂN TRANG CHUYÊN NGHIỆP CÓ LIÊN KẾT CHÍNH SÁCH METADATA -->
   <footer class='kybien-footer'>
-    <p>© 2026 KỲ BIẾN CHESS PLATFORM. Bổn Trang kính chúc chư vị kỳ hữu kỳ nghệ thăng tiến.</p>
+    <p>© 2026 KỲ BIẾN - ĐỆ NHẤT KỲ ĐẠO BÍ TRUYỀN GIANG HỒ. Bổn Trang kính chúc chư vị kỳ hữu kỳ nghệ thăng tiến, danh chấn bát hoang.</p>
     <div style='margin-top: 10px; font-size: 0.82rem; color: #a8947d; display: flex; justify-content: center; gap: 15px;'>
       <a href='/'>Trang Chủ</a> |
       <a href='/p/cam-nang.html'>Cẩm Nang</a> |

@@ -173,12 +173,12 @@
       if (profileElem) {
         profileElem.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
-            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">👤 HỒ SƠ KỲ THỦ</h3>
-            <span style="background: #4a3320; color: #a8947d; font-size: 0.75rem; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid #5a3d22;">Lữ Khách</span>
+            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">📜 HỒ SƠ HIỆP KHÁCH</h3>
+            <span style="background: #4a3320; color: #a8947d; font-size: 0.75rem; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid #5a3d22;">Vô Danh Lữ Khách</span>
           </div>
           <div style="text-align: center; padding: 15px 10px;">
             <p style="color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;">
-              Bạn đang tham gia với tư cách <strong>Lữ Khách</strong>.<br/>Đăng nhập ngay ở thanh trên để tích lũy ELO, thăng cấp &amp; lưu lịch sử đấu!
+              Chư vị đang hành tẩu với danh xưng <strong>Vô Danh Lữ Khách</strong>.<br/>Đăng nhập ngay ở thanh trên để tích lũy Chiến Lực (ELO), thăng tiến Cảnh Giới &amp; lưu danh sử sách!
             </p>
           </div>
         `;
@@ -188,17 +188,17 @@
     renderLoadingUI: function () {
       const headerElem = document.getElementById('kybien-header-profile');
       if (headerElem) {
-        headerElem.innerHTML = `<span style="font-size: 0.82rem; color: #a8947d;">⏳ Đang nạp tài khoản...</span>`;
+        headerElem.innerHTML = `<span style="font-size: 0.82rem; color: #a8947d;">⏳ Đang kiểm chứng danh xưng kỳ hữu...</span>`;
       }
 
       const profileElem = document.getElementById('kybien-user-profile-section');
       if (profileElem) {
         profileElem.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
-            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">👤 HỒ SƠ KỲ THỦ</h3>
+            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">📜 HỒ SƠ HIỆP KHÁCH</h3>
           </div>
           <div style="text-align: center; padding: 20px 10px; color: #a8947d; font-size: 0.88rem;">
-            ⏳ Đang xác minh phiên đăng nhập và tải dữ liệu hồ sơ...
+            ⏳ Đang kiểm chứng danh xưng và nạp dữ liệu hồ sơ hiệp khách...
           </div>
         `;
       }
@@ -219,11 +219,11 @@
       if (profileElem) {
         profileElem.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
-            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">👤 HỒ SƠ KỲ THỦ</h3>
+            <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.1rem; margin: 0;">📜 HỒ SƠ HIỆP KHÁCH</h3>
           </div>
           <div style="text-align: center; padding: 15px 10px; color: #a8947d; font-size: 0.88rem;">
             <p style="color: #ff6b6b; margin-bottom: 10px;">⚠️ ${escapeHtml(msg)}</p>
-            <button onclick="window.KybienAuth.fetchProfile()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.82rem;">🔄 Tải lại dữ liệu hồ sơ</button>
+            <button onclick="window.KybienAuth.fetchProfile()" style="background: #8b0000; color: #fff; border: 1px solid #a83a1f; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.82rem;">🔄 Nạp lại dữ liệu hồ sơ</button>
           </div>
         `;
       }
@@ -313,7 +313,7 @@
         profileElem.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
             <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.05rem; margin: 0;">
-              👤 HỒ SƠ KỲ THỦ: <span style="color: #fff;">${safeUsername}</span>
+              📜 HỒ SƠ HIỆP KHÁCH: <span style="color: #fff;">${safeUsername}</span>
             </h3>
             <span style="background: linear-gradient(135deg, #8b0000, #500000); color: #f1c40f; font-size: 0.75rem; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid #a83a1f;">
               ${fullTitle}
@@ -327,18 +327,18 @@
 
             <div style="flex: 1;">
               <div style="font-size: 0.9rem; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                <div>Danh hiệu: <strong style="color: #f1c40f;">${fullTitle}</strong> <span style="font-size: 0.8em; color: #e67e22;">(Lv.${level})</span></div>
-                <div>Điểm ELO: <strong style="color: #2ecc71;">${elo}</strong></div>
+                <div>Cảnh giới: <strong style="color: #f1c40f;">${fullTitle}</strong> <span style="font-size: 0.8em; color: #e67e22;">(Cấp ${level})</span></div>
+                <div>Chiến Lực: <strong style="color: #2ecc71;">${elo} ELO</strong></div>
               </div>
 
               <div style="font-size: 0.78rem; color: #a8947d; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
-                <span>Tỉ lệ thắng: <strong style="color: #2ecc71;">${winRate}%</strong> (${won}/${played} trận)</span>
+                <span>Chiến tích: <strong style="color: #2ecc71;">${winRate}%</strong> thắng (${won}/${played} trận)</span>
                 <span style="font-family: monospace; color: #f1c40f; font-weight: bold;">
                   ${isMaxLevel ? 'Cực Hạn (MAX)' : `${currentExp} / ${reqExp} EXP (${expPercent}%)`}
                 </span>
               </div>
 
-              <!-- Thanh EXP Hồ sơ Kỳ thủ -->
+              <!-- Thanh EXP Hồ sơ Hiệp khách -->
               <div style="background: #140b05; border: 1px solid #5a3d22; height: 10px; border-radius: 5px; overflow: hidden; width: 100%; position: relative; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);">
                 <div style="width: ${expPercent}%; height: 100%; background: ${isMaxLevel ? 'linear-gradient(90deg, #ff4757, #f1c40f)' : 'linear-gradient(90deg, #e67e22, #f1c40f)'}; transition: width 0.5s ease;"></div>
               </div>
@@ -346,8 +346,8 @@
           </div>
 
           <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.75rem; color: #888;">Cấp bậc: <strong style="color: #e5b36a;">${fullTitle}</strong></span>
-            <a href="/p/arena.html" style="font-size: 0.82rem; color: #2ecc71; font-weight: bold; text-decoration: underline;">Vào sảnh đấu cờ ➔</a>
+            <span style="font-size: 0.75rem; color: #888;">Danh xưng: <strong style="color: #e5b36a;">${fullTitle}</strong></span>
+            <a href="/p/arena.html" style="font-size: 0.82rem; color: #2ecc71; font-weight: bold; text-decoration: underline;">Tiến vào Sàn Đấu khiêu chiến ➔</a>
           </div>
         `;
       }
@@ -795,11 +795,11 @@
     waitForElem('kybien-top-elo-section', async (container) => {
       container.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
-          <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.15rem;">🏆 BẢNG XẾP HẠNG TOP ELO</h3>
-          <span style="font-size: 0.78rem; color: #a8947d;">Cao Thủ Kỳ Biến</span>
+          <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.15rem;">🏆 BẢNG VÀNG MINH CHỦ KỲ ĐẠO</h3>
+          <span style="font-size: 0.78rem; color: #a8947d;">Tuyệt Đỉnh Cao Thủ</span>
         </div>
         <div id="kybien-elo-list" style="display: flex; flex-direction: column; gap: 8px;">
-          <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 15px;">Đang tải bảng xếp hạng...</div>
+          <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 15px;">Đang thỉnh bảng vàng minh chủ...</div>
         </div>
       `;
 
@@ -811,7 +811,7 @@
         if (!listContainer) return;
 
         if (!list || !list.length) {
-          listContainer.innerHTML = '<div style="text-align:center; color:#a8947d; font-size:0.85rem;">Chưa có dữ liệu xếp hạng...</div>';
+          listContainer.innerHTML = '<div style="text-align:center; color:#a8947d; font-size:0.85rem;">Chưa có danh tính trên bảng vàng...</div>';
           return;
         }
 
@@ -858,19 +858,19 @@
     });
   }
 
-  // KHỐI PHÒNG ĐẤU TRỰC TIẾP TRANG CHỦ
+  // KHỐI KỲ ĐÀI LUẬN KIẾM TRANG CHỦ
   function initLiveRoomsWidget() {
     waitForElem('kybien-live-rooms-section', (container) => {
       const variantNames = { kb: 'Cờ Bí Pháp', t: 'Cờ Úp', g: 'Gián Điệp', n: 'Truyền Thống' };
 
       container.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;">
-          <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.15rem;">⚔️ PHÒNG ĐẤU TRỰC TIẾP</h3>
-          <a href="/p/arena.html" style="font-size: 0.8rem; color: #2ecc71; font-weight: bold;">+ Tạo Phòng</a>
+          <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; font-size: 1.15rem;">⚔️ KỲ ĐÀI LUẬN KIẾM</h3>
+          <a href="/p/arena.html" style="font-size: 0.8rem; color: #2ecc71; font-weight: bold;">+ Lập Kỳ Đài</a>
         </div>
         <div id="kybien-rooms-list" style="display: flex; flex-direction: column; gap: 8px;">
           <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;">
-            Đang kết nối sảnh cờ...
+            Đang kết nối sảnh luận kiếm...
           </div>
         </div>
       `;
@@ -881,8 +881,8 @@
         if (!rooms || !rooms.length) {
           listContainer.innerHTML = `
             <div style="text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;">
-              Chưa có phòng công khai nào đang chờ. <br/>
-              <a href="/p/arena.html" style="color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;">Tạo phòng ngay để chờ đối thủ! ➔</a>
+              Chưa có kỳ đài công khai nào đang chờ nghênh chiến. <br/>
+              <a href="/p/arena.html" style="color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;">Lập kỳ đài ngay để chờ kỳ hữu nghênh chiến! ➔</a>
             </div>
           `;
           return;
@@ -895,9 +895,9 @@
             <div>
               <b style="color: #f1c40f; font-size: 0.88rem;">${safeRoomCode}</b>
               <span style="font-size: 0.75rem; color: #2ecc71; margin-left: 6px;">[${variantNames[r.variant] || 'Cờ Tướng'}]</span>
-              <div style="font-size: 0.78rem; color: #a8947d;">Chủ phòng: ${safeHostName}</div>
+              <div style="font-size: 0.78rem; color: #a8947d;">Đài chủ: ${safeHostName}</div>
             </div>
-            <a href="/p/arena.html" style="background: #8b0000; color: #fff; font-size: 0.8rem; padding: 5px 12px; border-radius: 6px; font-weight: bold; border: 1px solid #a83a1f;">Vào Đấu ➔</a>
+            <a href="/p/arena.html" style="background: #8b0000; color: #fff; font-size: 0.8rem; padding: 5px 12px; border-radius: 6px; font-weight: bold; border: 1px solid #a83a1f;">Nghênh Chiến ➔</a>
           </div>
         `;
         }).join('');
@@ -925,7 +925,7 @@
           socket.on('public_rooms_list', (rooms) => renderRooms(rooms));
           socket.on('match_found', () => {
             if (window.location.pathname.indexOf('/p/arena.html') === -1) {
-              alert('⚔️ Đã có đối thủ tham gia phòng đấu! Đang tự động chuyển vào Sảnh Đấu...');
+              alert('⚔️ Đã có kỳ hữu tiếp chiến trên kỳ đài! Đang chuyển vào Sàn Đấu...');
               window.location.href = '/p/arena.html';
             }
           });

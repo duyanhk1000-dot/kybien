@@ -349,17 +349,17 @@
     </div>
   </div>
 
-  <!-- MODAL THÔNG BÁO CHƯA TẠO PHÒNG ONLINE -->
+  <!-- MODAL THÔNG BÁO CHƯA LẬP KỲ ĐÀI NGHÊNH CHIẾN -->
   <div class="modal" id="online-not-created-modal">
     <div class="mbox" style="text-align:center;max-width:380px;">
       <div style="font-size:3rem;line-height:1;margin-bottom:8px">⚠️</div>
-      <h3 style="color:#f1c40f;margin-bottom:8px;font-size:1.1rem">Chưa Tạo Phòng Chơi Online</h3>
+      <h3 style="color:#f1c40f;margin-bottom:8px;font-size:1.1rem">Chưa Lập Kỳ Đài Nghênh Chiến</h3>
       <p style="font-size:.88rem;color:#e8dcc6;margin-bottom:16px;line-height:1.5">
-        Bạn đang ở chế độ <b>Ghép Trận Kỳ Hội Online</b> nhưng chưa tạo hoặc gia nhập phòng đấu nào.
+        Chư vị đang chọn <b>Kỳ Hội Giang Hồ (Trực Tuyến)</b> nhưng chưa lập hoặc gia nhập kỳ đài nào.
       </p>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <button type="button" onclick="actionCreateOnlineRoomFromModal()" style="background:#27ae60!important;color:#fff!important;border:none!important;padding:10px;font-weight:bold;font-size:.9rem;border-radius:6px">Tạo Phòng Chơi Online</button>
-        <button type="button" onclick="actionSwitchToAiFromModal()" style="background:#e67e22!important;color:#fff!important;border:none!important;padding:10px;font-weight:bold;font-size:.9rem;border-radius:6px">Đấu Với Máy (PvE)</button>
+        <button type="button" onclick="actionCreateOnlineRoomFromModal()" style="background:#27ae60!important;color:#fff!important;border:none!important;padding:10px;font-weight:bold;font-size:.9rem;border-radius:6px">Lập Kỳ Đài Nghênh Chiến</button>
+        <button type="button" onclick="actionSwitchToAiFromModal()" style="background:#e67e22!important;color:#fff!important;border:none!important;padding:10px;font-weight:bold;font-size:.9rem;border-radius:6px">Khiêu Chiến Mộc Nhân Trận</button>
         <button type="button" onclick="closeOnlineNotCreatedModal()" style="background:#7f8c8d!important;color:#fff!important;border:none!important;padding:6px;font-size:.8rem;border-radius:6px;margin-top:4px">Hủy / Đóng</button>
       </div>
     </div>
@@ -379,13 +379,13 @@
 
     <aside id="sec-aside">
       <div class="arena-card">
-        <h3>Thiết Lập Ván Đấu</h3>
+        <h3>Thiết Lập Trận Đấu</h3>
         <div class="fg">
-          <label>Thể loại cờ<select id="mode_variant" onchange="onVariantChange()"><option value="kb" selected>Kỳ Biến (Bí Pháp Kiếm Hiệp)</option><option value="n">Cờ Tướng Truyền Thống</option><option value="t">Cờ Úp Truyền Thống</option><option value="g">Cờ Úp Gián Điệp</option></select></label>
-          <label>Chế độ thi đấu<select id="mode" onchange="onModeChange()"><option value="ai" selected>Chơi Với Máy (AI Bot)</option><option value="2p_online" id="opt-2p-online">Ghép Trận Kỳ Hội Online</option><option value="2p_local">Hai Người (Cùng Máy)</option></select></label>
-          <label id="lbl-lv">Cấp độ máy (Bot)<select id="lv" onchange="newGame()"><option value="0">Lv1 Tay Mơ</option><option value="1">Lv2 Ông Đồ</option><option value="2">Lv3 Pháo Đầu</option><option value="3">Lv4 Cao Thủ</option><option value="4" selected>Lv5 Địa Ngục Vương</option></select></label>
+          <label>Thể loại cờ<select id="mode_variant" onchange="onVariantChange()"><option value="kb" selected>Kỳ Biến (Bí Pháp Kiếm Hiệp)</option><option value="n">Cờ Tướng Chuẩn Mực</option><option value="t">Cờ Úp Truyền Thống</option><option value="g">Cờ Úp Gián Điệp</option></select></label>
+          <label>Chế độ thi đấu<select id="mode" onchange="onModeChange()"><option value="ai" selected>Khiêu Chiến Mộc Nhân Trận</option><option value="2p_online" id="opt-2p-online">Kỳ Hội Giang Hồ (Trực Tuyến)</option><option value="2p_local">Song Hùng Đối Ẩm (Hai Người)</option></select></label>
+          <label id="lbl-lv">Cảnh giới Mộc Nhân<select id="lv" onchange="newGame()"><option value="0">Tầng 1: Sơ Nhập Giang Hồ</option><option value="1">Tầng 2: Điền Viên Lão Giả</option><option value="2">Tầng 3: Trấn Sơn Pháo Thủ</option><option value="3">Tầng 4: Danh Chấn Kỳ Đạo</option><option value="4" selected>Tầng 5: Độc Tôn Kỳ Ma</option></select></label>
           <label id="lbl-bag-freq">Rơi Túi Kỳ Mưu<select id="drop_bag_freq" onchange="newGame()"><option value="10" selected>Mỗi 10 nước đi</option><option value="15">Mỗi 15 nước đi</option><option value="20">Mỗi 20 nước đi</option></select></label>
-          <label id="lbl-hc">Chấp quân (máy bị chấp)<select id="hc" onchange="newGame()"><option value="0" selected>Không chấp</option><option value="N">Chấp Mã</option><option value="C">Chấp Pháo</option><option value="R">Chấp Xe</option></select></label>
+          <label id="lbl-hc">Chấp quân (Mộc Nhân nhường quân)<select id="hc" onchange="newGame()"><option value="0" selected>Không chấp</option><option value="N">Chấp Mã</option><option value="C">Chấp Pháo</option><option value="R">Chấp Xe</option></select></label>
           <label>Thời gian luận chiếu<select id="tm" onchange="newGame()"><option value="0" selected>Vô hạn</option><option value="30">30 giây / nước</option><option value="60">1 phút / nước</option><option value="180">3 phút / nước</option><option value="300">5 phút / nước</option></select></label>
           <label>Kiểu bàn cờ<select id="vw" onchange="draw()"><option value="2">2D Phẳng</option><option value="3" selected>3D Khối</option></select></label>
         </div>
@@ -398,17 +398,17 @@
         </div>
         <div id="online-room-tools" style="display:none;margin-top:12px;padding:10px;background:#20140b;border:1px solid #4a331f;border-radius:8px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button type="button" onclick="createRoom()" style="flex:1;background:#27ae60!important;color:#fff!important;border:none!important">Tạo Mã Phòng</button>
-            <label style="display:flex;align-items:center;gap:5px;font-size:.76rem;color:var(--ac);white-space:nowrap"><input type="checkbox" id="chk-private-room"/> Phòng riêng</label>
+            <button type="button" onclick="createRoom()" style="flex:1;background:#27ae60!important;color:#fff!important;border:none!important">Lập Kỳ Đài Mới</button>
+            <label style="display:flex;align-items:center;gap:5px;font-size:.76rem;color:var(--ac);white-space:nowrap"><input type="checkbox" id="chk-private-room"/> Mật đài (Riêng tư)</label>
           </div>
           <div style="display:flex;gap:6px;margin-bottom:8px">
-            <input type="text" id="room-code-input" placeholder="Nhập mã phòng (vd: KB-8899)" style="flex:1;background:#1a110a;border:1px solid var(--bd);color:#fff;padding:6px;border-radius:6px;font-size:.8rem"/>
-            <button type="button" onclick="joinRoomByCode()" style="background:#2980b9!important;color:#fff!important;border:none!important">Vào Phòng</button>
+            <input type="text" id="room-code-input" placeholder="Nhập mật hiệu kỳ đài (vd: KB-8899)" style="flex:1;background:#1a110a;border:1px solid var(--bd);color:#fff;padding:6px;border-radius:6px;font-size:.8rem"/>
+            <button type="button" onclick="joinRoomByCode()" style="background:#2980b9!important;color:#fff!important;border:none!important">Nhập Đài</button>
           </div>
           <div style="border-top:1px dashed var(--bd);padding-top:8px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-              <span style="font-size:.75rem;font-weight:700;color:var(--ac)">Phòng Chờ Công Khai</span>
-              <button type="button" onclick="refreshPublicRooms()" style="padding:2px 7px!important;font-size:.65rem!important">Làm mới</button>
+              <span style="font-size:.75rem;font-weight:700;color:var(--ac)">Kỳ Đài Công Khai</span>
+              <button type="button" onclick="refreshPublicRooms()" style="padding:2px 7px!important;font-size:.65rem!important">Cập nhật</button>
             </div>
             <div id="public-rooms-list" style="max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
           </div>
@@ -722,11 +722,11 @@ if(!hasAtk('r')&&!hasAtk('b')){finish('draw',null,null,'mat');return true}
 return false}
 const REASON={mate:'chiếu bí',stuck:'hết nước đi (bị kín đường)',timeout:'hết giờ luận chiếu',spy:'lật phải quân địch (gián điệp) tự chiếu bí',perp:'chiếu liên tục phạm luật',rep:'lặp thế cờ 3 lần',nocap:'60 nước không ăn quân',mat:'hai bên hết quân tấn công'};
 function submitGreatMatchFromModal(){
-const st=$('post-status-txt');if(st)st.innerText='⏳ Đang gửi dữ liệu để Gemini AI biên soạn bài viết...';
+const st=$('post-status-txt');if(st)st.innerText='⏳ Quân Sư đang khởi thảo Ký Sự Sa Trường khắc lên Kỳ Phổ...';
 let rawName='';if(currentUser&&currentUser.username)rawName='Chiến Tướng.'+currentUser.username;
 if(!rawName)rawName='Hành Giả.Vô Danh';
 const formattedPlayer=rawName.includes('.')?rawName:('Chiến Tướng.'+rawName);
-const botName=ai?('Máy: '+BOTN[+$('lv').value]):'Địa Ngục Vương';
+const botName=ai?('Mộc Nhân: '+BOTN[+$('lv').value]):'Địa Ngục Vương';
 const pWhite=online.on?names.r:formattedPlayer;
 const pBlack=online.on?names.b:(ai?botName:'Lữ Nhân.Đối Thủ');
 const lastRes=window.__lastMatchResult||{};
@@ -734,8 +734,8 @@ const wn=lastRes.kind==='draw'?'Hòa':(lastRes.w==='r'?pWhite:pBlack);
 const ln=lastRes.kind==='draw'?'Hòa':(lastRes.l==='r'?pWhite:pBlack);
 const hd={'Content-Type':'application/json'},tk=localStorage.getItem('kybien_jwt_token');if(tk)hd.Authorization='Bearer '+tk;
 fetch(SERVER_API_ENDPOINT+'/api/matches/great-match',{method:'POST',headers:hd,body:JSON.stringify({playerWhite:pWhite,playerBlack:pBlack,moves:rec,winnerName:wn,loserName:ln,resultReason:REASON[lastRes.why||'mate'],plies:rec.length,variant:VAR})})
-.then(r=>r.json()).then(d=>{if(d.success){if(st)st.innerHTML='🎉 <b>Đã tự động xuất bản bài viết Trận Hay thành công lên Blogger!</b>'}
-else{if(st)st.innerText='❌ '+(d.message||'Lỗi khi đăng bài.')}}).catch(()=>{if(st)st.innerText='❌ Lỗi kết nối máy chủ.'})}
+.then(r=>r.json()).then(d=>{if(d.success){if(st)st.innerHTML='🎉 <b>Đã lưu danh và khắc Ký Sự Sa Trường thành công lên Kỳ Phổ!</b>'}
+else{if(st)st.innerText='❌ '+(d.message||'Lỗi khi khắc ký sự.')}}).catch(()=>{if(st)st.innerText='❌ Lỗi kết nối máy chủ.'})}
 async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId){
   const de=$('go-modal-desc');
   let expBox=$('pve-exp-reward-box');
@@ -751,7 +751,7 @@ async function submitPveMatchResult(outcome, diff, movesCount, whyCode, matchId)
     console.log('[PvE EXP] Trận đấu hoàn thành ở chế độ Khách (chưa có JWT token).');
     if(expBox){
       expBox.style.borderColor='#f39c12';
-      expBox.innerHTML='💡 <b>Khách vãng lai:</b> Vui lòng đăng nhập tài khoản ở thanh trên để được tích lũy EXP (+'+(diff==='HARD'?30:diff==='NORMAL'?20:10)+' EXP) và thăng cấp Kỳ Thủ khi đấu với Máy!';
+      expBox.innerHTML='💡 <b>Khách vãng lai:</b> Vui lòng đăng nhập tài khoản ở thanh trên để được tích lũy EXP (+'+(diff==='HARD'?30:diff==='NORMAL'?20:10)+' EXP) và thăng tiến Cảnh Giới khi khiêu chiến Mộc Nhân!';
     }
     return;
   }
@@ -857,14 +857,14 @@ if(isPve){
   submitPveMatchResult(pveOutcome,diff,actualMovesCount,why,currentMatchId);
   if(actualMovesCount>=120&&gm&&(currentUser||localStorage.getItem('kybien_jwt_token'))){
     gm.style.display='block';
-    gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐẤU MÁY KÉO DÀI '+actualMovesCount+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">✨ Đã kích hoạt thưởng Trận Hay (+15 EXP) & AI tự động biên soạn ký sự lên Blog!</div></div>';
+    gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY KHIÊU CHIẾN MỘC NHÂN KÉO DÀI '+actualMovesCount+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">✨ Đã kích hoạt thưởng Trận Hay (+15 EXP) & Quân Sư khởi thảo Ký Sự khắc lên Kỳ Phổ!</div></div>';
   }
 }else{
   if(currentUser){
     if(rec.length>=50){
       if(gm){
         gm.style.display='block';
-        gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 TRẬN HAY ĐỦ '+rec.length+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">⏳ Đang tự động biên soạn & xuất bản ký sự sa trường lên Blog...</div></div>';
+        gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;"><div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 CHIẾN TÍCH SA TRƯỜNG KÉO DÀI '+rec.length+' NƯỚC!</div><div id="post-status-txt" style="font-size:0.83rem;margin-top:4px;color:#2ecc71;">⏳ Quân Sư đang khởi thảo & xuất bản Ký Sự Sa Trường lên Kỳ Phổ...</div></div>';
       }
       setTimeout(submitGreatMatchFromModal,400);
     }
@@ -874,9 +874,9 @@ if(isPve){
         gm.style.display='block';
         gm.innerHTML='<div style="background:rgba(0,0,0,0.45);border:1px solid var(--bd);padding:12px;border-radius:8px;margin-top:10px;text-align:center;">'+
         '<div style="color:#f1c40f;font-weight:bold;font-size:0.95rem;margin-bottom:6px;">📜 VÁN ĐẤU XUẤT SẮC TẠO DẤU ẤN ('+rec.length+' NƯỚC)!</div>'+
-        '<div style="font-size:0.86rem;margin:8px 0;color:#e8dcc6;">Đăng ký để lưu danh và thông cáo ván đấu.</div>'+
+        '<div style="font-size:0.86rem;margin:8px 0;color:#e8dcc6;">Ghi danh hiệp khách để lưu danh và khắc ghi chiến tích sa trường.</div>'+
         '<div id="guest-post-actions" style="display:flex;gap:8px;justify-content:center;margin-top:10px;">'+
-        '<button type="button" onclick="showGuestRegisterModal()" style="background:#27ae60!important;color:#fff!important;border:none!important;padding:6px 14px;border-radius:6px;font-weight:bold;cursor:pointer">Đăng Ký Lưu Danh & Viết Bài AI</button>'+
+        '<button type="button" onclick="showGuestRegisterModal()" style="background:#27ae60!important;color:#fff!important;border:none!important;padding:6px 14px;border-radius:6px;font-weight:bold;cursor:pointer">Ghi Danh Lưu Danh & Khắc Ký Sự</button>'+
         '<button type="button" onclick="cancelGuestPost()" style="background:#7f8c8d!important;color:#fff!important;border:none!important;padding:6px 14px;border-radius:6px;cursor:pointer">Hủy</button>'+
         '</div>'+
         '<div id="post-status-txt" style="font-size:0.83rem;margin-top:8px;color:#2ecc71;display:none;"></div>'+
@@ -891,10 +891,10 @@ function showGuestRegisterModal(){
 const actions=$('guest-post-actions');
 if(!actions)return;
 actions.innerHTML='<div style="display:flex;flex-direction:column;gap:8px;max-width:280px;margin:8px auto 0;">'+
-'<input type="text" id="guest-reg-u" placeholder="Tên tài khoản mới" style="padding:6px;border-radius:4px;border:1px solid var(--bd);background:#1a110a;color:#fff;font-size:.85rem"/>'+
+'<input type="text" id="guest-reg-u" placeholder="Danh xưng hiệp khách" style="padding:6px;border-radius:4px;border:1px solid var(--bd);background:#1a110a;color:#fff;font-size:.85rem"/>'+
 '<input type="password" id="guest-reg-p" placeholder="Mật khẩu" style="padding:6px;border-radius:4px;border:1px solid var(--bd);background:#1a110a;color:#fff;font-size:.85rem"/>'+
 '<div style="display:flex;gap:6px;justify-content:center;margin-top:4px">'+
-'<button type="button" onclick="submitGuestRegAndPost()" style="background:#f1c40f!important;color:#8b0000!important;font-weight:bold;padding:6px 12px;border:none;border-radius:4px;cursor:pointer">Xác Nhận & Đăng Bài</button>'+
+'<button type="button" onclick="submitGuestRegAndPost()" style="background:#f1c40f!important;color:#8b0000!important;font-weight:bold;padding:6px 12px;border:none;border-radius:4px;cursor:pointer">Xác Nhận & Lưu Danh Kỳ Phổ</button>'+
 '<button type="button" onclick="cancelGuestPost()" style="background:#7f8c8d!important;color:#fff!important;padding:6px 12px;border:none;border-radius:4px;cursor:pointer">Hủy</button>'+
 '</div>'+
 '<div id="guest-reg-err" style="color:#e74c3c;font-size:.78rem;font-weight:bold;margin-top:4px"></div>'+
@@ -1099,7 +1099,7 @@ if(more||FX.length)kick()}
 function stat(){const ck=!over&&inCheck(turn),e=$('st');
 if(ck){e.className='pill check-danger';e.innerText='CẢNH BÁO CHIẾU TƯỚNG! - TƯỚNG '+(turn==='r'?'ĐỎ':'ĐEN')+' ĐANG BỊ UY HIẾP!'}
 else{e.className='pill';e.style.color=turn==='r'?'#e0705a':'#69b4ff';
-e.innerText=ai?(turn==='r'?'Lượt của bạn (Đỏ)':'Máy (Đen) đang suy nghĩ...'):online.on?(turn===online.side?'Đến lượt bạn!':'Đối thủ đang suy nghĩ...'):'Lượt đi: '+(turn==='r'?'Đỏ':'Đen')}}
+e.innerText=ai?(turn==='r'?'Lượt của bạn (Đỏ)':'Mộc Nhân (Đen) đang suy tính...'):online.on?(turn===online.side?'Đến lượt bạn!':'Đối thủ đang suy tính...'):'Lượt đi: '+(turn==='r'?'Đỏ':'Đen')}}
 function bars(){
 const top=flipped?'r':'b',bot=opp(top),kb=VAR==='kb';
 [['top',top],['bot',bot]].forEach(([k,col])=>{
@@ -1143,25 +1143,25 @@ if(typeof onModeChange==='function')onModeChange();
 function onModeChange(){
 const m=$('mode').value;
 if(m==='2p_online'&&!currentUser){
-alert('Vui lòng đăng nhập tài khoản để tham gia Ghép Trận Online!');
+alert('Vui lòng đăng nhập tài khoản để tham gia Kỳ Hội Trực Tuyến!');
 $('mode').value='ai';
 onModeChange();
 return;
 }
 $('lbl-lv').style.display=m==='ai'?'flex':'none';$('online-room-tools').style.display=m==='2p_online'?'block':'none';
 const b=$('btn-action');
-if(m==='2p_online'){b.innerText='GHÉP TRẬN TỰ ĐỘNG';b.style.background='#f1c40f';b.style.color='#8b0000';initSocket()}
+if(m==='2p_online'){b.innerText='TÌM KỲ HỮU NGHÊNH CHIẾN';b.style.background='#f1c40f';b.style.color='#8b0000';initSocket()}
 else{b.innerText=m==='ai'?'Khai Cuộc Ván Mới':'Khai Cuộc Ván Mới (Hai Người)';b.style.background='';b.style.color='';online.on=false;searching=false}
 newGame()}
 function switchTab(i){$('tb1').className='tb-btn'+(i===1?' active':'');$('tb2').className='tb-btn'+(i===2?' active':'');$('tab-1').className='tab-content'+(i===1?' show':'');$('tab-2').className='tab-content'+(i===2?' show':'')}
 const COMMON='<h4>Luật cơ bản</h4><ul><li>Đỏ đi trước. Bị chiếu bí hoặc hết nước đi (bị kín đường) là thua.</li><li>Hai Tướng không được đối mặt nhau trên cùng một cột khi không có quân che.</li><li>Chiếu liên tục mà không đổi thế là phạm luật và bị xử thua. Lặp lại cùng một thế cờ 3 lần thì hòa.</li><li>60 nước (120 lượt) không ăn quân, hoặc hai bên hết quân tấn công (Xe, Pháo, Mã, Tốt): hòa.</li><li>Đồng hồ luận chiếu: hết giờ mà chưa đi là thua.</li></ul>';
 function docs(){
 const t1=$('tab-1'),t2=$('tab-2');
-if(VAR==='n'){t1.innerHTML='<h4>Cờ Tướng Truyền Thống</h4><p>Luật cờ tướng chuẩn quốc tế, không có bí pháp hay quân úp.</p>'+COMMON+'<h4>Đi lại, gợi ý, chấp quân</h4><ul><li>Đi lại và Gợi ý không tốn điểm ở chế độ này.</li><li>Chế độ máy có thể chấp Mã, Pháo hoặc Xe cho máy.</li></ul>';
+if(VAR==='n'){t1.innerHTML='<h4>Cờ Tướng Chuẩn Mực</h4><p>Quy chuẩn chính tông cửu cung thập lộ, bảo toàn tinh hoa nguyên bản.</p>'+COMMON+'<h4>Đi lại, gợi ý, chấp quân</h4><ul><li>Đi lại và Gợi ý không tốn điểm ở chế độ này.</li><li>Khi khiêu chiến Mộc Nhân có thể chọn để Mộc Nhân chấp Mã, Pháo hoặc Xe.</li></ul>';
 t2.innerHTML='<h4>Kỳ âm nước đi</h4><p>Mỗi nước được ghi theo kiểu: <i>Quân, cột xuất phát, tiến / thoái / bình, số bước hoặc cột đích</i>. Cột đếm từ phải sang trái theo phía của phe đỏ và từ trái sang phải theo phía của phe đen.</p><h4>Mẹo hay</h4><ul><li>Giữ Sĩ và Tượng để bảo vệ cung.</li><li>Pháo đầu và Xe chiếm đường mở sớm.</li><li>Tốt qua sông mạnh hơn, nhưng đừng để mất liên kết.</li></ul>'}
 else if(UB){t1.innerHTML='<h4>'+VARS[VAR]+'</h4><p>Chỉ có hai Tướng ngửa. 30 quân còn lại được úp xuống.</p><ul><li>Quân úp đi <b>nước đầu tiên</b> theo loại quân của ô đang đứng (ô Xe đi như Xe...), đi xong thì lật ngửa và từ đó đi theo đúng quân thật.</li><li>Quân úp ở ô Sĩ chưa lật <b>không được ra khỏi cung</b>. Sau khi lật, Sĩ và Tượng được xuất cung, qua sông, đi lùi.</li>'+
 (VAR==='g'?'<li><b>Gián điệp:</b> 30 quân của cả hai bên được xáo chung. Quân úp có thể là quân địch: lật ra quân địch thì quân đó <span class="spy">(GIÁN ĐIỆP !)</span> đổi phe. Nếu nước lật đó khiến Tướng của bạn bị chiếu bí, bạn thua ngay.</li>':'<li>Quân úp của mỗi bên chắc chắn là quân của bên đó.</li>')+
-'<li>Khay "quân đã ăn": quân địch bạn ăn luôn hiện thật. Quân úp của bạn bị ăn chỉ hiện chữ 暗 trừ khi bật "Xem quân úp bí ẩn" (khóa từ nước đầu tiên).</li><li>Máy không nhìn trộm quân úp, máy chỉ biết quân sau khi đã lật.</li></ul>'+COMMON;
+'<li>Khay "quân đã ăn": quân địch bạn ăn luôn hiện thật. Quân úp của bạn bị ăn chỉ hiện chữ 暗 trừ khi bật "Xem quân úp bí ẩn" (khóa từ nước đầu tiên).</li><li>Mộc Nhân Cơ Quan trận tuyệt đối không nhìn trộm quân úp, chỉ tính toán sau khi quân đã lật.</li></ul>'+COMMON;
 const rows=[['Hàng Xe (góc)','Xe'],['Hàng Mã','Mã'],['Hàng Tượng','Tượng'],['Hàng Sĩ','Sĩ (không ra cung trước khi lật)'],['Hai ô Pháo','Pháo'],['Năm ô Tốt','Tốt']];
 t2.innerHTML='<h4>Cách quân úp đi trước khi lật</h4><table class="bt"><thead><tr><th>Ô đang đứng</th><th>Đi như</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</tbody></table>'+
 '<h4>Mẹo</h4><ul><li>Lượt đầu nên lật các quân xa Tướng của mình.</li>'+(VAR==='g'?'<li>Đừng lật quân úp sát Tướng nhà: nếu hóa thành quân địch bạn có thể bị chiếu bí ngay.</li><li>Quân địch lật ở phía bạn có thể bị bạn ăn lại: nhớ theo dõi khay quân đã ăn.</li>':'<li>Ghi nhớ các quân đã lật để đoán quân úp còn lại.</li>')+'</ul>'}
