@@ -94,6 +94,20 @@ export async function publishMatchToBlogger(
 
     const htmlContent = `
 <div class="kybien-match-post" data-match-id="${safeMatchId}">
+  <style>
+    .kybien-post-layout { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+    .sticky-board-col { flex: 1 1 480px; max-width: 520px; order: 1; position: sticky; top: 20px; box-sizing: border-box; }
+    .scrollable-story-col { flex: 1 1 420px; order: 2; box-sizing: border-box; }
+    @media (max-width: 900px) {
+      .kybien-post-layout { flex-direction: column !important; gap: 18px !important; }
+      .sticky-board-col { position: static !important; top: auto !important; width: 100% !important; max-width: 100% !important; flex: 1 1 auto !important; order: 1 !important; padding: 12px 8px !important; margin: 0 auto !important; }
+      .scrollable-story-col { width: 100% !important; max-width: 100% !important; flex: 1 1 auto !important; order: 2 !important; padding: 16px 14px !important; margin: 0 auto !important; }
+      #chess-board-canvas { height: auto !important; max-width: 100% !important; }
+      .sa-truong-article { font-size: 1rem !important; line-height: 1.8 !important; }
+      .sa-truong-article .content { text-align: left !important; }
+    }
+  </style>
+
   <!-- Khai báo Thẻ Chế độ chơi chuẩn có Icon -->
   <div class="kybien-variant-header-badge" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
     <span style="background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #a83a1f; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
@@ -109,11 +123,11 @@ export async function publishMatchToBlogger(
     🎯 <strong>Tóm tắt ván cờ:</strong> ${safeTacticalAnalysis}
   </p>
 
-  <!-- Khung Bố cục 2 Cột -->
-  <div class="kybien-post-layout" style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+  <!-- Khung Bố cục 2 Cột (Trên Mobile tự co về 1 Cột, không cố định bàn cờ) -->
+  <div class="kybien-post-layout">
     
     <!-- DOM ORDER #1: BÀI VIẾT KÝ SỰ SA TRƯỜNG -->
-    <div class="scrollable-story-col" style="flex: 1 1 420px; order: 2; background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 14px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);">
+    <div class="scrollable-story-col" style="background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 14px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);">
       
       <!-- Phân tích nước cờ then chốt -->
       <section class="tactical-analysis" style="margin-bottom: 24px; border-bottom: 1px solid #3d2817; padding-bottom: 18px;">
@@ -131,8 +145,8 @@ export async function publishMatchToBlogger(
 
     </div>
 
-    <!-- DOM ORDER #2: BÀN CỜ CỐ ĐỊNH -->
-    <div class="sticky-board-col" style="flex: 1 1 480px; max-width: 520px; order: 1; position: sticky; top: 20px; background: linear-gradient(145deg, #271a10, #180f08); padding: 18px; border-radius: 14px; border: 2px solid #5a3d22; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center;">
+    <!-- DOM ORDER #2: BÀN CỜ XEM LẠI (Desktop cố định, Mobile cuộn tự nhiên) -->
+    <div class="sticky-board-col" style="background: linear-gradient(145deg, #271a10, #180f08); padding: 18px; border-radius: 14px; border: 2px solid #5a3d22; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center;">
       <h3 style="color: #f1c40f; font-family: 'Noto Serif TC', serif; margin-bottom: 12px; font-size: 1.2rem; letter-spacing: 1px;">⚔️ BÀN CỜ TƯƠNG TÁC XEM LẠI (${safeVariantName})</h3>
       
       <div id="kybien-board-viewer" class="kybien-viewer-container" data-variant="${safeVariantCode}" data-moves='${safePgnMovesAttr}'>

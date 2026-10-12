@@ -26,7 +26,44 @@
 
     // Dọn dẹp đoạn trích trang chủ nếu dính chữ nút bấm bàn cờ
     cleanPostSnippets();
+
+    // Đảm bảo responsive mobile cho các bài viết (1 cột, không cố định bàn cờ)
+    applyMobilePostResponsive();
+    window.addEventListener('resize', applyMobilePostResponsive);
   });
+
+  function applyMobilePostResponsive() {
+    const isMobile = window.innerWidth <= 900;
+    if (isMobile) {
+      document.querySelectorAll('.sticky-board-col').forEach((el) => {
+        el.style.setProperty('position', 'static', 'important');
+        el.style.setProperty('top', 'auto', 'important');
+        el.style.setProperty('max-width', '100%', 'important');
+        el.style.setProperty('width', '100%', 'important');
+      });
+      document.querySelectorAll('.kybien-post-layout').forEach((el) => {
+        el.style.setProperty('flex-direction', 'column', 'important');
+      });
+      document.querySelectorAll('.scrollable-story-col').forEach((el) => {
+        el.style.setProperty('width', '100%', 'important');
+        el.style.setProperty('max-width', '100%', 'important');
+      });
+    } else {
+      document.querySelectorAll('.sticky-board-col').forEach((el) => {
+        el.style.removeProperty('position');
+        el.style.removeProperty('top');
+        el.style.removeProperty('max-width');
+        el.style.removeProperty('width');
+      });
+      document.querySelectorAll('.kybien-post-layout').forEach((el) => {
+        el.style.removeProperty('flex-direction');
+      });
+      document.querySelectorAll('.scrollable-story-col').forEach((el) => {
+        el.style.removeProperty('width');
+        el.style.removeProperty('max-width');
+      });
+    }
+  }
 
   function cleanPostSnippets() {
     document.querySelectorAll('.post-card-snippet').forEach((el) => {

@@ -488,6 +488,110 @@
       margin-top: 50px;
       background: #120b06;
     }
+
+    /* ===== RESPONSIVE MOBILE CHO BÀI VIẾT BLOG & BÀN CỜ (1 CỘT, KHÔNG CỐ ĐỊNH BÀN CỜ) ===== */
+    .kybien-post-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .sticky-board-col {
+      flex: 1 1 480px;
+      max-width: 520px;
+      order: 1;
+      position: sticky;
+      top: 20px;
+      box-sizing: border-box;
+    }
+    .scrollable-story-col {
+      flex: 1 1 420px;
+      order: 2;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 900px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+      }
+      .main-wrapper {
+        padding: 0 10px;
+        margin: 15px auto 30px auto;
+      }
+      .single-post-title {
+        font-size: 1.45rem;
+        margin-bottom: 15px;
+        line-height: 1.35;
+      }
+      /* 1 CỘT VÀ KHÔNG CỐ ĐỊNH BÀN CỜ TRÊN MOBILE */
+      .kybien-post-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 18px !important;
+      }
+      .sticky-board-col {
+        position: static !important;
+        top: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 1 1 auto !important;
+        order: 1 !important;
+        padding: 12px 8px !important;
+        margin: 0 auto 10px auto !important;
+        box-sizing: border-box !important;
+      }
+      .scrollable-story-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 1 1 auto !important;
+        order: 2 !important;
+        padding: 18px 14px !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+      }
+      #chess-board-canvas {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+      }
+      #kybien-replay-canvas {
+        width: 100% !important;
+        max-width: 440px !important;
+        height: auto !important;
+      }
+      .sa-truong-article {
+        font-size: 1.02rem !important;
+        line-height: 1.8 !important;
+      }
+      .sa-truong-article .content {
+        text-align: left !important;
+      }
+      .kybien-variant-header-badge {
+        gap: 6px !important;
+      }
+      .kybien-variant-header-badge span {
+        font-size: 0.8rem !important;
+        padding: 5px 10px !important;
+      }
+      .kybien-post-summary-text {
+        font-size: 0.95rem !important;
+        padding: 10px 14px !important;
+      }
+      .viewer-controls {
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+      }
+      .viewer-controls button {
+        padding: 7px 12px !important;
+        font-size: 0.82rem !important;
+      }
+    }
   ]]></b:skin>
 </head>
 <body>
