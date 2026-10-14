@@ -1,6 +1,7 @@
 import { config } from '../config/index.js';
 import { AIAnalysisResult } from './aiService.js';
 import { escapeHtmlText, escapeHtmlAttr, escapeJsonAttr } from '../utils/sanitize.js';
+import { buildSeoSlugTitle } from '../utils/seoSlug.js';
 
 // In-memory set to prevent duplicate Blogger publishing
 const publishedMatchIds: Set<string> = new Set();
@@ -173,6 +174,18 @@ export async function publishMatchToBlogger(
       .trim()
       .slice(0, 190);
 
+    // BƯỚC 1: Sinh slugTitle chuẩn SEO không dấu (để Blogger sinh permalink sạch, không dính chữ, không mất chữ đ)
+    const seoSlugTitle = buildSeoSlugTitle({
+      variantCode,
+      variantName,
+      playerWhite: playerWhiteName,
+      playerBlack: playerBlackName,
+      matchPhrase: rawMatchPhrase,
+      maxChars: 48,
+    });
+
+    console.log(`[Blogger SEO] Khởi tạo bài viết với Title Slug SEO: "${seoSlugTitle}"...`);
+
     const blogUrl = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/`;
     const postResponse = await fetch(blogUrl, {
       method: 'POST',
@@ -182,7 +195,7 @@ export async function publishMatchToBlogger(
       },
       body: JSON.stringify({
         kind: 'blogger#post',
-        title: postTitle,
+        title: seoSlugTitle,
         content: htmlContent,
         searchDescription: cleanSearchDescription,
         isDraft: false,
@@ -192,7 +205,35 @@ export async function publishMatchToBlogger(
 
     const postData = await postResponse.json();
     if (postData && postData.id) {
-      console.log(`[Blogger Published] Bài viết mới đã xuất bản thành công! ID: ${postData.id}`);
+      console.log(`[Blogger Published] Bài viết mới đã khởi tạo thành công! ID: ${postData.id}, URL dự kiến: ${postData.url || 'chờ cấp'}`);
+
+      // BƯỚC 2: Cập nhật lại Title hiển thị gốc có dấu và định dạng kiếm hiệp đầy đủ
+      try {
+        const patchUrl = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/${postData.id}`;
+        const patchResponse = await fetch(patchUrl, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: postTitle,
+          }),
+        });
+
+        if (patchResponse.ok) {
+          const patchData = await patchResponse.json();
+          console.log(`[Blogger SEO] Đã khôi phục tiêu đề gốc hiển thị thành công: "${postTitle}"!`);
+          if (patchData && patchData.url) {
+            console.log(`[Blogger SEO Permalink] URL vĩnh viễn chuẩn SEO: ${patchData.url}`);
+          }
+        } else {
+          console.warn(`[Blogger SEO Warning] Không thể cập nhật lại tiêu đề qua PATCH (Status: ${patchResponse.status}). Giữ tiêu đề slug.`);
+        }
+      } catch (patchErr) {
+        console.warn('[Blogger SEO Warning] Lỗi khi gọi PATCH cập nhật tiêu đề:', patchErr);
+      }
+
       publishedMatchIds.add(matchId);
       return postData.id;
     } else {
