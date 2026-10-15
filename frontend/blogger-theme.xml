@@ -867,7 +867,6 @@
                                 '<a href="' + postObj.url + '" style="color: #e8dcc6; text-decoration: none; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="' + postObj.title + '">' +
                                   postObj.title +
                                 '</a>' +
-                                '<span style="color: #2ecc71; font-size: 0.78rem; font-weight: bold; white-space: nowrap;">Thưởng lãm ➔</span>' +
                               '</li>';
                             }
 
