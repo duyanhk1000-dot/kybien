@@ -23,18 +23,12 @@ async function runTestMatch() {
   const aiResult = await analyzeMatchWithGemini(sample52Moves, 'kimlong', 'Asus', winner, loser, resultReason);
 
   if (!aiResult) {
-    console.log('⚠️ Cảnh báo: Chưa cấu hình GEMINI_API_KEY trong file .env hoặc Render.');
-    console.log('Giả lập bài viết mẫu thành công:');
-    console.log({
-      keyMoves: ["9,1-7,2: Mã Đỏ xuất trận chiếm cứ điểm", "8,4-3,4: Chiến xa Đỏ càn quét trung lộ", "0,4-1,2: Đòn đại pháo chốt hạ sát cục"],
-      tacticalAnalysis: "Chủ tướng kimlong chủ động điều kỵ binh và chiến xa áp đảo cánh phải, buộc Asus vào thế chống đỡ bị động.",
-      saTruongCommentary: "Trận đại chiến giữa kimlong và Asus nổ ra tàn khốc trên sa trường. Tiếng trống trận rền vang, kỵ binh kimlong cuồn cuộn lao lên..."
-    });
+    console.error('❌ Thất bại: Không thể sinh nội dung bài viết.');
     return;
   }
 
-  console.log('✅ Gemini AI đã sinh bài thành công!');
-  console.log('--- NỘI DUNG BÀI VIẾT TỪ AI ---');
+  console.log('✅ Đã khởi tạo bài viết Sa Trường Kiếm Hiệp thành công!');
+  console.log('--- NỘI DUNG BÀI VIẾT TỪ AI (HOẶC QUÂN SƯ DỰ PHÒNG) ---');
   console.log(JSON.stringify(aiResult, null, 2));
 
   console.log('[2/2] Đang xuất bản bài viết lên Blogger API v3 (kybien.blogspot.com)...');
