@@ -106,7 +106,8 @@ Tài liệu quy định kiến trúc kỹ thuật, yêu cầu chức năng, phi 
 * **FR-11: Phân tích chuyên môn & Sáng tạo Tiêu đề tự động (Gemini 2.5 Flash) (Hoàn thành 100%)**:
   * Tạo cụm tiêu đề phụ thần thái 3-6 từ (`matchTitlePhrase`), trích xuất nước cờ bước ngoặt (`keyMoves`), phân tích chiến thuật (`tacticalAnalysis`) và bài văn sa trường kiếm hiệp (`saTruongCommentary`).
 * **FR-12: Xuất bản tự động qua Blogger API v3 (Hoàn thành 100%)**:
-  * Gửi payload HTML nhúng `data-moves` và `data-variant` trực tiếp vào bài viết trên Blogger với nhãn (Labels) chuẩn hóa: *✨ Cờ Bí Pháp*, *🏯 Cờ Truyền Thống*, *🎴 Cờ Úp Truyền Thống*, *🕵️ Cờ Úp Gián Điệp*.
+  * Gửi payload HTML nhúng `data-moves` và `data-variant` trực tiếp vào bài viết trên Blogger.
+  * **Quy chuẩn Nhãn (Labels) SEO Bắt Buộc**: Tự động gán nhãn dạng slug không dấu sạch (`getStandardPostLabels`), gồm: `tran-hay`, `phan-tich-co`, và nhãn thể loại cờ tương ứng: `co-bi-phap` / `co-up` / `co-up-gian-diep` / `co-truyen-thong`. Tuyệt đối không dùng chữ có dấu hoặc khoảng trắng (`tran- hay`) để tránh lỗi mã hóa `%E1%BB%9D` và vỡ URL SEO. Giao diện theme Blogger tự động ánh xạ hiển thị chữ kiếm hiệp có dấu.
 
 ---
 

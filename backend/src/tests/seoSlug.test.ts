@@ -5,6 +5,7 @@ import {
   cleanVariantForSlug,
   buildSeoSlugTitle,
   generateSeoSlugFromText,
+  getStandardPostLabels,
 } from '../utils/seoSlug.js';
 import { publishMatchToBlogger } from '../services/bloggerService.js';
 import { config } from '../config/index.js';
@@ -179,6 +180,12 @@ export async function runSeoSlugTests(): Promise<void> {
     assert.strictEqual(fetchCalls[1].body.title.includes('Kỳ'), false, 'Lần 1 gửi Title không dấu');
     assert.strictEqual(fetchCalls[1].body.title.includes('Địa'), false, 'Lần 1 gửi Title không dấu');
     assert.ok(fetchCalls[1].body.title.includes('ky thu duy vs may dia nguc'), 'Lần 1 gửi Title Slug chuẩn');
+    // Kiểm tra nhãn tạo bài phải chuẩn slug không dấu
+    assert.deepStrictEqual(
+      fetchCalls[1].body.labels,
+      ['tran-hay', 'phan-tich-co', 'co-bi-phap'],
+      'Nhãn Blogger phải là mảng slug sạch không dấu'
+    );
 
     // Cuộc gọi 3: PATCH posts.patch với Title tiếng Việt đầy đủ gốc
     assert.strictEqual(fetchCalls[2].method, 'PATCH');
@@ -192,6 +199,29 @@ export async function runSeoSlugTests(): Promise<void> {
     config.blogger = originalConfig;
     global.fetch = originalFetch;
   }
+
+  // Test 8: Kiểm tra tính chuẩn hóa nghiêm ngặt của getStandardPostLabels cho mọi biến thể
+  console.log('-> Test 8: Kiểm tra quy chuẩn slug nhãn bài viết (getStandardPostLabels)...');
+  const testCases: Array<{ variant?: string; expected: string[] }> = [
+    { variant: 'kb', expected: ['tran-hay', 'phan-tich-co', 'co-bi-phap'] },
+    { variant: 't', expected: ['tran-hay', 'phan-tich-co', 'co-up'] },
+    { variant: 'g', expected: ['tran-hay', 'phan-tich-co', 'co-up-gian-diep'] },
+    { variant: 'n', expected: ['tran-hay', 'phan-tich-co', 'co-truyen-thong'] },
+    { variant: 'KB', expected: ['tran-hay', 'phan-tich-co', 'co-bi-phap'] },
+    { variant: 'T', expected: ['tran-hay', 'phan-tich-co', 'co-up'] },
+    { variant: '', expected: ['tran-hay', 'phan-tich-co', 'co-bi-phap'] },
+    { variant: undefined, expected: ['tran-hay', 'phan-tich-co', 'co-bi-phap'] },
+  ];
+
+  for (const tc of testCases) {
+    const labels = getStandardPostLabels(tc.variant);
+    assert.deepStrictEqual(labels, tc.expected, `Labels cho variant ${tc.variant} không đúng chuẩn`);
+    for (const label of labels) {
+      assert.ok(/^[a-z0-9\-]+$/.test(label), `Label "${label}" phải chỉ chứa ký tự thường không dấu và gạch ngang, không có dấu cách`);
+      assert.strictEqual(label.includes(' '), false, `Label "${label}" không được chứa khoảng trắng`);
+    }
+  }
+  console.log('✅ Test 8 Passed: Toàn bộ nhãn bài viết đảm bảo 100% slug sạch, không dấu, không khoảng cách rác!');
 
   console.log('\n==================================================');
   console.log('🎉 ALL BLOGGER SEO SLUG & TITLE SWITCH TESTS PASSED 100%!');

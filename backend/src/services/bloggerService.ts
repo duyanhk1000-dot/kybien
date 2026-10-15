@@ -1,7 +1,7 @@
 import { config } from '../config/index.js';
 import { AIAnalysisResult } from './aiService.js';
 import { escapeHtmlText, escapeHtmlAttr, escapeJsonAttr } from '../utils/sanitize.js';
-import { buildSeoSlugTitle } from '../utils/seoSlug.js';
+import { buildSeoSlugTitle, getStandardPostLabels } from '../utils/seoSlug.js';
 
 // In-memory set to prevent duplicate Blogger publishing
 const publishedMatchIds: Set<string> = new Set();
@@ -190,12 +190,7 @@ export async function publishMatchToBlogger(
     console.log(`[Blogger SEO] Khởi tạo bài viết với Title Slug SEO: "${seoSlugTitle}"...`);
 
     // Chuẩn hóa nhãn (Labels) thành dạng slug không dấu chuẩn SEO (tránh %E1%BB%9D...)
-    let variantLabelSlug = 'co-bi-phap';
-    if (variantCode === 't') variantLabelSlug = 'co-up';
-    else if (variantCode === 'g') variantLabelSlug = 'co-up-gian-diep';
-    else if (variantCode === 'n') variantLabelSlug = 'co-truyen-thong';
-
-    const postLabels = ['tran-hay', 'phan-tich-co', variantLabelSlug];
+    const postLabels = getStandardPostLabels(variantCode);
 
     const blogUrl = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/`;
     const postResponse = await fetch(blogUrl, {

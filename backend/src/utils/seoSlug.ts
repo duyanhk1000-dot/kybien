@@ -165,3 +165,22 @@ export function generateSeoSlugFromText(text: string, maxChars: number = 48): st
 
   return result.join(' ') || 'bai-viet';
 }
+
+/**
+ * Danh sách slug nhãn (Labels) chuẩn hóa cho bài viết xuất bản lên Blogger.
+ * Bắt buộc tuân thủ:
+ * - Slug chữ thường không dấu, phân cách bằng dấu gạch ngang '-', tuyệt đối không chứa khoảng trắng rác hay chữ có dấu.
+ * - Bài viết luôn có:
+ *   1. 'tran-hay': Nhãn phân loại chiến tích sa trường
+ *   2. 'phan-tich-co': Nhãn thư viện phân tích ván đấu
+ *   3. Nhãn biến thể cờ tương ứng: 'co-bi-phap' | 'co-up' | 'co-up-gian-diep' | 'co-truyen-thong'
+ */
+export function getStandardPostLabels(variantCode?: string): string[] {
+  const code = (variantCode || '').toLowerCase().trim();
+  let variantLabelSlug = 'co-bi-phap';
+  if (code === 't') variantLabelSlug = 'co-up';
+  else if (code === 'g') variantLabelSlug = 'co-up-gian-diep';
+  else if (code === 'n') variantLabelSlug = 'co-truyen-thong';
+
+  return ['tran-hay', 'phan-tich-co', variantLabelSlug];
+}
