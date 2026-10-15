@@ -13,12 +13,31 @@ import {
   finishPveMatch,
 } from '../controllers/matchController.js';
 import { generateToken, verifyToken } from '../utils/jwt.js';
+import { prisma } from '../utils/prisma.js';
 
 export async function runPveExpSystemTests(): Promise<void> {
   console.log('🧪 RUNNING COMPREHENSIVE PVE EXP SYSTEM VERIFICATION SUITE...\n');
 
-  // Reset in-memory trackers before testing
-  resetPveTrackingForTest();
+  // Ensure test user 9999 exists for finishPveMatch controller tests
+  try {
+    await prisma.user.upsert({
+      where: { id: 9999 },
+      update: {},
+      create: {
+        id: 9999,
+        username: 'Tester9999',
+        email: 'tester9999@test.com',
+        password_hash: 'mockhash123',
+        elo: 1200,
+        exp: 0n,
+        level: 1,
+      },
+    });
+  } catch (e) {}
+
+  try {
+    // Reset in-memory trackers before testing
+    resetPveTrackingForTest();
 
   // =========================================================================
   // SCENARIO 1: Người dùng hợp lệ, trận PvE đủ điều kiện: Tính và cộng EXP chuẩn xác
@@ -255,7 +274,7 @@ export async function runPveExpSystemTests(): Promise<void> {
       aiDifficulty: 'HARD',
       moves: tenMoves,
     },
-    user: { userId: 9999, username: 'Tester', email: 't@k.com' },
+    user: { userId: 9999, username: 'Tester9999', email: 'tester9999@test.com' },
   };
 
   let firstResBody: any = null;
@@ -331,4 +350,9 @@ export async function runPveExpSystemTests(): Promise<void> {
   console.log('\n==================================================');
   console.log('🎉 ALL 11 MANDATORY PVE EXP SYSTEM SCENARIOS PASSED 100%!');
   console.log('==================================================\n');
+  } finally {
+    try {
+      await prisma.user.deleteMany({ where: { id: 9999 } });
+    } catch (e) {}
+  }
 }
