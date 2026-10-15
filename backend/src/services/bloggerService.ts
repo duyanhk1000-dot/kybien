@@ -1,7 +1,7 @@
 import { config } from '../config/index.js';
 import { AIAnalysisResult } from './aiService.js';
 import { escapeHtmlText, escapeHtmlAttr, escapeJsonAttr } from '../utils/sanitize.js';
-import { buildSeoSlugTitle, getStandardPostLabels } from '../utils/seoSlug.js';
+import { buildSeoSlugTitle, getStandardPostLabels, injectBiPhapLinks } from '../utils/seoSlug.js';
 
 // In-memory set to prevent duplicate Blogger publishing
 const publishedMatchIds: Set<string> = new Set();
@@ -87,11 +87,13 @@ export async function publishMatchToBlogger(
     const safeMatchPhrase = escapeHtmlText(rawMatchPhrase);
     const postTitle = `[${safeVariantName}] ${whiteTitle} vs ${blackTitle} (${pgnMoves.length} nước) - ${safeMatchPhrase}`;
 
-    const safeTacticalAnalysis = escapeHtmlText(aiResult.tacticalAnalysis || '');
+    const safeTacticalAnalysis = injectBiPhapLinks(escapeHtmlText(aiResult.tacticalAnalysis || ''));
     const safeKeyMoves = Array.isArray(aiResult.keyMoves)
-      ? aiResult.keyMoves.map((m) => escapeHtmlText(String(m)))
+      ? aiResult.keyMoves.map((m) => injectBiPhapLinks(escapeHtmlText(String(m))))
       : [];
-    const safeSaTruongCommentary = escapeHtmlText(aiResult.saTruongCommentary || '').replace(/\n/g, '<br/>');
+    const safeSaTruongCommentary = injectBiPhapLinks(
+      escapeHtmlText(aiResult.saTruongCommentary || '').replace(/\n/g, '<br/>')
+    );
 
     const htmlContent = `
 <div class="kybien-match-post" data-match-id="${safeMatchId}">
@@ -115,7 +117,7 @@ export async function publishMatchToBlogger(
       ⚔️ ${safeMatchPhrase}
     </a>
     <a href="/p/arena.html?variant=${safeVariantCode}" style="text-decoration: none; background: linear-gradient(135deg, #3a2416, #22150c); color: #f1c40f; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #5a3d22; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-      ${safeVariantIcon} Vào Đấu ${safeVariantName} ➔
+      ${safeVariantIcon} Vào Sàn Đấu ${safeVariantName} ➔
     </a>
     <a href="/p/cam-nang.html" style="text-decoration: none; background: rgba(90,61,34,0.4); color: #2ecc71; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; border: 1px solid #5a3d22;">
       📜 Bí Pháp Cẩm Nang
@@ -146,6 +148,21 @@ export async function publishMatchToBlogger(
         <h2 style="color: #f1c40f; font-size: 1.35rem; margin-bottom: 15px; border-left: 4px solid #8b0000; padding-left: 12px; display: flex; align-items: center; gap: 8px;">⚔️ Tường Thuật Sa Trường Kiếm Hiệp</h2>
         <div class="content" style="text-align: justify;">${safeSaTruongCommentary}</div>
       </article>
+
+      <!-- Khối Kêu gọi hành động (Call To Action) Kiếm Hiệp cuối bài -->
+      <div class="kybien-post-cta-banner" style="margin-top: 25px; padding: 20px 24px; background: linear-gradient(135deg, #2a140a, #150a04); border: 2px solid #a83a1f; border-radius: 12px; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">
+        <p style="font-size: 1.08rem; color: #f1c40f; font-weight: bold; margin-bottom: 14px; font-family: 'Noto Serif TC', serif; line-height: 1.6;">
+          ⚔️ Muốn tái hiện thế cờ này hoặc đọ sức cùng kỳ hữu giang hồ?
+        </p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <a href="/p/arena.html?variant=${safeVariantCode}" style="display: inline-block; background: linear-gradient(135deg, #b71c1c, #6d0000); color: #fff; font-weight: bold; font-size: 0.95rem; padding: 11px 26px; border-radius: 8px; border: 1px solid #f1c40f; text-decoration: none; box-shadow: 0 3px 12px rgba(183,28,28,0.4); text-transform: uppercase; letter-spacing: 0.5px;">
+            TIẾN VÀO SÀN ĐẤU KHIÊU CHIẾN NGAY ➔
+          </a>
+          <a href="/p/cam-nang.html" style="display: inline-block; background: #22150c; color: #2ecc71; font-weight: bold; font-size: 0.9rem; padding: 10px 18px; border-radius: 8px; border: 1px solid #5a3d22; text-decoration: none;">
+            📜 Nghiên Cứu Cẩm Nang Võ Học
+          </a>
+        </div>
+      </div>
 
     </div>
 

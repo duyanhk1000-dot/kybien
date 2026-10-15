@@ -6,6 +6,8 @@ import {
   buildSeoSlugTitle,
   generateSeoSlugFromText,
   getStandardPostLabels,
+  injectBiPhapLinks,
+  BI_PHAP_ANCHORS,
 } from '../utils/seoSlug.js';
 import { publishMatchToBlogger } from '../services/bloggerService.js';
 import { config } from '../config/index.js';
@@ -222,6 +224,34 @@ export async function runSeoSlugTests(): Promise<void> {
     }
   }
   console.log('✅ Test 8 Passed: Toàn bộ nhãn bài viết đảm bảo 100% slug sạch, không dấu, không khoảng cách rác!');
+
+  // Test 9: Kiểm tra tự động gắn Link Ngữ Cảnh (Contextual Links) cho Bí Pháp
+  console.log('-> Test 9: Kiểm tra tự động gắn Link Ngữ Cảnh Bí Pháp (injectBiPhapLinks)...');
+  
+  // Xác nhận đủ 16 bí pháp
+  const biPhapKeys = Object.keys(BI_PHAP_ANCHORS);
+  assert.strictEqual(biPhapKeys.length, 16, 'Phải có đúng 16 Bí Pháp võ học được ánh xạ');
+
+  // Kiểm tra gắn link chính xác
+  const sampleText = 'Nước 12: Xe Đỏ thi triển Thiểm Điện Trảm ăn kỵ binh, sau đó Pháo kích hoạt Bích Lịch Hỏa và Phá Lãng Bộ.';
+  const linked = injectBiPhapLinks(sampleText);
+  assert.ok(linked.includes('<a href="/p/cam-nang.html#thiem-dien-tram"'), 'Phải gắn link cho Thiểm Điện Trảm');
+  assert.ok(linked.includes('<a href="/p/cam-nang.html#bich-lich-hoa"'), 'Phải gắn link cho Bích Lịch Hỏa');
+  assert.ok(linked.includes('<a href="/p/cam-nang.html#pha-lang-bo"'), 'Phải gắn link cho Phá Lãng Bộ');
+
+  // Kiểm tra không gắn link lặp lại cho cùng 1 từ khóa (chống spam anchor)
+  const repeatedText = 'Thiểm Điện Trảm lần 1, tiếp tục dùng Thiểm Điện Trảm lần 2.';
+  const linkedRepeated = injectBiPhapLinks(repeatedText);
+  const matchCount = (linkedRepeated.match(/href="\/p\/cam-nang\.html#thiem-dien-tram"/g) || []).length;
+  assert.strictEqual(matchCount, 1, 'Chỉ gắn link cho lần xuất hiện đầu tiên của từ khóa');
+
+  // Kiểm tra không chèn link vào bên trong thẻ <a> đã tồn tại
+  const existingAnchorText = '<a href="/custom-link">Xem Thiểm Điện Trảm tại đây</a> và dùng Bích Lịch Hỏa.';
+  const linkedExisting = injectBiPhapLinks(existingAnchorText);
+  assert.ok(linkedExisting.includes('<a href="/custom-link">Xem Thiểm Điện Trảm tại đây</a>'), 'Không được phá vỡ thẻ a đã có');
+  assert.ok(linkedExisting.includes('<a href="/p/cam-nang.html#bich-lich-hoa"'), 'Vẫn gắn link cho từ khóa bên ngoài thẻ a');
+
+  console.log('✅ Test 9 Passed: Link ngữ cảnh 16 Bí Pháp gắn chuẩn xác, tự nhiên, chống spam link 100%!');
 
   console.log('\n==================================================');
   console.log('🎉 ALL BLOGGER SEO SLUG & TITLE SWITCH TESTS PASSED 100%!');

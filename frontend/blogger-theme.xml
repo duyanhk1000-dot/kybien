@@ -648,17 +648,90 @@
                     <data:post.body/>
                   </div>
                   
-                  <!-- KHỐI LIÊN KẾT NỘI BỘ VÀO SÀN ĐẤU & CẨM NĂNG CUỐI BÀI -->
+                  <!-- KHỐI LIÊN KẾT NỘI BỘ VÀO SÀN ĐẤU, CẨM NĂNG & BÀI VIẾT LIÊN QUAN CUỐI BÀI -->
                   <b:if cond='data:blog.pageType == "item"'>
-                    <div class='single-post-footer-cta' style='margin: 25px 0; background: linear-gradient(135deg, #2a180e, #140b05); border: 2px solid #5a3d22; border-radius: 12px; padding: 22px; text-align: center; box-shadow: 0 6px 18px rgba(0,0,0,0.5);'>
-                      <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.2rem; margin-bottom: 8px;'>⚔️ TIẾN VÀO KỲ ĐÀI LUẬN KIẾM</h3>
-                      <p style='color: #a8947d; font-size: 0.9rem; margin-bottom: 16px;'>Thử sức cùng kỳ hữu giang hồ trên Sàn Đấu hoặc khám phá kho tàng bí kíp Thập Lục Bí Pháp!</p>
-                      <div style='display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;'>
-                        <a href='/p/arena.html' style='background: linear-gradient(135deg, #8b0000, #500000); color: #fff; padding: 10px 22px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; border: 1px solid #f1c40f; text-decoration: none;'>⚔️ Vào Sàn Đấu Khiêu Chiến ➔</a>
-                        <a href='/p/cam-nang.html' style='background: #332012; color: #f1c40f; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; border: 1px solid #5a3d22; text-decoration: none;'>📖 Xem Cẩm Nang Bí Pháp</a>
-                        <a href='/search/label/phan-tich-co' style='background: #22150c; color: #2ecc71; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; border: 1px solid #5a3d22; text-decoration: none;'>📜 Xem Thêm Trận Hay Khác</a>
+                    <!-- 1. BANNER KÊU GỌI HÀNH ĐỘNG (CALL TO ACTION) KIẾM HIỆP -->
+                    <div class='single-post-cta-banner' style='margin: 25px 0 20px 0; background: linear-gradient(135deg, #2a140a, #150a04); border: 2px solid #a83a1f; border-radius: 12px; padding: 22px; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.6);'>
+                      <p style='font-family: "Noto Serif TC", serif; font-size: 1.15rem; color: #f1c40f; font-weight: bold; margin-bottom: 14px; line-height: 1.5;'>
+                        ⚔️ Muốn tái hiện thế cờ này hoặc đọ sức cùng kỳ hữu giang hồ?
+                      </p>
+                      <div style='display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap;'>
+                        <a href='/p/arena.html' style='display: inline-block; background: linear-gradient(135deg, #b71c1c, #6d0000); color: #fff; font-weight: bold; font-size: 0.98rem; padding: 12px 28px; border-radius: 8px; border: 1px solid #f1c40f; text-decoration: none; box-shadow: 0 4px 14px rgba(183,28,28,0.5); text-transform: uppercase; letter-spacing: 0.5px;'>
+                          🔥 TIẾN VÀO SÀN ĐẤU KHIÊU CHIẾN NGAY ➔
+                        </a>
+                        <a href='/p/cam-nang.html' style='display: inline-block; background: #22150c; color: #2ecc71; font-weight: bold; font-size: 0.92rem; padding: 11px 20px; border-radius: 8px; border: 1px solid #5a3d22; text-decoration: none;'>
+                          📜 Nghiên Cứu Cẩm Nang Võ Học
+                        </a>
+                        <a href='/search/label/phan-tich-co' style='display: inline-block; background: #22150c; color: #f1c40f; padding: 11px 20px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; border: 1px solid #5a3d22; text-decoration: none;'>
+                          📖 Thư Viện Bình Văn
+                        </a>
                       </div>
                     </div>
+
+                    <!-- 2. KHỐI KỲ ĐÀM TƯƠNG QUAN (BÀI VIẾT LIÊN QUAN CÙNG THỂ LOẠI) -->
+                    <div class='kybien-related-section' style='margin: 25px 0 30px 0; background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 22px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);'>
+                      <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 16px;'>
+                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem; margin: 0;'>
+                          ⚔️ BÌNH VĂN LIÊN QUAN CÙNG THỂ LOẠI
+                        </h3>
+                        <a href='/search/label/phan-tich-co' style='color: #a8947d; font-size: 0.82rem; text-decoration: none;'>Xem Thêm Trận Hay ➔</a>
+                      </div>
+                      <div id='kybien-related-posts-grid' style='display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px;'>
+                        <div style='text-align: center; color: #a8947d; font-size: 0.85rem; padding: 15px;'>Đang thỉnh các ván cờ tương quan sa trường...</div>
+                      </div>
+                    </div>
+
+                    <script>//<![CDATA[
+                    (function(){
+                      var currentCleanUrl = window.location.href.split('?')[0].split('#')[0];
+                      var relLabel = ']]><b:loop values='data:post.labels' var='label'><b:if cond='data:label.name == "co-bi-phap" or data:label.name == "co-up" or data:label.name == "co-up-gian-diep" or data:label.name == "co-truyen-thong"'><data:label.name/></b:if></b:loop><![CDATA[';
+                      if(!relLabel) relLabel = 'tran-hay';
+
+                      var grid = document.getElementById('kybien-related-posts-grid');
+                      if(!grid) return;
+
+                      fetch('/feeds/posts/summary/-/' + encodeURIComponent(relLabel) + '?alt=json&max-results=6')
+                        .then(function(r){ return r.json(); })
+                        .then(function(data){
+                          if(!data || !data.feed || !data.feed.entry || !data.feed.entry.length){
+                            grid.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem; font-style: italic;">Chưa có ván cờ tương quan khác trong danh mục này.</div>';
+                            return;
+                          }
+                          var entries = data.feed.entry;
+                          var html = '';
+                          var rendered = 0;
+                          for(var i = 0; i < entries.length && rendered < 3; i++){
+                            var item = entries[i];
+                            var pUrl = '';
+                            if(item.link){
+                              for(var k = 0; k < item.link.length; k++){
+                                if(item.link[k].rel === 'alternate'){ pUrl = item.link[k].href; break; }
+                              }
+                            }
+                            if(!pUrl || pUrl.split('?')[0].split('#')[0] === currentCleanUrl) continue;
+                            var pTitle = item.title ? item.title.$t : 'Ván Cờ Sa Trường';
+                            var snippet = item.summary ? item.summary.$t.replace(/<[^>]*>/g, '').trim().slice(0, 95) + '...' : 'Thưởng lãm ván cờ kỳ đạo và kỳ mưu biến hóa...';
+
+                            html += '<a href="' + pUrl + '" style="display: flex; flex-direction: column; justify-content: space-between; background: rgba(34,21,12,0.65); border: 1px solid #5a3d22; border-radius: 8px; padding: 14px; text-decoration: none; transition: transform 0.2s, border-color 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">' +
+                              '<div>' +
+                                '<div style="font-family: \'Noto Serif TC\', serif; font-size: 0.92rem; font-weight: bold; color: #f1c40f; margin-bottom: 8px; line-height: 1.45;">📖 ' + pTitle + '</div>' +
+                                '<div style="font-size: 0.8rem; color: #a8947d; line-height: 1.5; margin-bottom: 10px;">' + snippet + '</div>' +
+                              '</div>' +
+                              '<div style="font-size: 0.78rem; color: #2ecc71; font-weight: bold;">Khám phá ván cờ ➔</div>' +
+                            '</a>';
+                            rendered++;
+                          }
+                          if(html){
+                            grid.innerHTML = html;
+                          } else {
+                            grid.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem; font-style: italic;">Chưa có ván cờ tương quan khác cùng thể loại.</div>';
+                          }
+                        })
+                        .catch(function(){
+                          if(grid) grid.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem;"><a href="/search/label/phan-tich-co" style="color:#f1c40f;">Xem thêm toàn bộ ván đấu tại Thư Viện Bình Văn ➔</a></div>';
+                        });
+                    })();
+                    //]]></script>
                   </b:if>
 
                   <!-- NHÚNG BÌNH LUẬN TRÊN BÀI BÌNH VĂN SA TRƯỜNG -->

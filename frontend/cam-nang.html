@@ -690,6 +690,11 @@
             <div class="detail-desc" id="det-desc">
               Gán nội tại vĩnh viễn lên quân Tốt. Tốt được phép đi và ăn quân lùi lại 1 ô phía sau.
             </div>
+            <div style="margin-top: 15px; padding-top: 12px; border-top: 1px dashed #5a3d22;">
+              <a href="/p/arena.html?variant=kb" class="btn-try-biphap" style="display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.88rem; padding: 9px 18px; border-radius: 6px; border: 1px solid #f1c40f; text-decoration: none; box-shadow: 0 3px 10px rgba(0,0,0,0.4); text-transform: uppercase;">
+                ⚔️ Thử Nghiệm Bí Pháp Này Tại Sàn Đấu ➔
+              </a>
+            </div>
           </div>
 
           <!-- CỘT PHẢI: BÀN CỜ DEMO CÓ HIỆU ỨNG HOẠT HỌA -->
@@ -1099,6 +1104,26 @@ const CARDS_DATA = [
   { id: 'KING_4', t: 'k', tName: 'Tướng', cost: 4, name: 'Càn Khôn Di Vị', type: 'Tức thì', duration: 'Tức thì (Đổi vị trí xong hết lượt)', badge: '🔄', desc: 'Hoán đổi vị trí ngay lập tức giữa Tướng và 1 quân nhà trong Cung (hết lượt).' }
 ];
 
+/* BẢNG ÁNH XẠ SLUG NEO (URL HASH) 16 BÍ PHÁP */
+const BIPHAP_HASH_MAP = {
+  'thiem-dien-tram': 'ROOK_1',
+  'pha-lang-bo': 'ROOK_2',
+  'xuyen-van-tien': 'CANNON_1',
+  'bich-lich-hoa': 'CANNON_2',
+  'dap-van-tieu': 'KNIGHT_1',
+  'tuyet-menh-co': 'KNIGHT_2',
+  'minh-kinh-thuat': 'ELEPHANT_1',
+  'ngu-ba-vien-chinh': 'ELEPHANT_2',
+  'xuat-tran-ho-phap': 'ADVISOR_1',
+  'song-long-xuat-hai': 'ADVISOR_2',
+  'tat-phong-binh': 'PAWN_1',
+  'hoi-phong-binh': 'PAWN_2',
+  'than-chinh-xuat-gia': 'KING_1',
+  'cap-cuu-can-vuong': 'KING_2',
+  'kim-cang-bat-hoai': 'KING_3',
+  'can-khon-di-vi': 'KING_4',
+};
+
 let selectedCard = CARDS_DATA.find(c => c.id === 'PAWN_2') || CARDS_DATA[0];
 let animTimer = null;
 let modeAnimTimer = null;
@@ -1362,7 +1387,8 @@ function renderCardsGrid(){
   function renderChip(card){
     if(!card) return '';
     const isSel = card.id === selectedCard.id ? ' selected' : '';
-    return `<div class="card-chip${isSel}" onclick="selectCard('${card.id}')" title="${card.desc}">
+    const slug = Object.keys(BIPHAP_HASH_MAP).find(k => BIPHAP_HASH_MAP[k] === card.id) || card.id.toLowerCase();
+    return `<div id="${slug}" class="card-chip${isSel}" onclick="selectCard('${card.id}')" title="${card.desc}">
       <span>${card.badge} ${card.name}</span>
       <span class="cost-tag">${card.cost}⚡</span>
     </div>`;
@@ -1704,6 +1730,26 @@ window.showSection = function(secId, nodeElem){
 renderCardsGrid();
 updateDetailView();
 startDemoAnimation();
+
+function handleUrlHash(){
+  const hash = (window.location.hash || '').replace('#', '').trim().toLowerCase();
+  if(!hash) return;
+  const cardId = BIPHAP_HASH_MAP[hash] || hash.toUpperCase();
+  const found = CARDS_DATA.find(c => c.id === cardId);
+  if(found){
+    if(typeof window.showSection === 'function'){
+      window.showSection('cards-16-detail', document.getElementById('node-16-cards'));
+    }
+    window.selectCard(found.id);
+    setTimeout(()=>{
+      const targetEl = document.getElementById(hash) || document.getElementById('cards-16-detail');
+      if(targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 250);
+  }
+}
+
+window.addEventListener('hashchange', handleUrlHash);
+handleUrlHash();
 
 })();
 //]]>

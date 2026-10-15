@@ -184,3 +184,73 @@ export function getStandardPostLabels(variantCode?: string): string[] {
 
   return ['tran-hay', 'phan-tich-co', variantLabelSlug];
 }
+
+/**
+ * Bảng ánh xạ 16 Bí Pháp Võ Học sang slug neo (Anchor Hash) của trang Cẩm Nang (/p/cam-nang.html#...)
+ */
+export const BI_PHAP_ANCHORS: Record<string, string> = {
+  'Thiểm Điện Trảm': 'thiem-dien-tram',
+  'Phá Lãng Bộ': 'pha-lang-bo',
+  'Xuyên Vân Tiễn': 'xuyen-van-tien',
+  'Bích Lịch Hỏa': 'bich-lich-hoa',
+  'Đạp Vân Tiêu': 'dap-van-tieu',
+  'Tuyệt Mệnh Cổ': 'tuyet-menh-co',
+  'Minh Kính Thuật': 'minh-kinh-thuat',
+  'Ngự Ba Viễn Chinh': 'ngu-ba-vien-chinh',
+  'Xuất Trần Hộ Pháp': 'xuat-tran-ho-phap',
+  'Song Long Xuất Hải': 'song-long-xuat-hai',
+  'Tật Phong Binh': 'tat-phong-binh',
+  'Hồi Phong Binh': 'hoi-phong-binh',
+  'Thân Chinh Xuất Giá': 'than-chinh-xuat-gia',
+  'Cấp Cứu Cần Vương': 'cap-cuu-can-vuong',
+  'Kim Cang Bất Hoại': 'kim-cang-bat-hoai',
+  'Càn Khôn Di Vị': 'can-khon-di-vi',
+};
+
+/**
+ * Tự động gắn link ngữ cảnh (Contextual Links) trỏ về Cẩm Nang khi bài viết nhắc đến các bí pháp độc quyền.
+ * - Gắn link cho lần xuất hiện đầu tiên của từng bí pháp (tránh nhồi nhét link / anchor stuffing).
+ * - Tuyệt đối không thay thế nếu từ khóa đã nằm trong thẻ HTML hoặc thẻ liên kết <a>.
+ */
+export function injectBiPhapLinks(htmlText: string): string {
+  if (!htmlText) return '';
+
+  const names = Object.keys(BI_PHAP_ANCHORS);
+  names.sort((a, b) => b.length - a.length);
+
+  const linked = new Set<string>();
+  const tokens = htmlText.split(/(<[^>]+>)/g);
+  let insideAnchor = false;
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token) continue;
+
+    if (token.startsWith('<')) {
+      if (/^<a\b/i.test(token)) insideAnchor = true;
+      else if (/^<\/a>/i.test(token)) insideAnchor = false;
+      continue;
+    }
+
+    if (insideAnchor) continue;
+
+    let modifiedToken = token;
+    for (const name of names) {
+      if (linked.has(name)) continue;
+      const idx = modifiedToken.indexOf(name);
+      if (idx !== -1) {
+        const slug = BI_PHAP_ANCHORS[name];
+        const linkTag = `<a href="/p/cam-nang.html#${slug}" style="color: #f1c40f; font-weight: bold; text-decoration: underline; text-underline-offset: 3px;" title="Xem luận giải bí pháp ${name} trong Cẩm Nang Võ Học">${name}</a>`;
+        modifiedToken =
+          modifiedToken.slice(0, idx) +
+          linkTag +
+          modifiedToken.slice(idx + name.length);
+        linked.add(name);
+      }
+    }
+    tokens[i] = modifiedToken;
+  }
+
+  return tokens.join('');
+}
+
