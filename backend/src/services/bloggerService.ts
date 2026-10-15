@@ -109,14 +109,17 @@ export async function publishMatchToBlogger(
     }
   </style>
 
-  <!-- Khai báo Thẻ Chế độ chơi chuẩn có Icon -->
+  <!-- Khai báo Thẻ Chế độ chơi chuẩn có liên kết nội bộ điều hướng -->
   <div class="kybien-variant-header-badge" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-    <span style="background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #a83a1f; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+    <a href="/search/label/tran-hay" style="text-decoration: none; background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #a83a1f; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
       ⚔️ ${safeMatchPhrase}
-    </span>
-    <span style="background: linear-gradient(135deg, #3a2416, #22150c); color: #f1c40f; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #5a3d22; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-      ${safeVariantIcon} ${safeVariantName}
-    </span>
+    </a>
+    <a href="/p/arena.html?variant=${safeVariantCode}" style="text-decoration: none; background: linear-gradient(135deg, #3a2416, #22150c); color: #f1c40f; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #5a3d22; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+      ${safeVariantIcon} Vào Đấu ${safeVariantName} ➔
+    </a>
+    <a href="/p/cam-nang.html" style="text-decoration: none; background: rgba(90,61,34,0.4); color: #2ecc71; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; border: 1px solid #5a3d22;">
+      📜 Bí Pháp Cẩm Nang
+    </a>
   </div>
 
   <!-- Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ & SEO Snippet -->
@@ -186,6 +189,14 @@ export async function publishMatchToBlogger(
 
     console.log(`[Blogger SEO] Khởi tạo bài viết với Title Slug SEO: "${seoSlugTitle}"...`);
 
+    // Chuẩn hóa nhãn (Labels) thành dạng slug không dấu chuẩn SEO (tránh %E1%BB%9D...)
+    let variantLabelSlug = 'co-bi-phap';
+    if (variantCode === 't') variantLabelSlug = 'co-up';
+    else if (variantCode === 'g') variantLabelSlug = 'co-up-gian-diep';
+    else if (variantCode === 'n') variantLabelSlug = 'co-truyen-thong';
+
+    const postLabels = ['tran-hay', 'phan-tich-co', variantLabelSlug];
+
     const blogUrl = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/posts/`;
     const postResponse = await fetch(blogUrl, {
       method: 'POST',
@@ -199,7 +210,7 @@ export async function publishMatchToBlogger(
         content: htmlContent,
         searchDescription: cleanSearchDescription,
         isDraft: false,
-        labels: ['Trận Hay', 'Phân Tích Cờ', safeVariantLabel],
+        labels: postLabels,
       }),
     });
 

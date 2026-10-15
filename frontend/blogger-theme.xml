@@ -607,7 +607,7 @@
         <li><a href='/'>Trang Chủ</a></li>
         <li><a href='/p/cam-nang.html'>Cẩm Nang</a></li>
         <li><a href='/p/arena.html'>Sàn Đấu</a></li>
-        <li><a href='/search/label/Phân%20Tích%20Cờ'>Bình Văn</a></li>
+        <li><a href='/search/label/phan-tich-co'>Bình Văn</a></li>
       </ul>
 
       <div id='kybien-header-profile'>
@@ -634,12 +634,33 @@
               <b:loop values='data:posts' var='post'>
                 <article class='single-page-view'>
                   <b:if cond='data:blog.pageType == "item"'>
+                    <!-- BREADCRUMBS ĐIỀU HƯỚNG PHÂN CẤP CHUẨN SEO -->
+                    <nav aria-label='Breadcrumb' class='kybien-breadcrumbs' style='font-size: 0.85rem; color: #a8947d; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;'>
+                      <a href='/' style='color: #f1c40f; text-decoration: none;'>Trang Chủ</a>
+                      <span>➔</span>
+                      <a href='/search/label/phan-tich-co' style='color: #f1c40f; text-decoration: none;'>Bình Văn Sa Trường</a>
+                      <span>➔</span>
+                      <span style='color: #e8dcc6; font-weight: 600;'><data:post.title/></span>
+                    </nav>
                     <h1 class='single-post-title'><data:post.title/></h1>
                   </b:if>
                   <div class='single-post-body'>
                     <data:post.body/>
                   </div>
                   
+                  <!-- KHỐI LIÊN KẾT NỘI BỘ VÀO SÀN ĐẤU & CẨM NĂNG CUỐI BÀI -->
+                  <b:if cond='data:blog.pageType == "item"'>
+                    <div class='single-post-footer-cta' style='margin: 25px 0; background: linear-gradient(135deg, #2a180e, #140b05); border: 2px solid #5a3d22; border-radius: 12px; padding: 22px; text-align: center; box-shadow: 0 6px 18px rgba(0,0,0,0.5);'>
+                      <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.2rem; margin-bottom: 8px;'>⚔️ TIẾN VÀO KỲ ĐÀI LUẬN KIẾM</h3>
+                      <p style='color: #a8947d; font-size: 0.9rem; margin-bottom: 16px;'>Thử sức cùng kỳ hữu giang hồ trên Sàn Đấu hoặc khám phá kho tàng bí kíp Thập Lục Bí Pháp!</p>
+                      <div style='display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;'>
+                        <a href='/p/arena.html' style='background: linear-gradient(135deg, #8b0000, #500000); color: #fff; padding: 10px 22px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; border: 1px solid #f1c40f; text-decoration: none;'>⚔️ Vào Sàn Đấu Khiêu Chiến ➔</a>
+                        <a href='/p/cam-nang.html' style='background: #332012; color: #f1c40f; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; border: 1px solid #5a3d22; text-decoration: none;'>📖 Xem Cẩm Nang Bí Pháp</a>
+                        <a href='/search/label/phan-tich-co' style='background: #22150c; color: #2ecc71; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; border: 1px solid #5a3d22; text-decoration: none;'>📜 Xem Thêm Trận Hay Khác</a>
+                      </div>
+                    </div>
+                  </b:if>
+
                   <!-- NHÚNG BÌNH LUẬN TRÊN BÀI BÌNH VĂN SA TRƯỜNG -->
                   <b:if cond='data:blog.pageType == "item"'>
                     <b:include data='post' name='comments'/>
@@ -659,7 +680,7 @@
                   </p>
                   <div class='hero-actions'>
                     <a class='btn-hero-primary' href='/p/arena.html'>⚔️ Vào Sàn Đấu &amp; Khiêu Chiến</a>
-                    <a class='btn-hero-secondary' href='/search/label/Phân%20Tích%20Cờ'>📜 Thưởng Lãm Bình Văn Sa Trường</a>
+                    <a class='btn-hero-secondary' href='/search/label/phan-tich-co'>📜 Thưởng Lãm Bình Văn Sa Trường</a>
                   </div>
                 </div>
 
@@ -751,7 +772,7 @@
 
                 <div class='section-title-bar'>
                   <h2>⚔️ THIÊN THƯ BÌNH VĂN &amp; CHIẾN TÍCH SA TRƯỜNG</h2>
-                  <span><a href='/search/label/Phân%20Tích%20Cờ' style='font-size: 0.9rem; color: #f1c40f;'>Thưởng Lãm Toàn Bộ ➔</a></span>
+                  <span><a href='/search/label/phan-tich-co' style='font-size: 0.9rem; color: #f1c40f;'>Thưởng Lãm Toàn Bộ ➔</a></span>
                 </div>
                 
                 <div class='post-grid'>
@@ -760,14 +781,32 @@
                       <div>
                         <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
                           <b:loop values='data:post.labels' var='label'>
-                            <b:if cond='data:label.name == "Trận Hay"'>
-                              <span class='post-card-tag' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold;'>⚔️ TRẬN HAY</span>
+                            <b:if cond='data:label.name == "tran-hay" or data:label.name == "tran- hay" or data:label.name == "Trận Hay"'>
+                              <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold; text-decoration: none;'>⚔️ TRẬN HAY</a>
                             </b:if>
                           </b:loop>
 
                           <b:loop values='data:post.labels' var='label'>
-                            <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Trận Hay"'>
-                              <span class='post-card-tag' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold;'><data:label.name/></span>
+                            <b:if cond='data:label.name != "phan-tich-co" and data:label.name != "Phân Tích Cờ" and data:label.name != "tran-hay" and data:label.name != "tran- hay" and data:label.name != "Trận Hay"'>
+                              <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold; text-decoration: none;'>
+                                <b:if cond='data:label.name == "co-bi-phap" or data:label.name == "Dai chien ky bien" or data:label.name == "Cờ Bí Pháp"'>
+                                  ✨ Cờ Bí Pháp
+                                <b:else/>
+                                  <b:if cond='data:label.name == "co-up" or data:label.name == "Cờ Úp"'>
+                                    🎴 Cờ Úp
+                                  <b:else/>
+                                    <b:if cond='data:label.name == "co-up-gian-diep" or data:label.name == "Cờ Gián Điệp"'>
+                                      🕵️ Cờ Gián Điệp
+                                    <b:else/>
+                                      <b:if cond='data:label.name == "co-truyen-thong" or data:label.name == "Cờ Truyền Thống"'>
+                                        🏯 Cờ Truyền Thống
+                                      <b:else/>
+                                        <data:label.name/>
+                                      </b:if>
+                                    </b:if>
+                                  </b:if>
+                                </b:if>
+                              </a>
                             </b:if>
                           </b:loop>
                         </div>
@@ -797,7 +836,32 @@
                 <div class='section-title-bar'>
                   <h2>
                     <b:if cond='data:blog.searchLabel'>
-                      📜 THIÊN THƯ BÌNH VĂN: <data:blog.searchLabel/>
+                      📜 THIÊN THƯ BÌNH VĂN: 
+                      <b:if cond='data:blog.searchLabel == "co-bi-phap" or data:blog.searchLabel == "Dai chien ky bien" or data:blog.searchLabel == "Cờ Bí Pháp"'>
+                        ✨ CỜ BÍ PHÁP
+                      <b:else/>
+                        <b:if cond='data:blog.searchLabel == "co-up" or data:blog.searchLabel == "Cờ Úp"'>
+                          🎴 CỜ ÚP
+                        <b:else/>
+                          <b:if cond='data:blog.searchLabel == "co-up-gian-diep" or data:blog.searchLabel == "Cờ Gián Điệp"'>
+                            🕵️ CỜ GIÁN ĐIỆP
+                          <b:else/>
+                            <b:if cond='data:blog.searchLabel == "co-truyen-thong" or data:blog.searchLabel == "Cờ Truyền Thống"'>
+                              🏯 CỜ TRUYỀN THỐNG
+                            <b:else/>
+                              <b:if cond='data:blog.searchLabel == "tran-hay" or data:blog.searchLabel == "tran- hay" or data:blog.searchLabel == "Trận Hay"'>
+                                ⚔️ TUYỂN TẬP TRẬN HAY
+                              <b:else/>
+                                <b:if cond='data:blog.searchLabel == "phan-tich-co" or data:blog.searchLabel == "Phân Tích Cờ"'>
+                                  TOÀN BỘ VÁN ĐẤU
+                                <b:else/>
+                                  <data:blog.searchLabel/>
+                                </b:if>
+                              </b:if>
+                            </b:if>
+                          </b:if>
+                        </b:if>
+                      </b:if>
                     <b:else/>
                       🔍 KẾT QUẢ TẦM KIẾM: <data:blog.searchQuery/>
                     </b:if>
@@ -807,12 +871,12 @@
 
                 <!-- THANH BỘ LỌC NHANH DÀNH CHO THƯ VIỆN BÀI VIẾT -->
                 <div class='label-filter-bar'>
-                  <a class='filter-btn' href='/search/label/Phân%20Tích%20Cờ'>Toàn Bộ Thiên Thư</a>
-                  <a class='filter-btn' href='/search/label/Cờ%20Bí%20Pháp'>Cờ Bí Pháp</a>
-                  <a class='filter-btn' href='/search/label/Cờ%20Úp'>Cờ Úp</a>
-                  <a class='filter-btn' href='/search/label/Cờ%20Gián%20Điệp'>Cờ Gián Điệp</a>
-                  <a class='filter-btn' href='/search/label/Cờ%20Truyền%20Thống'>Cờ Truyền Thống</a>
-                  <a class='filter-btn' href='/search/label/Trận%20Hay'>Trận Hay</a>
+                  <a class='filter-btn' href='/search/label/phan-tich-co'>Toàn Bộ Thiên Thư</a>
+                  <a class='filter-btn' href='/search/label/co-bi-phap'>✨ Cờ Bí Pháp</a>
+                  <a class='filter-btn' href='/search/label/co-up'>🎴 Cờ Úp</a>
+                  <a class='filter-btn' href='/search/label/co-up-gian-diep'>🕵️ Cờ Gián Điệp</a>
+                  <a class='filter-btn' href='/search/label/co-truyen-thong'>🏯 Cờ Truyền Thống</a>
+                  <a class='filter-btn' href='/search/label/tran-hay'>⚔️ Trận Hay</a>
                 </div>
 
                 <div class='post-grid'>
@@ -821,14 +885,32 @@
                       <div>
                         <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
                           <b:loop values='data:post.labels' var='label'>
-                            <b:if cond='data:label.name == "Trận Hay"'>
-                              <span class='post-card-tag' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold;'>⚔️ TRẬN HAY</span>
+                            <b:if cond='data:label.name == "tran-hay" or data:label.name == "tran- hay" or data:label.name == "Trận Hay"'>
+                              <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold; text-decoration: none;'>⚔️ TRẬN HAY</a>
                             </b:if>
                           </b:loop>
 
                           <b:loop values='data:post.labels' var='label'>
-                            <b:if cond='data:label.name != "Phân Tích Cờ" and data:label.name != "Trận Hay"'>
-                              <span class='post-card-tag' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold;'><data:label.name/></span>
+                            <b:if cond='data:label.name != "phan-tich-co" and data:label.name != "Phân Tích Cờ" and data:label.name != "tran-hay" and data:label.name != "tran- hay" and data:label.name != "Trận Hay"'>
+                              <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold; text-decoration: none;'>
+                                <b:if cond='data:label.name == "co-bi-phap" or data:label.name == "Dai chien ky bien" or data:label.name == "Cờ Bí Pháp"'>
+                                  ✨ Cờ Bí Pháp
+                                <b:else/>
+                                  <b:if cond='data:label.name == "co-up" or data:label.name == "Cờ Úp"'>
+                                    🎴 Cờ Úp
+                                  <b:else/>
+                                    <b:if cond='data:label.name == "co-up-gian-diep" or data:label.name == "Cờ Gián Điệp"'>
+                                      🕵️ Cờ Gián Điệp
+                                    <b:else/>
+                                      <b:if cond='data:label.name == "co-truyen-thong" or data:label.name == "Cờ Truyền Thống"'>
+                                        🏯 Cờ Truyền Thống
+                                      <b:else/>
+                                        <data:label.name/>
+                                      </b:if>
+                                    </b:if>
+                                  </b:if>
+                                </b:if>
+                              </a>
                             </b:if>
                           </b:loop>
                         </div>
@@ -912,7 +994,7 @@
       <a href='/'>Trang Chủ</a> |
       <a href='/p/cam-nang.html'>Cẩm Nang</a> |
       <a href='/p/arena.html'>Sàn Đấu</a> |
-      <a href='/search/label/Phân%20Tích%20Cờ'>Bình Văn</a>
+      <a href='/search/label/phan-tich-co'>Bình Văn</a>
     </div>
     <script>//<![CDATA[
     (function(){
