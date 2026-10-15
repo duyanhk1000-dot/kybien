@@ -668,13 +668,13 @@
                       </div>
                     </div>
 
-                    <!-- 2. KHỐI KỲ ĐÀM TƯƠNG QUAN (BÀI VIẾT LIÊN QUAN CÙNG THỂ LOẠI) -->
-                    <div class='kybien-related-section' style='margin: 25px 0 30px 0; background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 22px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);'>
+                    <!-- 2. KHỐI KỲ ĐÀM TƯƠNG QUAN (BÀI VIẾT LIÊN QUAN THEO NHÃN CHỦ ĐỀ) -->
+                    <div class='kybien-related-section' style='margin: 25px 0 30px 0; background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);'>
                       <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 16px;'>
-                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem; margin: 0;'>
-                          ⚔️ BÌNH VĂN LIÊN QUAN CÙNG THỂ LOẠI
+                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: 8px;'>
+                          ⚔️ BÌNH VĂN LIÊN QUAN
                         </h3>
-                        <a href='/search/label/phan-tich-co' style='color: #a8947d; font-size: 0.82rem; text-decoration: none;'>Xem Thêm Trận Hay ➔</a>
+                        <a href='/search/label/phan-tich-co' style='color: #a8947d; font-size: 0.82rem; text-decoration: none;'>Xem Thư Viện ➔</a>
                       </div>
 
                       <!-- LƯU TRỮ NHÃN BÀI VIẾT HIỆN TẠI VÀO DOM ĐỂ JS ĐỌC AN TOÀN -->
@@ -684,7 +684,7 @@
                         </b:loop>
                       </div>
 
-                      <div id='kybien-related-posts-grid' style='display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px;'>
+                      <div id='kybien-related-posts-container'>
                         <div style='text-align: center; color: #a8947d; font-size: 0.85rem; padding: 15px;'>Đang thỉnh các ván cờ tương quan sa trường...</div>
                       </div>
                     </div>
@@ -692,8 +692,8 @@
                     <script>//<![CDATA[
                     (function(){
                       var currentCleanUrl = window.location.href.split('?')[0].split('#')[0];
-                      var grid = document.getElementById('kybien-related-posts-grid');
-                      if(!grid) return;
+                      var container = document.getElementById('kybien-related-posts-container');
+                      if(!container) return;
 
                       // 1. Đọc danh sách nhãn của bài viết hiện tại từ DOM
                       var tagEls = document.querySelectorAll('#kybien-post-current-labels .rel-tag');
@@ -703,102 +703,181 @@
                         if(txt) currentTags.push(txt);
                       }
 
-                      // 2. Tải danh sách bài viết gần đây từ Feed Blogger
-                      fetch('/feeds/posts/summary?alt=json&max-results=25')
+                      // 2. Xác định các nhóm nhãn của bài viết hiện tại
+                      var groups = [];
+                      var hasVariant = false;
+                      var hasTranHay = false;
+
+                      for(var i = 0; i < currentTags.length; i++){
+                        var tag = currentTags[i];
+                        // Nhóm Thể loại cờ
+                        if((tag === 'co-bi-phap' || tag === 'Dai chien ky bien' || tag === 'Cờ Bí Pháp') && !hasVariant){
+                          groups.push({
+                            name: '✨ Cờ Bí Pháp',
+                            match: function(itemCats){
+                              return itemCats.indexOf('co-bi-phap') !== -1 || itemCats.indexOf('Dai chien ky bien') !== -1 || itemCats.indexOf('Cờ Bí Pháp') !== -1;
+                            }
+                          });
+                          hasVariant = true;
+                        } else if((tag === 'co-up' || tag === 'Cờ Úp') && !hasVariant){
+                          groups.push({
+                            name: '🎴 Cờ Úp',
+                            match: function(itemCats){
+                              return itemCats.indexOf('co-up') !== -1 || itemCats.indexOf('Cờ Úp') !== -1;
+                            }
+                          });
+                          hasVariant = true;
+                        } else if((tag === 'co-up-gian-diep' || tag === 'Cờ Gián Điệp') && !hasVariant){
+                          groups.push({
+                            name: '🕵️ Cờ Gián Điệp',
+                            match: function(itemCats){
+                              return itemCats.indexOf('co-up-gian-diep') !== -1 || itemCats.indexOf('Cờ Gián Điệp') !== -1;
+                            }
+                          });
+                          hasVariant = true;
+                        } else if((tag === 'co-truyen-thong' || tag === 'Cờ Truyền Thống') && !hasVariant){
+                          groups.push({
+                            name: '🏯 Cờ Truyền Thống',
+                            match: function(itemCats){
+                              return itemCats.indexOf('co-truyen-thong') !== -1 || itemCats.indexOf('Cờ Truyền Thống') !== -1;
+                            }
+                          });
+                          hasVariant = true;
+                        }
+                        // Nhóm Trận Hay
+                        else if((tag.indexOf('tran-') === 0 || tag === 'Trận Hay') && !hasTranHay){
+                          groups.push({
+                            name: '⚔️ Tuyển Tập Trận Hay',
+                            match: function(itemCats){
+                              for(var c = 0; c < itemCats.length; c++){
+                                if(itemCats[c].indexOf('tran-') === 0 || itemCats[c] === 'Trận Hay') return true;
+                              }
+                              return false;
+                            }
+                          });
+                          hasTranHay = true;
+                        }
+                      }
+
+                      // Fallback nếu bài viết không thuộc nhóm nào trên
+                      if(!groups.length){
+                        groups.push({
+                          name: '📜 Bình Văn Sa Trường',
+                          match: function(){ return true; }
+                        });
+                      }
+
+                      // 3. Tải danh sách bài viết từ Blogger Feed
+                      fetch('/feeds/posts/summary?alt=json&max-results=30')
                         .then(function(r){ return r.json(); })
                         .then(function(data){
                           if(!data || !data.feed || !data.feed.entry || !data.feed.entry.length){
-                            grid.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem; font-style: italic;">Chưa có ván cờ tương quan khác.</div>';
+                            container.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem; font-style: italic;">Chưa có ván cờ tương quan khác.</div>';
                             return;
                           }
 
                           var entries = data.feed.entry;
-                          var scored = [];
+                          var pickedUrls = {};
+                          var totalLimit = 5;
+                          var quotaPerGroup = Math.ceil(totalLimit / groups.length);
+                          var groupResults = [];
 
-                          for(var i = 0; i < entries.length; i++){
-                            var item = entries[i];
-                            var pUrl = '';
-                            if(item.link){
-                              for(var k = 0; k < item.link.length; k++){
-                                if(item.link[k].rel === 'alternate'){ pUrl = item.link[k].href; break; }
-                              }
-                            }
-                            if(!pUrl || pUrl.split('?')[0].split('#')[0] === currentCleanUrl) continue;
+                          for(var g = 0; g < groups.length; g++){
+                            var grp = groups[g];
+                            var grpItems = [];
 
-                            var pTitle = item.title ? item.title.$t : 'Ván Cờ Sa Trường';
-                            var snippet = item.summary ? item.summary.$t.replace(/<[^>]*>/g, '').trim().slice(0, 95) + '...' : 'Thưởng lãm ván cờ kỳ đạo và kỳ mưu biến hóa...';
+                            for(var e = 0; e < entries.length; e++){
+                              var item = entries[e];
+                              var pUrl = '';
+                              if(item.link){
+                                for(var k = 0; k < item.link.length; k++){
+                                  if(item.link[k].rel === 'alternate'){ pUrl = item.link[k].href; break; }
+                                }
+                              }
+                              if(!pUrl || pUrl.split('?')[0].split('#')[0] === currentCleanUrl) continue;
+                              if(pickedUrls[pUrl]) continue;
 
-                            // Lấy danh sách category của bài viết trong feed
-                            var itemCats = [];
-                            if(item.category){
-                              for(var c = 0; c < item.category.length; c++){
-                                if(item.category[c].term) itemCats.push(item.category[c].term);
+                              var itemCats = [];
+                              if(item.category){
+                                for(var c = 0; c < item.category.length; c++){
+                                  if(item.category[c].term) itemCats.push(item.category[c].term);
+                                }
                               }
-                            }
 
-                            // Chấm điểm độ tương quan:
-                            var score = 1;
-                            for(var cIdx = 0; cIdx < itemCats.length; cIdx++){
-                              var cat = itemCats[cIdx];
-                              // Cờ Bí Pháp
-                              if((cat === 'co-bi-phap' || cat === 'Dai chien ky bien' || cat === 'Cờ Bí Pháp') &&
-                                 (currentTags.indexOf('co-bi-phap') !== -1 || currentTags.indexOf('Dai chien ky bien') !== -1 || currentTags.indexOf('Cờ Bí Pháp') !== -1)){
-                                score += 20;
-                              }
-                              // Cờ Úp
-                              if((cat === 'co-up' || cat === 'Cờ Úp') &&
-                                 (currentTags.indexOf('co-up') !== -1 || currentTags.indexOf('Cờ Úp') !== -1)){
-                                score += 20;
-                              }
-                              // Cờ Úp Gián Điệp
-                              if((cat === 'co-up-gian-diep' || cat === 'Cờ Gián Điệp') &&
-                                 (currentTags.indexOf('co-up-gian-diep') !== -1 || currentTags.indexOf('Cờ Gián Điệp') !== -1)){
-                                score += 20;
-                              }
-                              // Cờ Truyền Thống
-                              if((cat === 'co-truyen-thong' || cat === 'Cờ Truyền Thống') &&
-                                 (currentTags.indexOf('co-truyen-thong') !== -1 || currentTags.indexOf('Cờ Truyền Thống') !== -1)){
-                                score += 20;
-                              }
-                              // Trận Hay
-                              if(cat.indexOf('tran-') === 0 || cat === 'Trận Hay'){
-                                score += 4;
+                              if(grp.match(itemCats)){
+                                var pTitle = item.title ? item.title.$t : 'Ván Cờ Sa Trường';
+                                grpItems.push({ url: pUrl, title: pTitle });
+                                pickedUrls[pUrl] = true;
+                                if(grpItems.length >= quotaPerGroup || Object.keys(pickedUrls).length >= totalLimit){
+                                  break;
+                                }
                               }
                             }
 
-                            scored.push({
-                              url: pUrl,
-                              title: pTitle,
-                              snippet: snippet,
-                              score: score
-                            });
+                            if(grpItems.length){
+                              groupResults.push({ name: grp.name, items: grpItems });
+                            }
                           }
 
-                          // Sắp xếp bài có độ liên quan cao nhất lên đầu
-                          scored.sort(function(a, b){ return b.score - a.score; });
+                          // Bù thêm bài nếu tổng số bài dưới 5
+                          var currentCount = Object.keys(pickedUrls).length;
+                          if(currentCount < totalLimit){
+                            var extraItems = [];
+                            for(var e2 = 0; e2 < entries.length && currentCount < totalLimit; e2++){
+                              var item2 = entries[e2];
+                              var pUrl2 = '';
+                              if(item2.link){
+                                for(var k2 = 0; k2 < item2.link.length; k2++){
+                                  if(item2.link[k2].rel === 'alternate'){ pUrl2 = item2.link[k2].href; break; }
+                                }
+                              }
+                              if(!pUrl2 || pUrl2.split('?')[0].split('#')[0] === currentCleanUrl) continue;
+                              if(pickedUrls[pUrl2]) continue;
 
-                          var top3 = scored.slice(0, 3);
-                          if(!top3.length){
-                            grid.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem; font-style: italic;">Chưa có ván cờ tương quan khác.</div>';
+                              var pTitle2 = item2.title ? item2.title.$t : 'Ván Cờ Sa Trường';
+                              extraItems.push({ url: pUrl2, title: pTitle2 });
+                              pickedUrls[pUrl2] = true;
+                              currentCount++;
+                            }
+                            if(extraItems.length){
+                              groupResults.push({ name: '📜 Tuyển Tập Kỳ Đàm Khác', items: extraItems });
+                            }
+                          }
+
+                          if(!groupResults.length){
+                            container.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem; font-style: italic;">Chưa có ván cờ tương quan khác.</div>';
                             return;
                           }
 
+                          // Render giao diện theo từng nhãn chủ đề, mỗi bài đúng 1 dòng title
                           var html = '';
-                          for(var m = 0; m < top3.length; m++){
-                            var card = top3[m];
-                            html += '<a href="' + card.url + '" style="display: flex; flex-direction: column; justify-content: space-between; background: rgba(34,21,12,0.65); border: 1px solid #5a3d22; border-radius: 8px; padding: 14px; text-decoration: none; transition: transform 0.2s, border-color 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">' +
-                              '<div>' +
-                                '<div style="font-family: \'Noto Serif TC\', serif; font-size: 0.92rem; font-weight: bold; color: #f1c40f; margin-bottom: 8px; line-height: 1.45;">📖 ' + card.title + '</div>' +
-                                '<div style="font-size: 0.8rem; color: #a8947d; line-height: 1.5; margin-bottom: 10px;">' + card.snippet + '</div>' +
+                          for(var gr = 0; gr < groupResults.length; gr++){
+                            var resGrp = groupResults[gr];
+                            html += '<div style="margin-bottom: 14px;">' +
+                              '<div style="font-size: 0.88rem; font-weight: bold; color: #f1c40f; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">' +
+                                '<span>🏷️</span>' +
+                                '<span>Chủ đề: <b>' + resGrp.name + '</b></span>' +
                               '</div>' +
-                              '<div style="font-size: 0.78rem; color: #2ecc71; font-weight: bold;">Khám phá ván cờ ➔</div>' +
-                            '</a>';
+                              '<ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px;">';
+
+                            for(var it = 0; it < resGrp.items.length; it++){
+                              var postObj = resGrp.items[it];
+                              html += '<li style="display: flex; align-items: center; gap: 8px; font-size: 0.92rem; padding: 7px 12px; background: rgba(34,21,12,0.55); border: 1px solid #4a301a; border-radius: 6px;">' +
+                                '<span style="color: #e57373; font-size: 0.72rem;">▶</span>' +
+                                '<a href="' + postObj.url + '" style="color: #e8dcc6; text-decoration: none; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="' + postObj.title + '">' +
+                                  postObj.title +
+                                '</a>' +
+                                '<span style="color: #2ecc71; font-size: 0.78rem; font-weight: bold; white-space: nowrap;">Thưởng lãm ➔</span>' +
+                              '</li>';
+                            }
+
+                            html += '</ul></div>';
                           }
 
-                          grid.innerHTML = html;
+                          container.innerHTML = html;
                         })
                         .catch(function(err){
-                          if(grid) grid.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem;"><a href="/search/label/phan-tich-co" style="color:#f1c40f;">Xem thêm toàn bộ ván đấu tại Thư Viện Bình Văn ➔</a></div>';
+                          if(container) container.innerHTML = '<div style="color: #a8947d; font-size: 0.85rem;"><a href="/search/label/phan-tich-co" style="color:#f1c40f;">Xem thêm toàn bộ ván đấu tại Thư Viện Bình Văn ➔</a></div>';
                         });
                     })();
                     //]]></script>
