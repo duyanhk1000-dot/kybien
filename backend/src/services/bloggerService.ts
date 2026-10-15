@@ -129,6 +129,12 @@ export async function publishMatchToBlogger(
     🎯 <strong>Tóm tắt ván cờ:</strong> ${safeTacticalAnalysis}
   </p>
 
+  <!-- Khối chú dẫn Bí Pháp Võ Học chuyên biệt cho Cờ Bí Pháp -->
+  ${safeVariantCode === 'kb' ? `
+  <div class="kybien-biphap-badge-box" style="margin-bottom: 22px; padding: 14px 18px; background: rgba(139,0,0,0.18); border: 1px dashed #a83a1f; border-radius: 8px; color: #e8dcc6; font-size: 0.95rem; line-height: 1.6;">
+    📜 <strong>Bí Pháp Sa Trường:</strong> Ván cờ diễn ra dưới thể thức Cờ Bí Pháp đỉnh cao. Kỳ thủ có thể khai triển 16 tuyệt kỹ võ học trấn phái như ${injectBiPhapLinks('Thiểm Điện Trảm')}, ${injectBiPhapLinks('Bích Lịch Hỏa')}, ${injectBiPhapLinks('Đạp Vân Tiêu')}, ${injectBiPhapLinks('Tuyệt Mệnh Cổ')} hay ${injectBiPhapLinks('Càn Khôn Di Vị')} để xoay chuyển cục diện. Xem toàn bộ tuyệt kỹ tại <a href="/p/cam-nang.html" style="color: #2ecc71; font-weight: bold; text-decoration: underline;" title="Cẩm Nang 16 Bí Pháp Võ Học Kỳ Biến">Cẩm Nang Võ Học</a>.
+  </div>` : ''}
+
   <!-- Khung Bố cục 2 Cột (Trên Mobile tự co về 1 Cột, không cố định bàn cờ) -->
   <div class="kybien-post-layout">
     
@@ -148,21 +154,6 @@ export async function publishMatchToBlogger(
         <h2 style="color: #f1c40f; font-size: 1.35rem; margin-bottom: 15px; border-left: 4px solid #8b0000; padding-left: 12px; display: flex; align-items: center; gap: 8px;">⚔️ Tường Thuật Sa Trường Kiếm Hiệp</h2>
         <div class="content" style="text-align: justify;">${safeSaTruongCommentary}</div>
       </article>
-
-      <!-- Khối Kêu gọi hành động (Call To Action) Kiếm Hiệp cuối bài -->
-      <div class="kybien-post-cta-banner" style="margin-top: 25px; padding: 20px 24px; background: linear-gradient(135deg, #2a140a, #150a04); border: 2px solid #a83a1f; border-radius: 12px; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">
-        <p style="font-size: 1.08rem; color: #f1c40f; font-weight: bold; margin-bottom: 14px; font-family: 'Noto Serif TC', serif; line-height: 1.6;">
-          ⚔️ Muốn tái hiện thế cờ này hoặc đọ sức cùng kỳ hữu giang hồ?
-        </p>
-        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <a href="/p/arena.html?variant=${safeVariantCode}" style="display: inline-block; background: linear-gradient(135deg, #b71c1c, #6d0000); color: #fff; font-weight: bold; font-size: 0.95rem; padding: 11px 26px; border-radius: 8px; border: 1px solid #f1c40f; text-decoration: none; box-shadow: 0 3px 12px rgba(183,28,28,0.4); text-transform: uppercase; letter-spacing: 0.5px;">
-            TIẾN VÀO SÀN ĐẤU KHIÊU CHIẾN NGAY ➔
-          </a>
-          <a href="/p/cam-nang.html" style="display: inline-block; background: #22150c; color: #2ecc71; font-weight: bold; font-size: 0.9rem; padding: 10px 18px; border-radius: 8px; border: 1px solid #5a3d22; text-decoration: none;">
-            📜 Nghiên Cứu Cẩm Nang Võ Học
-          </a>
-        </div>
-      </div>
 
     </div>
 

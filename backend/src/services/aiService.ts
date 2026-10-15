@@ -222,6 +222,9 @@ Hùng tráng, tàn khốc, dồn dập, có sát khí, chất cổ trang, đấu
 - Ví dụ: "Đại Chiến Càn Khôn Đổi Chủ", "Cuộc Phản Kích Xuyên Vân Tiễn", "Trận Tuyệt Mệnh Phá Vòng Vây", "Bão Lửa Thiêu Rụi Trung Quân", "Đại Pháo Đoạt Thần Kỳ", "Thiết Kỵ Càn Quét Tướng Cung", "Phá Lãng Bộ Trảm Tướng".
 - TUYỆT ĐỐI KHÔNG tự ý lặp lại cụm cố định "Trận Huyết Chiến Sa Trường" cho mọi trận đấu!
 
+8. QUY TẮC LỒNG GHÉP BÍ PHÁP VÕ HỌC (ĐẶC BIỆT KHI LÀ CỜ BÍ PHÁP "kb"):
+- BẮT BUỘC trong phần bình luận ("saTruongCommentary") hoặc phân tích ("tacticalAnalysis"), phải lồng ghép luận bàn tự nhiên về ít nhất 2 đến 3 Bí Pháp võ học độc quyền của Kỳ Biến (chọn từ danh sách: Thiểm Điện Trảm, Phá Lãng Bộ, Xuyên Vân Tiễn, Bích Lịch Hỏa, Đạp Vân Tiêu, Tuyệt Mệnh Cổ, Minh Kính Thuật, Ngự Ba Viễn Chinh, Xuất Trần Hộ Pháp, Song Long Xuất Hải, Tật Phong Binh, Hồi Phong Binh, Thân Chinh Xuất Giá, Cấp Cứu Cần Vương, Kim Cang Bất Hoại, Càn Khôn Di Vị) để làm nổi bật nét huyền ảo của ván cờ.
+
 Trả về đúng định dạng JSON có cấu trúc sau:
 {
   "matchTitlePhrase": "Cụm danh xưng hùng tráng 3-6 từ đặc tả riêng cho trận đấu này",
@@ -328,6 +331,8 @@ export function generateFallbackWuxiaAnalysis(
     const firstSpell = spellMoves[0].replace('CARD:', '').split('->')[0];
     const sName = spellMap[firstSpell] || 'Bí Pháp Kỳ Mưu';
     keyMoves.push(`Bước ngoặt trung cuộc: ${redTitle} bất ngờ xuất chiêu ${sName}, tạo uy lực cuồn cuộn làm rúng động phòng tuyến ${blackTitle}.`);
+  } else if (variant === 'kb') {
+    keyMoves.push(`Đấu trí bí pháp: ${redTitle} và ${blackTitle} rình rập cơ hội xuất chiêu Thiểm Điện Trảm và Đạp Vân Tiêu, buộc đối phương phải căng mình phòng ngự.`);
   } else if (flipMoves.length > 0) {
     keyMoves.push(`Giao tranh trung cuộc: Quân binh cởi bỏ lớp ngụy trang, đại tướng xuất hiện khiến cục diện đảo chiều ngoạn mục.`);
   } else {
@@ -340,6 +345,8 @@ export function generateFallbackWuxiaAnalysis(
     const secSpell = spellMoves[spellMoves.length - 1].replace('CARD:', '').split('->')[0];
     const sName2 = spellMap[secSpell] || 'Bí Pháp Tuyệt Kỹ';
     keyMoves.push(`Hiệp đấu then chốt: ${sName2} được kích hoạt chuẩn xác vào thời khắc sinh tử, bẻ gãy ý đồ phản công của đối thủ.`);
+  } else if (variant === 'kb') {
+    keyMoves.push(`Tuyệt kỹ định cục: Tận dụng sơ hở khi đối phương đề phòng Bích Lịch Hỏa, chiến xa thâm nhập hiểm địa khóa chặt chủ soái.`);
   } else {
     keyMoves.push(`Đòn thọc sâu quyết định: Chiến xa thâm nhập cung cấm, khóa chặt mọi đường thoái lui của chủ soái đối phương.`);
   }
@@ -364,13 +371,19 @@ export function generateFallbackWuxiaAnalysis(
   ];
   const chosenPhrase = titleOptions[Math.floor(Math.random() * titleOptions.length)];
 
-  const tacticalAnalysis = `Trận thư hùng kịch chiến kéo dài ${actualMoves} nước giữa ${redTitle} và ${blackTitle} diễn ra nghẹt thở. Cả hai kỳ thủ liên tục điều động bộ binh, kỵ binh và chiến xa giằng co từng tấc đất sa trường, tạo nên thế trận biến ảo khôn lường trước khi bước vào cao trào định đoạt cục diện.`;
+  const tacticalAnalysis = variant === 'kb'
+    ? `Trận thư hùng Cờ Bí Pháp kéo dài ${actualMoves} nước giữa ${redTitle} và ${blackTitle} diễn ra nghẹt thở. Cả hai kỳ thủ liên tục điều động bộ binh, kỵ binh và chiến xa giằng co từng tấc đất, luôn sẵn sàng tung ra các kỳ mưu như Thiểm Điện Trảm, Bích Lịch Hỏa hay Càn Khôn Di Vị để định đoạt cục diện sa trường.`
+    : `Trận thư hùng kịch chiến kéo dài ${actualMoves} nước giữa ${redTitle} và ${blackTitle} diễn ra nghẹt thở. Cả hai kỳ thủ liên tục điều động bộ binh, kỵ binh và chiến xa giằng co từng tấc đất sa trường, tạo nên thế trận biến ảo khôn lường trước khi bước vào cao trào định đoạt cục diện.`;
 
   let commentary = '';
   if (winTitle === 'Hòa') {
-    commentary = `Tiếng trống trận rền vang khắp sa trường khi ${redTitle} và ${blackTitle} dàn quân đối trận. Những đợt xung phong của kỵ binh cùng hỏa lực đại pháo nổ sấm liên miên khiến cát bụi mịt mù sa trường.\n\nTrải qua hơn ${actualMoves} hồi giao tranh đẫm lửa, thế trận rơi vào giằng co kịch liệt. Cả ${redTitle} lẫn ${blackTitle} đều phô diễn bản lĩnh điều binh khiển tướng phi phàm, hóa giải từng mưu sâu kế hiểm của đối phương. Đến tàn cuộc, đôi bên cạn kiệt binh lực nhưng ý chí kiên cường không ai chịu lùi bước, trận đại chiến khép lại với kết quả Hòa cờ đầy vẻ vang.`;
+    commentary = variant === 'kb'
+      ? `Tiếng trống trận rền vang khắp sa trường khi ${redTitle} và ${blackTitle} dàn quân đối trận Cờ Bí Pháp. Những đợt xung phong của kỵ binh cùng hỏa lực đại pháo nổ sấm liên miên khiến cát bụi mịt mù sa trường.\n\nTrải qua hơn ${actualMoves} hồi giao tranh đẫm lửa, thế trận rơi vào giằng co kịch liệt. Cả ${redTitle} lẫn ${blackTitle} đều phô diễn bản lĩnh điều binh khiển tướng phi phàm, hóa giải từng mưu sâu kế hiểm và sự đe dọa của các bí pháp như Thiểm Điện Trảm hay Tuyệt Mệnh Cổ. Đến tàn cuộc, đôi bên cạn kiệt binh lực nhưng ý chí kiên cường không ai chịu lùi bước, trận đại chiến khép lại với kết quả Hòa cờ đầy vẻ vang.`
+      : `Tiếng trống trận rền vang khắp sa trường khi ${redTitle} và ${blackTitle} dàn quân đối trận. Những đợt xung phong của kỵ binh cùng hỏa lực đại pháo nổ sấm liên miên khiến cát bụi mịt mù sa trường.\n\nTrải qua hơn ${actualMoves} hồi giao tranh đẫm lửa, thế trận rơi vào giằng co kịch liệt. Cả ${redTitle} lẫn ${blackTitle} đều phô diễn bản lĩnh điều binh khiển tướng phi phàm, hóa giải từng mưu sâu kế hiểm của đối phương. Đến tàn cuộc, đôi bên cạn kiệt binh lực nhưng ý chí kiên cường không ai chịu lùi bước, trận đại chiến khép lại với kết quả Hòa cờ đầy vẻ vang.`;
   } else {
-    commentary = `Tiếng tù và giục giã khai chiến, sa trường dậy sóng khi ${redTitle} và ${blackTitle} bước vào trận huyết chiến kinh thiên động địa. Ngay từ những nước đầu, ${redTitle} đã chủ động điều động chiến xa và pháo binh tiến chiếm cứ điểm huyết mạch, trong khi ${blackTitle} vững vàng bố trận phản kích tầng tầng lớp lớp.\n\nChiến sự bước sang trung cuộc vô cùng khốc liệt, hơn ${actualMoves} nước cờ là chuỗi giao tranh giằng co sinh tử. Những đòn tập kích thần tốc cùng việc tận dụng triệt để địa hình đã đẩy nhịp độ trận đấu lên đỉnh điểm cao trào.\n\nThời khắc quyết định đã điểm, ${winTitle} chớp lấy sơ hở then chốt nơi tuyến phòng thủ của ${loseTitle}, tung đòn quyết sát chiếu bí thần sầu đoạt trọn sa trường. ${winTitle} hiên ngang ca khúc khải hoàn, ghi danh chiến tích oanh liệt vào sử sách Kỳ Biến!`;
+    commentary = variant === 'kb'
+      ? `Tiếng tù và giục giã khai chiến, sa trường dậy sóng khi ${redTitle} và ${blackTitle} bước vào trận huyết chiến Cờ Bí Pháp kinh thiên động địa. Ngay từ những nước đầu, ${redTitle} đã chủ động điều động chiến xa và pháo binh tiến chiếm cứ điểm huyết mạch, trong khi ${blackTitle} vững vàng bố trận phản kích tầng tầng lớp lớp.\n\nChiến sự bước sang trung cuộc vô cùng khốc liệt, hơn ${actualMoves} nước cờ là chuỗi giao tranh giằng co sinh tử. Không khí sa trường căng thẳng tột độ khi uy lực tiềm ẩn của các kỳ mưu như Thiểm Điện Trảm hay Tuyệt Mệnh Cổ luôn chực chờ bùng nổ, đẩy nhịp độ trận đấu lên đỉnh điểm cao trào.\n\nThời khắc quyết định đã điểm, ${winTitle} chớp lấy sơ hở then chốt nơi tuyến phòng thủ của ${loseTitle}, tung đòn quyết sát chiếu bí thần sầu đoạt trọn sa trường. ${winTitle} hiên ngang ca khúc khải hoàn, ghi danh chiến tích oanh liệt vào sử sách Kỳ Biến!`
+      : `Tiếng tù và giục giã khai chiến, sa trường dậy sóng khi ${redTitle} và ${blackTitle} bước vào trận huyết chiến kinh thiên động địa. Ngay từ những nước đầu, ${redTitle} đã chủ động điều động chiến xa và pháo binh tiến chiếm cứ điểm huyết mạch, trong khi ${blackTitle} vững vàng bố trận phản kích tầng tầng lớp lớp.\n\nChiến sự bước sang trung cuộc vô cùng khốc liệt, hơn ${actualMoves} nước cờ là chuỗi giao tranh giằng co sinh tử. Những đòn tập kích thần tốc cùng việc tận dụng triệt để địa hình đã đẩy nhịp độ trận đấu lên đỉnh điểm cao trào.\n\nThời khắc quyết định đã điểm, ${winTitle} chớp lấy sơ hở then chốt nơi tuyến phòng thủ của ${loseTitle}, tung đòn quyết sát chiếu bí thần sầu đoạt trọn sa trường. ${winTitle} hiên ngang ca khúc khải hoàn, ghi danh chiến tích oanh liệt vào sử sách Kỳ Biến!`;
   }
 
   return {

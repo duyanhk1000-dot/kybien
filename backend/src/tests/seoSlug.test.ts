@@ -10,6 +10,7 @@ import {
   BI_PHAP_ANCHORS,
 } from '../utils/seoSlug.js';
 import { publishMatchToBlogger } from '../services/bloggerService.js';
+import { generateFallbackWuxiaAnalysis } from '../services/aiService.js';
 import { config } from '../config/index.js';
 
 export async function runSeoSlugTests(): Promise<void> {
@@ -252,6 +253,101 @@ export async function runSeoSlugTests(): Promise<void> {
   assert.ok(linkedExisting.includes('<a href="/p/cam-nang.html#bich-lich-hoa"'), 'Vẫn gắn link cho từ khóa bên ngoài thẻ a');
 
   console.log('✅ Test 9 Passed: Link ngữ cảnh 16 Bí Pháp gắn chuẩn xác, tự nhiên, chống spam link 100%!');
+
+  // Test 10: Kiểm tra tích hợp Bí Pháp trong Fallback Engine & khử trùng lặp Banner CTA
+  console.log('-> Test 10: Kiểm tra tích hợp Bí Pháp trong Fallback Engine & Khử trùng lặp CTA Banner...');
+  const fallbackAnalysis = generateFallbackWuxiaAnalysis(
+    ['7,1-7,4', '0,7-2,7'], // Không có CARD: move nào
+    'Kỳ Thủ Duy',
+    'Địa Ngục Vương',
+    'Kỳ Thủ Duy',
+    'Địa Ngục Vương',
+    'Tuyệt Sát',
+    'kb'
+  );
+
+  // Phải tự động lồng ghép Bí Pháp vào tacticalAnalysis và saTruongCommentary khi là variant kb
+  const linkedTactical = injectBiPhapLinks(fallbackAnalysis.tacticalAnalysis);
+  const linkedCommentary = injectBiPhapLinks(fallbackAnalysis.saTruongCommentary);
+  const linkedKeyMoves = fallbackAnalysis.keyMoves.map(injectBiPhapLinks);
+
+  assert.ok(
+    linkedTactical.includes('/p/cam-nang.html#thiem-dien-tram') ||
+    linkedTactical.includes('/p/cam-nang.html#bich-lich-hoa') ||
+    linkedTactical.includes('/p/cam-nang.html#can-khon-di-vi'),
+    'tacticalAnalysis phải có ít nhất 1 link nội bộ Bí Pháp'
+  );
+
+  assert.ok(
+    linkedCommentary.includes('/p/cam-nang.html#thiem-dien-tram') ||
+    linkedCommentary.includes('/p/cam-nang.html#tuyet-menh-co'),
+    'saTruongCommentary phải có ít nhất 1 link nội bộ Bí Pháp'
+  );
+
+  assert.ok(
+    linkedKeyMoves.some((m) => m.includes('/p/cam-nang.html#')),
+    'keyMoves phải có ít nhất 1 link nội bộ Bí Pháp'
+  );
+
+  // Giả lập publishMatchToBlogger để kiểm tra HTML nội dung cuối cùng
+  const test10Config = {
+    blogId: 'test_blog_123',
+    clientId: 'test_client_id',
+    clientSecret: 'test_client_secret',
+    refreshToken: 'test_refresh_token',
+  };
+  const prevConfig = config.blogger;
+  const prevFetch = global.fetch;
+
+  try {
+    config.blogger = test10Config;
+    let publishedHtml = '';
+
+    global.fetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const urlStr = String(url);
+      if (urlStr.includes('oauth2.googleapis.com/token')) {
+        return new Response(JSON.stringify({ access_token: 'mock_token', expires_in: 3600 }), { status: 200 });
+      }
+      if (urlStr.includes('/posts') && init?.method === 'POST') {
+        const bodyObj = JSON.parse(String(init.body || '{}'));
+        publishedHtml = bodyObj.content || '';
+        return new Response(JSON.stringify({ id: 'post_test10', url: 'https://kybien.blogspot.com/post_test10.html' }), { status: 200 });
+      }
+      if (urlStr.includes('/posts/post_test10') && init?.method === 'PATCH') {
+        return new Response(JSON.stringify({ id: 'post_test10', url: 'https://kybien.blogspot.com/post_test10.html' }), { status: 200 });
+      }
+      return new Response(JSON.stringify({}), { status: 200 });
+    }) as typeof fetch;
+
+    await publishMatchToBlogger(
+      'match_test10_unique',
+      'Kỳ Thủ Duy',
+      'Địa Ngục Vương',
+      ['7,1-7,4', '0,7-2,7'],
+      fallbackAnalysis,
+      'Cờ Bí Pháp',
+      'kb',
+      '✨',
+      '✨ Cờ Bí Pháp'
+    );
+
+    // 1. Kiểm tra HTML chứa khối chú dẫn Bí Pháp và link Bí Pháp
+    assert.ok(publishedHtml.includes('kybien-biphap-badge-box'), 'Phải có khối kybien-biphap-badge-box cho cờ bí pháp');
+    assert.ok(publishedHtml.includes('/p/cam-nang.html#thiem-dien-tram'), 'HTML bài viết phải chứa link Thiểm Điện Trảm');
+    assert.ok(publishedHtml.includes('/p/cam-nang.html#bich-lich-hoa'), 'HTML bài viết phải chứa link Bích Lịch Hỏa');
+
+    // 2. Kiểm tra KHÔNG CÒN khối .kybien-post-cta-banner (đã khử trùng lặp)
+    assert.strictEqual(
+      publishedHtml.includes('kybien-post-cta-banner'),
+      false,
+      'HTML bài viết KHÔNG được chứa khối kybien-post-cta-banner để tránh lặp lại 2 lần với Theme Blogger'
+    );
+
+    console.log('✅ Test 10 Passed: Tự động gắn link Bí Pháp 100% & Khử triệt để trùng lặp CTA Banner!');
+  } finally {
+    config.blogger = prevConfig;
+    global.fetch = prevFetch;
+  }
 
   console.log('\n==================================================');
   console.log('🎉 ALL BLOGGER SEO SLUG & TITLE SWITCH TESTS PASSED 100%!');

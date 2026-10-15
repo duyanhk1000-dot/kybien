@@ -71,6 +71,69 @@
     }
     @keyframes checkPulse { 0% { box-shadow: 0 0 5px #e74c3c; } 100% { box-shadow: 0 0 20px #e74c3c; } }
     
+    .board-top-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .board-top-bar .pill {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .taunt-btn {
+      padding: 6px 14px!important;
+      border-radius: 999px!important;
+      font-weight: 700!important;
+      font-size: .82rem!important;
+      cursor: pointer;
+      transition: all .25s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 38px;
+    }
+    .taunt-btn.taunt-on {
+      background: linear-gradient(135deg, #c0392b, #d35400)!important;
+      color: #fff!important;
+      border: 1.5px solid #f39c12!important;
+      box-shadow: 0 0 12px rgba(230,126,34,.55);
+    }
+    .taunt-btn.taunt-off {
+      background: #20140b!important;
+      color: #a8947d!important;
+      border: 1.5px solid #5a3d22!important;
+    }
+    .taunt-bubble {
+      margin: 0 auto 10px;
+      max-width: 580px;
+      padding: 9px 16px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(46, 26, 15, 0.96), rgba(20, 11, 6, 0.96));
+      border: 1.5px solid #f1c40f;
+      box-shadow: 0 4px 18px rgba(241,196,15,.4);
+      color: #f1c40f;
+      font-size: .88rem;
+      font-style: italic;
+      font-weight: 600;
+      text-align: center;
+      text-shadow: 0 1px 3px rgba(0,0,0,.85);
+      transition: opacity .35s ease, transform .35s ease;
+      z-index: 10;
+    }
+    .taunt-bubble.pop-in {
+      animation: tauntPopIn .35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .taunt-bubble.fade-out {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    @keyframes tauntPopIn {
+      0% { opacity: 0; transform: translateY(-12px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
     .pl {
       display: flex;
       align-items: center;
@@ -368,7 +431,11 @@
   <!-- BỐ CỤC CHÍNH BÀN CỜ & BẢNG ĐIỀU KHIỂN -->
   <div class="arena-layout">
     <section id="sec-board">
-      <div class="pill" id="st">Lượt đi: Đỏ</div>
+      <div class="board-top-bar">
+        <div class="pill" id="st">Lượt đi: Đỏ</div>
+        <button type="button" id="btn-taunt-toggle" class="taunt-btn taunt-on" onclick="VoiceTaunt.toggle()" title="Bật/Tắt chế độ Cà Khía Kiếm Hiệp">🔊 Gáy Khô Máu</button>
+      </div>
+      <div id="taunt-bubble" class="taunt-bubble" style="display:none"></div>
       <div class="pl" id="ptop"><span class="dot b" id="dtop"></span><b id="ntop">Đen</b><span class="clk" id="ctop"></span><span class="pips" id="pptop"></span><span class="mm" id="mtop"></span></div>
       <div class="bc" id="bc"><canvas id="cv" width="600" height="660"></canvas></div>
       <div class="pl" id="pbot"><span class="dot r" id="dbot"></span><b id="nbot">Đỏ</b><span class="clk" id="cbot"></span><span class="pips" id="ppbot"></span><span class="mm" id="mbot"></span></div>
@@ -395,6 +462,7 @@
           <button type="button" id="btn-undo" onclick="undoAction()">Đi lại</button>
           <button type="button" id="btn-hint" onclick="hintAction()">Gợi ý</button>
           <button type="button" id="btn-flip" onclick="flipBoardAction()">Lật bàn</button>
+          <button type="button" id="btn-resign" onclick="resignAction()" style="background:#8e1b1b!important;color:#fff!important;border:none!important">Đầu hàng</button>
         </div>
         <div id="online-room-tools" style="display:none;margin-top:12px;padding:10px;background:#20140b;border:1px solid #4a331f;border-radius:8px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -488,10 +556,222 @@ let seed=1;
 const rng=()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const hstr=s=>{let h=2166136261;for(let i=0;i<s.length;i++)h=Math.imul(h^s.charCodeAt(i),16777619);return h>>>0};
 
-/* ---------- ÂM THANH WEB AUDIO SYNTHESIZER ---------- */
-const Snd=(()=>{let a=null;const cx=()=>{if(!a)a=new(window.AudioContext||window.webkitAudioContext)();if(a.state==='suspended')a.resume();return a};
-function tn(ty,f,d,v,off,f2){try{const c=cx(),t=c.currentTime+(off||0),o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.01,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}}
-return{move:()=>tn('triangle',320,.08,.5,0,80),cap:()=>tn('sawtooth',180,.15,.7,0,40),check:()=>[523.25,659.25,783.99].forEach((f,i)=>tn('square',f,.25,.35,i*.07)),mate:()=>[440,392,349.23,293.66].forEach((f,i)=>tn('sawtooth',f,.45,.45,i*.18)),spell:()=>[587.33,739.99,880,1174.66].forEach((f,i)=>tn('sine',f,.3,.4,i*.08,f*1.4)),tick:()=>tn('square',880,.06,.15)}})();
+/* ---------- ÂM THANH WEB AUDIO SYNTHESIZER NATIVE ---------- */
+const Snd = (() => {
+  let a = null;
+  const cx = () => {
+    if (!a) a = new (window.AudioContext || window.webkitAudioContext)();
+    if (a.state === 'suspended') a.resume();
+    return a;
+  };
+  function tn(ty, f, d, v, off, f2) {
+    try {
+      const c = cx(), t = c.currentTime + (off || 0), o = c.createOscillator(), g = c.createGain();
+      o.type = ty;
+      o.frequency.setValueAtTime(f, t);
+      if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+      g.gain.setValueAtTime(v, t);
+      g.gain.exponentialRampToValueAtTime(.01, t + d);
+      o.connect(g);
+      g.connect(c.destination);
+      o.start(t);
+      o.stop(t + d);
+    } catch (e) {}
+  }
+  return {
+    // 1. Tiếng "CẠCH!" giòn tan khi quân cờ gõ xuống bàn
+    cach: () => tn('triangle', 360, .07, .65, 0, 70),
+    move: function() { this.cach(); },
+
+    // 2. Tiếng "KENG!" sắc lẹm khi hai quân chém nhau
+    keng: () => {
+      try {
+        const c = cx(), t = c.currentTime;
+        const o1 = c.createOscillator(), g1 = c.createGain();
+        o1.type = 'sawtooth';
+        o1.frequency.setValueAtTime(960, t);
+        o1.frequency.exponentialRampToValueAtTime(260, t + .12);
+        g1.gain.setValueAtTime(.8, t);
+        g1.gain.exponentialRampToValueAtTime(.01, t + .12);
+        o1.connect(g1); g1.connect(c.destination);
+        o1.start(t); o1.stop(t + .12);
+      } catch (e) {}
+    },
+    cap: function() { this.keng(); },
+
+    // 3. Tiếng "ÙM...!" vang rền khi kích hoạt Bí pháp hỏa công
+    um: () => {
+      try {
+        const c = cx(), t = c.currentTime;
+        const o = c.createOscillator(), g = c.createGain();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(160, t);
+        o.frequency.exponentialRampToValueAtTime(32, t + .55);
+        g.gain.setValueAtTime(.85, t);
+        g.gain.exponentialRampToValueAtTime(.01, t + .55);
+        o.connect(g); g.connect(c.destination);
+        o.start(t); o.stop(t + .55);
+        // Hài âm chưởng kiếm hiệp
+        [587.33, 739.99, 880, 1174.66].forEach((f, i) => tn('sine', f, .3, .35, i * .08, f * 1.3));
+      } catch (e) {}
+    },
+    spell: function() { this.um(); },
+
+    check: () => [523.25, 659.25, 783.99].forEach((f, i) => tn('square', f, .25, .35, i * .07)),
+    mate: () => [440, 392, 349.23, 293.66].forEach((f, i) => tn('sawtooth', f, .45, .45, i * .18)),
+    tick: () => tn('square', 880, .06, .15)
+  };
+})();
+
+/* ---------- HỆ THỐNG GIỌNG NÓI "CÀ KHÍA KIẾM HIỆP" ---------- */
+const TAUNT_LINES = {
+  idle: [
+    "Cờ thì gà ngan vịt, mà ngâm như kỳ thánh trăm năm!",
+    "Định ngồi thiền nhập định hay ngủ gật trên bàn cờ đấy?",
+    "Nghĩ nửa ngày trời... rồi cũng đi vào ngõ cụt thôi, hạ thủ mau!",
+    "Trà nguội ba tuần rồi kìa, có đi không để bổn tọa đi ngủ một giấc?",
+    "Kỳ nghệ có hạn mà thời gian suy nghĩ thì vô biên!",
+    "Gãi đầu rụng hết tóc rồi kìa, không tìm ra đường sống đâu con sâu!"
+  ],
+  capture_r: [
+    "Chiến xa béo mẫm thế này... tại hạ xin không khách khí nhé! Đi xe không đội mũ bảo hiểm thì rụng đài là đúng rồi, kêu ca gì!",
+    "Mất đứt một chiến xa, ruột gan đau như cắt nước mắt đầm đìa chưa? Đa tạ thí chủ đã hào phóng dâng mồi ngon nướng than hoa nhé!",
+    "Một Xe bằng mười quân, mất Xe coi như gãy nửa giang sơn rồi! Giờ lấy cái gì ra mà hoành hành sa trường đây đại hiệp?"
+  ],
+  capture_c: [
+    "Pháo xịt ngòi tịt khói rồi! Không có ngòi thì nổ vào mắt à, giờ lấy cái gì mà gầm rú sa trường?",
+    "Đầu tư quả pháo bắn chim gãy cánh, dâng đạn tận họng đối thủ thế này thì đánh đấm cái nỗi gì!",
+    "Tưởng pháo kích oanh tạc cửu cung thế nào, hóa ra là pháo hoa xịt nước mua vui cho thiên hạ!"
+  ],
+  capture_n: [
+    "Mã què cụt chân rồi con sâu! Khinh công bay qua cửa sổ hộ cái xem nào?",
+    "Chiến mã vấp đá gãy cả bốn vó, cắm đầu xuống hố sâu! Phiên mã nhảy lung tung rồi tự chui vào nồi lẩu thế này à?",
+    "Cản chân Mã mà không biết đường gỡ, nuôi ngựa tốn cỏ dâng thịt cho bổn tọa làm đĩa xào lăn, đa tạ nhé!"
+  ],
+  check: [
+    "Chiếu tướng! Nhảy đi đâu con sâu!",
+    "Long thể bất an, chui vào gầm giường mà trốn mau!",
+    "Cửu cung rung chuyển, chuẩn bị lo hậu sự đi là vừa!",
+    "Chạy đằng trời! Chạy đi đâu cho hết nắng đồ cờ non!",
+    "Đầu hàng sớm bớt đau khổ, giãy giụa làm chi cho thêm nhục nhã!"
+  ],
+  mate: [
+    "Cờ thấp như gián cắt chân, mà cũng dám xuống núi hành tẩu giang hồ!",
+    "Kỳ nghệ cỡ này... chỉ xứng quét lá đa ngoài cổng Thiếu Lâm Tự thôi!",
+    "Về núi bế quan luyện thêm ba vạn sáu ngàn năm nữa rồi hẵng tiếp chiêu bổn tọa!",
+    "Có cay không? Mặt đỏ bừng lên rồi kìa! Cay thì bấm Tái Đấu!",
+    "Cầm cờ mà run như cầy sấy thế này, ai dạy chơi cờ thế?",
+    "Thua tâm phục khẩu phục chưa? Hay lại đổ tại chuột đơ, mạng lag?",
+    "Đánh đấm thế này bảo sao danh hiệu Kỳ Đồng mãi không ngóc đầu lên nổi!"
+  ],
+  blunder: [
+    "Nước cờ mù mắt quần hùng! Đi xong có thấy hối hận đến tận ruột gan không?",
+    "Đúng là thần cơ diệu toán... phiên bản tấu hài mua vui thiên hạ!",
+    "Dâng quân tận mồm thế này, lòng tốt của thí chủ bần đạo xin nhận nhé!",
+    "Mắt để ngắm cảnh à mà thí quân hào phóng thế đại hiệp?"
+  ],
+  spell: [
+    "Xem tuyệt kỹ Thiểm Điện Trảm chém rách bàn cờ của ngươi đây!",
+    "Trúng một quả Bích Lịch Hỏa thì cháy cả lông mày nhé con!",
+    "Phá Lãng Bộ bẻ cua 90 độ, đỡ bằng niềm tin à?",
+    "Bí kíp gia truyền xuất thế, quỳ xuống mà chiêm ngưỡng!"
+  ],
+  surrender: [
+    "Đánh không lại bắt đầu dở trò xin xỏ à? Bổn tọa không có lòng từ bi đâu nhé!",
+    "Biết thân biết phận đầu hàng sớm là tốt, đỡ phải rước thêm nhục!"
+  ]
+};
+
+const VoiceTaunt = {
+  enabled: localStorage.getItem('kybien_taunt_enabled') !== 'false',
+  lastTime: 0,
+  cooldownMs: 14000,
+  bubbleTimer: null,
+
+  init() {
+    this.updateUI();
+  },
+
+  toggle() {
+    this.enabled = !this.enabled;
+    localStorage.setItem('kybien_taunt_enabled', this.enabled ? 'true' : 'false');
+    this.updateUI();
+    if (this.enabled) {
+      this.play('check', true);
+    } else {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      this.hideBubble();
+    }
+    return this.enabled;
+  },
+
+  updateUI() {
+    const btn = $('btn-taunt-toggle');
+    if (btn) {
+      if (this.enabled) {
+        btn.innerHTML = '🔊 Gáy Khô Máu';
+        btn.title = 'Chế độ Cà Khía: Bật (Gáy Khô Máu). Bấm để Tĩnh Tâm.';
+        btn.classList.add('taunt-on');
+        btn.classList.remove('taunt-off');
+      } else {
+        btn.innerHTML = '🔇 Tĩnh Tâm';
+        btn.title = 'Chế độ Cà Khía: Tắt (Tĩnh Tâm). Bấm để Gáy Khô Máu.';
+        btn.classList.add('taunt-off');
+        btn.classList.remove('taunt-on');
+      }
+    }
+  },
+
+  play(category, force = false) {
+    if (!this.enabled) return;
+    const now = Date.now();
+    if (!force && (now - this.lastTime < this.cooldownMs)) return;
+    if (!force && Math.random() > 0.38) return;
+
+    const list = TAUNT_LINES[category];
+    if (!list || !list.length) return;
+    const text = list[Math.floor(Math.random() * list.length)];
+
+    this.lastTime = now;
+    this.showBubble(text);
+    this.speak(text);
+  },
+
+  speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'vi-VN';
+      u.rate = 1.02;
+      u.pitch = 0.92;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  },
+
+  showBubble(text) {
+    const b = $('taunt-bubble');
+    if (!b) return;
+    b.innerText = '🗣️ "' + text + '"';
+    b.style.display = 'block';
+    b.classList.remove('fade-out');
+    b.classList.add('pop-in');
+    clearTimeout(this.bubbleTimer);
+    this.bubbleTimer = setTimeout(() => {
+      this.hideBubble();
+    }, 5500);
+  },
+
+  hideBubble() {
+    const b = $('taunt-bubble');
+    if (!b) return;
+    b.classList.remove('pop-in');
+    b.classList.add('fade-out');
+    setTimeout(() => {
+      if (b.classList.contains('fade-out')) b.style.display = 'none';
+    }, 400);
+  }
+};
 
 /* ---------- TRẠNG THÁI GAME ---------- */
 const CS=60,OX=60,OY=60,PR=25;
@@ -499,7 +779,7 @@ const cv=$('cv'),x=cv.getContext('2d');
 let B,P,K,ALL,turn,merit,hands,sel,VM,pend,armed,used,ms,mode,KB,bag,plies,over,busy,ai,VAR='kb',UB=false;
 let SIM=null,STOP=0,dl=0,nodes=0,NOISE=0;
 let ANIM=null,FX=[],LASTMV=null,HINT=null,raf=0,lastT=0,lastFx=0,flipped=false;
-let LIM=0,tleft=0,lastBeep=0,lastTick=0;
+let LIM=0,tleft=0,lastBeep=0,lastTick=0,turnStartTime=performance.now(),turnTaunted=false;
 let eaten={r:[],b:[]},snaps=[],ACT=[],REPLAY=false,rec=[],keys=[],movers=[],chks=[],noCap=0,capFlag=false;
 let names={r:'Đỏ',b:'Đen'},online={on:false,room:null,side:'r'};
 let socket=null,searching=false,currentUser=null,modalTimer=null,uid=0,currentMatchId='pve_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
@@ -546,6 +826,7 @@ function mk(o,r,c){const v=B[r][c],r0=o.r,c0=o.c;B[r0][c0]=null;B[r][c]=o;o.r=r;
 if(v){v.dead=true;if(v.p.sui&&o.t!=='k'&&(SIM===null||v.col===SIM)){o.dead=true;B[r][c]=null;d=o}}return{o,v,r0,c0,r,c,d}}
 function un(u){if(u.d)u.d.dead=false;u.o.r=u.r0;u.o.c=u.c0;B[u.r0][u.c0]=u.o;B[u.r][u.c]=u.v;if(u.v)u.v.dead=false}
 function sig(){let s='';for(const o of ALL)if(!o.dead)s+=o.col+o.t+(o.hd?1:0)+o.r+o.c+';';return s}
+function isEnPrise(piece){if(!piece||piece.dead)return false;const oppCol=opp(piece.col);let atk=false;for(const e of P[oppCol]){if(e.dead||e.st>0)continue;if(valid(e,piece.r,piece.c,null)){atk=true;break}}if(!atk)return false;let def=false;for(const f of P[piece.col]){if(f.dead||f===piece||f.st>0)continue;if(valid(f,piece.r,piece.c,null)){def=true;break}}return!def}
 
 /* ---------- KHỞI TẠO VÁN ĐẤU ---------- */
 function setupBoard(variant,op){
@@ -573,7 +854,7 @@ if(hc!=='0'&&$('mode').value==='ai'&&(VAR==='n'||VAR==='kb')){const q={N:[0,1],C
 turn='r';merit={r:3,b:3};hands=VAR==='kb'?{r:pick(3),b:pick(3)}:{r:[],b:[]};
 sel=null;VM=[];pend=null;armed=null;used=false;ms=null;mode=null;KB={r:null,b:null};bag=null;plies=0;over=false;busy=false;
 ANIM=null;FX=[];LASTMV=null;HINT=null;eaten={r:[],b:[]};snaps=[];ACT=[];rec=[];keys=[sig()];movers=[];chks=[];noCap=0;capFlag=false;currentMatchId='pve_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);matchTestModeUsed=tstOn();
-LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();
+LIM=+$('tm').value;tleft=LIM*1000;lastBeep=0;lastTick=performance.now();turnStartTime=performance.now();turnTaunted=false;VoiceTaunt.init();
 const md=$('mode').value;ai=md==='ai'&&!online.on;
 if(!online.on){flipped=false;names={r:(currentUser&&currentUser.username)?currentUser.username:'Đỏ (Bạn)',b:ai?'Đen (Máy: '+BOTN[+$('lv').value]+')':'Đen'};if(md==='2p_local')names.r='Đỏ'}
 $('chk_see').disabled=false;setLocked(online.on);
@@ -613,6 +894,16 @@ if(!r||!r.m)return;if(cost)merit[turn]-=cost;
 HINT={f:[r.m[0].r,r.m[0].c],t:[r.m[1],r.m[2]],until:performance.now()+6000};ui();draw();
 say('[GỢI Ý] Nên đi '+TN[r.m[0].t]+' từ ('+r.m[0].c+','+r.m[0].r+') tới ('+r.m[2]+','+r.m[1]+')'+(cost?' (-1 Công trạng)':''),'#f1c40f','log-sp')}
 function flipBoardAction(){if(online.on)return;flipped=!flipped;ui();draw()}
+function resignAction(){
+  if(over||ANIM)return;
+  if(!confirm('Đại hiệp có thực sự muốn buông cờ chịu trói, nhận thua trận này?'))return;
+  if(online.on&&socket&&online.room){
+    socket.emit('resign',{roomId:online.room});
+  }else{
+    const loser=ai?'r':(online.on?online.side:turn);
+    finish('win',opp(loser),loser,'resign');
+  }
+}
 
 /* ---------- THỰC HIỆN NƯỚC ĐI CỜ ---------- */
 function notation(o,r2,c2,cap){const s=sideTag(o.col),c1=o.col==='r'?9-o.c:o.c+1,cd=o.col==='r'?9-c2:c2+1;let act;
@@ -632,6 +923,8 @@ rec.push(fr+','+fc+'-'+r+','+c);capFlag=!!v;
 say(rec.length+'. '+note,null,mc==='r'?'log-r':'log-b');
 if(v){merit[mc]=Math.min(10,merit[mc]+(GAIN[v.t==='k'?'p':(v.hd?v.t:v.t)]||(GAIN[v.tru]||1)));
 eaten[mc].push({col:v.col,t:v.t,tru:v.tru,truCol:v.truCol,hd:v.hd,by:mc});Snd.cap();
+const vt=v.hd?v.tru:v.t;
+if(vt==='r')VoiceTaunt.play('capture_r');else if(vt==='c')VoiceTaunt.play('capture_c');else if(vt==='n')VoiceTaunt.play('capture_n');
 if(u.d){rec.push('POISON_KILL:'+r+','+c);say(rec.length+'. '+sideTag(mc)+' [Tuyệt Mệnh Cổ] Kích độc bùng phát! Quân vừa ăn Mã cũng bỏ mạng!','#9b59b6','log-sp')}}else Snd.move();
 let rv=null;if(o.hd&&!o.dead){rv=reveal(o);rec.push('FLIP:'+r+','+c+'->'+rv.t)}
 let got=false;
@@ -643,6 +936,7 @@ function doMove(o,r,c,fast){
 const bf=armed&&armed.o===o?armed.card.id:null,r0=o.r,c0=o.c,mc=o.col;
 if(!REPLAY)ACT.push({k:'m',fr:r0,fc:c0,tr:r,tc:c});
 const res=apply(o,r,c,fast);armed=null;sel=null;VM=[];HINT=null;let L=[];
+if(!res.v&&(o.t==='r'||o.t==='c'||o.t==='n')&&isEnPrise(o))VoiceTaunt.play('blunder');
 if(res.rv&&res.rv.spy&&VAR==='g'&&inCheck(mc)&&allMoves(mc).length===0){finish('win',opp(mc),mc,'spy');return}
 if(!o.dead){
 if(bf==='CANNON_2'&&res.v){for(const[d,e]of OFF.k){const q=(B[r+d]||[])[c+e];if(q&&q.col!==o.col)q.st=1}o.st=2;
@@ -675,6 +969,7 @@ if(!isFree(turn)){merit[turn]-=cd.cost;hands[turn].splice(i,1)}
 used=true;pend=null;const tag=sideTag(turn),cl=turn==='r'?'log-r':'log-b';
 if(!REPLAY){ACT.push({k:'c',id:cid,r:o.r,c:o.c});rec.push('CARD:'+cid+'->'+o.r+','+o.c)}
 Snd.spell();
+VoiceTaunt.play('spell');
 if(cd.pas){o.p[PF[cd.id]]=1;sel=null;VM=[];armed=null;
 if(cd.id==='KNIGHT_2'){const mineView=isMine(turn);if(mineView){$('msg').innerText='Đã âm thầm hạ độc Tuyệt Mệnh Cổ lên Mã (đối thủ không hay biết).';$('msg').style.color='#9b59b6'}}
 else say(rec.length+'. '+tag+' Gán giá trị nội tại ['+cd.name+'] cho '+TN[o.t]+'! Bạn có thể đi quân này hoặc quân khác.','#2ecc71',cl)}
@@ -704,13 +999,13 @@ socket.emit('make_move',{roomId:online.room,move:{from:lm.fr+','+lm.fc,to:lm.tr+
 ACT=[];
 for(const o of P[prev])if(!o.dead&&o.st>0)o.st--;
 if(KB[prev]&&--KB[prev].n<=0)KB[prev]=null;
-turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;
+turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;turnStartTime=performance.now();turnTaunted=false;
 noCap=capFlag?0:noCap+1;capFlag=false;
 updateBag();
 const ck=inCheck(turn);keys.push(sig());movers.push(prev);chks.push(ck);
 if(plies===1)$('chk_see').disabled=true;
 pushSnap();
-if(!checkEnd(ck)){if(ck){Snd.check();say('CẢNH BÁO: '+sideTag(turn)+' Tướng quân lâm nguy!','#ff4757','log-sp')}stat()}
+if(!checkEnd(ck)){if(ck){Snd.check();VoiceTaunt.play('check');say('CẢNH BÁO: '+sideTag(turn)+' Tướng quân lâm nguy!','#ff4757','log-sp')}stat()}
 busy=!over&&ai&&turn===aiCol;ui();draw();if(busy)setTimeout(aiRun,400)}
 function checkEnd(ck){
 if(!allMoves(turn).length){finish('win',opp(turn),turn,ck?'mate':'stuck');return true}
@@ -856,6 +1151,13 @@ if(over)return;over=true;busy=false;ms=null;sel=null;VM=[];pend=null;armed=null;
 window.__lastMatchResult={kind,w,l,why};
 const me=ai?'r':online.on?online.side:null;
 const modal=$('game-over-modal');Snd.mate();
+if(why==='resign'||why==='Đầu hàng'||why==='surrender'){
+  VoiceTaunt.play('surrender',true);
+}else if(kind==='win'){
+  VoiceTaunt.play('mate',true);
+}else if(kind==='draw'){
+  VoiceTaunt.play('surrender',true);
+}
 const ic=$('go-modal-icon'),ti=$('go-modal-title'),su=$('go-modal-sub'),de=$('go-modal-desc');
 if(kind==='draw'){ic.innerText='⚖️';ti.innerText='HÒA CỜ';ti.style.color='#e8dcc6';su.innerText='Ván đấu kết thúc hòa!';de.innerText='Lý do: '+REASON[why]+'.'}
 else{const mine=me?w===me:null;ic.innerText=mine===null?'👑':mine?'🏆':'💀';ti.innerText=mine===null?(w==='r'?'PHE ĐỎ THẮNG!':'PHE ĐEN THẮNG!'):mine?'CHIẾN THẮNG RỰC RỠ!':'VÁN ĐẤU KẾT THÚC!';ti.style.color=mine===false?'#e74c3c':'#f1c40f';
@@ -948,6 +1250,9 @@ if(gm)gm.style.display='none';
 /* ---------- ĐỒNG HỒ ---------- */
 function clockTick(){
 const now=performance.now(),dt=now-lastTick;lastTick=now;
+if(!over&&!busy&&!ANIM&&!$('game-over-modal').offsetParent){
+  if(now-turnStartTime>15000&&!turnTaunted){turnTaunted=true;VoiceTaunt.play('idle');}
+}
 if(LIM&&!over&&!busy&&!ANIM&&isMine(turn)&&!$('game-over-modal').offsetParent){
 tleft-=dt;if(tleft<=0){tleft=0;finish('win',opp(turn),turn,'timeout');return}
 const s=Math.ceil(tleft/1000);if(s<=5&&s!==lastBeep){lastBeep=s;Snd.tick()}}
@@ -1344,18 +1649,19 @@ else{searching=false;if($('btn-action'))$('btn-action').innerText='GHÉP TRẬN 
 else{online.on=false;newGame()}}
 
 /* ---------- KHỞI ĐỘNG KHI TẢI TRANG ---------- */
-Object.assign(window,{onVariantChange,onModeChange,onTestModeChange,newGame,switchTab,selCard,skipAction,undoAction,hintAction,flipBoardAction,draw,ui,closeMatchModal,closeGameOverModal,
+Object.assign(window,{onVariantChange,onModeChange,onTestModeChange,newGame,switchTab,selCard,skipAction,undoAction,hintAction,flipBoardAction,resignAction,VoiceTaunt,draw,ui,closeMatchModal,closeGameOverModal,
 arenaLogin,arenaRegister,arenaLogout,createRoom,joinRoomByCode,refreshPublicRooms,handleGameAction,submitGreatMatchFromModal,
 showGuestRegisterModal,submitGuestRegAndPost,cancelGuestPost,
 showOnlineNotCreatedModal,closeOnlineNotCreatedModal,actionCreateOnlineRoomFromModal,actionSwitchToAiFromModal});
 window.__kb={get s(){return{turn,over,B,P,K,VM,ms,mode,pend,armed,hands,merit,used,bag,plies,ai,VAR,online,names,flipped,ANIM,eaten,snaps:snaps.length,rec:rec.length}},onClick,selCard,skipAction,undoAction,hintAction,allMoves,facing,inCheck,draw,aiRun,clockTick,finish,flip:()=>{flipped=!flipped;ui()},bars,docs,
-setLIM:v=>{LIM=v;tleft=v*1000},busyAnim:()=>!!ANIM,legal:legalMoves,precheck,sig};
+setLIM:v=>{LIM=v;tleft=v*1000},busyAnim:()=>!!ANIM,legal:legalMoves,precheck,sig,Snd,VoiceTaunt};
 function syncTray(){const box=$('card-tray-wrapper');if(!box)return;
 if(window.innerWidth<=950){const h=$('mobile-tray-placeholder');if(h&&box.parentNode!==h)h.appendChild(box)}
 else{const a=$('sec-aside'),l=$('log-card-wrapper');if(a&&l&&box.parentNode!==a)a.insertBefore(box,l)}}
 window.addEventListener('resize',syncTray);
 setInterval(clockTick,250);
 checkAuthUI();
+VoiceTaunt.init();
 try{
   const params=new URLSearchParams(window.location.search);
   const v=params.get('variant');

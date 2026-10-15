@@ -108,6 +108,12 @@ Tài liệu quy định kiến trúc kỹ thuật, yêu cầu chức năng, phi 
 * **FR-12: Xuất bản tự động qua Blogger API v3 (Hoàn thành 100%)**:
   * Gửi payload HTML nhúng `data-moves` và `data-variant` trực tiếp vào bài viết trên Blogger.
   * **Quy chuẩn Nhãn (Labels) SEO Bắt Buộc**: Tự động gán nhãn dạng slug không dấu sạch (`getStandardPostLabels`), gồm: `tran-hay`, `phan-tich-co`, và nhãn thể loại cờ tương ứng: `co-bi-phap` / `co-up` / `co-up-gian-diep` / `co-truyen-thong`. Tuyệt đối không dùng chữ có dấu hoặc khoảng trắng (`tran- hay`) để tránh lỗi mã hóa `%E1%BB%9D` và vỡ URL SEO. Giao diện theme Blogger tự động ánh xạ hiển thị chữ kiếm hiệp có dấu.
+* **FR-13: Hệ thống Giọng Nói & Âm Thanh Sa Trường "Cà Khía Kiếm Hiệp" (Đang thiết kế / Sẵn sàng tích hợp)**:
+  * Đặc tả chi tiết tại [docs/VOICE_TAUNT_SYSTEM.md](file:///d:/Lap%20trinh%20game/ky_bien/docs/VOICE_TAUNT_SYSTEM.md).
+  * **Web Audio API Native Synthesizer**: Tự sinh 100% âm thanh va chạm cổ điển từ tần số sóng âm (tiếng *"Cạch!"* giòn tan khi gõ quân, tiếng *"Keng!"* sắc lẹm khi chém quân, tiếng *"Ùm...!"* vang rền khi hỏa công) — hoàn toàn không dùng file âm thanh bên ngoài, độ trễ bằng 0.
+  * **Bộ kịch bản 7 nhóm tình huống châm chọc**: Đặc biệt phân tách chi tiết ăn Xe / Pháo / Mã (mỗi quân có 3 câu thoại châm chọc sâu cay, xát muối vào nỗi đau mất quân chủ lực).
+  * **Nút chuyển đổi trạng thái "Gáy Khô Máu" vs "Tĩnh Tâm"** trên góc bàn cờ (lưu cấu hình vào `localStorage`).
+  * **Thuật toán kích hoạt thông minh**: Tỷ lệ ngẫu nhiên 30% - 40% và giãn cách cooldown 12-15s chống spam, 100% khi chiếu bí/kết thúc.
 
 ---
 
@@ -169,6 +175,7 @@ CREATE TABLE matches (
 | **Blogger Theme XML (`v2.8.0`)** | ✅ **HOÀN THÀNH 100%** | Phân tách trang chủ/thư viện, chống trùng title/meta SEO |
 | **Chống Race Condition & Optimization** | ✅ **HOÀN THÀNH 100%** | Cơ chế `waitForElem`, khóa `_inited` viewer, dọn dẹp duplicate Socket.io |
 | **Trang xem nhanh (`index.html`)** | ✅ **HOÀN THÀNH 100%** | Standalone HTML5 preview đầy đủ giao diện Trang chủ & Thư viện |
+| **Giọng nói Cà Khía Kiếm Hiệp (`FR-13`)** | ✅ **HOÀN THÀNH 100%** | Web Audio Native Synthesizer (Cạch, Keng, Ùm), 7 nhóm thoại, nút Gáy Khô Máu, rate 38% |
 
 ---
 
