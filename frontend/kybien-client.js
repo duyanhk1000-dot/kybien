@@ -81,6 +81,52 @@
       txt = txt.replace(/⏩\s*Đầu|◀\s*Lùi|Tiến\s*▶|Cuối\s*⏩|🔴\s*Nước\s*\d+.*$/gi, '').trim();
       if (txt && txt !== '...') el.textContent = txt;
     });
+
+    // Lấy nội dung tóm tắt đầy đủ 100% từ Blogger JSON Feed cho mọi bài viết (kể cả bài cũ)
+    fetchFullPostSummaries();
+  }
+
+  function fetchFullPostSummaries() {
+    const cards = document.querySelectorAll('.post-card');
+    if (!cards.length) return;
+
+    const urlToCard = {};
+    cards.forEach((card) => {
+      const link = card.querySelector('.post-card-title a') || card.querySelector('.btn-read-post');
+      if (link && link.getAttribute('href')) {
+        try {
+          const u = new URL(link.getAttribute('href'), window.location.origin);
+          urlToCard[u.pathname] = card;
+        } catch (e) {}
+      }
+    });
+
+    fetch('/feeds/posts/default?alt=json&max-results=30')
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data || !data.feed || !data.feed.entry) return;
+        data.feed.entry.forEach((entry) => {
+          const altLink = (entry.link || []).find((l) => l.rel === 'alternate');
+          if (!altLink || !altLink.href) return;
+          try {
+            const postPath = new URL(altLink.href).pathname;
+            const targetCard = urlToCard[postPath];
+            if (targetCard) {
+              const content = (entry.content && entry.content.$t) || '';
+              const m = content.match(/kybien-post-summary-text[^>]*>([\s\S]*?)<\/p>/i);
+              if (m && m[1]) {
+                let clean = m[1].replace(/<[^>]*>/g, '').replace(/[\r\n]+/g, ' ').trim();
+                if (!clean.startsWith('🎯')) clean = '🎯 Tóm tắt ván cờ: ' + clean;
+                const snippetEl = targetCard.querySelector('.post-card-snippet');
+                if (snippetEl) {
+                  snippetEl.textContent = clean;
+                }
+              }
+            }
+          } catch (e) {}
+        });
+      })
+      .catch(() => {});
   }
 
   function updateOnlineStatsUI(stats) {

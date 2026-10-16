@@ -72,7 +72,7 @@
   
   <!-- Socket.io Client & Ky Bien Core Scripts (Không chặn hiển thị với defer) -->
   <script defer='defer' src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.3'></script>
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.4'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -1239,7 +1239,7 @@
     //]]></script>
   </footer>
 
-  <!-- Script làm sạch snippet hiển thị thẻ bài viết trang chủ & danh mục -->
+  <!-- Script làm sạch và nạp 100% tóm tắt chiến thuật đầy đủ cho thẻ bài viết trang chủ & danh mục -->
   <script>//<![CDATA[
   (function(){
     function cleanSnippets() {
@@ -1254,7 +1254,50 @@
           if (clean && clean !== '...') el.innerText = clean;
         }
       });
+      fetchFullSummaries();
     }
+
+    function fetchFullSummaries() {
+      var cards = document.querySelectorAll('.post-card');
+      if (!cards.length) return;
+
+      var urlToCard = {};
+      cards.forEach(function(card) {
+        var link = card.querySelector('.post-card-title a') || card.querySelector('.btn-read-post');
+        if (link && link.getAttribute('href')) {
+          try {
+            var u = new URL(link.getAttribute('href'), window.location.origin);
+            urlToCard[u.pathname] = card;
+          } catch (e) {}
+        }
+      });
+
+      fetch('/feeds/posts/default?alt=json&max-results=30')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (!data || !data.feed || !data.feed.entry) return;
+          data.feed.entry.forEach(function(entry) {
+            var altLink = (entry.link || []).find(function(l) { return l.rel === 'alternate'; });
+            if (!altLink || !altLink.href) return;
+            try {
+              var postPath = new URL(altLink.href).pathname;
+              var targetCard = urlToCard[postPath];
+              if (targetCard) {
+                var content = (entry.content && entry.content.$t) || '';
+                var m = content.match(/kybien-post-summary-text[^>]*>([\s\S]*?)<\/p>/i);
+                if (m && m[1]) {
+                  var clean = m[1].replace(/<[^>]*>/g, '').replace(/[\r\n]+/g, ' ').trim();
+                  if (!clean.startsWith('🎯')) clean = '🎯 Tóm tắt ván cờ: ' + clean;
+                  var snippetEl = targetCard.querySelector('.post-card-snippet');
+                  if (snippetEl) snippetEl.textContent = clean;
+                }
+              }
+            } catch (e) {}
+          });
+        })
+        .catch(function() {});
+    }
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', cleanSnippets);
     } else {
