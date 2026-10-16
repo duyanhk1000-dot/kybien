@@ -46,6 +46,15 @@ export async function runVariantEngineTests(): Promise<void> {
   const engineG = new XiangqiEngine(undefined, 'g', initialPiecesG);
   assert.strictEqual(engineG.board[9][0]?.realColor, 'b', 'Spy piece should preserve real color in variant g');
 
+  // Test King Capture Detection
+  console.log('-> Testing Direct King Capture in XiangqiEngine...');
+  const captureEngine = new XiangqiEngine(undefined, 'n');
+  // Đặt Xe đỏ tại (1, 4) ngay trước Tướng đen tại (0, 4)
+  captureEngine.board[1][4] = { type: 'r', color: 'r', isFaceDown: false };
+  const resCapture = captureEngine.validateMove({ from: '1,4', to: '0,4' }, 'r', 'n');
+  assert.strictEqual(resCapture.valid, true, 'Nước ăn Tướng phải hợp lệ');
+  assert.strictEqual(resCapture.isKingCaptured, true, 'isKingCaptured phải là true khi ăn Tướng');
+
   // 5. Security & Invalid Payload Tests
   console.log('-> Testing Malformed Payloads & Invalid Inputs...');
   const engineErr = new XiangqiEngine();

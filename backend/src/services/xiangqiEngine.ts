@@ -240,7 +240,7 @@ export class XiangqiEngine {
     moveInput: { from: string; to: string },
     turnColor: PieceColor,
     variant: string
-  ): { valid: boolean; error?: string; formattedNotation?: string } {
+  ): { valid: boolean; error?: string; formattedNotation?: string; isKingCaptured?: boolean } {
     const rawMove = moveInput.from;
 
     // Handle Special Actions: CARD
@@ -304,19 +304,24 @@ export class XiangqiEngine {
       return { valid: false, error: 'Nước đi không đúng quy tắc luật cờ.' };
     }
 
-    // Simulate move to ensure King safety (no self-check / flying general)
+    // Check if move captures the opponent King directly
     const targetPiece = this.board[toCoord.r][toCoord.c];
-    this.board[fromCoord.r][fromCoord.c] = null;
-    this.board[toCoord.r][toCoord.c] = piece;
+    const isKingCaptured = targetPiece !== null && targetPiece.type === 'k';
 
-    const flyingGen = this.isFlyingGeneral();
+    if (!isKingCaptured) {
+      // Simulate move to ensure King safety (no flying general)
+      this.board[fromCoord.r][fromCoord.c] = null;
+      this.board[toCoord.r][toCoord.c] = piece;
 
-    // Revert simulation
-    this.board[fromCoord.r][fromCoord.c] = piece;
-    this.board[toCoord.r][toCoord.c] = targetPiece;
+      const flyingGen = this.isFlyingGeneral();
 
-    if (flyingGen) {
-      return { valid: false, error: 'Nước đi phạm luật Lộ Mặt Tướng.' };
+      // Revert simulation
+      this.board[fromCoord.r][fromCoord.c] = piece;
+      this.board[toCoord.r][toCoord.c] = targetPiece;
+
+      if (flyingGen) {
+        return { valid: false, error: 'Nước đi phạm luật Lộ Mặt Tướng.' };
+      }
     }
 
     // Apply move to state
@@ -328,7 +333,7 @@ export class XiangqiEngine {
     this.turn = this.turn === 'RED' ? 'BLACK' : 'RED';
 
     const moveNotation = `${fromCoord.r},${fromCoord.c}-${toCoord.r},${toCoord.c}`;
-    return { valid: true, formattedNotation: moveNotation };
+    return { valid: true, formattedNotation: moveNotation, isKingCaptured };
   }
 
   public getFen(): string {

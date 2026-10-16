@@ -523,7 +523,7 @@ const INF="\u221E";
 const SERVER_API_ENDPOINT='https://kybien-backend.onrender.com';
 const VARS={kb:'Kỳ Biến (Bí Pháp Kiếm Hiệp)',n:'Cờ Tướng Truyền Thống',t:'Cờ Úp Truyền Thống',g:'Cờ Úp Gián Điệp'};
 const LB={rk:'帥',ra:'仕',rb:'相',rn:'傌',rr:'俥',rc:'炮',rp:'兵',bk:'將',ba:'士',bb:'象',bn:'馬',br:'車',bc:'砲',bp:'卒'};
-const VAL={k:0,r:1000,c:480,n:430,b:200,a:200,p:100},HID=340,GAIN={p:1,a:2,b:2,n:3,c:3,r:5};
+const VAL={k:20000,r:1000,c:480,n:430,b:200,a:200,p:100},HID=340,GAIN={p:1,a:2,b:2,n:3,c:3,r:5};
 const TN={r:'Xe',c:'Pháo',n:'Mã',b:'Tượng',a:'Sĩ',p:'Tốt',k:'Tướng'};
 TN.b='Tượng';TN.k='Tướng (Soái)';
 const PF={KNIGHT_2:'sui',ELEPHANT_2:'cross',ADVISOR_1:'leave',PAWN_2:'back',KING_1:'out'};
@@ -953,7 +953,11 @@ if(v){merit[mc]=Math.min(10,merit[mc]+(GAIN[v.t==='k'?'p':(v.hd?v.t:v.t)]||(GAIN
 eaten[mc].push({col:v.col,t:v.t,tru:v.tru,truCol:v.truCol,hd:v.hd,by:mc});Snd.cap();
 const vt=v.hd?v.tru:v.t;
 if(vt==='r')VoiceTaunt.play('capture_r');else if(vt==='c')VoiceTaunt.play('capture_c');else if(vt==='n')VoiceTaunt.play('capture_n');
-if(u.d){rec.push('POISON_KILL:'+r+','+c);say(rec.length+'. '+sideTag(mc)+' [Tuyệt Mệnh Cổ] Kích độc bùng phát! Quân vừa ăn Mã cũng bỏ mạng!','#9b59b6','log-sp')}}else Snd.move();
+if(u.d){rec.push('POISON_KILL:'+r+','+c);say(rec.length+'. '+sideTag(mc)+' [Tuyệt Mệnh Cổ] Kích độc bùng phát! Quân vừa ăn Mã cũng bỏ mạng!','#9b59b6','log-sp')}
+if(v.t==='k'){
+  say(rec.length+'. '+sideTag(mc)+' đã tiêu diệt Tướng của '+sideTag(v.col)+'! Ván đấu kết thúc!','#f1c40f','log-sp',true);
+  finish('win',mc,v.col,'capt_k');
+}}else Snd.move();
 let rv=null;if(o.hd&&!o.dead){rv=reveal(o);rec.push('FLIP:'+r+','+c+'->'+rv.t)}
 let got=false;
 if(!o.dead&&hadBag){const cd={...CARDS[Math.floor(rng()*CARDS.length)]};if(hands[mc].length<5)hands[mc].push(cd);bag=null;got=true;
@@ -964,8 +968,15 @@ function doMove(o,r,c,fast){
 const bf=armed&&armed.o===o?armed.card.id:null,r0=o.r,c0=o.c,mc=o.col;
 if(!REPLAY)ACT.push({k:'m',fr:r0,fc:c0,tr:r,tc:c});
 const res=apply(o,r,c,fast);armed=null;sel=null;VM=[];HINT=null;let L=[];
+if(res.v&&res.v.t==='k')return;
 if(!res.v&&(o.t==='r'||o.t==='c'||o.t==='n')&&isEnPrise(o))VoiceTaunt.play('blunder');
-if(res.rv&&res.rv.spy&&VAR==='g'&&inCheck(mc)&&allMoves(mc).length===0){finish('win',opp(mc),mc,'spy');return}
+if(res.rv&&res.rv.spy&&VAR==='g'&&inCheck(mc)){
+  if(allMoves(mc).length===0){finish('win',opp(mc),mc,'spy');return}
+  else{
+    Snd.check();VoiceTaunt.play('check');
+    say('⚠️ CẢNH BÁO CHIẾU TƯỚNG: Tướng '+sideTag(mc)+' lâm nguy trước gián điệp vừa lộ diện!','#ff4757','log-sp');
+  }
+}
 if(!o.dead){
 if(bf==='CANNON_2'&&res.v){for(const[d,e]of OFF.k){const q=(B[r+d]||[])[c+e];if(q&&q.col!==o.col)q.st=1}o.st=2;
 say(rec.length+'. '+sideTag(mc)+' [Bích Lịch Hỏa] Quân địch kề bên và Pháo bị định thân 1 hiệp!','#3498db','log-sp')}
@@ -1030,10 +1041,10 @@ if(KB[prev]&&--KB[prev].n<=0)KB[prev]=null;
 turn=opp(prev);used=false;armed=null;sel=null;VM=[];pend=null;ms=null;mode=null;plies++;tleft=LIM*1000;lastBeep=0;turnStartTime=performance.now();turnTaunted=false;
 noCap=capFlag?0:noCap+1;capFlag=false;
 updateBag();
-const ck=inCheck(turn);keys.push(sig());movers.push(prev);chks.push(ck);
+const ck=inCheck(turn),ckOpp=inCheck(opp(turn));keys.push(sig());movers.push(prev);chks.push(ck||ckOpp);
 if(plies===1)$('chk_see').disabled=true;
 pushSnap();
-if(!checkEnd(ck)){if(ck){Snd.check();VoiceTaunt.play('check');say('CẢNH BÁO: '+sideTag(turn)+' Tướng quân lâm nguy!','#ff4757','log-sp')}stat()}
+if(!checkEnd(ck)){if(ck||ckOpp){Snd.check();VoiceTaunt.play('check');const threatened=ck?turn:opp(turn);say('CẢNH BÁO: '+sideTag(threatened)+' Tướng quân lâm nguy!','#ff4757','log-sp')}stat()}
 busy=!over&&ai&&turn===aiCol;ui();draw();if(busy)setTimeout(aiRun,400)}
 function checkEnd(ck){
 if(!allMoves(turn).length){finish('win',opp(turn),turn,ck?'mate':'stuck');return true}
@@ -1046,7 +1057,7 @@ finish('draw',null,null,'rep');return true}
 if(noCap>=120){finish('draw',null,null,'nocap');return true}
 if(!hasAtk('r')&&!hasAtk('b')){finish('draw',null,null,'mat');return true}
 return false}
-const REASON={mate:'chiếu bí',stuck:'hết nước đi (bị kín đường)',timeout:'hết giờ luận chiếu',spy:'lật phải quân địch (gián điệp) tự chiếu bí',perp:'chiếu liên tục phạm luật',rep:'lặp thế cờ 3 lần',nocap:'60 nước không ăn quân',mat:'hai bên hết quân tấn công'};
+const REASON={mate:'chiếu bí',capt_k:'bị tiêu diệt Tướng',stuck:'hết nước đi (bị kín đường)',timeout:'hết giờ luận chiếu',spy:'lật phải quân địch (gián điệp) tự chiếu bí',perp:'chiếu liên tục phạm luật',rep:'lặp thế cờ 3 lần',nocap:'60 nước không ăn quân',mat:'hai bên hết quân tấn công'};
 function submitGreatMatchFromModal(){
 const st=$('post-status-txt');if(st)st.innerText='⏳ Quân Sư đang khởi thảo Ký Sự Sa Trường khắc lên Kỳ Phổ...';
 let rawName='';if(currentUser&&currentUser.username)rawName='Chiến Tướng.'+currentUser.username;
@@ -1425,10 +1436,10 @@ if(LASTMV)marks();
 if(HINT){if(now>HINT.until)HINT=null;else{const a=[PX(HINT.f[1]),PY(HINT.f[0])],b=[PX(HINT.t[1]),PY(HINT.t[0])],ang=Math.atan2(b[1]-a[1],b[0]-a[0]);
 x.save();x.strokeStyle='#8bc34a';x.fillStyle='#8bc34a';x.lineWidth=6;x.globalAlpha=.85;x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0]-Math.cos(ang)*14,b[1]-Math.sin(ang)*14);x.stroke();
 x.beginPath();x.moveTo(b[0],b[1]);x.lineTo(b[0]-Math.cos(ang-.45)*24,b[1]-Math.sin(ang-.45)*24);x.lineTo(b[0]-Math.cos(ang+.45)*24,b[1]-Math.sin(ang+.45)*24);x.fill();x.restore();more=true}}
-if(!over&&!ANIM&&inCheck(turn)){const k=K[turn],X=PX(k.c),Y=PY(k.r),a=.5+.5*Math.sin(now/130);x.save();
+if(!over&&!ANIM){for(const cCol of['r','b']){if(K[cCol]&&!K[cCol].dead&&inCheck(cCol)){const k=K[cCol],X=PX(k.c),Y=PY(k.r),a=.5+.5*Math.sin(now/130);x.save();
 x.strokeStyle='rgba(255,60,60,'+(.55+.4*a)+')';x.lineWidth=3+2*a;x.shadowColor='#ff2a2a';x.shadowBlur=14;x.beginPath();x.arc(X,Y,Math.max(0.1,PR+7+3*a),0,7);x.stroke();
 x.shadowBlur=0;x.font='bold 13px "Be Vietnam Pro",sans-serif';x.textAlign='center';x.fillStyle='#ff6b6b';x.strokeStyle='rgba(0,0,0,.8)';x.lineWidth=3;
-x.strokeText('CHIẾU!',X,Y-PR-14);x.fillText('CHIẾU!',X,Y-PR-14);x.restore();more=true}
+x.strokeText('CHIẾU!',X,Y-PR-14);x.fillText('CHIẾU!',X,Y-PR-14);x.restore();more=true}}}
 if(armed&&!armed.o.dead){const X=PX(armed.o.c),Y=PY(armed.o.r);x.save();x.strokeStyle='#ffa726';x.lineWidth=3;x.shadowColor='#ff9800';x.shadowBlur=12;
 x.setLineDash([8,6]);x.lineDashOffset=-now/40;x.beginPath();x.arc(X,Y,Math.max(0.1,PR+8+2*Math.sin(now/160)),0,7);x.stroke();x.restore();more=true}
 for(const col of['r','b'])for(const o of P[col]){if(o.dead||o.st<=0)continue;const X=PX(o.c),Y=PY(o.r);x.save();
@@ -1450,8 +1461,9 @@ return true});x.restore();
 if(more||FX.length)kick()}
 
 /* ---------- GIAO DIỆN VÀ THÔNG BÁO ---------- */
-function stat(){const ck=!over&&inCheck(turn),e=$('st');
-if(ck){e.className='pill check-danger';e.innerText='CẢNH BÁO CHIẾU TƯỚNG! - TƯỚNG '+(turn==='r'?'ĐỎ':'ĐEN')+' ĐANG BỊ UY HIẾP!'}
+function stat(){const ckTurn=!over&&inCheck(turn),ckOpp=!over&&inCheck(opp(turn)),e=$('st');
+if(ckTurn){e.className='pill check-danger';e.innerText='CẢNH BÁO CHIẾU TƯỚNG! - TƯỚNG '+(turn==='r'?'ĐỎ':'ĐEN')+' ĐANG BỊ UY HIẾP!'}
+else if(ckOpp){e.className='pill check-danger';e.innerText='CẢNH BÁO CHIẾU TƯỚNG! - TƯỚNG '+(opp(turn)==='r'?'ĐỎ':'ĐEN')+' ĐANG BỊ GIÁN ĐIỆP UY HIẾP!'}
 else{e.className='pill';e.style.color=turn==='r'?'#e0705a':'#69b4ff';
 e.innerText=ai?(turn==='r'?'Lượt của bạn (Đỏ)':'Mộc Nhân (Đen) đang suy tính...'):online.on?(turn===online.side?'Đến lượt bạn!':'Đối thủ đang suy tính...'):'Lượt đi: '+(turn==='r'?'Đỏ':'Đen')}}
 function bars(){

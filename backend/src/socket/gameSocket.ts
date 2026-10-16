@@ -327,6 +327,12 @@ export function setupGameSocket(io: Server): void {
         turn: room.turn,
         movesHistory: room.moves,
       });
+
+      if (moveResult.isKingCaptured) {
+        const winnerId = turnColor === 'r' ? room.playerWhite.userId : room.playerBlack.userId;
+        await processGameOver(room, winnerId, 'Bắt Tướng');
+        return;
+      }
     });
 
     const processGameOver = async (room: any, winnerId: number | null, reason: string) => {
