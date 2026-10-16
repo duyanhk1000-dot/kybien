@@ -623,62 +623,58 @@ const Snd = (() => {
   };
 })();
 
-/* ---------- HỆ THỐNG GIỌNG NÓI "CÀ KHÍA KIẾM HIỆP" ---------- */
-const TAUNT_LINES = {
+/* ---------- HỆ THỐNG GIỌNG NÓI "CÀ KHÍA KIẾM HIỆP" (MP3 AUDIO + TTS FALLBACK) ---------- */
+const TAUNT_AUDIO_BASE = (typeof window !== 'undefined' && window.location && (window.location.hostname.includes('blogspot.com') || window.location.hostname.includes('github.io')))
+  ? 'https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/audio/taunts/'
+  : 'audio/taunts/';
+
+const TAUNT_ITEMS = {
   idle: [
-    "Cờ thì gà ngan vịt, mà ngâm như kỳ thánh trăm năm!",
-    "Định ngồi thiền nhập định hay ngủ gật trên bàn cờ đấy?",
-    "Nghĩ nửa ngày trời... rồi cũng đi vào ngõ cụt thôi, hạ thủ mau!",
-    "Trà nguội ba tuần rồi kìa, có đi không để bổn tọa đi ngủ một giấc?",
-    "Kỳ nghệ có hạn mà thời gian suy nghĩ thì vô biên!",
-    "Gãi đầu rụng hết tóc rồi kìa, không tìm ra đường sống đâu con sâu!"
+    { file: '1.1.idle.mp3', text: "Hừ! Cờ thì gà ngan vịt, mà ngâm như kỳ thánh trăm năm!" },
+    { file: '1.2.idle.mp3', text: "Định ngồi thiền nhập định hay ngủ gật trên bàn cờ đấy?" },
+    { file: '1.3.idle.mp3', text: "Nghĩ nửa ngày trời... rồi cũng đi vào ngõ cụt thôi, hạ thủ mau!" },
+    { file: '1.4.idle.mp3', text: "Trà nguội ba tuần rồi kìa, có đi không để bổn tọa đi ngủ một giấc?" },
+    { file: '1.5.idle.mp3', text: "Kỳ nghệ có hạn mà thời gian suy nghĩ thì vô biên!" },
+    { file: '1.6.idle.mp3', text: "Gãi đầu rụng hết tóc rồi kìa, không tìm ra đường sống đâu con sâu!" }
   ],
   capture_r: [
-    "Chiến xa béo mẫm thế này... tại hạ xin không khách khí nhé! Đi xe không đội mũ bảo hiểm thì rụng đài là đúng rồi, kêu ca gì!",
-    "Mất đứt một chiến xa, ruột gan đau như cắt nước mắt đầm đìa chưa? Đa tạ thí chủ đã hào phóng dâng mồi ngon nướng than hoa nhé!",
-    "Một Xe bằng mười quân, mất Xe coi như gãy nửa giang sơn rồi! Giờ lấy cái gì ra mà hoành hành sa trường đây đại hiệp?"
+    { file: '2.1.capture_r.mp3', text: "Chiến xa béo mẫm thế này... tại hạ xin không khách khí nhé! Đi xe không đội mũ bảo hiểm thì rụng đài là đúng rồi, kêu ca gì!" },
+    { file: '2.2.capture_r.mp3', text: "Mất đứt một chiến xa, ruột gan đau như cắt nước mắt đầm đìa chưa? Đa tạ thí chủ đã hào phóng dâng mồi ngon nướng than hoa nhé!" },
+    { file: '2.3.capture_r.mp3', text: "Một Xe bằng mười quân, mất Xe coi như gãy nửa giang sơn rồi! Giờ lấy cái gì ra mà hoành hành sa trường đây đại hiệp?" }
   ],
   capture_c: [
-    "Pháo xịt ngòi tịt khói rồi! Không có ngòi thì nổ vào mắt à, giờ lấy cái gì mà gầm rú sa trường?",
-    "Đầu tư quả pháo bắn chim gãy cánh, dâng đạn tận họng đối thủ thế này thì đánh đấm cái nỗi gì!",
-    "Tưởng pháo kích oanh tạc cửu cung thế nào, hóa ra là pháo hoa xịt nước mua vui cho thiên hạ!"
+    { file: '3.1.capture_c.mp3', text: "Pháo xịt ngòi tịt khói rồi! Không có ngòi thì nổ vào mắt à, giờ lấy cái gì mà gầm rú sa trường?" },
+    { file: '3.2.capture_c.mp3', text: "Đầu tư quả pháo bắn chim gãy cánh, dâng đạn tận họng đối thủ thế này thì đánh đấm cái nỗi gì!" },
+    { file: '3.3.capture_c.mp3', text: "Tưởng pháo kích oanh tạc cửu cung thế nào, hóa ra là pháo hoa xịt nước mua vui cho thiên hạ!" }
   ],
   capture_n: [
-    "Mã què cụt chân rồi con sâu! Khinh công bay qua cửa sổ hộ cái xem nào?",
-    "Chiến mã vấp đá gãy cả bốn vó, cắm đầu xuống hố sâu! Phiên mã nhảy lung tung rồi tự chui vào nồi lẩu thế này à?",
-    "Cản chân Mã mà không biết đường gỡ, nuôi ngựa tốn cỏ dâng thịt cho bổn tọa làm đĩa xào lăn, đa tạ nhé!"
+    { file: '4.1.capture_n.mp3', text: "Mã què cụt chân rồi con sâu! Khinh công bay qua cửa sổ hộ cái xem nào?" },
+    { file: '4.2.capture_n.mp3', text: "Chiến mã vấp đá gãy cả bốn vó, cắm đầu xuống hố sâu! Phiên mã nhảy lung tung rồi tự chui vào nồi lẩu thế này à?" },
+    { file: '4.3.capture_n.mp3', text: "Cản chân Mã mà không biết đường gỡ, nuôi ngựa tốn cỏ dâng thịt cho bổn tọa làm đĩa xào lăn, đa tạ nhé!" }
   ],
   check: [
-    "Chiếu tướng! Nhảy đi đâu con sâu!",
-    "Long thể bất an, chui vào gầm giường mà trốn mau!",
-    "Cửu cung rung chuyển, chuẩn bị lo hậu sự đi là vừa!",
-    "Chạy đằng trời! Chạy đi đâu cho hết nắng đồ cờ non!",
-    "Đầu hàng sớm bớt đau khổ, giãy giụa làm chi cho thêm nhục nhã!"
+    { file: '5.1.check.mp3', text: "Chiếu tướng! Nhảy đi đâu con sâu!" },
+    { file: '5.2.check.mp3', text: "Long thể bất an, chui vào gầm giường mà trốn mau!" },
+    { file: '5.3.check.mp3', text: "Cửu cung rung chuyển, chuẩn bị lo hậu sự đi là vừa!" },
+    { file: '5.4.check.mp3', text: "Chạy đằng trời! Chạy đi đâu cho hết nắng đồ cờ non!" }
   ],
   mate: [
-    "Cờ thấp như gián cắt chân, mà cũng dám xuống núi hành tẩu giang hồ!",
-    "Kỳ nghệ cỡ này... chỉ xứng quét lá đa ngoài cổng Thiếu Lâm Tự thôi!",
-    "Về núi bế quan luyện thêm ba vạn sáu ngàn năm nữa rồi hẵng tiếp chiêu bổn tọa!",
-    "Có cay không? Mặt đỏ bừng lên rồi kìa! Cay thì bấm Tái Đấu!",
-    "Cầm cờ mà run như cầy sấy thế này, ai dạy chơi cờ thế?",
-    "Thua tâm phục khẩu phục chưa? Hay lại đổ tại chuột đơ, mạng lag?",
-    "Đánh đấm thế này bảo sao danh hiệu Kỳ Đồng mãi không ngóc đầu lên nổi!"
+    { file: '6.1.mate.mp3', text: "Cờ thấp như gián cắt chân, mà cũng dám xuống núi hành tẩu giang hồ!" },
+    { file: '6.2.mate.mp3', text: "Kỳ nghệ cỡ này... chỉ xứng quét lá đa ngoài cổng Thiếu Lâm Tự thôi!" },
+    { file: '6.3.mate.mp3', text: "Về núi bế quan luyện thêm ba vạn sáu ngàn năm nữa rồi hẵng tiếp chiêu bổn tọa!" },
+    { file: '6.4.mate.mp3', text: "Có cay không? Mặt đỏ bừng lên rồi kìa! Cay thì bấm Tái Đấu!" }
   ],
   blunder: [
-    "Nước cờ mù mắt quần hùng! Đi xong có thấy hối hận đến tận ruột gan không?",
-    "Đúng là thần cơ diệu toán... phiên bản tấu hài mua vui thiên hạ!",
-    "Dâng quân tận mồm thế này, lòng tốt của thí chủ bần đạo xin nhận nhé!",
-    "Mắt để ngắm cảnh à mà thí quân hào phóng thế đại hiệp?"
+    { file: '7.1.blunder.mp3', text: "Nước cờ mù mắt quần hùng! Đi xong có thấy hối hận đến tận ruột gan không?" },
+    { file: '7.2.blunder.mp3', text: "Đúng là thần cơ diệu toán... phiên bản tấu hài mua vui thiên hạ!" },
+    { file: '7.3.blunder.mp3', text: "Dâng quân tận mồm thế này, lòng tốt của thí chủ bần đạo xin nhận nhé!" }
   ],
   spell: [
-    "Xem tuyệt kỹ Thiểm Điện Trảm chém rách bàn cờ của ngươi đây!",
-    "Trúng một quả Bích Lịch Hỏa thì cháy cả lông mày nhé con!",
-    "Phá Lãng Bộ bẻ cua 90 độ, đỡ bằng niềm tin à?",
-    "Bí kíp gia truyền xuất thế, quỳ xuống mà chiêm ngưỡng!"
+    { file: '8.1.spell.mp3', text: "Xem tuyệt kỹ Thiểm Điện Trảm chém rách bàn cờ của ngươi đây!" }
   ],
   surrender: [
-    "Đánh không lại bắt đầu dở trò xin xỏ à? Bổn tọa không có lòng từ bi đâu nhé!",
-    "Biết thân biết phận đầu hàng sớm là tốt, đỡ phải rước thêm nhục!"
+    { file: '9.1.surrender.mp3', text: "Đánh không lại bắt đầu dở trò xin xỏ à? Bổn tọa không có lòng từ bi đâu nhé!" },
+    { file: '9.2.surrender.mp3', text: "Biết thân biết phận đầu hàng sớm là tốt, đỡ phải rước thêm nhục!" }
   ]
 };
 
@@ -687,6 +683,7 @@ const VoiceTaunt = {
   lastTime: 0,
   cooldownMs: 14000,
   bubbleTimer: null,
+  currentAudio: null,
 
   init() {
     this.updateUI();
@@ -699,10 +696,23 @@ const VoiceTaunt = {
     if (this.enabled) {
       this.play('check', true);
     } else {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      this.stop();
       this.hideBubble();
     }
     return this.enabled;
+  },
+
+  stop() {
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch(e){}
+      this.currentAudio = null;
+    }
+    if ('speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch(e){}
+    }
   },
 
   updateUI() {
@@ -728,25 +738,43 @@ const VoiceTaunt = {
     if (!force && (now - this.lastTime < this.cooldownMs)) return;
     if (!force && Math.random() > 0.38) return;
 
-    const list = TAUNT_LINES[category];
+    const list = TAUNT_ITEMS[category];
     if (!list || !list.length) return;
-    const text = list[Math.floor(Math.random() * list.length)];
+    const item = list[Math.floor(Math.random() * list.length)];
 
     this.lastTime = now;
-    this.showBubble(text);
-    this.speak(text);
+    this.showBubble(item.text);
+    this.playAudio(item.file, item.text);
   },
 
-  speak(text) {
+  playAudio(filename, fallbackText) {
+    this.stop();
+    try {
+      const url = TAUNT_AUDIO_BASE + filename;
+      const audio = new Audio(url);
+      this.currentAudio = audio;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.warn('[Taunt Audio] Không phát được MP3 (' + filename + '), dùng TTS dự phòng:', err);
+          this.speakFallback(fallbackText);
+        });
+      }
+    } catch(err) {
+      this.speakFallback(fallbackText);
+    }
+  },
+
+  speakFallback(text) {
     if (!('speechSynthesis' in window)) return;
     try {
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
       u.lang = 'vi-VN';
-      u.rate = 1.02;
-      u.pitch = 0.92;
+      u.rate = 1.0;
+      u.pitch = 0.9;
       window.speechSynthesis.speak(u);
-    } catch (e) {}
+    } catch(e) {}
   },
 
   showBubble(text) {
