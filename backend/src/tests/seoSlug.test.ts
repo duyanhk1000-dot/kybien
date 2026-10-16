@@ -302,6 +302,7 @@ export async function runSeoSlugTests(): Promise<void> {
   try {
     config.blogger = test10Config;
     let publishedHtml = '';
+    let postPayload: any = null;
 
     global.fetch = (async (url: string | URL | Request, init?: RequestInit) => {
       const urlStr = String(url);
@@ -311,6 +312,7 @@ export async function runSeoSlugTests(): Promise<void> {
       if (urlStr.includes('/posts') && init?.method === 'POST') {
         const bodyObj = JSON.parse(String(init.body || '{}'));
         publishedHtml = bodyObj.content || '';
+        postPayload = bodyObj;
         return new Response(JSON.stringify({ id: 'post_test10', url: 'https://kybien.blogspot.com/post_test10.html' }), { status: 200 });
       }
       if (urlStr.includes('/posts/post_test10') && init?.method === 'PATCH') {
@@ -343,7 +345,20 @@ export async function runSeoSlugTests(): Promise<void> {
       'HTML bài viết KHÔNG được chứa khối kybien-post-cta-banner để tránh lặp lại 2 lần với Theme Blogger'
     );
 
-    console.log('✅ Test 10 Passed: Tự động gắn link Bí Pháp 100% & Khử triệt để trùng lặp CTA Banner!');
+    // 3. Kiểm tra DOM Order vs Visual Order (Flexbox): kybien-post-summary-text đứng trước trong DOM, badge hiển thị ở trên nhờ order: 1
+    const summaryDomIndex = publishedHtml.indexOf('kybien-post-summary-text');
+    const badgeDomIndex = publishedHtml.indexOf('kybien-variant-header-badge');
+    assert.ok(summaryDomIndex !== -1 && badgeDomIndex !== -1, 'Phải có cả 2 khối tóm tắt và huy hiệu');
+    assert.ok(summaryDomIndex < badgeDomIndex, 'kybien-post-summary-text phải đứng trước kybien-variant-header-badge trong DOM để Blogger lấy làm snippet');
+    assert.ok(publishedHtml.includes('order: 1'), 'Huy hiệu phải có style order: 1 để hiển thị ở trên cùng');
+    assert.ok(publishedHtml.includes('order: 2'), 'Tóm tắt phải có style order: 2 để hiển thị ở dưới huy hiệu');
+
+    // 4. Kiểm tra searchDescription sạch sẽ, chuẩn tiền tố
+    assert.ok(postPayload, 'Phải có postPayload');
+    assert.ok(postPayload.searchDescription.startsWith('🎯 Tóm tắt ván cờ:'), 'searchDescription phải bắt đầu bằng 🎯 Tóm tắt ván cờ:');
+    assert.strictEqual(postPayload.searchDescription.includes('<'), false, 'searchDescription không được chứa thẻ HTML');
+
+    console.log('✅ Test 10 Passed: Tự động gắn link Bí Pháp 100% & Khử triệt để trùng lặp CTA Banner & Tách chuẩn Snippet!');
   } finally {
     config.blogger = prevConfig;
     global.fetch = prevFetch;

@@ -111,23 +111,26 @@ export async function publishMatchToBlogger(
     }
   </style>
 
-  <!-- Khai báo Thẻ Chế độ chơi chuẩn có liên kết nội bộ điều hướng -->
-  <div class="kybien-variant-header-badge" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-    <a href="/search/label/tran-hay" style="text-decoration: none; background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #a83a1f; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-      ⚔️ ${safeMatchPhrase}
-    </a>
-    <a href="/p/arena.html?variant=${safeVariantCode}" style="text-decoration: none; background: linear-gradient(135deg, #3a2416, #22150c); color: #f1c40f; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #5a3d22; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-      ${safeVariantIcon} Vào Sàn Đấu ${safeVariantName} ➔
-    </a>
-    <a href="/p/cam-nang.html" style="text-decoration: none; background: rgba(90,61,34,0.4); color: #2ecc71; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; border: 1px solid #5a3d22;">
-      📜 Bí Pháp Cẩm Nang
-    </a>
-  </div>
+  <!-- Khung Tiêu Đề Đầu Bài: Flexbox đảo thứ tự để Blogger Snippet & SEO bóc tách chuẩn xác đoạn tóm tắt ván cờ -->
+  <div class="kybien-post-top-header" style="display: flex; flex-direction: column;">
+    <!-- DOM ORDER #1: Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ & SEO Snippet (Blogger & Search Engine sẽ lấy từ đây) -->
+    <p class="kybien-post-summary-text" style="order: 2; font-weight: 600; color: #e5b36a; font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; background: rgba(229,179,106,0.08); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #f1c40f;">
+      🎯 <strong>Tóm tắt ván cờ:</strong> ${safeTacticalAnalysis}
+    </p>
 
-  <!-- Đoạn tóm tắt sạch sẽ dành cho Thẻ Trang chủ & SEO Snippet -->
-  <p class="kybien-post-summary-text" style="font-weight: 600; color: #e5b36a; font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; background: rgba(229,179,106,0.08); padding: 14px 18px; border-radius: 8px; border-left: 4px solid #f1c40f;">
-    🎯 <strong>Tóm tắt ván cờ:</strong> ${safeTacticalAnalysis}
-  </p>
+    <!-- DOM ORDER #2: Khai báo Thẻ Chế độ chơi chuẩn (order: 1 giúp giao diện luôn hiển thị ở trên cùng) -->
+    <div class="kybien-variant-header-badge" style="order: 1; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+      <a href="/search/label/tran-hay" style="text-decoration: none; background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #a83a1f; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+        ⚔️ ${safeMatchPhrase}
+      </a>
+      <a href="/p/arena.html?variant=${safeVariantCode}" style="text-decoration: none; background: linear-gradient(135deg, #3a2416, #22150c); color: #f1c40f; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.88rem; border: 1px solid #5a3d22; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+        ${safeVariantIcon} Vào Sàn Đấu ${safeVariantName} ➔
+      </a>
+      <a href="/p/cam-nang.html" style="text-decoration: none; background: rgba(90,61,34,0.4); color: #2ecc71; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; border: 1px solid #5a3d22;">
+        📜 Bí Pháp Cẩm Nang
+      </a>
+    </div>
+  </div>
 
   <!-- Khối chú dẫn Bí Pháp Võ Học chuyên biệt cho Cờ Bí Pháp -->
   ${safeVariantCode === 'kb' ? `
@@ -179,11 +182,14 @@ export async function publishMatchToBlogger(
 </div>
 `;
 
-    const cleanSearchDescription = (safeTacticalAnalysis || '')
+    const rawAnalysisText = (safeTacticalAnalysis || '')
       .replace(/<[^>]*>/g, '')
       .replace(/[\r\n]+/g, ' ')
-      .trim()
-      .slice(0, 190);
+      .trim();
+
+    const cleanSearchDescription = rawAnalysisText.startsWith('🎯')
+      ? rawAnalysisText.slice(0, 190)
+      : `🎯 Tóm tắt ván cờ: ${rawAnalysisText}`.slice(0, 190);
 
     // BƯỚC 1: Sinh slugTitle chuẩn SEO không dấu (để Blogger sinh permalink sạch, không dính chữ, không mất chữ đ)
     const seoSlugTitle = buildSeoSlugTitle({
