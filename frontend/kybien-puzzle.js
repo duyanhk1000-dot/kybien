@@ -793,8 +793,8 @@
       state.currentSession = resp.data;
       state.isThinking = false;
       updateStatus('🔴 Đến lượt Đại hiệp: Hãy tìm diệu thủ sát cục!');
-      const authorDisplay = pz.creator?.username ? `Kỳ thủ ${pz.creator.username}` : 'Bổn trang gửi';
-      addLog(`⚔️ Khởi đầu kỳ trận: [${pz.title}] (${authorDisplay})`);
+      const authorDisplay = pz.creator?.username ? `Kỳ thủ ${pz.creator.username}` : 'Kỳ Biến Các';
+      addLog(`⚔️ Khởi đầu kỳ trận: [${pz.title}] • ${authorDisplay}`);
     } catch (err) {
       state.isThinking = false;
       console.error('[Start Session Error]', err);
@@ -880,11 +880,13 @@
       item.onclick = () => selectDailyPuzzle(pz);
 
       item.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 6px; flex: 1; overflow: hidden;">
-          <span class="daily-badge-tag ${meta.class}">${meta.icon} ${meta.label}</span>
+        <div style="display: flex; align-items: center; gap: 8px; flex: 1; overflow: hidden;">
+          <span class="daily-badge-tag ${meta.class}" style="white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 58px;">
+            <span>${meta.icon}</span><span>${meta.label}</span>
+          </span>
           <span style="font-size: 0.8rem; color: #e8dcc6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(pz.title)}</span>
         </div>
-        <div style="font-size: 0.74rem; font-weight: 600; color: ${pz.is_solved ? '#2ecc71' : '#f1c40f'}; margin-left: 6px;">
+        <div style="font-size: 0.74rem; font-weight: 600; color: ${pz.is_solved ? '#2ecc71' : '#f1c40f'}; margin-left: 6px; white-space: nowrap; flex-shrink: 0;">
           ${pz.is_solved ? '✓ Đã Phá' : `+${pz.exp_reward} EXP`}
         </div>
       `;
@@ -919,7 +921,7 @@
       item.onclick = () => selectPuzzle(idx);
 
       if (state.tier === 'UGC') {
-        const creatorName = pz.creator?.username || 'Bổn trang gửi';
+        const creatorName = pz.creator?.username || 'Kỳ Biến Các';
         let constraintsBadge = '';
         if (pz.constraints) {
           try {
@@ -1018,7 +1020,7 @@
     }
 
     if (indexEl) {
-      const author = pz.creator?.username || 'Bổn trang gửi';
+      const author = pz.creator?.username || 'Kỳ Biến Các';
       if (state.isDailyMode) {
         indexEl.textContent = `📅 Thế Cờ Hôm Nay • ${author}`;
       } else if (pz.tier === 'UGC') {
