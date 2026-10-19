@@ -27,3 +27,22 @@ export function authenticateToken(
   req.user = payload;
   next();
 }
+
+export function optionalAuthenticateToken(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token) {
+    const payload = verifyToken(token);
+    if (payload) {
+      req.user = payload;
+    }
+  }
+
+  next();
+}
+

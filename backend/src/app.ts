@@ -1,8 +1,11 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
 import { config } from './config/index.js';
 import authRoutes from './routes/authRoutes.js';
 import matchRoutes from './routes/matchRoutes.js';
+import puzzleRoutes from './routes/puzzleRoutes.js';
 import { onlineTracker } from './services/onlineTracker.js';
 import { prisma } from './utils/prisma.js';
 
@@ -28,6 +31,10 @@ app.use(
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+const frontendPath = fs.existsSync(path.join(process.cwd(), 'frontend'))
+  ? path.join(process.cwd(), 'frontend')
+  : path.join(process.cwd(), '..', 'frontend');
+app.use(express.static(frontendPath));
 
 // Cơ chế Supabase Database Keep-Alive (Chống ngủ đông 7 ngày)
 let lastDbKeepAliveTime = 0;
@@ -86,6 +93,7 @@ app.get('/api/stats/online', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/match', matchRoutes);
+app.use('/api/puzzles', puzzleRoutes);
 
 // Global Error Handler
 app.use((err: any, req: Request, res: Response, next: any) => {

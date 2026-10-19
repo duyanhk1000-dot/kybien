@@ -1,0 +1,162 @@
+[
+  {
+    "tier": 1,
+    "id": 1,
+    "name": "Mã Đơn Khống Tướng (Ghim Chết Quân)",
+    "fen": "5k3/5n3/N8/9/9/9/9/9/9/5K3",
+    "win_line": "1. M9+7 (hoặc M9+8) áp sát cung. Tướng Đỏ ở lộ 6 ghim chặt Mã Đen ở lộ 6 (Mã Đen không thể nhảy vì lộ mặt Tướng). Đen rơi vào thế Zugzwang (hết nước đi hợp lệ) -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ đi Tướng sai: Tg6-5 (Tướng chuyển sang lộ 5 làm mất thế ghim đối mặt), Đen lập tức nhảy M6+4 thoát ghim và phản công -> Đỏ mất ưu thế, dẫn đến THUA/HÒA."
+  },
+  {
+    "tier": 1,
+    "id": 2,
+    "name": "Pháo Giác Mượn Sĩ Chiếu Rút",
+    "fen": "3ak4/4a4/4c4/7C1/9/9/9/9/9/5K3",
+    "win_line": "1. P8=5! (Pháo 8 bình 5 vào trung lộ mượn Sĩ Đen làm ngòi chiếu Tướng). Tướng Đen kẹt lộ 6 do Tướng Đỏ khống chế, lộ 4 vướng Sĩ, buộc phải thoái Sĩ phá ngòi nhưng Đỏ tiếp tục giật Pháo -> Sát cục Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ tham ăn hoặc đi nước nguội P8=9 hay P8-1: Đen lập tức đi S5+4 củng cố cung điện và điều Pháo phản kích -> Đỏ bế tắc, THUA ngược."
+  },
+  {
+    "tier": 1,
+    "id": 3,
+    "name": "Thí Xe Ngọa Tào (Tuyệt Sát Mã Tiên)",
+    "fen": "3akab2/9/4c1N1n/9/9/9/5R3/1r2BA3/4Apr2/4K1B2",
+    "win_line": "1. X6+6! (Xe Đỏ đâm thẳng ăn Sĩ đáy chiếu tướng!). Đen bắt buộc: S4-5 (Sĩ ăn Xe). 2. M7+5! (Mã Đỏ nhảy ngọa tào chiếu bí). Tướng Đen vướng Tượng và Sĩ không lối thoát -> Đỏ THẮNG TUYỆT ĐỐI!",
+    "lose_line": "Nếu Đỏ sợ mất Xe mà đi X6-1 phòng thủ hoặc M7-6: Đen lập tức đâm X4+1 (Xe Đen ăn Sĩ đáy chiếu bí) -> Đỏ THUA NGAY LẬP TỨC TRONG 1 NƯỚC!"
+  },
+  {
+    "tier": 1,
+    "id": 4,
+    "name": "Pháo Phế Khóa Cung - Mã Điệp Sát",
+    "fen": "CN1ak4/4a4/4b4/9/9/9/9/4B4/3rA1r2/4KAB1c",
+    "win_line": "1. P9=6! (Pháo Đỏ chém Sĩ chiếu tướng ép Tướng Đen ăn ra: Tg5=4). 2. M8+6! (Mã Đỏ nhảy chiếu độc hiểm, Tướng Đen nghẽn đường) -> Sát cục không thể cản phá! Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ nôn nóng nhảy M8+7 chiếu trước: Tướng Đen đi Tg5=6 hoặc Sĩ che mặt, Đỏ đứt chuỗi nước chiếu liên tục -> Đen lập tức đâm X4+1 ăn Sĩ chiếu bí -> Đỏ THUA TAN NÁT!"
+  },
+  {
+    "tier": 1,
+    "id": 5,
+    "name": "Song Mã Ẩm Tuyền (Mã Kẹp Rút Thắt Cổ)",
+    "fen": "3k5/9/9/2N6/2N6/9/9/9/3p1r3/4K4",
+    "win_line": "1. Mã dưới (hàng 4) tiến 4 chiếu tướng! Ép Tướng Đen chạy sang lộ 5. 2. Mã trên tiếp tục nhảy chiếu liên hoàn, ép Tướng Đen vào góc rồi thắt nút cổ chai -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ dùng Mã trên nhảy trước: Tự cản chân Mã dưới, Tướng Đen lách ra lộ thoáng thoát thân -> Hết nước chiếu, Đen đâm Xe X6+1 chiếu bí -> Đỏ THUA!"
+  },
+  {
+    "tier": 1,
+    "id": 6,
+    "name": "Song Xe Kẹp Nách (Phế Xe Đoạt Thành)",
+    "fen": "4k4/3RaR3/6n2/9/9/9/9/5p3/4pr3/3K5",
+    "win_line": "1. X6=5! (Xe Đỏ ăn Sĩ trung tâm chiếu tướng). Đen: Tg ăn lên. 2. X4=5! (Xe còn lại đâm chiếu vỗ mặt kết liễu) -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ đi chậm Tg6-5 phòng thủ: Đen lập tức đi X4+1 đâm đáy chiếu bí -> Đỏ THUA NGAY!"
+  },
+  {
+    "tier": 1,
+    "id": 7,
+    "name": "Song Pháo Trùng Thọc Đáy",
+    "fen": "r3kab2/4a4/9/4p4/9/9/4C4/4C4/4pr3/3K5",
+    "win_line": "1. Pháo trước nảy chiếu, mở đường cho Pháo sau tiếp ứng tạo thế Pháo Trùng kinh điển ép Tướng Đen tử trận -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ rút Pháo về đỡ lộ đáy: Xe Đen lập tức chém Pháo chiếu sát -> Đỏ THUA!"
+  },
+  {
+    "tier": 1,
+    "id": 8,
+    "name": "Điệp Pháo Kê Đòn (Mượn Sĩ Làm Ngòi)",
+    "fen": "5kb2/4a4/4ba2c/9/9/9/4C4/2n4C1/3r1p3/4K4",
+    "win_line": "1. Pháo lộ 8 bình vào trung lộ mượn Sĩ và Tượng Đen làm giá chiếu liên tục, ép Tướng Đen hết đường -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ nhảy Tướng hoặc đi quân khác: Đen dùng Xe + Tốt đâm đáy hạ thành -> Đỏ THUA!"
+  },
+  {
+    "tier": 1,
+    "id": 9,
+    "name": "Song Binh Nhập Cung Khóa Họng",
+    "fen": "5k3/4P1P2/5n2b/9/9/5c3/9/9/3r1p3/4K4",
+    "win_line": "1. B5=6! (Binh 5 lách vào chiếu ép Tướng Đen dạt góc). 2. B7=6! (Binh 7 áp sát khóa chân Tướng) -> Song Binh thắt cổ Tướng Đen, Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ đi B7=6 trước: Mã Đen lập tức chém Binh Đỏ giải vây, sau đó Xe Đen đâm sát cục -> Đỏ THUA!"
+  },
+  {
+    "tier": 1,
+    "id": 10,
+    "name": "Xa Mã Tương Công Thọc Sườn",
+    "fen": "3ck4/4a1R2/9/9/9/7R1/9/9/3r1p3/4K4",
+    "win_line": "1. Xe 3 bình 5 chiếu ép Sĩ bung, sau đó Xe 2 đâm sâu hàng đáy tạo thế Song Long vần Tướng -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ đi Xe chậm 1 nhịp: Đen đâm Xe chiếu bí lập tức -> Đỏ THUA!"
+  },
+  {
+    "tier": 2,
+    "id": 1,
+    "name": "Thập Tự Mai Phục (Thí Mã Giác Xe Pháo)",
+    "fen": "3c5/2R2n3/3kc2NC/9/8r/2rN3n1/9/9/3p1p3/4K3R",
+    "win_line": "1. M7+5! (Thí Mã trung tâm phá nát hệ thống phòng thủ Đen). 2. Xe Pháo Đỏ phối hợp giật đòn rút hiểm hóc -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ tham lam ăn Xe Đen lộ 8: Đen lập tức đi X7+2 chiếu tướng kết hợp Tốt đáy công thành -> Đỏ tan vỡ, THUA NGAY!"
+  },
+  {
+    "tier": 2,
+    "id": 2,
+    "name": "Bát Bộ Đương Xa (Hãm Cung Tuyệt Sát)",
+    "fen": "C1b1R4/3k4n/2Nr3R1/c6Nn/2b6/9/3p5/3p5/2p1p4/3K1c1r1",
+    "win_line": "1. X5+1! Chiếu ép Sĩ, sau đó Pháo 9 bắn đòn hiểm xuyên tim khiến Tướng Đen không kịp trở tay -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ nhảy Mã sai chân: Tướng Đen lách thoát cung, bầy Tốt Đen và Xe phản kích cực mạnh -> Đỏ THUA!"
+  },
+  {
+    "tier": 2,
+    "id": 3,
+    "name": "Tam Binh Vây Thành (Phế Xe Khai Lộ)",
+    "fen": "3a5/2P1ak3/6P2/3PR4/9/9/7r1/5p3/4p4/5K3",
+    "win_line": "1. X6=5! (Phế Xe ăn Sĩ ép Tướng/Sĩ Đen ăn về). 2. B7=6 (Binh lách vào chiếu dứt điểm trận đấu) -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ dùng Binh ăn Sĩ trước: Tướng Đen ăn lên thoát ra ngoài, Đen đâm Xe chiếu bí -> Đỏ THUA!"
+  },
+  {
+    "tier": 2,
+    "id": 4,
+    "name": "Đơn Xe Độc Mã Phá Càn Khôn",
+    "fen": "4k4/9/N8/9/9/6B2/5pr2/3AB3R/3p5/5K3",
+    "win_line": "1. X1+2 chiếu tướng, phối hợp M9+7 tạo gọng kìm xiết chặt Tướng Đen -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ chạy Tướng: Tốt Đen tiến 1 bóp nghẹt cung cấm -> Đỏ THUA!"
+  },
+  {
+    "tier": 2,
+    "id": 5,
+    "name": "Song Xa Vấn Lộ Khóa Tướng Đáy",
+    "fen": "3k2b2/2R6/b2a5/9/N8/4R4/9/9/c3p1p1C/3p1K3",
+    "win_line": "1. X7+1 chiếu ép Tướng lên tầng 2, M9+8 khóa đường chạy, Xe dưới thọc sườn kết liễu -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ tham ăn Pháo Đen: Tốt Đen tiến 1 đâm chiếu sát cục -> Đỏ THUA!"
+  },
+  {
+    "tier": 3,
+    "id": 1,
+    "name": "Cửu Lộ Phong Vân (Tướng Xuất Cung Phụ Chiến)",
+    "fen": "9/7R1/2Ck5/9/5P2c/2Np5/9/5n3/r3p4/3K5",
+    "win_line": "Chuỗi nước chiếu tuyệt đối: Pháo 7 lách chiếu, Xe 8 thọc sâu, ép Tướng Đen chạy dọc bàn cờ rồi mượn mặt Tướng Đỏ hạ sát -> Đỏ THẮNG!",
+    "lose_line": "Chỉ cần 1 nước không chiếu (đi nguội): Xe và Tốt Đen bên dưới lập tức sát tử Đỏ -> Đỏ THUA!"
+  },
+  {
+    "tier": 3,
+    "id": 2,
+    "name": "Hỏa Thiêu Liên Doanh (Pháo Mã Binh Trận)",
+    "fen": "3ak1b2/2P2P3/3ac2P1/9/1R7/C5N2/9/3p1p1C1/4p2r1/5K3",
+    "win_line": "1. Binh áp sát ép Tướng, Pháo từ xa bắn đòn chặn hậu, Mã nhảy ngọa tào tạo thế Tam Tướng Vây Hãm -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ đi sai thứ tự quân làm nghẽn lộ Pháo: Đen phản kích đâm Xe chiếu bí -> Đỏ THUA!"
+  },
+  {
+    "tier": 3,
+    "id": 3,
+    "name": "Đơn Xa Xảo Sát Phá Song Tượng",
+    "fen": "3c2b2/3k5/4b4/9/9/5R3/9/9/9/4K4",
+    "win_line": "Xe Đỏ điều phối cực kỳ vi diệu: Chiếu rỉa Tượng, chiếm trung lộ ép Tướng Đen vào thế bí hiểm -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ đi Xe vội vàng: Pháo Đen che chắn và phản đòn đẩy Đỏ vào thế hòa hoặc thua cờ tàn -> Đỏ THẤT BẠI!"
+  },
+  {
+    "tier": 3,
+    "id": 4,
+    "name": "Bạch Mã Khiêu Khê (Phế Binh Thông Lộ)",
+    "fen": "4P4/9/1P1kr1R2/2C6/9/3p5/5p1r1/2C2p3/4p4/5K3",
+    "win_line": "Phế Binh mở đường cho Pháo giáng đòn chí mạng, Xe càn quét hàng đáy không cho Đen cơ hội thở -> Đỏ THẮNG!",
+    "lose_line": "Nếu tiếc Binh không phế: Toàn bộ lộ công bị tắc, Đen đâm Xe hạ thủ -> Đỏ THUA!"
+  },
+  {
+    "tier": 3,
+    "id": 5,
+    "name": "Long Hổ Tương Tranh (Đại Chiến Tàn Cuộc)",
+    "fen": "9/9/2PnkN3/5P3/5R3/9/rrN6/9/4p4/3K5",
+    "win_line": "Song Mã phối hợp Xe Binh đan dệt lưới trời, từng nước ép Đen phải đổi quân bất lợi rồi sát cục -> Đỏ THẮNG!",
+    "lose_line": "Nếu Đỏ tính sót 1 nước nhảy Mã: Đen lập tức lật ngược thế cờ bằng Song Xe Mã Tốt hùng hậu -> Đỏ THUA NGAY LẬP TỨC!"
+  }
+]

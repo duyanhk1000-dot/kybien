@@ -15,6 +15,13 @@ backend/.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+backend/*_results.json
+backend/*_dump.json
+backend/db_puzzles_dump.json
+backend/audit_*.json
+backend/solved_fixtures_30.json
+backend/all_verified_trees.json
+data/ziga_mirror/
 
 # IDE & System files
 .DS_Store

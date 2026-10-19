@@ -11,6 +11,11 @@ import { runEloChangeSystemTests } from './eloChangeSystem.test.js';
 import { runPveExpSystemTests } from './pveExpSystem.test.js';
 import { runOnlineTrackerTests } from './onlineTracker.test.js';
 import { runSeoSlugTests } from './seoSlug.test.js';
+import { runXiangqiChessRulesTests } from './xiangqiChessRules.test.js';
+import { runPuzzleMilestone1Tests } from './puzzleMilestone1.test.js';
+import { runConcurrencyAndRewardIsolationTests } from './concurrencyAndRewardIsolation.test.js';
+import { runE2EHttpMilestone1Tests } from './e2eHttpMilestone1.test.js';
+import { runDailyPuzzleAndBlogTests } from './dailyPuzzleAndBlog.test.js';
 
 async function run() {
   try {
@@ -27,8 +32,14 @@ async function run() {
     await runPveExpSystemTests();
     await runOnlineTrackerTests();
     await runSeoSlugTests();
+    await runXiangqiChessRulesTests();
+    await runPuzzleMilestone1Tests();
+    await runConcurrencyAndRewardIsolationTests();
+    await runE2EHttpMilestone1Tests();
+    await runDailyPuzzleAndBlogTests();
+    await (await import('./ugcPuzzleCreator.test.js')).runUgcPuzzleCreatorTests();
     console.log('\n==================================================');
-    console.log('🏆 ALL KYBIEN SYSTEM TESTS (SECURITY, ENGINE, ELO, EXP, PVE SYSTEM, LEADERBOARD, V2 AUDIT, ELO CHANGE, ONLINE TRACKER, SEO SLUG) PASSED 100%!');
+    console.log('🏆 ALL KYBIEN SYSTEM TESTS (SECURITY, CHESS RULES, 30 FIXTURES, EXP ATOMICITY, CONCURRENCY ISOLATION, E2E HTTP API, LEADERBOARD, V2 AUDIT, SEO SLUG, PUZZLE MILESTONE 1, DAILY PUZZLES & BLOG AUTOMATION, UGC CREATOR & VERIFICATION) PASSED 100%!');
     console.log('==================================================\n');
     process.exit(0);
   } catch (err) {
