@@ -605,6 +605,7 @@
       
       <ul class='nav-links'>
         <li><a href='/'>Trang Chủ</a></li>
+        <li><a href='/p/co-the.html'>Cờ Thế</a></li>
         <li><a href='/p/cam-nang.html'>Cẩm Nang</a></li>
         <li><a href='/p/arena.html'>Sàn Đấu</a></li>
         <li><a href='/search/label/phan-tich-co'>Bình Văn</a></li>
@@ -1217,6 +1218,7 @@
     <p>© 2026 KỲ BIẾN - ĐỆ NHẤT KỲ ĐẠO BÍ TRUYỀN GIANG HỒ. Bổn Trang kính chúc chư vị kỳ hữu kỳ nghệ thăng tiến, danh chấn bát hoang.</p>
     <div style='margin-top: 10px; font-size: 0.82rem; color: #a8947d; display: flex; justify-content: center; gap: 15px;'>
       <a href='/'>Trang Chủ</a> |
+      <a href='/p/co-the.html'>Cờ Thế</a> |
       <a href='/p/cam-nang.html'>Cẩm Nang</a> |
       <a href='/p/arena.html'>Sàn Đấu</a> |
       <a href='/search/label/phan-tich-co'>Bình Văn</a>
