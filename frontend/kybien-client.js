@@ -70,16 +70,9 @@
 
   function cleanPostSnippets() {
     document.querySelectorAll('.post-card-snippet').forEach((el) => {
-      let txt = (el.innerText || el.textContent || '').trim();
-      const summaryIdx = txt.indexOf('Tóm tắt ván cờ:');
-      if (summaryIdx !== -1) {
-        txt = '🎯 ' + txt.slice(summaryIdx).trim();
-      } else if (txt.includes('Vào Sàn Đấu') || txt.includes('Bí Pháp Cẩm Nang')) {
-        txt = txt.replace(/^⚔️[^\n\r]+?📜\s*Bí Pháp Cẩm Nang\s*/i, '')
-                 .replace(/^⚔️[^\n\r]+?➔\s*/i, '').trim();
-      }
+      let txt = el.innerText || el.textContent || '';
       txt = txt.replace(/⏩\s*Đầu|◀\s*Lùi|Tiến\s*▶|Cuối\s*⏩|🔴\s*Nước\s*\d+.*$/gi, '').trim();
-      if (txt && txt !== '...') el.textContent = txt;
+      if (txt) el.textContent = txt;
     });
   }
 
