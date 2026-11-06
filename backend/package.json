@@ -6,10 +6,11 @@
   "scripts": {
     "build": "tsc",
     "test": "tsc && node dist/tests/runAllTests.js",
-    "start": "npx prisma db push && node dist/server.js",
+    "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "prisma:generate": "prisma generate",
-    "prisma:push": "prisma db push"
+    "prisma:push": "prisma db push",
+    "db:sync": "prisma db push"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
