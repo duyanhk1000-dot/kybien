@@ -171,9 +171,12 @@
         clientSocket.on('online_stats', (stats) => {
           updateOnlineStatsUI(stats);
         });
-        clientSocket.on('connect', () => { showNetBanner('✅ Đã kết nối lại máy chủ.', false); });
-        clientSocket.on('disconnect', () => { showOnlineStatsOffline(); showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...', true); });
-        clientSocket.on('connect_error', () => { showOnlineStatsOffline(); showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...', true); });
+        // Chỉ báo "đã kết nối lại" khi trước đó từng rớt mạng trong phiên này —
+        // 'connect' cũng bắn ở lần kết nối đầu tiên, nên không được báo ở đó.
+        let clientWasDown = false;
+        clientSocket.on('connect', () => { if (clientWasDown) { clientWasDown = false; showNetBanner('✅ Đã kết nối lại máy chủ.', false); } });
+        clientSocket.on('disconnect', () => { clientWasDown = true; showOnlineStatsOffline(); showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...', true); });
+        clientSocket.on('connect_error', () => { clientWasDown = true; showOnlineStatsOffline(); showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...', true); });
         window._kybienGlobalSocket = clientSocket;
       } catch (e) {
         console.warn('[Online Tracker Socket]', e);
@@ -1134,9 +1137,11 @@
         try {
           const token = localStorage.getItem('kybien_jwt_token') || '';
           const socket = io(SERVER_URL, { auth: { token } });
-          socket.on('connect', () => { showNetBanner('✅ Đã kết nối lại máy chủ.', false); socket.emit('get_public_rooms'); });
-          socket.on('disconnect', () => { showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...', true); });
-          socket.on('connect_error', () => { showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...', true); });
+          // Như socket thống kê: chỉ báo "đã kết nối lại" khi trước đó từng rớt mạng.
+          let lobbyWasDown = false;
+          socket.on('connect', () => { if (lobbyWasDown) { lobbyWasDown = false; showNetBanner('✅ Đã kết nối lại máy chủ.', false); } socket.emit('get_public_rooms'); });
+          socket.on('disconnect', () => { lobbyWasDown = true; showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...', true); });
+          socket.on('connect_error', () => { lobbyWasDown = true; showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...', true); });
           socket.on('public_rooms_list', (rooms) => renderRooms(rooms));
           socket.on('match_found', () => {
             if (window.location.pathname.indexOf('/p/arena.html') === -1) {

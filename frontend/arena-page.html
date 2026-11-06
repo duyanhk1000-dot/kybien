@@ -1644,11 +1644,15 @@ if(!await ensureUser()){alert('Vui lòng đăng nhập tài khoản để sử d
 const token=localStorage.getItem('kybien_jwt_token');
 if(!token||typeof io==='undefined'){alert('Không thể khởi tạo kết nối máy chủ!');return false}
 if(!socket){socket=io(SERVER_API_ENDPOINT,{auth:{token}});
-socket.on('connect',()=>{showNetBanner('✅ Đã kết nối máy chủ.',false);socket.emit('get_public_rooms');});
-socket.on('disconnect',()=>{const s=$('st');if(s){s.innerText='⚠️ Mất kết nối máy chủ — đang thử kết nối lại...';s.style.color='#ff6b6b';}showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...',true);});
-socket.on('connect_error',()=>{showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...',true);});
+// 'connect' cũng bắn ở lần kết nối đầu tiên nên chỉ báo "đã kết nối lại" khi
+// trước đó từng rớt mạng trong phiên này; 'reconnect' không báo nữa vì
+// socket.io bắn cả 'connect' lẫn 'reconnect' khi nối lại (báo trùng).
+let sockWasDown=false;
+socket.on('connect',()=>{if(sockWasDown){sockWasDown=false;showNetBanner('✅ Đã kết nối lại máy chủ.',false);}socket.emit('get_public_rooms');});
+socket.on('disconnect',()=>{sockWasDown=true;const s=$('st');if(s){s.innerText='⚠️ Mất kết nối máy chủ — đang thử kết nối lại...';s.style.color='#ff6b6b';}showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...',true);});
+socket.on('connect_error',()=>{sockWasDown=true;showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...',true);});
 socket.on('reconnect_attempt',()=>{showNetBanner('🔄 Đang thử kết nối lại máy chủ...',true);});
-socket.on('reconnect',()=>{const s=$('st');if(s)s.style.color='';showNetBanner('✅ Đã kết nối lại máy chủ.',false);socket.emit('get_public_rooms');});
+socket.on('reconnect',()=>{const s=$('st');if(s)s.style.color='';socket.emit('get_public_rooms');});
 socket.on('matchmaking_queued',d=>{$('st').innerText=d.message});
 socket.on('room_created',d=>{const vn=VARS[d.variant]||'Cờ Tướng';$('st').innerText='Mã phòng: '+d.roomCode+' ['+vn+'] - đang chờ đối thủ...';say('[Hệ thống] Đã tạo mã phòng: '+d.roomCode+' ['+vn+'].','#f1c40f','log-sp');alert('Đã tạo phòng!\nMã phòng: '+d.roomCode+'\nThể loại: '+vn+(d.isPrivate?'\n(Phòng riêng)':'\n(Công khai)'))});
 socket.on('public_rooms_list',rooms=>{const l=$('public-rooms-list');if(!l)return;l.innerHTML='';
