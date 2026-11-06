@@ -446,6 +446,16 @@
     }
     .center-roll:disabled { opacity: 0.45; cursor: not-allowed; }
     .center-roll.pulse { animation: btn-pulse 1s ease-in-out infinite; }
+    /* Trên điện thoại: khung lắc xí ngầu dời xuống dưới bàn cờ (to hơn, khỏi che ô giữa) */
+    .dice-zone-mobile { display: none; width: 100%; margin-top: 12px; justify-content: center; }
+    @media (max-width: 640px) {
+      .dice-zone-mobile { display: flex; }
+      .dice-zone-mobile .center-dice { padding: 10px 14px; gap: 8px; }
+      .dice-zone-mobile .die-sm { width: 44px; height: 44px; padding: 6px; border-radius: 8px; }
+      .dice-zone-mobile .die-sm .pip { width: 7px; height: 7px; }
+      .dice-zone-mobile .center-roll { padding: 8px 16px; font-size: 0.95rem; }
+      .dice-zone-mobile .center-points { font-size: 1.1rem; }
+    }
     /* Xí ngầu nhỏ trong ô giữa */
     .die-sm { width: 32px; height: 32px; padding: 4px; border-radius: 6px; }
     .die-sm .pip { width: 5px; height: 5px; }
@@ -800,6 +810,9 @@
           </div>
         </div>
 
+        <!-- Trên điện thoại: khung lắc xí ngầu dời xuống đây (dưới bàn cờ) -->
+        <div class="dice-zone-mobile" id="dice-zone-mobile"></div>
+
         <div class="board-actions">
           <button class="btn-act btn-primary" onclick="init()">🔄 Đánh Lại</button>
           <button class="btn-act" onclick="document.getElementById('nw').click()">⚔️ Ván Mới</button>
@@ -831,7 +844,7 @@
           <h4>✨ Luật riêng của trang này</h4>
           <ul>
             <li><strong>Bay số 1</strong> (chỉ chơi 1 xúc xắc): gieo ra 1, quân đang ở khu vực nào thì được <strong>bay thẳng tới cửa đích</strong> của khu đó (ô có viền màu) nếu đường đi không có quân nào cản; có quân địch đứng ở cửa đích thì <strong>đá nó về chuồng</strong>. Bấm nút <strong>✈</strong> trên quân để bay, bấm vào quân để đi 1 ô bình thường.</li>
-            <li><strong>Ô đích ở giữa:</strong> ô trung tâm là <strong>ô đích</strong> — quân không đi xuyên qua mà đi <strong>vào</strong> đó để về đích. Trong đích có 6 bậc (5 ô màu + ô trung tâm), đi lên theo số xúc xắc, cần <strong>số chính xác</strong> để lên tới đỉnh (ô trung tâm tính là 1 bước); gieo thừa thì đứng yên — <strong>chỉ leo lên, không tụt xuống</strong>.</li>
+            <li><strong>Về đích:</strong> quân phải gieo <strong>đúng số</strong> để về tới <strong>ô cửa đích</strong> (ô có viền màu) rồi mới được vào đường về đích — gieo thừa thì không vào được. Trong đích có 6 ô đánh số <strong>1–6</strong> (6 ở trong cùng): <strong>số xí ngầu = số ô muốn lên</strong> — ví dụ đang ở ô 1, gieo ra 6 mới lên được ô 6 (về trung tâm); chỉ được lên ô có số lớn hơn, không đi lùi.</li>
             <li><strong>Chơi 2 xúc xắc:</strong> mỗi xúc xắc là 1 nước đi riêng (đi 2 quân, hoặc 1 quân đi 2 lần); <strong>không có luật bay số 1</strong>; ra 6 ở 1 trong 2 xúc xắc thì được gieo tiếp. Luật <strong>ba lần 6 mất lượt chỉ áp dụng ở chế độ 1 xúc xắc</strong>.</li>
             <li><strong>Lắc xúc xắc:</strong> bấm vào cốc hoặc nút Lắc — xúc xắc xoay mặt liên tục rồi chậm dần mới hiện kết quả; ra 6 hoặc ra 1 thì xúc xắc sáng vàng lên.</li>
           </ul>
@@ -991,10 +1004,25 @@ function legalMoves(state, color, die, diceMode, opts) {
       const door = canFly(state, color, pos);
       if (door !== null) moves.push({ token: i, kind: 'fly', toPos: flyPos(color, door), flyDoor: door });
     }
-    const to = pos + die;
-    if (to > FINISH_POS) continue; // gieo thừa: đứng yên, không tụt xuống
-    if (!isPathClear(state, color, pos, to)) continue; // có quân cản trên đường
-    moves.push({ token: i, kind: 'move', toPos: to });
+    // Luật về đích mới:
+    // - Trên đường đi (pos <= 49): chỉ được đi tới tối đa ô cửa đích (pos 50).
+    //   Không được nhảy thẳng từ đường đi vào ô đích (phải gieo đúng số để về cửa đích).
+    // - Ở cửa đích (pos 50) hoặc trong đích (pos 51..55): số xí ngầu = số ô đích
+    //   muốn tới (1..6, 6 = về trung tâm). Chỉ được lên ô có số lớn hơn ô đang đứng.
+    if (pos <= 49) {
+      const to = pos + die;
+      if (to > 50) continue; // chưa về đúng cửa đích thì không được vào đích
+      if (!isPathClear(state, color, pos, to)) continue; // có quân cản trên đường
+      moves.push({ token: i, kind: 'move', toPos: to });
+    } else if (pos === 50) {
+      // Ở cửa đích: gieo n thì vào ô đích số n.
+      moves.push({ token: i, kind: 'move', toPos: 50 + die });
+    } else {
+      // Trong đích (ô số c = pos - 50): chỉ lên được ô có số lớn hơn.
+      const c = pos - 50;
+      if (die <= c) continue;
+      moves.push({ token: i, kind: 'move', toPos: 50 + die });
+    }
   }
   return moves;
 }
@@ -1186,9 +1214,10 @@ function buildBoard() {
         if (hi >= 0) {
           d.classList.add('home-' + col);
           // Số bước đích: ô ngoài cùng = 1, sát trung tâm = 5 (trung tâm = 6).
-          // Số xoay theo chiều mũi tên: Đỏ đi xuống (90°), Lam đi sang trái (180°),
-          // Vàng đi lên (270°), Xanh lá đi sang phải (0°).
-          const rot = { red: ' rot-90', blue: ' rot-180', yellow: ' rot-270', green: '' }[col];
+          // Số xoay theo chiều mũi tên: Đỏ đi xuống (90 do), Lam đi sang trái (180 do),
+          // Vàng đi lên (270 do), Xanh lá đi sang phải (0 do).
+          // Lam: không xoay ngược nữa, để số thẳng (đọc 6-5-4-3-2-1 từ trung tâm ra ngoài).
+          const rot = { red: ' rot-90', blue: '', yellow: ' rot-270', green: '' }[col];
           const num = document.createElement('span');
           num.className = 'home-num' + rot;
           num.textContent = String(hi + 1);
@@ -1239,7 +1268,29 @@ function buildBoard() {
   document.getElementById('btn-roll').onclick = doRoll;
   document.getElementById('die-0').onclick = () => onDieClick(0);
   document.getElementById('die-1').onclick = () => onDieClick(1);
+  placeDiceWidget();
 }
+
+// Trên điện thoại (<=640px): dời khung lắc xí ngầu xuống dưới bàn cờ để khỏi che ô giữa.
+const diceMobileMQ = (typeof window !== 'undefined' && window.matchMedia)
+  ? window.matchMedia('(max-width: 640px)')
+  : { matches: false, addEventListener: function () {} };
+function placeDiceWidget() {
+  const w = document.getElementById('center-dice');
+  if (!w) return;
+  if (diceMobileMQ.matches) {
+    const zone = document.getElementById('dice-zone-mobile');
+    if (zone && w.parentNode !== zone) zone.appendChild(w);
+  } else {
+    const toks = document.getElementById('center-tokens');
+    if (centerEl && w.parentNode !== centerEl) {
+      if (toks) centerEl.insertBefore(w, toks);
+      else centerEl.appendChild(w);
+    }
+  }
+}
+if (diceMobileMQ.addEventListener) diceMobileMQ.addEventListener('change', placeDiceWidget);
+else if (diceMobileMQ.addListener) diceMobileMQ.addListener(placeDiceWidget);
 
 function makeToken(color, ti) {
   const t = document.createElement('div');
@@ -1424,6 +1475,7 @@ function syncHumanOptions() {
   selH.value = String(Math.min(cur, total));
 }
 function init() {
+  clearTimeout(autoMoveTimer);
   const total = parseInt(document.getElementById('sel-total').value, 10) || 4;
   const humans = Math.min(parseInt(document.getElementById('sel-humans').value, 10) || 1, total);
   // Màu tham gia: 2 người -> Đỏ + Vàng (đối diện nhau), 3 người -> Đỏ + Lam + Vàng, 4 người -> đủ 4 màu.
@@ -1571,6 +1623,31 @@ function finishRoll(vals) {
   renderDice();
   updateTags();
   maybeAiTurn();
+  autoMoveIfSingle();
+}
+// Chỉ có đúng 1 nước đi (người chơi) thì tự động đi luôn, khỏi phải bấm.
+let autoMoveTimer = null;
+function autoMoveIfSingle() {
+  if (phase !== 'move' || !isHuman(curColor())) return;
+  const seen = new Set();
+  const list = [];
+  dice.forEach((d, di) => {
+    if (!d || d.used) return;
+    for (const m of legalMoves(state, curColor(), d.v, diceMode, moveOpts())) {
+      const key = m.token + '|' + m.kind + '|' + m.toPos;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      list.push({ dieIdx: di, move: m });
+    }
+  });
+  if (list.length !== 1) return;
+  const { dieIdx, move } = list[0];
+  addLog('Chỉ có 1 nước đi \u2014 tự động đi.');
+  clearTimeout(autoMoveTimer);
+  autoMoveTimer = setTimeout(() => {
+    if (phase !== 'move' || !isHuman(curColor())) return;
+    executeMove(curColor(), move, dieIdx);
+  }, 700);
 }
 function onDieClick(di) {
   if (phase !== 'move' || diceMode !== 2) return;
@@ -1760,11 +1837,17 @@ boardEl.addEventListener('click', (e) => {
   const badge = e.target.closest('.fly-badge');
   if (badge) { doFly(badge.dataset.color, +badge.dataset.token); return; }
   const tok = e.target.closest('.token');
-  if (tok) { onTokenClick(tok.dataset.color, +tok.dataset.token); return; }
+  // Bấm trúng quân của mình và quân đó đi được thì đi quân đó.
+  // Bấm trúng quân địch đang chồng lên, quân mình không đi được, hoặc bấm vào
+  // khoảng trống trong ô: đi 1 quân của mình trong ô đó (không cần bấm đúng quân bé tí).
+  if (tok && tok.dataset.color === curColor()) {
+    const mov = movableInfo(curColor());
+    if (mov.has(+tok.dataset.token)) { onTokenClick(tok.dataset.color, +tok.dataset.token); return; }
+  }
   const cell = e.target.closest('.cell');
   if (cell) {
     const movables = cell.querySelectorAll('.token.movable');
-    if (movables.length === 1) {
+    if (movables.length >= 1) {
       onTokenClick(movables[0].dataset.color, +movables[0].dataset.token);
     }
   }
