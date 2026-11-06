@@ -832,6 +832,7 @@ const BLACK = 1, WHITE = 2;
 let size = 9, handicap = 0, komi = 7.5, mode = 'ai';
 let humanColor = 1, aiColor = 2;
 let B, cur, over, phase, passCount, lastPasser, captured, prevHash, hist, moveList, moveCount, lastMove, deadSet, scoreResult;
+let savedKomi = 7.5; // komi trước khi bật chấp quân (để khôi phục khi tắt chấp)
 let aiTimer = null;
 const CELL = 40, MARGIN = 36;
 
@@ -858,6 +859,7 @@ function restore(s) {
 function init() {
   size = +document.getElementById('boardsize').value || 9;
   handicap = +document.getElementById('handicap').value || 0;
+  syncModeTabs(); // ép komi về 0.5 khi có chấp quân / khôi phục khi tắt chấp — trước khi đọc komi
   komi = +document.getElementById('komi').value || 7.5;
   B = newBoard(size);
   cur = BLACK;
@@ -892,12 +894,19 @@ function syncModeTabs() {
   document.getElementById('btn-win-swap') && (document.getElementById('btn-win-swap').style.display = 'none');
   const hc = +document.getElementById('handicap').value || 0;
   const komiSel = document.getElementById('komi');
-  if (hc > 0) { komiSel.value = '0.5'; komiSel.disabled = true; }
-  else komiSel.disabled = false;
+  if (hc > 0) {
+    if (!komiSel.disabled) savedKomi = +komiSel.value || 7.5; // nhớ komi cũ trước khi ép
+    komiSel.value = '0.5';
+    komiSel.disabled = true;
+  } else {
+    if (komiSel.disabled) komiSel.value = String(savedKomi); // tắt chấp: trả lại komi cũ
+    komiSel.disabled = false;
+  }
+  const komiVal = +komiSel.value || 7.5;
   const diffLabel = { easy: 'Dễ', medium: 'Vừa', hard: 'Khó' }[document.getElementById('diff').value] || 'Vừa';
   document.getElementById('tag-mode-info').textContent =
-    size + ' × ' + size + (hc > 0 ? ' · Chấp ' + hc + ' quân' : ' · Komi ' + komi) +
-    (isAi ? ' · Đấu với máy — ' + diffLabel : ' · 2 người chơi');
+    size + ' × ' + size + (hc > 0 ? ' · Chấp ' + hc + ' quân' : ' · Komi ' + komiVal) +
+    (isAi ? ' · Đấu với máy — ' + diffLabel + ' · Bạn: ' + colorName(humanColor) : ' · 2 người chơi');
 }
 
 function selectQuickMode(m) {
