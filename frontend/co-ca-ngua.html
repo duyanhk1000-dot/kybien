@@ -501,10 +501,16 @@
     .token.blue { color: #1565c0; }
     .token.yellow { color: #f9a825; }
     .token.green { color: #2e7d32; }
-    .token.stk-0 { left: 2%; top: 2%; width: 48%; height: 48%; }
-    .token.stk-1 { left: 50%; top: 2%; width: 48%; height: 48%; }
-    .token.stk-2 { left: 2%; top: 50%; width: 48%; height: 48%; }
-    .token.stk-3 { left: 50%; top: 50%; width: 48%; height: 48%; }
+    /* Xếp chồng trên 1 ô: lưới 3x3, tối đa 9 quân (quân thứ 10 trở đi chồng lên ô cuối). */
+    .token.stk-0 { left: 0%; top: 0%; width: 33%; height: 33%; }
+    .token.stk-1 { left: 33%; top: 0%; width: 33%; height: 33%; }
+    .token.stk-2 { left: 66%; top: 0%; width: 33%; height: 33%; }
+    .token.stk-3 { left: 0%; top: 33%; width: 33%; height: 33%; }
+    .token.stk-4 { left: 33%; top: 33%; width: 33%; height: 33%; }
+    .token.stk-5 { left: 66%; top: 33%; width: 33%; height: 33%; }
+    .token.stk-6 { left: 0%; top: 66%; width: 33%; height: 33%; }
+    .token.stk-7 { left: 33%; top: 66%; width: 33%; height: 33%; }
+    .token.stk-8 { left: 66%; top: 66%; width: 33%; height: 33%; }
     .token.movable {
       cursor: pointer;
       animation: token-pulse 0.9s ease-in-out infinite;
@@ -796,7 +802,7 @@
             <div class="cup" id="cup">🎲</div>
           </div>
           <div class="dice-side">
-            <div class="dice-status" id="dice-status">Bấm <span class="hl">Lắc Xúc Xắc</span> để gieo.</div>
+            <div class="dice-status" id="dice-status" aria-live="polite">Bấm <span class="hl">Lắc Xúc Xắc</span> để gieo.</div>
             <div class="dice-actions">
               <button class="btn-act btn-primary pulse" id="btn-roll">🎲 Lắc Xúc Xắc</button>
               <button class="btn-act" id="btn-roll-again" style="display: none;">🎲 Gieo Tiếp</button>
@@ -842,7 +848,7 @@
           <ul>
             <li><strong>Bay số 1</strong> (chỉ chơi 1 xúc xắc): gieo ra 1, quân đang ở khu vực nào thì được <strong>bay thẳng tới cửa đích</strong> của khu đó (ô có viền màu) nếu đường đi không có quân nào cản; có quân địch đứng ở cửa đích thì <strong>đá nó về chuồng</strong>. Bấm nút <strong>✈</strong> trên quân để bay, bấm vào quân để đi 1 ô bình thường.</li>
             <li><strong>Ô đích ở giữa:</strong> ô trung tâm là <strong>ô đích</strong> — quân không đi xuyên qua mà đi <strong>vào</strong> đó để về đích. Trong đích có 6 bậc (5 ô màu + ô trung tâm), đi lên theo số xúc xắc, cần <strong>số chính xác</strong> để lên tới đỉnh (ô trung tâm tính là 1 bước); gieo thừa thì đứng yên — <strong>chỉ leo lên, không tụt xuống</strong>.</li>
-            <li><strong>Chơi 2 xúc xắc:</strong> mỗi xúc xắc là 1 nước đi riêng (đi 2 quân, hoặc 1 quân đi 2 lần); <strong>không có luật bay số 1</strong>; ra 6 ở 1 trong 2 xúc xắc thì được gieo tiếp.</li>
+            <li><strong>Chơi 2 xúc xắc:</strong> mỗi xúc xắc là 1 nước đi riêng (đi 2 quân, hoặc 1 quân đi 2 lần); <strong>không có luật bay số 1</strong>; ra 6 ở 1 trong 2 xúc xắc thì được gieo tiếp. Luật <strong>ba lần 6 mất lượt chỉ áp dụng ở chế độ 1 xúc xắc</strong>.</li>
             <li><strong>Lắc xúc xắc:</strong> bấm vào cốc hoặc nút Lắc — xúc xắc xoay mặt liên tục rồi chậm dần mới hiện kết quả; ra 6 hoặc ra 1 thì xúc xắc sáng vàng lên.</li>
           </ul>
         </div>
@@ -1020,11 +1026,12 @@ function hasWon(state, color) { return state.players[color].tokens.every(p => p 
 function finishedCount(state, color) { return state.players[color].tokens.filter(p => p === FINISH_POS).length; }
 
 // ===== AI nhẹ tích hợp =====
-function dangerAt(state, tIdx) {
+function dangerAt(state, tIdx, me) {
   // Có quân địch đứng sau lưng trong vòng 1-6 ô (có thể ăn mình ở lượt sau)?
+  // Chỉ tính quân khác màu — quân mình đứng sau không phải là nguy hiểm.
   for (let k = 1; k <= 6; k++) {
     const behind = (tIdx - k + 52) % 52;
-    for (const o of occupantsAt(state, behind)) return true;
+    if (occupantsAt(state, behind).some(o => o.color !== me)) return true;
   }
   return false;
 }
@@ -1041,12 +1048,12 @@ function scoreMove(state, color, move, die, hard) {
   if (move.toPos <= 50 && SAFE.has(trackIdx(color, move.toPos))) s += 15; // đáp xuống ô an toàn
   if (hard) {
     const fromCell = cellOf(color, from);
-    if (fromCell.type === 'track' && dangerAt(state, fromCell.idx)) {
+    if (fromCell.type === 'track' && dangerAt(state, fromCell.idx, color)) {
       const toCell = cellOf(color, move.toPos);
       if (toCell.type !== 'track' || SAFE.has(toCell.idx)) s += 12; // thoát khỏi chỗ nguy hiểm
     }
     const toCell = cellOf(color, move.toPos);
-    if (toCell.type === 'track' && !SAFE.has(toCell.idx) && dangerAt(sim, toCell.idx)) s -= 12; // đáp xuống chỗ dễ bị ăn
+    if (toCell.type === 'track' && !SAFE.has(toCell.idx) && dangerAt(sim, toCell.idx, color)) s -= 12; // đáp xuống chỗ dễ bị ăn
   }
   s += move.toPos * 0.2; // ưu tiên quân gần đích
   s += Math.random() * 2; // phá hòa
@@ -1073,14 +1080,24 @@ function aiChoose(state, color, dice, diceMode, level, opts) {
 /* ===== UI ===== */
 let diceMode = 1;
 let setup = { red: 'human', blue: 'ai', yellow: 'ai', green: 'ai' };
-let state, turnIdx, phase, dice, selectedDie, consecutiveSixes, lastRollHadSix, history, logLines;
+let state, turnIdx, phase, dice, selectedDie, consecutiveSixes, lastRollHadSix, turnHistory, logLines;
+let undoLeft = 3; // số lần Đi Lại còn lại trong ván (giới hạn để không gieo lại vô hạn)
+function updateUndoUI() {
+  const btns = [document.getElementById('btn-undo'), document.getElementById('btn-undo-2')];
+  btns.forEach(b => {
+    if (!b) return;
+    b.disabled = undoLeft <= 0;
+    b.textContent = '↩️ Đi Lại (' + undoLeft + ')';
+  });
+}
 let aiTimer = null, rollTimer = null, rollIntervals = [];
 let soundOn = true, audioCtx = null;
 let cellEls = {}, baseEls = {}, centerEl = null;
 let rolledPair = null, exitUsedThisRoll = false;
 let movingToken = null; // {color, token, mode:'hop'|'fly'|'land'}
-// Hình đầu ngựa (SVG) cho quân cờ — dùng currentColor để tô màu theo người chơi.
-const HORSE_SVG = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M58 31 L47 20 L41 8 L36 15 L29 6 L26 15 C22 20 18 27 16 34 C14 42 16 50 20 55 L32 57 C40 56 46 50 48 43 C51 39 55 34 58 31 Z" fill="currentColor" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="44" cy="26" r="2.4" fill="#fff" opacity="0.9"/></svg>';
+// Hình quân Mã cờ vua (SVG) cho quân cờ — đế phẳng như quân cờ thật, cổ dài, hõm hàm.
+// Dùng currentColor để tô màu theo người chơi.
+const KNIGHT_SVG = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M58 30 L47 19 L42 7 L37 15 L30 5 L27 14 C21 18 16 26 14 34 C12 42 12 50 14 56 L12 58 L52 58 C52 52 50 47 47 43 C45 41 45 38 47 36 C50 34 55 32 58 30 Z" fill="currentColor" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="44" cy="26" r="2.4" fill="#fff" opacity="0.9"/></svg>';
 function moveOpts() {
   return { pair: rolledPair, exitUsed: exitUsedThisRoll };
 }
@@ -1197,7 +1214,7 @@ function buildBoard() {
     b.style.gridColumn = basePos[col][1] + ' / ' + (basePos[col][1] + 6);
     b.innerHTML = '<div class="base-inner"></div>' +
       [[25, 25], [75, 25], [25, 75], [75, 75]].map(([x, y]) =>
-        '<span class="spot" style="left:' + x + '%;top:' + y + '%">' + HORSE_SVG + '</span>').join('');
+        '<span class="spot" style="left:' + x + '%;top:' + y + '%">' + KNIGHT_SVG + '</span>').join('');
     boardEl.appendChild(b);
     baseEls[col] = b;
   }
@@ -1215,7 +1232,10 @@ function makeToken(color, ti) {
   t.className = 'token ' + color;
   t.dataset.color = color;
   t.dataset.token = ti;
-  t.innerHTML = HORSE_SVG;
+  t.innerHTML = KNIGHT_SVG;
+  t.setAttribute('role', 'button');
+  t.setAttribute('tabindex', '0');
+  t.setAttribute('aria-label', 'Quân Mã ' + COLOR_VN[color] + ' số ' + (ti + 1));
   if (movingToken && movingToken.color === color && movingToken.token === ti) {
     t.classList.add(movingToken.mode === 'fly' ? 'flying' : movingToken.mode === 'land' ? 'landed' : 'hopping');
   }
@@ -1242,6 +1262,7 @@ function movableInfo(color) {
 function renderTokens() {
   boardEl.querySelectorAll('.token,.fly-badge,.center-token').forEach(el => el.remove());
   const mov = movableInfo(curColor());
+  const humanTurn = isHuman(curColor());
   const cellGroups = {};
   const baseGroups = {};
   for (const color of state.order) {
@@ -1261,7 +1282,7 @@ function renderTokens() {
       const d = document.createElement('div');
       d.className = 'center-token';
       d.style.color = centerColor[color];
-      d.innerHTML = HORSE_SVG;
+      d.innerHTML = KNIGHT_SVG;
       centerEl.appendChild(d);
     });
   }
@@ -1274,7 +1295,7 @@ function renderTokens() {
       t.style.top = (spot[1] - 13) + '%';
       t.style.width = '26%';
       t.style.height = '26%';
-      if (color === curColor() && mov.has(ti)) t.classList.add('movable');
+      if (color === curColor() && humanTurn && mov.has(ti)) t.classList.add('movable');
       baseEls[color].appendChild(t);
     }
   }
@@ -1285,14 +1306,14 @@ function renderTokens() {
     const cellEl = cellEls[k];
     group.forEach((tk, idx) => {
       const t = makeToken(tk.color, tk.token);
-      if (group.length > 1) t.classList.add('stk-' + idx);
-      if (tk.color === curColor() && mov.has(tk.token)) {
+      if (group.length > 1) t.classList.add('stk-' + Math.min(idx, 8));
+      if (tk.color === curColor() && humanTurn && mov.has(tk.token)) {
         t.classList.add('movable');
         if (mov.get(tk.token).fly) t.classList.add('can-fly');
       }
       cellEl.appendChild(t);
     });
-    if (canFlyNow) {
+    if (canFlyNow && humanTurn) {
       for (const tk of group) {
         if (tk.color === curColor() && canFly(state, tk.color, tk.pos) !== null) {
           const b = document.createElement('span');
@@ -1300,6 +1321,9 @@ function renderTokens() {
           b.textContent = '✈ BAY';
           b.dataset.color = tk.color;
           b.dataset.token = tk.token;
+          b.setAttribute('role', 'button');
+          b.setAttribute('tabindex', '0');
+          b.setAttribute('aria-label', 'Bay quân Mã ' + COLOR_VN[tk.color] + ' số ' + (tk.token + 1));
           cellEl.appendChild(b);
         }
       }
@@ -1397,18 +1421,20 @@ function init() {
   turnIdx = 0;
   consecutiveSixes = 0;
   lastRollHadSix = false;
-  history = [];
+  turnHistory = [];
   logLines = [];
   dice = [];
   selectedDie = null;
+  undoLeft = 3;
   buildBoard();
   beginTurn();
   renderStandings();
+  updateUndoUI();
   document.getElementById('move-history').innerHTML = '<div class="history-line">Chưa có nước đi nào — Đỏ đi trước.</div>';
   addLog('Ván mới bắt đầu: ' + order.map(c => COLOR_VN[c]).join(', ') + '. Đỏ đi trước.');
 }
 function beginTurn() {
-  history.push(snapshot());
+  turnHistory.push(snapshot());
   phase = 'roll';
   dice = [];
   selectedDie = null;
@@ -1420,6 +1446,7 @@ function beginTurn() {
   maybeAiTurn();
 }
 function endTurn() {
+  consecutiveSixes = 0; // không để bộ đếm rò sang lượt người kế tiếp
   turnIdx = (turnIdx + 1) % state.order.length;
   beginTurn();
 }
@@ -1430,6 +1457,7 @@ function selectDiceMode(n) {
   init();
 }
 function maybeAiTurn() {
+  clearTimeout(aiTimer);
   if (phase === 'over') return;
   if (isHuman(curColor())) return;
   if (phase === 'roll') {
@@ -1484,6 +1512,7 @@ function startRoll() {
   rollIntervals.push(fast);
 }
 function finishRoll(vals) {
+  rollIntervals = []; // dọn mảng interval đã tự kết thúc
   cupEl.classList.remove('shaking');
   cupEl.classList.add('lifted');
   const diceEls = [document.getElementById('die-0'), document.getElementById('die-1')].slice(0, diceMode);
@@ -1520,7 +1549,8 @@ function finishRoll(vals) {
     return;
   }
   phase = 'move';
-  selectedDie = 0;
+  // Chọn xúc xắc đầu tiên có nước đi hợp lệ để tô sáng (2 xúc xắc: xúc xắc 0 có thể không đi được nhưng xúc xắc 1 thì được).
+  selectedDie = Math.max(0, vals.findIndex(v => legalMoves(state, curColor(), v, diceMode, moveOpts()).length > 0));
   const goodNote = vals.includes(6) ? ' Ra 6 — được gieo tiếp!' : (diceMode === 1 && vals[0] === 1 ? ' Ra 1 — quân có nút ✈ thì bay được!' : '');
   setStatus(who + ' gieo được ' + vals.join(' và ') + '.' + goodNote + ' Chọn quân để đi.');
   renderTokens();
@@ -1530,13 +1560,14 @@ function finishRoll(vals) {
 }
 function onDieClick(di) {
   if (phase !== 'move' || diceMode !== 2) return;
+  if (!isHuman(curColor())) return;
   if (!dice[di] || dice[di].used) return;
   selectedDie = di;
   renderDice();
   renderTokens();
 }
 function onTokenClick(color, tokenIdx) {
-  if (phase !== 'move' || color !== curColor()) return;
+  if (phase !== 'move' || color !== curColor() || !isHuman(color)) return;
   const mov = movableInfo(color);
   const info = mov.get(tokenIdx);
   if (!info) return;
@@ -1548,7 +1579,7 @@ function onTokenClick(color, tokenIdx) {
   executeMove(color, m, di);
 }
 function doFly(color, tokenIdx) {
-  if (phase !== 'move' || color !== curColor() || diceMode !== 1) return;
+  if (phase !== 'move' || color !== curColor() || diceMode !== 1 || !isHuman(color)) return;
   const di = dice.findIndex(x => !x.used && x.v === 1);
   if (di < 0) return;
   const m = legalMoves(state, color, 1, 1, moveOpts()).find(x => x.token === tokenIdx && x.kind === 'fly');
@@ -1595,7 +1626,8 @@ function animateMove(color, move, fromPos, done) {
 }
 function afterMove(color, move, di) {
   movingToken = null;
-  const ev = { captured: captureAt(state, color, move.toPos), finished: move.toPos === FINISH_POS };
+  // Thống nhất luật ăn quân qua applyMove (cùng code với AI mô phỏng).
+  const ev = applyMove(state, color, move);
   const who = COLOR_VN[color];
   let msg;
   if (move.kind === 'exit') msg = who + ' xuất quân!';
@@ -1648,20 +1680,22 @@ function afterMove(color, move, di) {
 }
 function undo() {
   if (phase === 'rolling' || phase === 'animating' || phase === 'over') return;
-  if (history.length < 2) return;
+  if (turnHistory.length < 2) return;
+  if (undoLeft <= 0) { addLog('Đã hết lượt Đi Lại (3/ván).'); return; }
   clearTimers();
-  history.pop(); // bỏ lượt hiện tại
-  while (history.length > 1) {
-    const top = history[history.length - 1];
+  turnHistory.pop(); // bỏ lượt hiện tại
+  while (turnHistory.length > 1) {
+    const top = turnHistory[turnHistory.length - 1];
     if (isHuman(state.order[top.turnIdx])) break;
-    history.pop();
+    turnHistory.pop();
   }
-  const s = history[history.length - 1];
+  const s = turnHistory[turnHistory.length - 1];
   restore(s);
+  undoLeft--;
+  updateUndoUI();
   phase = 'roll';
   dice = [];
   selectedDie = null;
-  consecutiveSixes = 0;
   renderTokens();
   renderStandings();
   renderDice();
@@ -1724,6 +1758,14 @@ boardEl.addEventListener('click', (e) => {
       onTokenClick(movables[0].dataset.color, +movables[0].dataset.token);
     }
   }
+});
+// Chơi bằng bàn phím: Tab tới quân/nút bay rồi Enter hoặc Space.
+boardEl.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const badge = e.target.closest('.fly-badge');
+  if (badge) { e.preventDefault(); doFly(badge.dataset.color, +badge.dataset.token); return; }
+  const tok = e.target.closest('.token');
+  if (tok) { e.preventDefault(); onTokenClick(tok.dataset.color, +tok.dataset.token); }
 });
 
 /* ===== Khởi động ===== */
