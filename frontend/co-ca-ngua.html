@@ -52,7 +52,7 @@
 
     /* ===== MAIN LAYOUT ===== */
     .puzzle-main-wrapper {
-      max-width: 1300px;
+      max-width: 1500px;
       margin: 18px auto;
       padding: 0 16px;
       flex: 1;
@@ -377,7 +377,7 @@
     }
     #board-wrap {
       width: 100%;
-      max-width: 620px;
+      max-width: 720px;
       aspect-ratio: 1;
     }
     /* Bàn cờ 15x15 */
@@ -474,15 +474,16 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: #b7950b;
-      opacity: 0.5;
+      gap: 2px;
+      color: #7a5c00;
+      opacity: 0.85;
       pointer-events: none;
       font-weight: 900;
       line-height: 1.1;
       z-index: 1;
     }
-    .center-home .center-mark .star { font-size: 1.7rem; }
-    .center-home .center-mark .lbl { font-size: 0.55rem; letter-spacing: 1px; }
+    .center-home .center-mark .star { font-size: 1.15rem; }
+    .center-home .center-mark .lbl { font-size: 0.72rem; letter-spacing: 2px; }
     /* Quân ngựa: hình đầu ngựa (SVG), không còn khối tròn */
     .token {
       position: absolute;
@@ -586,6 +587,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
     .btn-act:hover {
       background: #5a3d22;
@@ -1097,7 +1099,7 @@ let rolledPair = null, exitUsedThisRoll = false;
 let movingToken = null; // {color, token, mode:'hop'|'fly'|'land'}
 // Hình quân Mã cờ vua (SVG) cho quân cờ — đế phẳng như quân cờ thật, cổ dài, hõm hàm.
 // Dùng currentColor để tô màu theo người chơi.
-const KNIGHT_SVG = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M58 30 L47 19 L42 7 L37 15 L30 5 L27 14 C21 18 16 26 14 34 C12 42 12 50 14 56 L12 58 L52 58 C52 52 50 47 47 43 C45 41 45 38 47 36 C50 34 55 32 58 30 Z" fill="currentColor" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="44" cy="26" r="2.4" fill="#fff" opacity="0.9"/></svg>';
+const KNIGHT_SVG = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M58 22 L48 14 L43 4 L38 11 L31 3 L28 11 C18 16 9 24 8 32 C7 40 14 47 22 52 L6 60 L58 60 L46 52 C46 45 44 39 42 35 C40 32 41 29 43 27 C46 25 53 23 58 22 Z" fill="currentColor" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="44" cy="26" r="2.4" fill="#fff" opacity="0.9"/></svg>';
 function moveOpts() {
   return { pair: rolledPair, exitUsed: exitUsedThisRoll };
 }
