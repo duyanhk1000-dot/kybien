@@ -256,10 +256,24 @@
       ...(options.headers || {}),
     };
 
-    const res = await fetch(`${SERVER_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
+    // Timeout 8 giây: tránh treo vĩnh viễn khi backend chết/ngủ
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    let res;
+    try {
+      res = await fetch(`${SERVER_URL}${endpoint}`, {
+        ...options,
+        headers,
+        signal: ctrl.signal,
+      });
+    } catch (e) {
+      if (e && e.name === 'AbortError') {
+        throw new Error('Hết thời gian chờ máy chủ (8 giây) — vui lòng kiểm tra mạng và thử lại.');
+      }
+      throw e;
+    } finally {
+      clearTimeout(timer);
+    }
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
@@ -575,7 +589,10 @@
   }
 
   async function executePlayerMove(fromR, fromC, toR, toC, moveUci) {
-    if (!state.currentSession) return;
+    if (!state.currentSession) {
+      updateStatus('⚠️ Chưa có phiên chơi — hãy bấm "Đánh Lại" để tạo phiên mới rồi đi tiếp.');
+      return;
+    }
 
     state.isThinking = true;
     updateStatus('⚔️ Đang vận khí xuất chiêu...');
@@ -752,7 +769,7 @@
       }
     } catch (err) {
       console.error('[Load Puzzles Error]', err);
-      updateStatus(`⚠️ Không thể kết nối máy chủ: ${err.message}`);
+      updateStatus(`⚠️ Không thể kết nối máy chủ: ${escapeHtml(err.message)}`);
     }
   }
 
@@ -767,6 +784,8 @@
   }
 
   async function loadPuzzle(pz) {
+    // Race guard: chỉ nhận response của lần tải mới nhất (bấm chuyển ải nhanh)
+    const myReq = (state._loadPuzzleReqId = (state._loadPuzzleReqId || 0) + 1);
     state.currentPuzzle = pz;
     state.board = parseFen(pz.fen);
     state.selectedSquare = null;
@@ -790,15 +809,17 @@
           sessionType: 'RANKED',
         }),
       });
+      if (myReq !== state._loadPuzzleReqId) return; // đã có lần tải mới hơn, bỏ response cũ
       state.currentSession = resp.data;
       state.isThinking = false;
       updateStatus('🔴 Đến lượt Đại hiệp: Hãy tìm diệu thủ sát cục!');
-      const authorDisplay = pz.creator?.username ? `Kỳ thủ ${pz.creator.username}` : 'Kỳ Biến Các';
-      addLog(`⚔️ Khởi đầu kỳ trận: [${pz.title}] • ${authorDisplay}`);
+      const authorDisplay = pz.creator?.username ? `Kỳ thủ ${escapeHtml(pz.creator.username)}` : 'Kỳ Biến Các';
+      addLog(`⚔️ Khởi đầu kỳ trận: [${escapeHtml(pz.title)}] • ${authorDisplay}`);
     } catch (err) {
+      if (myReq !== state._loadPuzzleReqId) return; // đã có lần tải mới hơn, bỏ lỗi cũ
       state.isThinking = false;
       console.error('[Start Session Error]', err);
-      updateStatus(`⚠️ Lỗi khởi tạo phiên chơi: ${err.message}`);
+      updateStatus(`⚠️ Lỗi khởi tạo phiên chơi: ${escapeHtml(err.message)} — bấm "Đánh Lại" để thử lại.`);
     }
   }
 
@@ -926,8 +947,8 @@
         if (pz.constraints) {
           try {
             const c = typeof pz.constraints === 'string' ? JSON.parse(pz.constraints) : pz.constraints;
-            if (c.max_moves) constraintsBadge += ` ≤${c.max_moves} nước`;
-            if (c.forbidden_pieces && c.forbidden_pieces.length > 0) constraintsBadge += ` 🚫${c.forbidden_pieces.join('')}`;
+            if (c.max_moves) constraintsBadge += ` ≤${Number(c.max_moves) || ''} nước`;
+            if (c.forbidden_pieces && c.forbidden_pieces.length > 0) constraintsBadge += ` 🚫${c.forbidden_pieces.map((p) => escapeHtml(String(p))).join('')}`;
           } catch (e) {}
         }
 
@@ -1038,7 +1059,7 @@
         if (c.max_moves) cArr.push(`Sát cục trong ≤ ${c.max_moves} nước`);
         if (c.forbidden_pieces && c.forbidden_pieces.length > 0) {
           const pMap = { R: 'Xe', C: 'Pháo', N: 'Mã' };
-          cArr.push(`Cấm dùng quân: ${c.forbidden_pieces.map((p) => pMap[p] || p).join(', ')}`);
+          cArr.push(`Cấm dùng quân: ${c.forbidden_pieces.map((p) => escapeHtml(pMap[p] || p)).join(', ')}`);
         }
         if (cArr.length > 0) {
           addLog(`<div style="color: #f1c40f; font-weight: bold; background: rgba(241,196,15,0.1); border-left: 3px solid #f1c40f; padding: 4px 8px; border-radius: 4px; margin: 4px 0;">🎯 Thách đấu: ${cArr.join(' | ')}</div>`);
@@ -1867,26 +1888,26 @@
     }
 
     // Chuyển Tab Thư Viện: Chính Tông vs Giang Hồ (UGC)
-    const tabStandard = document.getElementById('tab-library-standard');
-    const tabUgc = document.getElementById('tab-library-ugc');
-
-    if (tabStandard && tabUgc) {
-      tabStandard.onclick = () => {
-        tabStandard.classList.add('active');
-        tabUgc.classList.remove('active');
+    // 4 tab ải: Nhập Môn (EASY) / Vừa (MEDIUM) / Khó (HARD) / Cộng đồng (UGC)
+    const tierTabs = [
+      { id: 'tab-library-standard', tier: 'EASY', label: '1,500 Kỳ Trận' },
+      { id: 'tab-library-medium', tier: 'MEDIUM', label: 'Ải Vừa' },
+      { id: 'tab-library-hard', tier: 'HARD', label: 'Ải Khó' },
+      { id: 'tab-library-ugc', tier: 'UGC', label: 'Kỳ Trận Giang Hồ' },
+    ];
+    tierTabs.forEach(({ id, tier, label }) => {
+      const tab = document.getElementById(id);
+      if (!tab) return;
+      tab.onclick = () => {
+        tierTabs.forEach(({ id: otherId }) => {
+          const other = document.getElementById(otherId);
+          if (other) other.classList.toggle('active', otherId === id);
+        });
         const catalogLabel = document.getElementById('catalog-count-label');
-        if (catalogLabel) catalogLabel.textContent = '1,500 Kỳ Trận';
-        loadPuzzles('EASY');
+        if (catalogLabel) catalogLabel.textContent = label;
+        loadPuzzles(tier);
       };
-
-      tabUgc.onclick = () => {
-        tabUgc.classList.add('active');
-        tabStandard.classList.remove('active');
-        const catalogLabel = document.getElementById('catalog-count-label');
-        if (catalogLabel) catalogLabel.textContent = 'Kỳ Trận Giang Hồ';
-        loadPuzzles('UGC');
-      };
-    }
+    });
 
     // Khởi tạo Creator Engine
     Creator.init();

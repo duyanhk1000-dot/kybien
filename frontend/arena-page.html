@@ -227,7 +227,8 @@
       background: var(--bt);
       border: 1px solid var(--bd);
       color: var(--tx);
-      padding: 7px 11px;
+      padding: 10px 12px;
+      min-height: 44px;
       border-radius: 8px;
       font: 600 .82rem 'Be Vietnam Pro', sans-serif;
       cursor: pointer;
@@ -250,7 +251,7 @@
     .fg label { display: flex; flex-direction: column; gap: 3px; font-size: .72rem; color: var(--mu); }
     .ckrow { display: flex; align-items: center; gap: 7px; font-size: .78rem; margin-top: 8px; color: var(--tx); }
     .acts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-    .acts button { font-size: .78rem!important; padding: 7px 4px!important; background: #2f1f14!important; }
+    .acts button { font-size: .78rem!important; padding: 10px 4px!important; min-height: 44px; background: #2f1f14!important; }
     
     #tray { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; max-height: 290px; overflow: auto; }
     .cd {
@@ -519,6 +520,15 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
+// Escape HTML khi chèn dữ liệu server/người dùng vào innerHTML (chống stored-XSS)
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+// Banner trạng thái mạng (mất kết nối / đã kết nối lại) — dùng textContent nên an toàn
+function showNetBanner(msg,isErr){
+  let b=document.getElementById('kb-net-banner');
+  if(!b){b=document.createElement('div');b.id='kb-net-banner';b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;text-align:center;padding:8px 12px;font:700 .85rem sans-serif;display:none';document.body.appendChild(b);}
+  b.textContent=msg;b.style.display='block';b.style.background=isErr?'#8b0000':'#1e8449';b.style.color='#fff';
+  if(!isErr){clearTimeout(b._t);b._t=setTimeout(()=>{b.style.display='none';},3000);}
+}
 const INF="\u221E";
 const SERVER_API_ENDPOINT='https://kybien-backend.onrender.com';
 const VARS={kb:'Kỳ Biến (Bí Pháp Kiếm Hiệp)',n:'Cờ Tướng Truyền Thống',t:'Cờ Úp Truyền Thống',g:'Cờ Úp Gián Điệp'};
@@ -1612,7 +1622,7 @@ function arenaRegister(){if(window.KybienAuth&&typeof window.KybienAuth.handleRe
 function arenaLogout(){localStorage.removeItem('kybien_jwt_token');if(window.KybienAuth)window.KybienAuth.clearToken();checkAuthUI()}
 function showMatchModal(d,vt,side){
 Snd.check();if($('modal-match-variant'))$('modal-match-variant').innerText='Thể loại: '+vt;
-if($('modal-match-players'))$('modal-match-players').innerHTML='Đỏ: <b>'+d.playerWhite.username+'</b> ('+d.playerWhite.elo+' ELO)<br/>Đen: <b>'+d.playerBlack.username+'</b> ('+d.playerBlack.elo+' ELO)';
+if($('modal-match-players'))$('modal-match-players').innerHTML='Đỏ: <b>'+esc(d.playerWhite.username)+'</b> ('+(Number(d.playerWhite.elo)||1200)+' ELO)<br/>Đen: <b>'+esc(d.playerBlack.username)+'</b> ('+(Number(d.playerBlack.elo)||1200)+' ELO)';
 if($('modal-match-side'))$('modal-match-side').innerText='Bạn cầm quân: '+(side==='r'?'ĐỎ (đi trước)':'ĐEN (đi sau)');
 if($('match-found-modal'))$('match-found-modal').style.display='flex';let n=5;if($('modal-countdown'))$('modal-countdown').innerText=n;
 if(modalTimer)clearInterval(modalTimer);modalTimer=setInterval(()=>{n--;if($('modal-countdown'))$('modal-countdown').innerText=n;if(n<=0)closeMatchModal()},1000)}
@@ -1634,13 +1644,17 @@ if(!await ensureUser()){alert('Vui lòng đăng nhập tài khoản để sử d
 const token=localStorage.getItem('kybien_jwt_token');
 if(!token||typeof io==='undefined'){alert('Không thể khởi tạo kết nối máy chủ!');return false}
 if(!socket){socket=io(SERVER_API_ENDPOINT,{auth:{token}});
-socket.on('connect',()=>socket.emit('get_public_rooms'));
+socket.on('connect',()=>{showNetBanner('✅ Đã kết nối máy chủ.',false);socket.emit('get_public_rooms');});
+socket.on('disconnect',()=>{const s=$('st');if(s){s.innerText='⚠️ Mất kết nối máy chủ — đang thử kết nối lại...';s.style.color='#ff6b6b';}showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...',true);});
+socket.on('connect_error',()=>{showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...',true);});
+socket.on('reconnect_attempt',()=>{showNetBanner('🔄 Đang thử kết nối lại máy chủ...',true);});
+socket.on('reconnect',()=>{const s=$('st');if(s)s.style.color='';showNetBanner('✅ Đã kết nối lại máy chủ.',false);socket.emit('get_public_rooms');});
 socket.on('matchmaking_queued',d=>{$('st').innerText=d.message});
 socket.on('room_created',d=>{const vn=VARS[d.variant]||'Cờ Tướng';$('st').innerText='Mã phòng: '+d.roomCode+' ['+vn+'] - đang chờ đối thủ...';say('[Hệ thống] Đã tạo mã phòng: '+d.roomCode+' ['+vn+'].','#f1c40f','log-sp');alert('Đã tạo phòng!\nMã phòng: '+d.roomCode+'\nThể loại: '+vn+(d.isPrivate?'\n(Phòng riêng)':'\n(Công khai)'))});
 socket.on('public_rooms_list',rooms=>{const l=$('public-rooms-list');if(!l)return;l.innerHTML='';
 if(!rooms||!rooms.length){l.innerHTML='<div style="font-size:.72rem;color:var(--mu);text-align:center;padding:6px">Chưa có phòng công khai nào...</div>';return}
 rooms.forEach(r=>{const d=document.createElement('div');d.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#1a110a;border:1px solid var(--bd);padding:6px 8px;border-radius:6px;cursor:pointer';
-d.innerHTML='<div><b style="color:var(--ac);font-size:.78rem">'+r.roomCode+'</b> <span style="font-size:.68rem;color:#2ecc71">['+(VARS[r.variant]||'Cờ Tướng')+']</span> <span style="font-size:.68rem;color:var(--mu)">'+r.hostName+'</span></div><span style="font-size:.68rem;color:#2ecc71">Vào đấu</span>';
+d.innerHTML='<div><b style="color:var(--ac);font-size:.78rem">'+esc(r.roomCode)+'</b> <span style="font-size:.68rem;color:#2ecc71">['+(VARS[r.variant]||'Cờ Tướng')+']</span> <span style="font-size:.68rem;color:var(--mu)">'+esc(r.hostName)+'</span></div><span style="font-size:.68rem;color:#2ecc71">Vào đấu</span>';
 d.addEventListener('click',()=>joinRoomByCode(r.roomCode));l.appendChild(d)})});
 socket.on('match_found',d=>{
 online.on=true;online.room=d.roomId;searching=false;

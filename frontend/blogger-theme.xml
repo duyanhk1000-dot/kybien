@@ -45,12 +45,19 @@
     <meta content='Đệ nhất kỳ đạo bí truyền giang hồ, kỳ hội đối ẩm bí pháp thập lục kỳ mưu, tái hiện ván cờ tương tác và bình văn sa trường thiên cổ.' property='og:description'/>
   </b:if>
 
+  <!-- Favicon & màu thanh trình duyệt trên mobile -->
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta content='#0d0906' name='theme-color'/>
+
   <!-- Twitter Card Tags -->
-  <meta content='summary_large_image' name='twitter:card'/>
+  <meta content='summary' name='twitter:card'/>
   <meta expr:content='data:blog.pageTitle' name='twitter:title'/>
   <b:if cond='data:blog.metaDescription'>
     <meta expr:content='data:blog.metaDescription' name='twitter:description'/>
   </b:if>
+  <!-- LƯU Ý: chưa có ảnh bìa 1200x630 riêng nên og:image/twitter:image tạm dùng favicon của blog. Khi có ảnh bìa, thay URL dưới đây bằng link ảnh bìa và đổi twitter:card lại thành summary_large_image. -->
+  <meta content='https://kybien.blogspot.com/favicon.ico' property='og:image'/>
+  <meta content='https://kybien.blogspot.com/favicon.ico' name='twitter:image'/>
 
   <!-- JSON-LD Structured Data Schema cho Google Search -->
   <script type='application/ld+json'>
@@ -72,7 +79,7 @@
   
   <!-- Socket.io Client & Ky Bien Core Scripts (Không chặn hiển thị với defer) -->
   <script defer='defer' src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.4'></script>
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.5'></script>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -349,7 +356,7 @@
     /* GRID CÁC THẺ BÀI VIẾT BÌNH VĂN SA TRƯỜNG */
     .post-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr));
       gap: 22px;
     }
 
@@ -510,6 +517,48 @@
       box-sizing: border-box;
     }
 
+    /* Class ẩn thị giác nhưng screen reader vẫn đọc (dùng cho <label> trong form) */
+    .kybien-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    /* Ô tìm kiếm ở header — theo kiểu dáng theme */
+    .kybien-header-search {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kybien-header-search input[type='search'] {
+      background: #22150c;
+      border: 1px solid #5a3d22;
+      border-radius: 6px;
+      color: #e8dcc6;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      width: 150px;
+      font-family: inherit;
+    }
+    .kybien-header-search input[type='search']::placeholder {
+      color: #a8947d;
+    }
+    .kybien-header-search button {
+      background: linear-gradient(135deg, #a83a1f, #8b0000);
+      color: #fff;
+      border: 1px solid #f1c40f;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
     @media (max-width: 900px) {
       .nav-container {
         flex-direction: column;
@@ -592,6 +641,22 @@
         font-size: 0.82rem !important;
       }
     }
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 1.6rem;
+        line-height: 1.3;
+      }
+      .hero-subtitle {
+        font-size: 0.95rem;
+      }
+      .kybien-header-search {
+        width: 100%;
+      }
+      .kybien-header-search input[type='search'] {
+        flex: 1;
+        width: auto;
+      }
+    }
   ]]></b:skin>
 </head>
 <body>
@@ -611,14 +676,22 @@
         <li><a href='/search/label/phan-tich-co'>Bình Văn</a></li>
       </ul>
 
+      <form action='/search' class='kybien-header-search' method='get' role='search'>
+        <label class='kybien-sr-only' for='hdr-search-q'>Tìm kiếm bài viết</label>
+        <input autocomplete='off' id='hdr-search-q' name='q' placeholder='Tìm bài viết...' type='search'/>
+        <button aria-label='Tìm kiếm' type='submit'>🔍</button>
+      </form>
+
       <div id='kybien-header-profile'>
-        <div class='kybien-nav-auth'>
-          <input id='hdr-auth-u' placeholder='Tên kỳ thủ' style='width: 110px;' type='text'/>
-          <input id='hdr-auth-p' placeholder='Mật khẩu' style='width: 100px;' type='password'/>
-          <button onclick='if(window.KybienAuth)window.KybienAuth.handleLogin()' style='background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.78rem;' type='button'>Đăng Nhập</button>
+        <form class='kybien-nav-auth' id='kybien-header-login-form' onsubmit='if(window.KybienAuth)window.KybienAuth.handleLogin(); return false;'>
+          <label class='kybien-sr-only' for='hdr-auth-u'>Tên kỳ thủ</label>
+          <input autocomplete='username' id='hdr-auth-u' placeholder='Tên kỳ thủ' style='width: 110px;' type='text'/>
+          <label class='kybien-sr-only' for='hdr-auth-p'>Mật khẩu</label>
+          <input autocomplete='current-password' id='hdr-auth-p' placeholder='Mật khẩu' style='width: 100px;' type='password'/>
+          <button style='background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.78rem;' type='submit'>Đăng Nhập</button>
           <button onclick='if(window.KybienAuth)window.KybienAuth.handleRegister()' style='background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.78rem;' type='button'>Đăng Ký</button>
           <div id='hdr-auth-err' style='color: #ff6b6b; font-size: 0.72rem; font-weight: bold; width: 100%; display: none;'/>
-        </div>
+        </form>
       </div>
     </div>
   </header>
@@ -695,6 +768,11 @@
                       var currentCleanUrl = window.location.href.split('?')[0].split('#')[0];
                       var container = document.getElementById('kybien-related-posts-container');
                       if(!container) return;
+
+                      // Escape HTML: tiêu đề/URL lấy từ Blogger Feed là dữ liệu động (tiêu đề bài do người đăng đặt, có thể chứa ký tự đặc biệt). Nối thẳng vào innerHTML sẽ phá vỡ HTML hoặc chèn được script (XSS) nên phải escape trước khi chèn.
+                      function escHtml(s){
+                        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                      }
 
                       // 1. Đọc danh sách nhãn của bài viết hiện tại từ DOM
                       var tagEls = document.querySelectorAll('#kybien-post-current-labels .rel-tag');
@@ -857,7 +935,7 @@
                             html += '<div style="margin-bottom: 14px;">' +
                               '<div style="font-size: 0.88rem; font-weight: bold; color: #f1c40f; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">' +
                                 '<span>🏷️</span>' +
-                                '<span>Chủ đề: <b>' + resGrp.name + '</b></span>' +
+                                '<span>Chủ đề: <b>' + escHtml(resGrp.name) + '</b></span>' +
                               '</div>' +
                               '<ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px;">';
 
@@ -865,8 +943,8 @@
                               var postObj = resGrp.items[it];
                               html += '<li style="display: flex; align-items: center; gap: 8px; font-size: 0.92rem; padding: 7px 12px; background: rgba(34,21,12,0.55); border: 1px solid #4a301a; border-radius: 6px;">' +
                                 '<span style="color: #e57373; font-size: 0.72rem;">▶</span>' +
-                                '<a href="' + postObj.url + '" style="color: #e8dcc6; text-decoration: none; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="' + postObj.title + '">' +
-                                  postObj.title +
+                                '<a href="' + escHtml(postObj.url) + '" style="color: #e8dcc6; text-decoration: none; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;" title="' + escHtml(postObj.title) + '">' +
+                                  escHtml(postObj.title) +
                                 '</a>' +
                               '</li>';
                             }
@@ -946,7 +1024,7 @@
                 </div>
 
                 <!-- KHỐI WIDGET ĐỘNG TRANG CHỦ: HỒ SƠ, KỲ ĐÀI LUẬN KIẾM & BẢNG VÀNG MINH CHỦ -->
-                <div class='kybien-dashboard-widgets' style='display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; margin-bottom: 35px;'>
+                <div class='kybien-dashboard-widgets' style='display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 24px; margin-bottom: 35px;'>
                   
                   <!-- CỘT 1: HỒ SƠ HIỆP KHÁCH & KỲ ĐÀI LUẬN KIẾM -->
                   <div style='display: flex; flex-direction: column; gap: 20px;'>
@@ -1212,7 +1290,7 @@
   <!-- CHÂN TRANG CHUYÊN NGHIỆP CÓ LIÊN KẾT CHÍNH SÁCH METADATA -->
   <footer class='kybien-footer'>
     <div id='kybien-online-footer' style='margin-bottom: 12px; font-size: 0.9rem; color: #f1c40f; display: flex; align-items: center; justify-content: center; gap: 8px;'>
-      <span style='display:inline-block;width:9px;height:9px;background:#2ecc71;border-radius:50%;box-shadow:0 0 10px #2ecc71;'/>
+      <span id='online-status-dot' style='display:inline-block;width:9px;height:9px;background:#7f8c8d;border-radius:50%;'/>
       <span id='online-stats-text'>Tề tựu: <b>--</b> vị (<b>--</b> Kỳ thủ • <b>--</b> Lữ khách)</span>
     </div>
     <p>© 2026 KỲ BIẾN - ĐỆ NHẤT KỲ ĐẠO BÍ TRUYỀN GIANG HỒ. Bổn Trang kính chúc chư vị kỳ hữu kỳ nghệ thăng tiến, danh chấn bát hoang.</p>
@@ -1225,18 +1303,34 @@
     </div>
     <script>//<![CDATA[
     (function(){
+      var dot=document.getElementById('online-status-dot');
+      var el=document.getElementById('online-stats-text');
+      // Chấm trạng thái: xám = chưa rõ/đang tải, xanh = máy chủ đang chạy, đỏ = không kết nối được.
+      function setDot(color, glow){
+        if(!dot) return;
+        dot.style.background=color;
+        dot.style.boxShadow=glow ? ('0 0 10px ' + color) : 'none';
+      }
+      function setOffline(){
+        setDot('#e74c3c', true);
+        if(el) el.innerHTML='Máy chủ tạm nghỉ — Không kết nối được máy chủ, thử lại sau.';
+      }
       function renderStats(s){
-        if(!s)return;
-        var el=document.getElementById('online-stats-text');
+        if(!s) return;
+        setDot('#2ecc71', true);
         if(el){
-          var t=s.total!=null?s.total:0,m=s.members!=null?s.members:0,g=s.guests!=null?s.guests:0;
+          var t=+s.total||0,m=+s.members||0,g=+s.guests||0;
           el.innerHTML='Tề tựu: <b>'+t+'</b> vị (<b>'+m+'</b> Kỳ thủ • <b>'+g+'</b> Lữ khách)';
         }
       }
-      fetch('https://kybien-backend.onrender.com/api/stats/online')
-        .then(function(r){return r.json();})
-        .then(function(d){if(d&&d.data)renderStats(d.data);})
-        .catch(function(){});
+      var controller=(typeof AbortController !== 'undefined') ? new AbortController() : null;
+      var timer=null;
+      if(controller) timer=setTimeout(function(){ controller.abort(); }, 8000);
+      var opts=controller ? { signal: controller.signal } : {};
+      fetch('https://kybien-backend.onrender.com/api/stats/online', opts)
+        .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(d){ if(timer) clearTimeout(timer); if(d && d.data) renderStats(d.data); else setOffline(); })
+        .catch(function(){ if(timer) clearTimeout(timer); setOffline(); });
     })();
     //]]></script>
   </footer>

@@ -1,7 +1,21 @@
+import crypto from 'crypto';
 import { Server, Socket } from 'socket.io';
 import { XiangqiEngine } from './xiangqiEngine.js';
 import { prisma } from '../utils/prisma.js';
 import { calculatePostMatchStats } from './levelService.js';
+
+// Mã phòng 6 ký tự chữ+số, bỏ các ký tự dễ nhầm khi đọc/đánh máy (0/O, 1/I/L).
+// Sinh bằng crypto (không đoán trước được) thay vì Math.random() như trước.
+// Không gian mã: 31^6 ≈ 887 triệu (trước đây chỉ 9.000 mã KB-1000..9999,
+// quét hết trong vài phút là vào được phòng riêng bất kỳ).
+const ROOM_CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+function generateRoomCode(): string {
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += ROOM_CODE_ALPHABET[crypto.randomInt(ROOM_CODE_ALPHABET.length)];
+  }
+  return `KB-${code}`;
+}
 
 export interface PlayerInQueue {
   socketId: string;
@@ -162,8 +176,7 @@ class MatchmakingManager {
     let roomCode = '';
     let roomId = '';
     do {
-      const codeNumber = Math.floor(1000 + Math.random() * 9000);
-      roomCode = `KB-${codeNumber}`;
+      roomCode = generateRoomCode();
       roomId = `room_${isPrivate ? 'priv' : 'pub'}_${Date.now()}_${roomCode}`;
     } while (this.privateCodeToRoomId.has(roomCode));
 
@@ -195,12 +208,16 @@ class MatchmakingManager {
   }
 
   public joinRoomByCode(roomCode: string, player: PlayerInQueue): { success: boolean; room?: GameRoom; error?: string } {
+    // Chuẩn hóa mã do người chơi nhập (xóa khoảng trắng, viết hoa) — mã mới
+    // chỉ gồm chữ hoa + số nên nhập thường vẫn vào được; mã cũ KB-1234 vẫn khớp.
+    const normalizedCode = (roomCode || '').trim().toUpperCase();
+
     const existingActive = this.getUserActiveRoom(player.userId);
     if (existingActive && existingActive.status === 'PLAYING') {
       return { success: false, error: 'Bạn đang ở trong một trận đấu chưa kết thúc.' };
     }
 
-    const roomId = this.privateCodeToRoomId.get(roomCode);
+    const roomId = this.privateCodeToRoomId.get(normalizedCode);
     if (!roomId) {
       return { success: false, error: 'Mã phòng không tồn tại hoặc đã bị hủy.' };
     }

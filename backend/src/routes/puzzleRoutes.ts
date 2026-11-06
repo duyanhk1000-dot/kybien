@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { PuzzleController } from '../controllers/puzzleController.js';
-import { authenticateToken, optionalAuthenticateToken } from '../middlewares/authMiddleware.js';
+import { authenticateToken, optionalAuthenticateToken, requireAdmin } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
@@ -11,7 +11,10 @@ router.get('/daily', optionalAuthenticateToken, PuzzleController.getDailyPuzzles
 router.get('/daily/:date', optionalAuthenticateToken, PuzzleController.getDailyPuzzlesByDate);
 
 // POST /api/puzzles/daily/publish - Kích hoạt đăng 3 thế cờ hàng ngày và tự động viết bài Blog
-router.post('/daily/publish', optionalAuthenticateToken, PuzzleController.publishDaily);
+// CHỈ ADMIN: yêu cầu đăng nhập + email nằm trong ADMIN_EMAILS (xem requireAdmin).
+// Trước đây dùng optionalAuthenticateToken nên bất kỳ ai cũng kích hoạt đăng bài
+// lên Blogger của chủ sở hữu, đốt quota Gemini và spam blog.
+router.post('/daily/publish', authenticateToken, requireAdmin, PuzzleController.publishDaily);
 
 // --- UGC PUZZLE CREATOR & VERIFICATION ROUTES (Yêu cầu đăng nhập tài khoản Kỳ Biến) ---
 // POST /api/puzzles/ugc/create-draft - Tạo bản thảo thế cờ

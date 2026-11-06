@@ -7,6 +7,34 @@ import { XiangqiEngine } from '../services/xiangqiEngine.js';
 import { prisma } from '../utils/prisma.js';
 import { onlineTracker } from '../services/onlineTracker.js';
 
+// Giới hạn đoán mã phòng: tối đa 5 lần nhập sai mã / phút / socket.
+// Đếm CHỈ khi mã không tồn tại (lỗi 'Mã phòng không tồn tại...'), không đếm
+// các lỗi khác (đang trong trận, phòng đầy...) để không khóa oan người chơi
+// nhập đúng mã nhưng gặp lỗi khác. Thông báo lỗi không bao giờ lộ mã đúng.
+const ROOM_CODE_MAX_WRONG_ATTEMPTS = 5;
+const ROOM_CODE_ATTEMPT_WINDOW_MS = 60 * 1000;
+const roomCodeWrongAttempts = new Map<string, { count: number; windowStart: number }>();
+
+function isRoomCodeGuessBlocked(socketId: string): boolean {
+  const record = roomCodeWrongAttempts.get(socketId);
+  if (!record) return false;
+  if (Date.now() - record.windowStart >= ROOM_CODE_ATTEMPT_WINDOW_MS) {
+    roomCodeWrongAttempts.delete(socketId);
+    return false;
+  }
+  return record.count >= ROOM_CODE_MAX_WRONG_ATTEMPTS;
+}
+
+function recordWrongRoomCodeGuess(socketId: string): void {
+  const now = Date.now();
+  const record = roomCodeWrongAttempts.get(socketId);
+  if (!record || now - record.windowStart >= ROOM_CODE_ATTEMPT_WINDOW_MS) {
+    roomCodeWrongAttempts.set(socketId, { count: 1, windowStart: now });
+  } else {
+    record.count += 1;
+  }
+}
+
 export function setupGameSocket(io: Server): void {
   // Cho phép cả Kỳ thủ (có token) và Lữ khách (chưa có token) kết nối để nhận thông tin trực tuyến
   io.use((socket: Socket, next) => {
@@ -219,6 +247,20 @@ export function setupGameSocket(io: Server): void {
         return;
       }
 
+      // Chuẩn hóa mã nhập vào; dùng data?. để không crash khi client emit
+      // event rỗng (trước đây data.roomCode với data undefined sẽ ném TypeError).
+      const code = typeof data?.roomCode === 'string' ? data.roomCode.trim() : '';
+      if (!code) {
+        socket.emit('game_error', { message: 'Vui lòng nhập mã phòng.' });
+        return;
+      }
+
+      // Chặn đoán mã: quá 5 lần nhập sai mã / phút thì khóa 1 phút.
+      if (isRoomCodeGuessBlocked(socket.id)) {
+        socket.emit('game_error', { message: 'Bạn nhập sai mã phòng quá nhiều lần, vui lòng thử lại sau 1 phút.' });
+        return;
+      }
+
       try {
         const dbUser = await prisma.user.findUnique({
           where: { id: user.userId },
@@ -230,7 +272,7 @@ export function setupGameSocket(io: Server): void {
           return;
         }
 
-        const result = matchmakingManager.joinRoomByCode(data.roomCode, {
+        const result = matchmakingManager.joinRoomByCode(code, {
           socketId: socket.id,
           userId: dbUser.id,
           username: dbUser.username,
@@ -241,9 +283,17 @@ export function setupGameSocket(io: Server): void {
         });
 
         if (!result.success || !result.room || !result.room.playerBlack) {
+          // Chỉ đếm lần nhập SAI MÃ (chuỗi lỗi này phải khớp với
+          // matchmakingService.joinRoomByCode); lỗi khác không tính.
+          if (result.error === 'Mã phòng không tồn tại hoặc đã bị hủy.') {
+            recordWrongRoomCodeGuess(socket.id);
+          }
           socket.emit('game_error', { message: result.error || 'Không thể tham gia phòng này.' });
           return;
         }
+
+        // Vào phòng thành công: xóa lịch sử đoán sai của socket này.
+        roomCodeWrongAttempts.delete(socket.id);
 
         const room = result.room;
         const playerBlack = result.room.playerBlack;
@@ -438,6 +488,7 @@ export function setupGameSocket(io: Server): void {
     });
 
     socket.on('disconnect', () => {
+      roomCodeWrongAttempts.delete(socket.id);
       onlineTracker.removeSocket(socket.id);
       io.emit('online_stats', onlineTracker.getStats());
       matchmakingManager.handleSocketDisconnect(socket.id, broadcastPublicRooms);
