@@ -232,29 +232,8 @@
       transition: all 0.3s ease;
     }
 
-    /* ===== KHU VỰC XÚC XẮC ===== */
-    .dice-zone {
-      width: 100%;
-      background: linear-gradient(135deg, #2e1a0d, #1a0e06);
-      border: 1px solid #5a3d22;
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      box-sizing: border-box;
-    }
-    .dice-cup-wrap {
-      position: relative;
-      width: 118px;
-      height: 86px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
+    
+    
     .dice-row {
       display: flex;
       gap: 10px;
@@ -316,52 +295,14 @@
       transform: translateY(-4px);
     }
     .die.clickable { cursor: pointer; }
-    .cup {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      transform: translateX(-50%);
-      width: 104px;
-      height: 74px;
-      background: linear-gradient(180deg, #a83a1f, #5a1300);
-      border: 2px solid #f1c40f;
-      border-bottom: none;
-      border-radius: 14px 14px 6px 6px;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffd54f;
-      font-weight: 900;
-      font-size: 1.5rem;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
-      cursor: pointer;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
-    }
-    .cup.shaking { animation: cup-shake 0.14s linear infinite; }
-    @keyframes cup-shake {
-      0% { transform: translateX(-50%) rotate(0deg); }
-      25% { transform: translateX(calc(-50% - 4px)) rotate(-4deg); }
-      50% { transform: translateX(calc(-50% + 3px)) rotate(3deg); }
-      75% { transform: translateX(calc(-50% - 2px)) rotate(-2deg); }
-      100% { transform: translateX(-50%) rotate(0deg); }
-    }
-    .cup.lifted {
-      transform: translateX(-50%) translateY(-78px) rotate(-10deg);
-      opacity: 0;
-      pointer-events: none;
-    }
-    .dice-side {
-      flex: 1;
-      min-width: 220px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    
+    
+    
+    
+    
     .dice-status { font-size: 0.92rem; color: #e8dcc6; font-weight: 600; min-height: 1.4em; }
     .dice-status .hl { color: #f1c40f; }
-    .dice-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    
 
     .canvas-container {
       background: #120904;
@@ -460,35 +401,95 @@
       border-radius: 6px;
       position: relative;
       display: flex;
-      flex-wrap: wrap;
-      align-content: center;
-      justify-content: center;
-      gap: 1px;
-      padding: 3px;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.6);
-    }
-    .center-home .center-mark {
-      position: absolute;
-      inset: 0;
-      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 2px;
-      color: #b7950b;
-      opacity: 0.9;
-      pointer-events: none;
+      padding: 3px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.6);
+    }
+    /* Khung lắc xí ngầu ở giữa 4 mũi tên đích */
+    .center-dice {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: rgba(20, 10, 4, 0.82);
+      border: 1px solid #b7950b;
+      border-radius: 8px;
+      padding: 5px 6px;
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .center-dice-row { display: flex; gap: 6px; align-items: center; justify-content: center; }
+    .center-dice-bottom { display: flex; gap: 6px; align-items: center; justify-content: center; }
+    .center-points {
+      font-size: 0.85rem;
       font-weight: 900;
-      line-height: 1.1;
+      color: #ffd54f;
+      min-width: 1.2em;
+      text-align: center;
+      line-height: 1;
+    }
+    .center-roll {
+      background: linear-gradient(135deg, #8b0000, #5a0000);
+      color: #fff;
+      border: 1px solid #f1c40f;
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .center-roll:disabled { opacity: 0.45; cursor: not-allowed; }
+    .center-roll.pulse { animation: btn-pulse 1s ease-in-out infinite; }
+    /* Xí ngầu nhỏ trong ô giữa */
+    .die-sm { width: 32px; height: 32px; padding: 4px; border-radius: 6px; }
+    .die-sm .pip { width: 5px; height: 5px; }
+    /* Quân đã về đích: xếp thành hàng nhỏ dưới khung xí ngầu */
+    .center-tokens {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: center;
+      justify-content: center;
+      gap: 1px;
+      z-index: 3;
+      max-width: 100%;
+    }
+    /* Số 6 ở ô trung tâm (bước cuối cùng) */
+    .center-six {
+      position: absolute;
+      top: 1px;
+      left: 4px;
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: #3e2723;
+      text-shadow: 0 0 2px rgba(255,255,255,0.9);
+      z-index: 1;
+      pointer-events: none;
+      line-height: 1;
+    }
+    /* Số trong các ô đích (1 ngoài cùng ... 5 sát trung tâm), xoay theo chiều mũi tên */
+    .cell { position: relative; }
+    .home-num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: rgba(0, 0, 0, 0.55);
+      pointer-events: none;
+      line-height: 1;
       z-index: 1;
     }
-    .center-home .center-mark .star { font-size: 1.1rem; }
-    .center-home .center-mark .lbl {
-      font-size: 0.85rem;
-      letter-spacing: 2px;
-      color: #3e2723;
-      text-shadow: 0 0 3px rgba(255,255,255,0.95), 0 0 3px rgba(255,255,255,0.95), 0 1px 2px rgba(255,255,255,0.9);
-    }
+    .home-num.rot-90 { transform: rotate(90deg); }
+    .home-num.rot-180 { transform: rotate(180deg); }
+    .home-num.rot-270 { transform: rotate(270deg); }
     /* Quân ngựa: hình đầu ngựa (SVG), không còn khối tròn */
     .token {
       position: absolute;
@@ -563,8 +564,9 @@
     }
     .center-token {
       position: relative;
-      width: 22%;
-      height: 22%;
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
       z-index: 3;
       filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
     }
@@ -700,8 +702,6 @@
       .puzzle-panel.left-col { order: 2; }
       .rules-grid { grid-template-columns: 1fr; gap: 8px; }
       .die { width: 44px; height: 44px; }
-      .dice-cup-wrap { width: 104px; height: 78px; }
-      .cup { width: 92px; height: 66px; }
     }
   </style>
 </head>
@@ -791,31 +791,8 @@
           <div id="st-notice" style="font-size: 0.88rem; color: #f1c40f; font-weight: 700;"></div>
         </div>
 
-        <!-- KHU VỰC LẮC XÚC XẮC -->
-        <div class="dice-zone">
-          <div class="dice-cup-wrap" id="dice-cup-wrap" title="Bấm vào cốc để lắc xúc xắc">
-            <div class="dice-row" id="dice-row">
-              <div class="die" id="die-0" data-v="6">
-                <span class="pip p1"></span><span class="pip p2"></span><span class="pip p3"></span>
-                <span class="pip p4"></span><span class="pip p5"></span><span class="pip p6"></span>
-                <span class="pip p7"></span><span class="pip p8"></span><span class="pip p9"></span>
-              </div>
-              <div class="die" id="die-1" data-v="6" style="display: none;">
-                <span class="pip p1"></span><span class="pip p2"></span><span class="pip p3"></span>
-                <span class="pip p4"></span><span class="pip p5"></span><span class="pip p6"></span>
-                <span class="pip p7"></span><span class="pip p8"></span><span class="pip p9"></span>
-              </div>
-            </div>
-            <div class="cup" id="cup">🎲</div>
-          </div>
-          <div class="dice-side">
-            <div class="dice-status" id="dice-status" aria-live="polite">Bấm <span class="hl">Lắc Xúc Xắc</span> để gieo.</div>
-            <div class="dice-actions">
-              <button class="btn-act btn-primary pulse" id="btn-roll">🎲 Lắc Xúc Xắc</button>
-              <button class="btn-act" id="btn-roll-again" style="display: none;">🎲 Gieo Tiếp</button>
-            </div>
-          </div>
-        </div>
+        <!-- TRẠNG THÁI LƯỢT (xí ngầu đã dời vào ô giữa bàn) -->
+        <div class="dice-status" id="dice-status" aria-live="polite" style="margin-bottom: 12px;">Bấm <span class="hl">Lắc Xúc Xắc</span> để gieo.</div>
 
         <div class="canvas-container">
           <div id="board-wrap">
@@ -881,7 +858,7 @@
   </div>
 
 <script>
-/* ===== ENGINE (pure, testable) — luật cờ cá ngựa ===== */
+/* ===== ENGINE (pure, testable) \u2014 luật cờ cá ngựa ===== */
 const COLORS = ['red', 'blue', 'yellow', 'green'];
 const COLOR_VN = { red: 'Đỏ', blue: 'Lam', yellow: 'Vàng', green: 'Xanh lá' };
 // Bàn 15x15. Quân đi NGƯỢC chiều kim đồng hồ; chỉ số TRACK tăng theo chiều đi.
@@ -1035,7 +1012,7 @@ function finishedCount(state, color) { return state.players[color].tokens.filter
 // ===== AI nhẹ tích hợp =====
 function dangerAt(state, tIdx, me) {
   // Có quân địch đứng sau lưng trong vòng 1-6 ô (có thể ăn mình ở lượt sau)?
-  // Chỉ tính quân khác màu — quân mình đứng sau không phải là nguy hiểm.
+  // Chỉ tính quân khác màu \u2014 quân mình đứng sau không phải là nguy hiểm.
   for (let k = 1; k <= 6; k++) {
     const behind = (tIdx - k + 52) % 52;
     if (occupantsAt(state, behind).some(o => o.color !== me)) return true;
@@ -1094,7 +1071,7 @@ function updateUndoUI() {
   btns.forEach(b => {
     if (!b) return;
     b.disabled = undoLeft <= 0;
-    b.textContent = '↩️ Đi Lại (' + undoLeft + ')';
+    b.textContent = '\u21A9\uFE0F Đi Lại (' + undoLeft + ')';
   });
 }
 let aiTimer = null, rollTimer = null, rollIntervals = [];
@@ -1102,7 +1079,7 @@ let soundOn = true, audioCtx = null;
 let cellEls = {}, baseEls = {}, centerEl = null;
 let rolledPair = null, exitUsedThisRoll = false;
 let movingToken = null; // {color, token, mode:'hop'|'fly'|'land'}
-// Hình quân Mã cờ vua (SVG) cho quân cờ — đế phẳng như quân cờ thật, cổ dài, hõm hàm.
+// Hình quân Mã cờ vua (SVG) cho quân cờ \u2014 đế phẳng như quân cờ thật, cổ dài, hõm hàm.
 // Dùng currentColor để tô màu theo người chơi.
 const KNIGHT_SVG = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M58 22 L48 14 L43 4 L38 11 L31 3 L28 11 C18 16 9 24 8 32 C7 40 14 47 22 52 L6 60 L58 60 L46 52 C46 45 44 39 42 35 C40 32 41 29 43 27 C46 25 53 23 58 22 Z" fill="currentColor" stroke="rgba(0,0,0,0.4)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="44" cy="26" r="2.4" fill="#fff" opacity="0.9"/></svg>';
 function moveOpts() {
@@ -1110,7 +1087,6 @@ function moveOpts() {
 }
 
 const boardEl = document.getElementById('ludo-board');
-const cupEl = document.getElementById('cup');
 
 function curColor() { return state.order[turnIdx]; }
 function isHuman(color) { return setup[color] === 'human'; }
@@ -1207,7 +1183,18 @@ function buildBoard() {
     } else {
       for (const col of COLORS) {
         const hi = HOME_CELLS[col].findIndex(([hr, hc]) => hr === r && hc === c);
-        if (hi >= 0) { d.classList.add('home-' + col); break; }
+        if (hi >= 0) {
+          d.classList.add('home-' + col);
+          // Số bước đích: ô ngoài cùng = 1, sát trung tâm = 5 (trung tâm = 6).
+          // Số xoay theo chiều mũi tên: Đỏ đi xuống (90°), Lam đi sang trái (180°),
+          // Vàng đi lên (270°), Xanh lá đi sang phải (0°).
+          const rot = { red: ' rot-90', blue: ' rot-180', yellow: ' rot-270', green: '' }[col];
+          const num = document.createElement('span');
+          num.className = 'home-num' + rot;
+          num.textContent = String(hi + 1);
+          d.appendChild(num);
+          break;
+        }
       }
     }
     boardEl.appendChild(d);
@@ -1225,13 +1212,33 @@ function buildBoard() {
     boardEl.appendChild(b);
     baseEls[col] = b;
   }
+  // Ô trung tâm: khung lắc xí ngầu + số 6 (bước cuối) + hàng quân đã về đích.
+  const pips = '<span class="pip p1"></span><span class="pip p2"></span><span class="pip p3"></span>' +
+    '<span class="pip p4"></span><span class="pip p5"></span><span class="pip p6"></span>' +
+    '<span class="pip p7"></span><span class="pip p8"></span><span class="pip p9"></span>';
   const ctr = document.createElement('div');
   ctr.className = 'center-home';
   ctr.style.gridRow = '7 / 10';
   ctr.style.gridColumn = '7 / 10';
-  ctr.innerHTML = '<span class="center-mark"><span class="star">★</span><span class="lbl">ĐÍCH</span></span>';
+  ctr.innerHTML =
+    '<span class="center-six">6</span>' +
+    '<div class="center-dice" id="center-dice">' +
+      '<div class="center-dice-row" id="dice-row">' +
+        '<div class="die die-sm" id="die-0" data-v="6">' + pips + '</div>' +
+        '<div class="die die-sm" id="die-1" data-v="6" style="display: none;">' + pips + '</div>' +
+      '</div>' +
+      '<div class="center-dice-bottom">' +
+        '<button class="center-roll pulse" id="btn-roll">\u{1F3B2} Lắc</button>' +
+        '<span class="center-points" id="dice-points"></span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="center-tokens" id="center-tokens"></div>';
   boardEl.appendChild(ctr);
   centerEl = ctr;
+  // Ô giữa được dựng lại mỗi lần init() nên gắn lại sự kiện xí ngầu ở đây.
+  document.getElementById('btn-roll').onclick = doRoll;
+  document.getElementById('die-0').onclick = () => onDieClick(0);
+  document.getElementById('die-1').onclick = () => onDieClick(1);
 }
 
 function makeToken(color, ti) {
@@ -1290,7 +1297,7 @@ function renderTokens() {
       d.className = 'center-token';
       d.style.color = centerColor[color];
       d.innerHTML = KNIGHT_SVG;
-      centerEl.appendChild(d);
+      document.getElementById('center-tokens').appendChild(d);
     });
   }
   // Quân trong chuồng: đặt lên đúng ô tròn của mình.
@@ -1325,7 +1332,7 @@ function renderTokens() {
         if (tk.color === curColor() && canFly(state, tk.color, tk.pos) !== null) {
           const b = document.createElement('span');
           b.className = 'fly-badge';
-          b.textContent = '✈ BAY';
+          b.textContent = '\u2708 BAY';
           b.dataset.color = tk.color;
           b.dataset.token = tk.token;
           b.setAttribute('role', 'button');
@@ -1346,7 +1353,7 @@ function renderStandings() {
     return '<div class="stand-row' + (color === curColor() ? ' is-turn' : '') + '">' +
       '<span class="stand-dot ' + color + '"></span>' +
       '<span class="stand-name">' + COLOR_VN[color] + ' (' + who + ')</span>' +
-      '<span class="stand-prog">Về đích: ' + fin + '/4 · Trong chuồng: ' + inBase + '</span>' +
+      '<span class="stand-prog">Về đích: ' + fin + '/4 \u00B7 Trong chuồng: ' + inBase + '</span>' +
       '</div>';
   }).join('');
 }
@@ -1368,6 +1375,11 @@ function updateTags() {
     diceMode + ' xúc xắc \u00B7 ' + state.order.length + ' người \u00B7 ' + diffLabel();
 }
 function renderDice() {
+  const pts = document.getElementById('dice-points');
+  if (pts) {
+    const vals = (dice || []).filter(d => d).map(d => d.v);
+    pts.textContent = vals.length ? vals.join(' + ') : '';
+  }
   const d0 = document.getElementById('die-0');
   const d1 = document.getElementById('die-1');
   d1.style.display = diceMode === 2 ? '' : 'none';
@@ -1389,10 +1401,9 @@ function updateRollUI() {
   const humanTurn = phase === 'roll' && isHuman(curColor());
   btn.disabled = !humanTurn;
   btn.classList.toggle('pulse', humanTurn);
-  btn.textContent = consecutiveSixes > 0 ? '🎲 Gieo Tiếp (ra 6!)' : '🎲 Lắc Xúc Xắc';
+  btn.textContent = consecutiveSixes > 0 ? '\u{1F3B2} Gieo Tiếp' : '\u{1F3B2} Lắc';
   if (phase === 'roll') {
-    cupEl.classList.remove('lifted', 'shaking');
-    if (isHuman(curColor())) setStatus('Lượt của bạn — bấm <span class="hl">Lắc Xúc Xắc</span> hoặc bấm vào cốc để gieo.');
+    if (isHuman(curColor())) setStatus('Lượt của bạn \u2014 bấm <span class="hl">Lắc</span> ở giữa bàn để gieo.');
     else setStatus('Máy đang chuẩn bị gieo...');
   }
 }
@@ -1407,7 +1418,7 @@ function syncHumanOptions() {
     const ai = total - h;
     const o = document.createElement('option');
     o.value = String(h);
-    o.textContent = h + ' người thật — ' + (ai === 0 ? 'không có máy' : 'đấu ' + ai + ' máy');
+    o.textContent = h + ' người thật \u2014 ' + (ai === 0 ? 'không có máy' : 'đấu ' + ai + ' máy');
     selH.appendChild(o);
   }
   selH.value = String(Math.min(cur, total));
@@ -1437,7 +1448,7 @@ function init() {
   beginTurn();
   renderStandings();
   updateUndoUI();
-  document.getElementById('move-history').innerHTML = '<div class="history-line">Chưa có nước đi nào — Đỏ đi trước.</div>';
+  document.getElementById('move-history').innerHTML = '<div class="history-line">Chưa có nước đi nào \u2014 Đỏ đi trước.</div>';
   addLog('Ván mới bắt đầu: ' + order.map(c => COLOR_VN[c]).join(', ') + '. Đỏ đi trước.');
 }
 function beginTurn() {
@@ -1492,8 +1503,6 @@ function startRoll() {
   phase = 'rolling';
   updateRollUI();
   setStatus('Đang lắc...');
-  cupEl.classList.remove('lifted');
-  cupEl.classList.add('shaking');
   const diceEls = [document.getElementById('die-0'), document.getElementById('die-1')].slice(0, diceMode);
   diceEls.forEach(d => { d.classList.remove('is-good', 'settle', 'is-used', 'is-selected'); d.classList.add('rolling'); });
   playRattle();
@@ -1520,8 +1529,6 @@ function startRoll() {
 }
 function finishRoll(vals) {
   rollIntervals = []; // dọn mảng interval đã tự kết thúc
-  cupEl.classList.remove('shaking');
-  cupEl.classList.add('lifted');
   const diceEls = [document.getElementById('die-0'), document.getElementById('die-1')].slice(0, diceMode);
   diceEls.forEach((d, i) => {
     d.classList.remove('rolling');
@@ -1540,8 +1547,8 @@ function finishRoll(vals) {
     if (vals[0] === 6) {
       consecutiveSixes++;
       if (consecutiveSixes >= 3) {
-        addLog(who + ' gieo 6 ba lần liên tiếp — mất lượt!');
-        setStatus(who + ' gieo 6 ba lần liên tiếp — mất lượt!');
+        addLog(who + ' gieo 6 ba lần liên tiếp \u2014 mất lượt!');
+        setStatus(who + ' gieo 6 ba lần liên tiếp \u2014 mất lượt!');
         renderDice();
         rollTimer = setTimeout(() => { consecutiveSixes = 0; endTurn(); }, 1000);
         return;
@@ -1549,8 +1556,8 @@ function finishRoll(vals) {
     } else consecutiveSixes = 0;
   }
   if (!anyLegalMove(state, curColor(), vals, diceMode, moveOpts())) {
-    addLog(who + ' gieo ' + vals.join(', ') + ' — không đi được!');
-    setStatus(who + ' gieo ' + vals.join(', ') + ' — không đi được!');
+    addLog(who + ' gieo ' + vals.join(', ') + ' \u2014 không đi được!');
+    setStatus(who + ' gieo ' + vals.join(', ') + ' \u2014 không đi được!');
     renderDice();
     rollTimer = setTimeout(() => { endTurn(); }, 1100);
     return;
@@ -1558,7 +1565,7 @@ function finishRoll(vals) {
   phase = 'move';
   // Chọn xúc xắc đầu tiên có nước đi hợp lệ để tô sáng (2 xúc xắc: xúc xắc 0 có thể không đi được nhưng xúc xắc 1 thì được).
   selectedDie = Math.max(0, vals.findIndex(v => legalMoves(state, curColor(), v, diceMode, moveOpts()).length > 0));
-  const goodNote = vals.includes(6) ? ' Ra 6 — được gieo tiếp!' : (diceMode === 1 && vals[0] === 1 ? ' Ra 1 — quân có nút ✈ thì bay được!' : '');
+  const goodNote = vals.includes(6) ? ' Ra 6 \u2014 được gieo tiếp!' : (diceMode === 1 && vals[0] === 1 ? ' Ra 1 \u2014 quân có nút \u2708 thì bay được!' : '');
   setStatus(who + ' gieo được ' + vals.join(' và ') + '.' + goodNote + ' Chọn quân để đi.');
   renderTokens();
   renderDice();
@@ -1652,7 +1659,7 @@ function afterMove(color, move, di) {
     if (dice[di].v === 6) {
       phase = 'roll';
       dice = [];
-      setStatus(who + ' ra 6 — được gieo tiếp!');
+      setStatus(who + ' ra 6 \u2014 được gieo tiếp!');
       updateRollUI();
       maybeAiTurn();
     } else {
@@ -1666,7 +1673,7 @@ function afterMove(color, move, di) {
   if (usable.length > 0) {
     selectedDie = usable[0].i;
     phase = 'move';
-    setStatus(who + ' còn 1 xúc xắc (' + dice[usable[0].i].v + ') — chọn quân để đi.');
+    setStatus(who + ' còn 1 xúc xắc (' + dice[usable[0].i].v + ') \u2014 chọn quân để đi.');
     renderTokens();
     renderDice();
     updateTags();
@@ -1678,7 +1685,7 @@ function afterMove(color, move, di) {
   if (lastRollHadSix) {
     phase = 'roll';
     dice = [];
-    setStatus(who + ' ra 6 — được gieo tiếp!');
+    setStatus(who + ' ra 6 \u2014 được gieo tiếp!');
     updateRollUI();
     maybeAiTurn();
   } else {
@@ -1708,7 +1715,7 @@ function undo() {
   renderDice();
   updateTags();
   updateRollUI();
-  addLog('Đã đi lại — về đầu lượt của ' + COLOR_VN[curColor()] + '.');
+  addLog('Đã đi lại \u2014 về đầu lượt của ' + COLOR_VN[curColor()] + '.');
   maybeAiTurn();
 }
 
@@ -1722,7 +1729,7 @@ function endGame(winner) {
   renderStandings();
   updateTags();
   updateRollUI();
-  document.getElementById('win-icon').textContent = '🏆';
+  document.getElementById('win-icon').textContent = '\u{1F3C6}';
   document.getElementById('win-title').textContent = COLOR_VN[winner].toUpperCase() + ' THẮNG!';
   document.getElementById('win-desc').textContent = 'Đưa cả 4 quân về đích trước.';
   const box = document.getElementById('score-breakdown');
@@ -1730,7 +1737,7 @@ function endGame(winner) {
     const fin = finishedCount(state, color);
     const inBase = state.players[color].tokens.filter(p => p === -1).length;
     return '<div class="reward-item"><span>' + COLOR_VN[color] + ' (' + (isHuman(color) ? 'Bạn' : 'Máy') + '):</span>' +
-      '<strong>Về đích ' + fin + '/4 · Trong chuồng ' + inBase + '</strong></div>';
+      '<strong>Về đích ' + fin + '/4 \u00B7 Trong chuồng ' + inBase + '</strong></div>';
   }).join('');
   showModal();
 }
@@ -1741,13 +1748,9 @@ document.getElementById('btn-win-close').onclick = hideModal;
 document.getElementById('nw').onclick = init;
 document.getElementById('btn-undo').onclick = undo;
 document.getElementById('btn-undo-2').onclick = undo;
-document.getElementById('btn-roll').onclick = doRoll;
-document.getElementById('cup').onclick = doRoll;
-document.getElementById('die-0').onclick = () => onDieClick(0);
-document.getElementById('die-1').onclick = () => onDieClick(1);
 document.getElementById('btn-sound').onclick = function () {
   soundOn = !soundOn;
-  this.textContent = soundOn ? '🔊 Âm Thanh: Bật' : '🔇 Âm Thanh: Tắt';
+  this.textContent = soundOn ? '\u{1F50A} Âm Thanh: Bật' : '\u{1F507} Âm Thanh: Tắt';
   if (soundOn) ensureAudio();
 };
 document.getElementById('diff').onchange = updateTags;
