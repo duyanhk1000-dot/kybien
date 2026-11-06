@@ -9,7 +9,7 @@
   <b:include data='blog' name='all-head-content'/>
 
   <!-- Chuẩn hóa Tiêu đề SEO (Không trùng lặp) -->
-  <b:if cond='data:blog.pageType == "index"'>
+  <b:if cond='data:blog.pageType == &quot;index&quot;'>
     <b:if cond='data:blog.searchLabel'>
       <title><data:blog.searchLabel/> - Thư Viện Bình Văn Sa Trường | KỲ BIẾN CHESS</title>
     <b:else/>
@@ -34,7 +34,7 @@
   <meta expr:content='data:blog.canonicalUrl' property='og:url'/>
   <meta content='Kỳ Biến' property='og:site_name'/>
   <meta content='vi_VN' property='og:locale'/>
-  <b:if cond='data:blog.pageType == "item"'>
+  <b:if cond='data:blog.pageType == &quot;item&quot;'>
     <meta content='article' property='og:type'/>
   <b:else/>
     <meta content='website' property='og:type'/>
@@ -62,14 +62,14 @@
   <!-- JSON-LD Structured Data Schema cho Google Search -->
   <script type='application/ld+json'>
   {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Kỳ Biến Chess",
-    "url": "<data:blog.homepageUrl/>",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "<data:blog.homepageUrl/>search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
+    &quot;@context&quot;: &quot;https://schema.org&quot;,
+    &quot;@type&quot;: &quot;WebSite&quot;,
+    &quot;name&quot;: &quot;Kỳ Biến Chess&quot;,
+    &quot;url&quot;: &quot;<data:blog.homepageUrl/>&quot;,
+    &quot;potentialAction&quot;: {
+      &quot;@type&quot;: &quot;SearchAction&quot;,
+      &quot;target&quot;: &quot;<data:blog.homepageUrl/>search?q={search_term_string}&quot;,
+      &quot;query-input&quot;: &quot;required name=search_term_string&quot;
     }
   }
   </script>
@@ -78,8 +78,8 @@
   <link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap' rel='stylesheet'/>
   
   <!-- Socket.io Client & Ky Bien Core Scripts (Không chặn hiển thị với defer) -->
-  <script defer='defer' src='https://cdn.socket.io/4.8.1/socket.io.min.js'></script>
-  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.6'></script>
+  <script defer='defer' src='https://cdn.socket.io/4.8.1/socket.io.min.js'/>
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.6'/>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -670,10 +670,10 @@
       
       <ul class='nav-links'>
         <li><a href='/'>Trang Chủ</a></li>
-        <li><a href='/p/co-the.html'>Cờ Thế</a></li>
-        <li><a href='/p/cam-nang.html'>Cẩm Nang</a></li>
         <li><a href='/p/arena.html'>Sàn Đấu</a></li>
+        <li><a href='/p/cam-nang.html'>Cẩm Nang</a></li>        
         <li><a href='/search/label/phan-tich-co'>Bình Văn</a></li>
+        <li><a href='/p/sanh-game.html'>Sảnh Game</a></li>
       </ul>
 
       <form action='/search' class='kybien-header-search' method='get' role='search'>
@@ -700,20 +700,38 @@
   <div class='main-wrapper'>
     <main class='content-area'>
       <b:section id='main' showaddelement='yes'>
-        <b:widget id='Blog1' locked='true' title='Bài đăng trên Blog' type='Blog'>
+        <b:widget id='Blog1' locked='true' title='Bài đăng trên Blog' type='Blog' version='1'>
+          <b:widget-settings>
+            <b:widget-setting name='showDateHeader'>true</b:widget-setting>
+            <b:widget-setting name='showShareButtons'>true</b:widget-setting>
+            <b:widget-setting name='authorLabel'>By</b:widget-setting>
+            <b:widget-setting name='showCommentLink'>true</b:widget-setting>
+            <b:widget-setting name='showAuthor'>false</b:widget-setting>
+            <b:widget-setting name='style.unittype'>TextAndImage</b:widget-setting>
+            <b:widget-setting name='reactionsLabel'/>
+            <b:widget-setting name='showAuthorProfile'>false</b:widget-setting>
+            <b:widget-setting name='style.layout'>1x1</b:widget-setting>
+            <b:widget-setting name='showLabels'>true</b:widget-setting>
+            <b:widget-setting name='showLocation'>true</b:widget-setting>
+            <b:widget-setting name='showTimestamp'>true</b:widget-setting>
+            <b:widget-setting name='postsPerAd'>3</b:widget-setting>
+            <b:widget-setting name='showBacklinks'>false</b:widget-setting>
+            <b:widget-setting name='showInlineAds'>true</b:widget-setting>
+            <b:widget-setting name='showReactions'>false</b:widget-setting>
+          </b:widget-settings>
           <b:includable id='main'>
             
             <!-- BRANCH 1: TRANG BÀI VIẾT CHI TIẾT HOẶC TRANG SẢNH CỜ (/p/arena.html) -->
-            <b:if cond='data:blog.pageType == "item" or data:blog.pageType == "static_page" or data:blog.pageType == "page"'>
+            <b:if cond='data:blog.pageType == &quot;item&quot; or data:blog.pageType == &quot;static_page&quot; or data:blog.pageType == &quot;page&quot;'>
               <b:loop values='data:posts' var='post'>
                 <article class='single-page-view'>
-                  <b:if cond='data:blog.pageType == "item"'>
+                  <b:if cond='data:blog.pageType == &quot;item&quot;'>
                     <!-- BREADCRUMBS ĐIỀU HƯỚNG PHÂN CẤP CHUẨN SEO -->
                     <nav aria-label='Breadcrumb' class='kybien-breadcrumbs' style='font-size: 0.85rem; color: #a8947d; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;'>
                       <a href='/' style='color: #f1c40f; text-decoration: none;'>Trang Chủ</a>
-                      <span>➔</span>
+                      <span>&#10132;</span>
                       <a href='/search/label/phan-tich-co' style='color: #f1c40f; text-decoration: none;'>Bình Văn Sa Trường</a>
-                      <span>➔</span>
+                      <span>&#10132;</span>
                       <span style='color: #e8dcc6; font-weight: 600;'><data:post.title/></span>
                     </nav>
                     <h1 class='single-post-title'><data:post.title/></h1>
@@ -723,15 +741,15 @@
                   </div>
                   
                   <!-- KHỐI LIÊN KẾT NỘI BỘ VÀO SÀN ĐẤU, CẨM NĂNG & BÀI VIẾT LIÊN QUAN CUỐI BÀI -->
-                  <b:if cond='data:blog.pageType == "item"'>
+                  <b:if cond='data:blog.pageType == &quot;item&quot;'>
                     <!-- 1. BANNER KÊU GỌI HÀNH ĐỘNG (CALL TO ACTION) KIẾM HIỆP -->
                     <div class='single-post-cta-banner' style='margin: 25px 0 20px 0; background: linear-gradient(135deg, #2a140a, #150a04); border: 2px solid #a83a1f; border-radius: 12px; padding: 22px; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.6);'>
-                      <p style='font-family: "Noto Serif TC", serif; font-size: 1.15rem; color: #f1c40f; font-weight: bold; margin-bottom: 14px; line-height: 1.5;'>
-                        ⚔️ Muốn tái hiện thế cờ này hoặc đọ sức cùng kỳ hữu giang hồ?
+                      <p style='font-family: &quot;Noto Serif TC&quot;, serif; font-size: 1.15rem; color: #f1c40f; font-weight: bold; margin-bottom: 14px; line-height: 1.5;'>
+                        &#9876;&#65039; Muốn tái hiện thế cờ này hoặc đọ sức cùng kỳ hữu giang hồ?
                       </p>
                       <div style='display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap;'>
                         <a href='/p/arena.html' style='display: inline-block; background: linear-gradient(135deg, #b71c1c, #6d0000); color: #fff; font-weight: bold; font-size: 0.98rem; padding: 12px 28px; border-radius: 8px; border: 1px solid #f1c40f; text-decoration: none; box-shadow: 0 4px 14px rgba(183,28,28,0.5); text-transform: uppercase; letter-spacing: 0.5px;'>
-                          🔥 TIẾN VÀO SÀN ĐẤU KHIÊU CHIẾN NGAY ➔
+                          🔥 TIẾN VÀO SÀN ĐẤU KHIÊU CHIẾN NGAY &#10132;
                         </a>
                         <a href='/p/cam-nang.html' style='display: inline-block; background: #22150c; color: #2ecc71; font-weight: bold; font-size: 0.92rem; padding: 11px 20px; border-radius: 8px; border: 1px solid #5a3d22; text-decoration: none;'>
                           📜 Nghiên Cứu Cẩm Nang Võ Học
@@ -745,10 +763,10 @@
                     <!-- 2. KHỐI KỲ ĐÀM TƯƠNG QUAN (BÀI VIẾT LIÊN QUAN THEO NHÃN CHỦ ĐỀ) -->
                     <div class='kybien-related-section' style='margin: 25px 0 30px 0; background: linear-gradient(145deg, #22150c, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);'>
                       <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 16px;'>
-                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: 8px;'>
-                          ⚔️ BÌNH VĂN LIÊN QUAN
+                        <h3 style='color: #f1c40f; font-family: &quot;Noto Serif TC&quot;, serif; font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: 8px;'>
+                          &#9876;&#65039; BÌNH VĂN LIÊN QUAN
                         </h3>
-                        <a href='/search/label/phan-tich-co' style='color: #a8947d; font-size: 0.82rem; text-decoration: none;'>Xem Thư Viện ➔</a>
+                        <a href='/search/label/phan-tich-co' style='color: #a8947d; font-size: 0.82rem; text-decoration: none;'>Xem Thư Viện &#10132;</a>
                       </div>
 
                       <!-- LƯU TRỮ NHÃN BÀI VIẾT HIỆN TẠI VÀO DOM ĐỂ JS ĐỌC AN TOÀN -->
@@ -962,7 +980,7 @@
                   </b:if>
 
                   <!-- NHÚNG BÌNH LUẬN TRÊN BÀI BÌNH VĂN SA TRƯỜNG -->
-                  <b:if cond='data:blog.pageType == "item"'>
+                  <b:if cond='data:blog.pageType == &quot;item&quot;'>
                     <b:include data='post' name='comments'/>
                   </b:if>
                 </article>
@@ -973,13 +991,13 @@
               <b:if cond='!data:blog.searchLabel and !data:blog.searchQuery'>
                 <!-- KHỐI HERO BANNER CHÀO MỪNG TRANG CHỦ -->
                 <div class='hero-section'>
-                  <span class='hero-badge'>⚔️ ĐỆ NHẤT KỲ ĐẠO BÍ TRUYỀN GIANG HỒ</span>
+                  <span class='hero-badge'>&#9876;&#65039; ĐỆ NHẤT KỲ ĐẠO BÍ TRUYỀN GIANG HỒ</span>
                   <h1 class='hero-title'>KỲ BIẾN THIÊN THƯ SA TRƯỜNG</h1>
                   <p class='hero-subtitle'>
                     Hội tụ tinh hoa cờ tướng bí pháp thập lục kỳ mưu, cờ úp gián điệp thiên biến vạn hóa, tôi luyện kỳ nghệ cùng Mộc Nhân Cơ Quan trận và thưởng lãm kho tàng bình văn thiên cổ sa trường luận chiếu.
                   </p>
                   <div class='hero-actions'>
-                    <a class='btn-hero-primary' href='/p/arena.html'>⚔️ Vào Sàn Đấu &amp; Khiêu Chiến</a>
+                    <a class='btn-hero-primary' href='/p/arena.html'>&#9876;&#65039; Vào Sàn Đấu &amp; Khiêu Chiến</a>
                     <a class='btn-hero-secondary' href='/search/label/phan-tich-co'>📜 Thưởng Lãm Bình Văn Sa Trường</a>
                   </div>
                 </div>
@@ -988,29 +1006,29 @@
                 <div class='variant-cards-grid'>
                   <div class='variant-card'>
                     <div>
-                      <div class='variant-icon'>✨</div>
+                      <div class='variant-icon'>&#10024;</div>
                       <h3 class='variant-title'>Cờ Kỳ Biến</h3>
                       <p class='variant-desc'>Đột phá quy củ cổ truyền với Thập lục Bí Pháp giang hồ, tích lũy Công Trạng thi triển thần thông nghịch chuyển càn khôn.</p>
                     </div>
-                    <a class='btn-play-variant' href='/p/arena.html?variant=kb'>⚔️ Khai Cuộc Bí Pháp</a>
+                    <a class='btn-play-variant' href='/p/arena.html?variant=kb'>&#9876;&#65039; Khai Cuộc Bí Pháp</a>
                   </div>
 
                   <div class='variant-card'>
                     <div>
-                      <div class='variant-icon'>🕵️</div>
+                      <div class='variant-icon'>🕵&#65039;</div>
                       <h3 class='variant-title'>Cờ Úp Truyền Thống</h3>
                       <p class='variant-desc'>Mười lăm ám quân mai phục nơi chiến địa. Thử thách nhãn lực đoán quân, biến hóa khôn lường chuyển bại thành thắng.</p>
                     </div>
-                    <a class='btn-play-variant' href='/p/arena.html?variant=t'>🕵️ Khai Cuộc Cờ Úp</a>
+                    <a class='btn-play-variant' href='/p/arena.html?variant=t'>🕵&#65039; Khai Cuộc Cờ Úp</a>
                   </div>
 
                   <div class='variant-card'>
                     <div>
-                      <div class='variant-icon'>⚔️</div>
+                      <div class='variant-icon'>&#9876;&#65039;</div>
                       <h3 class='variant-title'>Cờ Úp Gián Điệp</h3>
                       <p class='variant-desc'>Ám tiễn khó phòng! Quân gián điệp ngụy trang cài cắm giữa trận địa đối phương, một nước lật cờ kinh thiên động địa.</p>
                     </div>
-                    <a class='btn-play-variant' href='/p/arena.html?variant=g'>🗡️ Khai Cuộc Gián Điệp</a>
+                    <a class='btn-play-variant' href='/p/arena.html?variant=g'>🗡&#65039; Khai Cuộc Gián Điệp</a>
                   </div>
 
                   <div class='variant-card'>
@@ -1031,27 +1049,27 @@
                     <!-- Widget Hồ Sơ Cá Nhân -->
                     <div id='kybien-user-profile-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
                       <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
-                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.1rem;'>📜 HỒ SƠ HIỆP KHÁCH</h3>
+                        <h3 style='color: #f1c40f; font-family: &quot;Noto Serif TC&quot;, serif; font-size: 1.1rem;'>📜 HỒ SƠ HIỆP KHÁCH</h3>
                         <span style='background: #4a3320; color: #a8947d; font-size: 0.75rem; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid #5a3d22;'>Vô Danh Lữ Khách</span>
                       </div>
                       <div style='text-align: center; padding: 15px 10px;'>
                         <p style='color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;'>
                           Chư vị đang hành tẩu với danh xưng <strong>Vô Danh Lữ Khách</strong>.<br/>Đăng nhập tài khoản để tích lũy Chiến Lực (ELO), thăng tiến Cảnh Giới &amp; lưu danh sử sách!
                         </p>
-                        <a href='/p/arena.html' style='display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f;'>🔑 Đăng Nhập / Ghi Danh Nhập Trận ➔</a>
+                        <a href='/p/arena.html' style='display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f;'>🔑 Đăng Nhập / Ghi Danh Nhập Trận &#10132;</a>
                       </div>
                     </div>
                     
                     <!-- Widget Kỳ Đài Luận Kiếm -->
                     <div id='kybien-live-rooms-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
                       <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
-                        <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem;'>⚔️ KỲ ĐÀI LUẬN KIẾM</h3>
+                        <h3 style='color: #f1c40f; font-family: &quot;Noto Serif TC&quot;, serif; font-size: 1.15rem;'>&#9876;&#65039; KỲ ĐÀI LUẬN KIẾM</h3>
                         <a href='/p/arena.html' style='font-size: 0.8rem; color: #2ecc71; font-weight: bold;'>+ Lập Kỳ Đài</a>
                       </div>
                       <div id='kybien-rooms-list' style='display: flex; flex-direction: column; gap: 8px;'>
                         <div style='text-align: center; color: #a8947d; font-size: 0.85rem; padding: 12px; background: rgba(34,21,12,0.4); border-radius: 8px; border: 1px dashed #5a3d22;'>
                           Đang kết nối sảnh luận kiếm... <br/>
-                          <a href='/p/arena.html' style='color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;'>Tiến vào Sàn Đấu khiêu chiến ngay! ➔</a>
+                          <a href='/p/arena.html' style='color: #f1c40f; font-weight: bold; text-decoration: underline; margin-top: 4px; display: inline-block;'>Tiến vào Sàn Đấu khiêu chiến ngay! &#10132;</a>
                         </div>
                       </div>
                     </div>
@@ -1060,7 +1078,7 @@
                   <!-- CỘT 2: BẢNG VÀNG MINH CHỦ KỲ ĐẠO -->
                   <div id='kybien-top-elo-section' style='background: linear-gradient(145deg, #271a10, #140b05); border: 1px solid #5a3d22; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);'>
                     <div style='display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #5a3d22; padding-bottom: 10px; margin-bottom: 14px;'>
-                      <h3 style='color: #f1c40f; font-family: "Noto Serif TC", serif; font-size: 1.15rem;'>🏆 BẢNG VÀNG MINH CHỦ KỲ ĐẠO</h3>
+                      <h3 style='color: #f1c40f; font-family: &quot;Noto Serif TC&quot;, serif; font-size: 1.15rem;'>🏆 BẢNG VÀNG MINH CHỦ KỲ ĐẠO</h3>
                       <span style='font-size: 0.78rem; color: #a8947d;'>Tuyệt Đỉnh Cao Thủ</span>
                     </div>
                     <div id='kybien-elo-list' style='display: flex; flex-direction: column; gap: 8px;'>
@@ -1071,8 +1089,8 @@
                 </div>
 
                 <div class='section-title-bar'>
-                  <h2>⚔️ THIÊN THƯ BÌNH VĂN &amp; CHIẾN TÍCH SA TRƯỜNG</h2>
-                  <span><a href='/search/label/phan-tich-co' style='font-size: 0.9rem; color: #f1c40f;'>Thưởng Lãm Toàn Bộ ➔</a></span>
+                  <h2>&#9876;&#65039; THIÊN THƯ BÌNH VĂN &amp; CHIẾN TÍCH SA TRƯỜNG</h2>
+                  <span><a href='/search/label/phan-tich-co' style='font-size: 0.9rem; color: #f1c40f;'>Thưởng Lãm Toàn Bộ &#10132;</a></span>
                 </div>
                 
                 <div class='post-grid'>
@@ -1081,24 +1099,24 @@
                       <div>
                         <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
                           <b:loop values='data:post.labels' var='label'>
-                            <b:if cond='data:label.name == "tran-hay" or data:label.name == "tran- hay" or data:label.name == "Trận Hay"'>
-                              <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold; text-decoration: none;'>⚔️ TRẬN HAY</a>
+                            <b:if cond='data:label.name == &quot;tran-hay&quot; or data:label.name == &quot;tran- hay&quot; or data:label.name == &quot;Trận Hay&quot;'>
+                              <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold; text-decoration: none;'>&#9876;&#65039; TRẬN HAY</a>
                             </b:if>
                           </b:loop>
 
                           <b:loop values='data:post.labels' var='label'>
-                            <b:if cond='data:label.name != "phan-tich-co" and data:label.name != "Phân Tích Cờ" and data:label.name != "tran-hay" and data:label.name != "tran- hay" and data:label.name != "Trận Hay"'>
+                            <b:if cond='data:label.name != &quot;phan-tich-co&quot; and data:label.name != &quot;Phân Tích Cờ&quot; and data:label.name != &quot;tran-hay&quot; and data:label.name != &quot;tran- hay&quot; and data:label.name != &quot;Trận Hay&quot;'>
                               <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold; text-decoration: none;'>
-                                <b:if cond='data:label.name == "co-bi-phap" or data:label.name == "Dai chien ky bien" or data:label.name == "Cờ Bí Pháp"'>
-                                  ✨ Cờ Bí Pháp
+                                <b:if cond='data:label.name == &quot;co-bi-phap&quot; or data:label.name == &quot;Dai chien ky bien&quot; or data:label.name == &quot;Cờ Bí Pháp&quot;'>
+                                  &#10024; Cờ Bí Pháp
                                 <b:else/>
-                                  <b:if cond='data:label.name == "co-up" or data:label.name == "Cờ Úp"'>
+                                  <b:if cond='data:label.name == &quot;co-up&quot; or data:label.name == &quot;Cờ Úp&quot;'>
                                     🎴 Cờ Úp
                                   <b:else/>
-                                    <b:if cond='data:label.name == "co-up-gian-diep" or data:label.name == "Cờ Gián Điệp"'>
-                                      🕵️ Cờ Gián Điệp
+                                    <b:if cond='data:label.name == &quot;co-up-gian-diep&quot; or data:label.name == &quot;Cờ Gián Điệp&quot;'>
+                                      🕵&#65039; Cờ Gián Điệp
                                     <b:else/>
-                                      <b:if cond='data:label.name == "co-truyen-thong" or data:label.name == "Cờ Truyền Thống"'>
+                                      <b:if cond='data:label.name == &quot;co-truyen-thong&quot; or data:label.name == &quot;Cờ Truyền Thống&quot;'>
                                         🏯 Cờ Truyền Thống
                                       <b:else/>
                                         <data:label.name/>
@@ -1124,7 +1142,7 @@
                         </div>
                       </div>
                       <a class='btn-read-post' expr:href='data:post.url'>
-                        📖 Thưởng Lãm Hồi Ký &amp; Khám Phá Ván Cờ ➔
+                        📖 Thưởng Lãm Hồi Ký &amp; Khám Phá Ván Cờ &#10132;
                       </a>
                     </div>
                   </b:loop>
@@ -1139,22 +1157,22 @@
                   <h2>
                     <b:if cond='data:blog.searchLabel'>
                       📜 THIÊN THƯ BÌNH VĂN: 
-                      <b:if cond='data:blog.searchLabel == "co-bi-phap" or data:blog.searchLabel == "Dai chien ky bien" or data:blog.searchLabel == "Cờ Bí Pháp"'>
-                        ✨ CỜ BÍ PHÁP
+                      <b:if cond='data:blog.searchLabel == &quot;co-bi-phap&quot; or data:blog.searchLabel == &quot;Dai chien ky bien&quot; or data:blog.searchLabel == &quot;Cờ Bí Pháp&quot;'>
+                        &#10024; CỜ BÍ PHÁP
                       <b:else/>
-                        <b:if cond='data:blog.searchLabel == "co-up" or data:blog.searchLabel == "Cờ Úp"'>
+                        <b:if cond='data:blog.searchLabel == &quot;co-up&quot; or data:blog.searchLabel == &quot;Cờ Úp&quot;'>
                           🎴 CỜ ÚP
                         <b:else/>
-                          <b:if cond='data:blog.searchLabel == "co-up-gian-diep" or data:blog.searchLabel == "Cờ Gián Điệp"'>
-                            🕵️ CỜ GIÁN ĐIỆP
+                          <b:if cond='data:blog.searchLabel == &quot;co-up-gian-diep&quot; or data:blog.searchLabel == &quot;Cờ Gián Điệp&quot;'>
+                            🕵&#65039; CỜ GIÁN ĐIỆP
                           <b:else/>
-                            <b:if cond='data:blog.searchLabel == "co-truyen-thong" or data:blog.searchLabel == "Cờ Truyền Thống"'>
+                            <b:if cond='data:blog.searchLabel == &quot;co-truyen-thong&quot; or data:blog.searchLabel == &quot;Cờ Truyền Thống&quot;'>
                               🏯 CỜ TRUYỀN THỐNG
                             <b:else/>
-                              <b:if cond='data:blog.searchLabel == "tran-hay" or data:blog.searchLabel == "tran- hay" or data:blog.searchLabel == "Trận Hay"'>
-                                ⚔️ TUYỂN TẬP TRẬN HAY
+                              <b:if cond='data:blog.searchLabel == &quot;tran-hay&quot; or data:blog.searchLabel == &quot;tran- hay&quot; or data:blog.searchLabel == &quot;Trận Hay&quot;'>
+                                &#9876;&#65039; TUYỂN TẬP TRẬN HAY
                               <b:else/>
-                                <b:if cond='data:blog.searchLabel == "phan-tich-co" or data:blog.searchLabel == "Phân Tích Cờ"'>
+                                <b:if cond='data:blog.searchLabel == &quot;phan-tich-co&quot; or data:blog.searchLabel == &quot;Phân Tích Cờ&quot;'>
                                   TOÀN BỘ VÁN ĐẤU
                                 <b:else/>
                                   <data:blog.searchLabel/>
@@ -1174,11 +1192,11 @@
                 <!-- THANH BỘ LỌC NHANH DÀNH CHO THƯ VIỆN BÀI VIẾT -->
                 <div class='label-filter-bar'>
                   <a class='filter-btn' href='/search/label/phan-tich-co'>Toàn Bộ Thiên Thư</a>
-                  <a class='filter-btn' href='/search/label/co-bi-phap'>✨ Cờ Bí Pháp</a>
+                  <a class='filter-btn' href='/search/label/co-bi-phap'>&#10024; Cờ Bí Pháp</a>
                   <a class='filter-btn' href='/search/label/co-up'>🎴 Cờ Úp</a>
-                  <a class='filter-btn' href='/search/label/co-up-gian-diep'>🕵️ Cờ Gián Điệp</a>
+                  <a class='filter-btn' href='/search/label/co-up-gian-diep'>🕵&#65039; Cờ Gián Điệp</a>
                   <a class='filter-btn' href='/search/label/co-truyen-thong'>🏯 Cờ Truyền Thống</a>
-                  <a class='filter-btn' href='/search/label/tran-hay'>⚔️ Trận Hay</a>
+                  <a class='filter-btn' href='/search/label/tran-hay'>&#9876;&#65039; Trận Hay</a>
                 </div>
 
                 <div class='post-grid'>
@@ -1187,24 +1205,24 @@
                       <div>
                         <div class='post-card-tags' style='display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;'>
                           <b:loop values='data:post.labels' var='label'>
-                            <b:if cond='data:label.name == "tran-hay" or data:label.name == "tran- hay" or data:label.name == "Trận Hay"'>
-                              <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold; text-decoration: none;'>⚔️ TRẬN HAY</a>
+                            <b:if cond='data:label.name == &quot;tran-hay&quot; or data:label.name == &quot;tran- hay&quot; or data:label.name == &quot;Trận Hay&quot;'>
+                              <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #8b0000, #4a0000); color: #fff; border: 1px solid #a83a1f; font-weight: bold; text-decoration: none;'>&#9876;&#65039; TRẬN HAY</a>
                             </b:if>
                           </b:loop>
 
                           <b:loop values='data:post.labels' var='label'>
-                            <b:if cond='data:label.name != "phan-tich-co" and data:label.name != "Phân Tích Cờ" and data:label.name != "tran-hay" and data:label.name != "tran- hay" and data:label.name != "Trận Hay"'>
+                            <b:if cond='data:label.name != &quot;phan-tich-co&quot; and data:label.name != &quot;Phân Tích Cờ&quot; and data:label.name != &quot;tran-hay&quot; and data:label.name != &quot;tran- hay&quot; and data:label.name != &quot;Trận Hay&quot;'>
                               <a class='post-card-tag' expr:href='data:label.url' style='background: linear-gradient(135deg, #3a2416, #1d120a); color: #f1c40f; border: 1px solid #5a3d22; font-weight: bold; text-decoration: none;'>
-                                <b:if cond='data:label.name == "co-bi-phap" or data:label.name == "Dai chien ky bien" or data:label.name == "Cờ Bí Pháp"'>
-                                  ✨ Cờ Bí Pháp
+                                <b:if cond='data:label.name == &quot;co-bi-phap&quot; or data:label.name == &quot;Dai chien ky bien&quot; or data:label.name == &quot;Cờ Bí Pháp&quot;'>
+                                  &#10024; Cờ Bí Pháp
                                 <b:else/>
-                                  <b:if cond='data:label.name == "co-up" or data:label.name == "Cờ Úp"'>
+                                  <b:if cond='data:label.name == &quot;co-up&quot; or data:label.name == &quot;Cờ Úp&quot;'>
                                     🎴 Cờ Úp
                                   <b:else/>
-                                    <b:if cond='data:label.name == "co-up-gian-diep" or data:label.name == "Cờ Gián Điệp"'>
-                                      🕵️ Cờ Gián Điệp
+                                    <b:if cond='data:label.name == &quot;co-up-gian-diep&quot; or data:label.name == &quot;Cờ Gián Điệp&quot;'>
+                                      🕵&#65039; Cờ Gián Điệp
                                     <b:else/>
-                                      <b:if cond='data:label.name == "co-truyen-thong" or data:label.name == "Cờ Truyền Thống"'>
+                                      <b:if cond='data:label.name == &quot;co-truyen-thong&quot; or data:label.name == &quot;Cờ Truyền Thống&quot;'>
                                         🏯 Cờ Truyền Thống
                                       <b:else/>
                                         <data:label.name/>
@@ -1230,7 +1248,7 @@
                         </div>
                       </div>
                       <a class='btn-read-post' expr:href='data:post.url'>
-                        📖 Thưởng Lãm Hồi Ký &amp; Khám Phá Ván Cờ ➔
+                        📖 Thưởng Lãm Hồi Ký &amp; Khám Phá Ván Cờ &#10132;
                       </a>
                     </div>
                   </b:loop>
@@ -1243,29 +1261,56 @@
             </b:if>
 
           </b:includable>
-
-          <!-- INCLUDABLE CHO PHÂN TRANG -->
-          <b:includable id='nextprev'>
-            <div class='blog-pager' id='blog-pager'>
-              <b:if cond='data:newerPageUrl'>
-                <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' id='blog-pager-newer-link' expr:title='data:newerPageTitle'>⏮️ Ván Mới Hơn</a>
-              <b:else/>
-                <span></span>
-              </b:if>
-
-              <b:if cond='data:blog.homepageUrl != data:blog.url'>
-                <a class='home-link' expr:href='data:blog.homepageUrl'>🏠 Trang Chủ</a>
-              </b:if>
-
-              <b:if cond='data:olderPageUrl'>
-                <a class='blog-pager-older-link' expr:href='data:olderPageUrl' id='blog-pager-older-link' expr:title='data:olderPageTitle'>Ván Cũ Hơn ⏭️</a>
-              <b:else/>
-                <span></span>
-              </b:if>
-            </div>
-          </b:includable>
-
-          <!-- INCLUDABLE CHO BÌNH LUẬN BÀI VIẾT -->
+          <b:includable id='backlinkDeleteIcon' var='backlink'/>
+          <b:includable id='backlinks' var='post'/>
+          <b:includable id='comment-form' var='post'>
+  <div class='comment-form'>
+    <a name='comment-form'/>
+    <b:if cond='data:mobile'>
+      <h4 id='comment-post-message'>
+        <a expr:id='data:widget.instanceId + &quot;_comment-editor-toggle-link&quot;' href='javascript:void(0)'><data:postCommentMsg/></a></h4>
+      <p><data:blogCommentMessage/></p>
+      <data:blogTeamBlogMessage/>
+      <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+      <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' style='display: none' width='100%'/>
+    <b:else/>
+      <h4 id='comment-post-message'><data:postCommentMsg/></h4>
+      <p><data:blogCommentMessage/></p>
+      <data:blogTeamBlogMessage/>
+      <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+      <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' width='100%'/>
+    </b:if>
+    <data:post.cmtfpIframe/>
+    <script type='text/javascript'>
+      BLOG_CMT_createIframe(&#39;<data:post.appRpcRelayPath/>&#39;);
+    </script>
+  </div>
+</b:includable>
+          <b:includable id='commentDeleteIcon' var='comment'>
+  <span expr:class='&quot;item-control &quot; + data:comment.adminClass'>
+    <b:if cond='data:showCmtPopup'>
+      <div class='goog-toggle-button'>
+        <div class='goog-inline-block comment-action-icon'/>
+      </div>
+    <b:else/>
+      <a class='comment-delete' expr:href='data:comment.deleteUrl' expr:title='data:top.deleteCommentMsg'>
+        <img src='https://resources.blogblog.com/img/icon_delete13.gif'/>
+      </a>
+    </b:if>
+  </span>
+</b:includable>
+          <b:includable id='comment_count_picker' var='post'>
+  <a class='comment-link' expr:href='data:post.addCommentUrl' expr:onclick='data:post.addCommentOnclick'>
+    <data:post.commentLabelFull/>:
+  </a>
+</b:includable>
+          <b:includable id='comment_picker' var='post'>
+  <b:if cond='data:post.showThreadedComments'>
+    <b:include data='post' name='threaded_comments'/>
+  <b:else/>
+    <b:include data='post' name='comments'/>
+  </b:if>
+</b:includable>
           <b:includable id='comments' var='post'>
             <b:if cond='data:post.allowComments'>
               <section class='comments-section' id='comments'>
@@ -1281,7 +1326,613 @@
               </section>
             </b:if>
           </b:includable>
+          <b:includable id='feedLinks'>
+  <b:if cond='data:blog.pageType != &quot;item&quot;'> <!-- Blog feed links -->
+    <b:if cond='data:feedLinks'>
+      <div class='blog-feeds'>
+        <b:include data='feedLinks' name='feedLinksBody'/>
+      </div>
+    </b:if>
 
+  <b:else/> <!--Post feed links -->
+    <div class='post-feeds'>
+      <b:loop values='data:posts' var='post'>
+        <b:include cond='data:post.allowComments and data:post.feedLinks' data='post.feedLinks' name='feedLinksBody'/>
+      </b:loop>
+    </div>
+  </b:if>
+</b:includable>
+          <b:includable id='feedLinksBody' var='links'>
+  <div class='feed-links'>
+  <data:feedLinksMsg/>
+  <b:loop values='data:links' var='f'>
+     <a class='feed-link' expr:href='data:f.url' expr:type='data:f.mimeType' target='_blank'><data:f.name/> (<data:f.feedType/>)</a>
+  </b:loop>
+  </div>
+</b:includable>
+          <b:includable id='iframe_comments' var='post'>
+  <!-- G+ comments, no longer available. The includable is retained for backwards-compatibility. -->
+</b:includable>
+          <b:includable id='mobile-index-post' var='post'>
+  <div class='mobile-date-outer date-outer'>
+    <b:if cond='data:post.dateHeader'>
+      <div class='date-header'>
+        <span><data:post.dateHeader/></span>
+      </div>
+    </b:if>
+
+    <div class='mobile-post-outer'>
+      <a expr:href='data:post.url'>
+        <h3 class='mobile-index-title entry-title' itemprop='name'>
+          <data:post.title/>
+        </h3>
+
+        <div class='mobile-index-arrow'>&amp;rsaquo;</div>
+
+        <div class='mobile-index-contents'>
+          <b:if cond='data:post.thumbnailUrl'>
+            <div class='mobile-index-thumbnail'>
+              <div class='Image'>
+                <img expr:src='data:post.thumbnailUrl'/>
+              </div>
+            </div>
+          </b:if>
+
+          <div class='post-body'>
+            <b:if cond='data:post.snippet'><data:post.snippet/></b:if>
+          </div>
+        </div>
+
+        <div style='clear: both;'/>
+      </a>
+
+      <div class='mobile-index-comment'>
+        <b:include cond='data:blog.pageType != &quot;static_page&quot;                          and data:post.allowComments                          and data:post.numComments != 0' data='post' name='comment_count_picker'/>
+      </div>
+    </div>
+  </div>
+</b:includable>
+          <b:includable id='mobile-main' var='top'>
+    <!-- posts -->
+    <div class='blog-posts hfeed'>
+
+      <b:include data='top' name='status-message'/>
+
+      <b:if cond='data:blog.pageType == &quot;index&quot;'>
+        <b:loop values='data:posts' var='post'>
+          <b:include data='post' name='mobile-index-post'/>
+        </b:loop>
+      <b:else/>
+        <b:loop values='data:posts' var='post'>
+          <b:include data='post' name='mobile-post'/>
+        </b:loop>
+      </b:if>
+    </div>
+
+   <b:include name='mobile-nextprev'/>
+</b:includable>
+          <b:includable id='mobile-nextprev'>
+  <div class='blog-pager' id='blog-pager'>
+    <b:if cond='data:newerPageUrl'>
+      <div class='mobile-link-button' id='blog-pager-newer-link'>
+      <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' expr:id='data:widget.instanceId + &quot;_blog-pager-newer-link&quot;' expr:title='data:newerPageTitle'>&amp;lsaquo;</a>
+      </div>
+    </b:if>
+
+    <b:if cond='data:olderPageUrl'>
+      <div class='mobile-link-button' id='blog-pager-older-link'>
+      <a class='blog-pager-older-link' expr:href='data:olderPageUrl' expr:id='data:widget.instanceId + &quot;_blog-pager-older-link&quot;' expr:title='data:olderPageTitle'>&amp;rsaquo;</a>
+      </div>
+    </b:if>
+
+    <div class='mobile-link-button' id='blog-pager-home-link'>
+    <a class='home-link' expr:href='data:blog.homepageUrl'><data:homeMsg/></a>
+    </div>
+
+    <div class='mobile-desktop-link'>
+      <a class='home-link' expr:href='data:desktopLinkUrl'><data:desktopLinkMsg/></a>
+    </div>
+
+  </div>
+  <div class='clear'/>
+</b:includable>
+          <b:includable id='mobile-post' var='post'>
+  <div class='date-outer'>
+    <b:if cond='data:post.dateHeader'>
+      <h2 class='date-header'><span><data:post.dateHeader/></span></h2>
+    </b:if>
+    <div class='date-posts'>
+      <div class='post-outer'>
+
+        <div class='post hentry uncustomized-post-template' itemscope='itemscope' itemtype='http://schema.org/BlogPosting'>
+          <b:if cond='data:post.thumbnailUrl'>
+            <meta expr:content='data:post.thumbnailUrl' itemprop='image_url'/>
+          </b:if>
+          <meta expr:content='data:blog.blogId' itemprop='blogId'/>
+          <meta expr:content='data:post.id' itemprop='postId'/>
+
+          <a expr:name='data:post.id'/>
+          <b:if cond='data:post.title'>
+            <h3 class='post-title entry-title' itemprop='name'>
+              <b:if cond='data:post.link'>
+                <a expr:href='data:post.link'><data:post.title/></a>
+              <b:elseif cond='data:post.url and data:blog.url != data:post.url'/>
+                <a expr:href='data:post.url'><data:post.title/></a>
+              <b:else/>
+                <data:post.title/>
+              </b:if>
+            </h3>
+          </b:if>
+
+          <div class='post-header'>
+            <div class='post-header-line-1'/>
+          </div>
+
+          <div class='post-body entry-content' expr:id='&quot;post-body-&quot; + data:post.id' itemprop='articleBody'>
+            <data:post.body/>
+            <div style='clear: both;'/> <!-- clear for photos floats -->
+          </div>
+
+          <div class='post-footer'>
+            <div class='post-footer-line post-footer-line-1'>
+              <span class='post-author vcard'>
+                <b:if cond='data:top.showAuthor'>
+                  <b:if cond='data:post.authorProfileUrl'>
+                    <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+                      <meta expr:content='data:post.authorProfileUrl' itemprop='url'/>
+                      <a expr:href='data:post.authorProfileUrl' rel='author' title='author profile'>
+                        <span itemprop='name'><data:post.author/></span>
+                      </a>
+                    </span>
+                  <b:else/>
+                    <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+                      <span itemprop='name'><data:post.author/></span>
+                    </span>
+                  </b:if>
+                </b:if>
+              </span>
+
+              <span class='post-timestamp'>
+                <b:if cond='data:top.showTimestamp'>
+                  <data:top.timestampLabel/>
+                  <b:if cond='data:post.url'>
+                    <meta expr:content='data:post.url.canonical' itemprop='url'/>
+                    <a class='timestamp-link' expr:href='data:post.url' rel='bookmark' title='permanent link'><abbr class='published' expr:title='data:post.timestampISO8601' itemprop='datePublished'><data:post.timestamp/></abbr></a>
+                  </b:if>
+                </b:if>
+              </span>
+
+              <span class='post-comment-link'>
+                <b:include cond='data:blog.pageType not in {&quot;item&quot;,&quot;static_page&quot;}                                  and data:post.allowComments' data='post' name='comment_count_picker'/>
+              </span>
+            </div>
+
+            <div class='post-footer-line post-footer-line-2'>
+              <b:if cond='data:top.showMobileShare'>
+                <div class='mobile-link-button goog-inline-block' id='mobile-share-button'>
+                  <a href='javascript:void(0);'><data:shareMsg/></a>
+                </div>
+              </b:if>
+            </div>
+
+          </div>
+        </div>
+
+        <b:include cond='data:blog.pageType in {&quot;static_page&quot;,&quot;item&quot;}' data='post' name='comment_picker'/>
+      </div>
+    </div>
+  </div>
+</b:includable>
+          <b:includable id='nextprev'>
+            <div class='blog-pager' id='blog-pager'>
+              <b:if cond='data:newerPageUrl'>
+                <a class='blog-pager-newer-link' expr:href='data:newerPageUrl' expr:title='data:newerPageTitle' id='blog-pager-newer-link'>&#9198;&#65039; Ván Mới Hơn</a>
+              <b:else/>
+                <span/>
+              </b:if>
+
+              <b:if cond='data:blog.homepageUrl != data:blog.url'>
+                <a class='home-link' expr:href='data:blog.homepageUrl'>🏠 Trang Chủ</a>
+              </b:if>
+
+              <b:if cond='data:olderPageUrl'>
+                <a class='blog-pager-older-link' expr:href='data:olderPageUrl' expr:title='data:olderPageTitle' id='blog-pager-older-link'>Ván Cũ Hơn &#9197;&#65039;</a>
+              <b:else/>
+                <span/>
+              </b:if>
+            </div>
+          </b:includable>
+          <b:includable id='post' var='post'>
+  <div class='post hentry uncustomized-post-template' itemprop='blogPost' itemscope='itemscope' itemtype='http://schema.org/BlogPosting'>
+    <b:if cond='data:post.firstImageUrl'>
+      <meta expr:content='data:post.firstImageUrl' itemprop='image_url'/>
+    </b:if>
+    <meta expr:content='data:blog.blogId' itemprop='blogId'/>
+    <meta expr:content='data:post.id' itemprop='postId'/>
+
+    <a expr:name='data:post.id'/>
+    <b:if cond='data:post.title'>
+      <h3 class='post-title entry-title' itemprop='name'>
+      <b:if cond='data:post.link or (data:post.url and data:blog.url != data:post.url)'>
+        <a expr:href='data:post.link ? data:post.link : data:post.url'><data:post.title/></a>
+      <b:else/>
+        <data:post.title/>
+      </b:if>
+      </h3>
+    </b:if>
+
+    <div class='post-header'>
+    <div class='post-header-line-1'/>
+    </div>
+
+    <!-- Then use the post body as the schema.org description, for good G+/FB snippeting. -->
+    <div class='post-body entry-content' expr:id='&quot;post-body-&quot; + data:post.id' expr:itemprop='(data:blog.metaDescription ? &quot;&quot; : &quot;description &quot;) + &quot;articleBody&quot;'>
+      <data:post.body/>
+      <div style='clear: both;'/> <!-- clear for photos floats -->
+    </div>
+
+    <b:if cond='data:post.hasJumpLink'>
+      <div class='jump-link'>
+        <a expr:href='data:post.url + &quot;#more&quot;' expr:title='data:post.title'><data:post.jumpText/></a>
+      </div>
+    </b:if>
+
+    <div class='post-footer'>
+    <div class='post-footer-line post-footer-line-1'>
+      <span class='post-author vcard'>
+        <b:if cond='data:top.showAuthor'>
+          <data:top.authorLabel/>
+            <b:if cond='data:post.authorProfileUrl'>
+              <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+                <meta expr:content='data:post.authorProfileUrl' itemprop='url'/>
+                <a class='g-profile' expr:href='data:post.authorProfileUrl' rel='author' title='author profile'>
+                  <span itemprop='name'><data:post.author/></span>
+                </a>
+              </span>
+            <b:else/>
+              <span class='fn' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+                <span itemprop='name'><data:post.author/></span>
+              </span>
+            </b:if>
+        </b:if>
+      </span>
+
+      <span class='post-timestamp'>
+        <b:if cond='data:top.showTimestamp'>
+          <data:top.timestampLabel/>
+          <b:if cond='data:post.url'>
+            <meta expr:content='data:post.url.canonical' itemprop='url'/>
+            <a class='timestamp-link' expr:href='data:post.url' rel='bookmark' title='permanent link'><abbr class='published' expr:title='data:post.timestampISO8601' itemprop='datePublished'><data:post.timestamp/></abbr></a>
+          </b:if>
+        </b:if>
+      </span>
+
+      <span class='post-comment-link'>
+        <b:include cond='data:blog.pageType not in {&quot;item&quot;,&quot;static_page&quot;}                          and data:post.allowComments' data='post' name='comment_count_picker'/>
+      </span>
+
+      <span class='post-icons'>
+        <!-- email post links -->
+        <b:if cond='data:post.emailPostUrl'>
+          <span class='item-action'>
+          <a expr:href='data:post.emailPostUrl' expr:title='data:top.emailPostMsg'>
+            <img alt='' class='icon-action' height='13' src='https://resources.blogblog.com/img/icon18_email.gif' width='18'/>
+          </a>
+          </span>
+        </b:if>
+
+        <!-- quickedit pencil -->
+        <b:include data='post' name='postQuickEdit'/>
+      </span>
+
+      <!-- share buttons -->
+      <div class='post-share-buttons goog-inline-block'>
+        <b:include cond='data:post.sharePostUrl' data='post' name='shareButtons'/>
+      </div>
+
+      </div>
+
+      <div class='post-footer-line post-footer-line-2'>
+      <span class='post-labels'>
+        <b:if cond='data:top.showPostLabels and data:post.labels'>
+          <data:postLabelsLabel/>
+          <b:loop values='data:post.labels' var='label'>
+            <a expr:href='data:label.url' rel='tag'><data:label.name/></a><b:if cond='not data:label.isLast'>,</b:if>
+          </b:loop>
+        </b:if>
+      </span>
+      </div>
+
+      <div class='post-footer-line post-footer-line-3'>
+      <span class='post-location'>
+        <b:if cond='data:top.showLocation and data:post.location'>
+          <data:postLocationLabel/>
+          <a expr:href='data:post.location.mapsUrl' target='_blank'><data:post.location.name/></a>
+        </b:if>
+      </span>
+      </div>
+      <b:if cond='data:post.authorAboutMe'>
+        <div class='author-profile' itemprop='author' itemscope='itemscope' itemtype='http://schema.org/Person'>
+          <b:if cond='data:post.authorPhoto.url'>
+            <img expr:src='data:post.authorPhoto.url' itemprop='image' width='50px'/>
+          </b:if>
+          <div>
+            <a class='g-profile' expr:href='data:post.authorProfileUrl' itemprop='url' rel='author' title='author profile'>
+              <span itemprop='name'><data:post.author/></span>
+            </a>
+          </div>
+          <span itemprop='description'><data:post.authorAboutMe/></span>
+        </div>
+      </b:if>
+    </div>
+  </div>
+</b:includable>
+          <b:includable id='postQuickEdit' var='post'>
+  <b:if cond='data:post.editUrl'>
+    <span expr:class='&quot;item-control &quot; + data:post.adminClass'>
+      <a expr:href='data:post.editUrl' expr:title='data:top.editPostMsg'>
+        <img alt='' class='icon-action' height='18' src='https://resources.blogblog.com/img/icon18_edit_allbkg.gif' width='18'/>
+      </a>
+    </span>
+  </b:if>
+</b:includable>
+          <b:includable id='shareButtons' var='post'>
+  <b:if cond='data:top.showEmailButton'><a class='goog-inline-block share-button sb-email' expr:href='data:post.sharePostUrl + &quot;&amp;target=email&quot;' expr:title='data:top.emailThisMsg' target='_blank'><span class='share-button-link-text'><data:top.emailThisMsg/></span></a></b:if><b:if cond='data:top.showBlogThisButton'><a class='goog-inline-block share-button sb-blog' expr:href='data:post.sharePostUrl + &quot;&amp;target=blog&quot;' expr:onclick='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=270,width=475\&quot;); return false;&quot;' expr:title='data:top.blogThisMsg' target='_blank'><span class='share-button-link-text'><data:top.blogThisMsg/></span></a></b:if><b:if cond='data:top.showTwitterButton'><a class='goog-inline-block share-button sb-twitter' expr:href='data:post.sharePostUrl + &quot;&amp;target=twitter&quot;' expr:title='data:top.shareToTwitterMsg' target='_blank'><span class='share-button-link-text'><data:top.shareToTwitterMsg/></span></a></b:if><b:if cond='data:top.showFacebookButton'><a class='goog-inline-block share-button sb-facebook' expr:href='data:post.sharePostUrl + &quot;&amp;target=facebook&quot;' expr:onclick='&quot;window.open(this.href, \&quot;_blank\&quot;, \&quot;height=430,width=640\&quot;); return false;&quot;' expr:title='data:top.shareToFacebookMsg' target='_blank'><span class='share-button-link-text'><data:top.shareToFacebookMsg/></span></a></b:if><b:if cond='data:top.showPinterestButton'><a class='goog-inline-block share-button sb-pinterest' expr:href='data:post.sharePostUrl + &quot;&amp;target=pinterest&quot;' expr:title='data:top.shareToPinterestMsg' target='_blank'><span class='share-button-link-text'><data:top.shareToPinterestMsg/></span></a></b:if>
+</b:includable>
+          <b:includable id='status-message'>
+  <b:if cond='data:navMessage'>
+  <div class='status-msg-wrap'>
+    <div class='status-msg-body'>
+      <data:navMessage/>
+    </div>
+    <div class='status-msg-border'>
+      <div class='status-msg-bg'>
+        <div class='status-msg-hidden'><data:navMessage/></div>
+      </div>
+    </div>
+  </div>
+  <div style='clear: both;'/>
+  </b:if>
+</b:includable>
+          <b:includable id='threaded-comment-form' var='post'>
+  <div class='comment-form'>
+    <a name='comment-form'/>
+    <b:if cond='data:mobile'>
+      <p><data:blogCommentMessage/></p>
+      <data:blogTeamBlogMessage/>
+      <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+      <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' style='display: none' width='100%'/>
+    <b:else/>
+      <p><data:blogCommentMessage/></p>
+      <data:blogTeamBlogMessage/>
+      <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+      <iframe allowtransparency='true' class='blogger-iframe-colorize blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' width='100%'/>
+    </b:if>
+    <data:post.cmtfpIframe/>
+    <script type='text/javascript'>
+      BLOG_CMT_createIframe(&#39;<data:post.appRpcRelayPath/>&#39;);
+    </script>
+  </div>
+</b:includable>
+          <b:includable id='threaded_comment_js' var='post'>
+  <script async='async' expr:src='data:post.commentSrc' type='text/javascript'/>
+
+  <script type='text/javascript'>
+    (function() {
+      var items = <data:post.commentJso/>;
+      var msgs = <data:post.commentMsgs/>;
+      var config = <data:post.commentConfig/>;
+
+// <![CDATA[
+      var cursor = null;
+      if (items && items.length > 0) {
+        cursor = parseInt(items[items.length - 1].timestamp) + 1;
+      }
+
+      var bodyFromEntry = function(entry) {
+        var text = (entry &&
+                    ((entry.content && entry.content.$t) ||
+                     (entry.summary && entry.summary.$t))) ||
+            '';
+        if (entry && entry.gd$extendedProperty) {
+          for (var k in entry.gd$extendedProperty) {
+            if (entry.gd$extendedProperty[k].name == 'blogger.contentRemoved') {
+              return '<span class="deleted-comment">' + text + '</span>';
+            }
+          }
+        }
+        return text;
+      }
+
+      var parse = function(data) {
+        cursor = null;
+        var comments = [];
+        if (data && data.feed && data.feed.entry) {
+          for (var i = 0, entry; entry = data.feed.entry[i]; i++) {
+            var comment = {};
+            // comment ID, parsed out of the original id format
+            var id = /blog-(\d+).post-(\d+)/.exec(entry.id.$t);
+            comment.id = id ? id[2] : null;
+            comment.body = bodyFromEntry(entry);
+            comment.timestamp = Date.parse(entry.published.$t) + '';
+            if (entry.author && entry.author.constructor === Array) {
+              var auth = entry.author[0];
+              if (auth) {
+                comment.author = {
+                  name: (auth.name ? auth.name.$t : undefined),
+                  profileUrl: (auth.uri ? auth.uri.$t : undefined),
+                  avatarUrl: (auth.gd$image ? auth.gd$image.src : undefined)
+                };
+              }
+            }
+            if (entry.link) {
+              if (entry.link[2]) {
+                comment.link = comment.permalink = entry.link[2].href;
+              }
+              if (entry.link[3]) {
+                var pid = /.*comments\/default\/(\d+)\?.*/.exec(entry.link[3].href);
+                if (pid && pid[1]) {
+                  comment.parentId = pid[1];
+                }
+              }
+            }
+            comment.deleteclass = 'item-control blog-admin';
+            if (entry.gd$extendedProperty) {
+              for (var k in entry.gd$extendedProperty) {
+                if (entry.gd$extendedProperty[k].name == 'blogger.itemClass') {
+                  comment.deleteclass += ' ' + entry.gd$extendedProperty[k].value;
+                } else if (entry.gd$extendedProperty[k].name == 'blogger.displayTime') {
+                  comment.displayTime = entry.gd$extendedProperty[k].value;
+                }
+              }
+            }
+            comments.push(comment);
+          }
+        }
+        return comments;
+      };
+
+      var paginator = function(callback) {
+        if (hasMore()) {
+          var url = config.feed + '?alt=json&v=2&orderby=published&reverse=false&max-results=50';
+          if (cursor) {
+            url += '&published-min=' + new Date(cursor).toISOString();
+          }
+          window.bloggercomments = function(data) {
+            var parsed = parse(data);
+            cursor = parsed.length < 50 ? null
+                : parseInt(parsed[parsed.length - 1].timestamp) + 1
+            callback(parsed);
+            window.bloggercomments = null;
+          }
+          url += '&callback=bloggercomments';
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = url;
+          document.getElementsByTagName('head')[0].appendChild(script);
+        }
+      };
+      var hasMore = function() {
+        return !!cursor;
+      };
+      var getMeta = function(key, comment) {
+        if ('iswriter' == key) {
+          var matches = !!comment.author
+              && comment.author.name == config.authorName
+              && comment.author.profileUrl == config.authorUrl;
+          return matches ? 'true' : '';
+        } else if ('deletelink' == key) {
+          return config.baseUri + '/comment/delete/'
+               + config.blogId + '/' + comment.id;
+        } else if ('deleteclass' == key) {
+          return comment.deleteclass;
+        }
+        return '';
+      };
+
+      var replybox = null;
+      var replyUrlParts = null;
+      var replyParent = undefined;
+
+      var onReply = function(commentId, domId) {
+        if (replybox == null) {
+          // lazily cache replybox, and adjust to suit this style:
+          replybox = document.getElementById('comment-editor');
+          if (replybox != null) {
+            replybox.height = '250px';
+            replybox.style.display = 'block';
+            replyUrlParts = replybox.src.split('#');
+          }
+        }
+        if (replybox && (commentId !== replyParent)) {
+          replybox.src = '';
+          document.getElementById(domId).insertBefore(replybox, null);
+          replybox.src = replyUrlParts[0]
+              + (commentId ? '&parentID=' + commentId : '')
+              + '#' + replyUrlParts[1];
+          replyParent = commentId;
+        }
+      };
+
+      var hash = (window.location.hash || '#').substring(1);
+      var startThread, targetComment;
+      if (/^comment-form_/.test(hash)) {
+        startThread = hash.substring('comment-form_'.length);
+      } else if (/^c[0-9]+$/.test(hash)) {
+        targetComment = hash.substring(1);
+      }
+
+      // Configure commenting API:
+      var configJso = {
+        'maxDepth': config.maxThreadDepth
+      };
+      var provider = {
+        'id': config.postId,
+        'data': items,
+        'loadNext': paginator,
+        'hasMore': hasMore,
+        'getMeta': getMeta,
+        'onReply': onReply,
+        'rendered': true,
+        'initComment': targetComment,
+        'initReplyThread': startThread,
+        'config': configJso,
+        'messages': msgs
+      };
+
+      var render = function() {
+        if (window.goog && window.goog.comments) {
+          var holder = document.getElementById('comment-holder');
+          window.goog.comments.render(holder, provider);
+        }
+      };
+
+      // render now, or queue to render when library loads:
+      if (window.goog && window.goog.comments) {
+        render();
+      } else {
+        window.goog = window.goog || {};
+        window.goog.comments = window.goog.comments || {};
+        window.goog.comments.loadQueue = window.goog.comments.loadQueue || [];
+        window.goog.comments.loadQueue.push(render);
+      }
+    })();
+// ]]>
+  </script>
+</b:includable>
+          <b:includable id='threaded_comments' var='post'>
+  <div class='comments' id='comments'>
+    <a name='comments'/>
+    <h4><data:post.commentLabelFull/>:</h4>
+
+    <div class='comments-content'>
+      <b:include cond='data:post.embedCommentForm' data='post' name='threaded_comment_js'/>
+      <div id='comment-holder'>
+         <data:post.commentHtml/>
+      </div>
+    </div>
+
+    <p class='comment-footer'>
+      <b:if cond='data:post.allowNewComments'>
+        <b:include data='post' name='threaded-comment-form'/>
+      <b:else/>
+        <data:post.noNewCommentsText/>
+      </b:if>
+    </p>
+
+    <b:if cond='data:showCmtPopup'>
+      <div id='comment-popup'>
+        <iframe allowtransparency='true' frameborder='0' id='comment-actions' name='comment-actions' scrolling='no'>
+        </iframe>
+      </div>
+    </b:if>
+
+    <div id='backlinks-container'>
+    <div expr:id='data:widget.instanceId + &quot;_backlinks-container&quot;'>
+    </div>
+    </div>
+  </div>
+</b:includable>
         </b:widget>
       </b:section>
     </main>
@@ -1291,15 +1942,15 @@
   <footer class='kybien-footer'>
     <div id='kybien-online-footer' style='margin-bottom: 12px; font-size: 0.9rem; color: #f1c40f; display: flex; align-items: center; justify-content: center; gap: 8px;'>
       <span id='online-status-dot' style='display:inline-block;width:9px;height:9px;background:#7f8c8d;border-radius:50%;'/>
-      <span id='online-stats-text'>Tề tựu: <b>--</b> vị (<b>--</b> Kỳ thủ • <b>--</b> Lữ khách)</span>
+      <span id='online-stats-text'>Tề tựu: <b>--</b> vị (<b>--</b> Kỳ thủ &#8226; <b>--</b> Lữ khách)</span>
     </div>
-    <p>© 2026 KỲ BIẾN - ĐỆ NHẤT KỲ ĐẠO BÍ TRUYỀN GIANG HỒ. Bổn Trang kính chúc chư vị kỳ hữu kỳ nghệ thăng tiến, danh chấn bát hoang.</p>
+    <p>&#169; 2026 KỲ BIẾN - ĐỆ NHẤT KỲ ĐẠO BÍ TRUYỀN GIANG HỒ. Bổn Trang kính chúc chư vị kỳ hữu kỳ nghệ thăng tiến, danh chấn bát hoang.</p>
     <div style='margin-top: 10px; font-size: 0.82rem; color: #a8947d; display: flex; justify-content: center; gap: 15px;'>
       <a href='/'>Trang Chủ</a> |
-      <a href='/p/co-the.html'>Cờ Thế</a> |
-      <a href='/p/cam-nang.html'>Cẩm Nang</a> |
       <a href='/p/arena.html'>Sàn Đấu</a> |
-      <a href='/search/label/phan-tich-co'>Bình Văn</a>
+      <a href='/p/cam-nang.html'>Cẩm Nang</a> |      
+      <a href='/search/label/phan-tich-co'>Bình Văn</a> |
+      <a href='/p/sanh-game.html'>Sảnh Game</a>
     </div>
     <script>//<![CDATA[
     (function(){
