@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Cờ Caro — Kỳ Biến Sa Trường</title>
-  <meta name="description" content="Cờ Caro theo luật Việt Nam: đấu với máy hoặc 2 người chơi chung máy. 4 quân mở 2 đầu hoặc 5 quân liên tiếp là thắng."/>
+  <meta name="description" content="Cờ Caro 2 luật: Caro Việt Nam (4 mở thắng) và Gomoku quốc tế Swap2 (Standard / Free). Đấu với máy hoặc 2 người chơi chung máy."/>
 
   <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC chuẩn giao diện Kỳ Biến -->
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet"/>
@@ -40,10 +40,6 @@
     a:hover { color: #f1c40f; }
 
     /* ===== EMBED & STANDALONE BLOGGER MODE ===== */
-    html.is-embedded .kybien-navbar,
-    body.is-embedded .kybien-navbar {
-      display: none !important;
-    }
     html.is-embedded .puzzle-main-wrapper,
     body.is-embedded .puzzle-main-wrapper {
       margin: 8px auto !important;
@@ -53,55 +49,6 @@
       max-width: 1300px !important;
       box-sizing: border-box !important;
     }
-
-    /* ===== NAVBAR ===== */
-    .kybien-navbar {
-      background: linear-gradient(135deg, #8b0000, #4a0000);
-      color: #ffffff;
-      padding: 12px 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 2px solid #f1c40f;
-    }
-    .nav-container {
-      max-width: 1300px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .brand-logo {
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'Noto Serif TC', serif;
-    }
-    .brand-logo span { color: #f1c40f; }
-    .logo-general-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #c62828;
-      color: #ffffff;
-      border: 2px solid #f1c40f;
-      font-family: 'Noto Serif TC', serif;
-      font-weight: 900;
-      font-size: 1.1rem;
-      box-shadow: 0 0 10px rgba(241,196,15,0.4);
-    }
-    .nav-links { display: flex; gap: 18px; list-style: none; align-items: center; flex-wrap: wrap; }
-    .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.92rem; }
-    .nav-links a:hover, .nav-links a.active { color: #f1c40f; text-shadow: 0 0 6px rgba(241,196,15,0.5); }
 
     /* ===== MAIN LAYOUT ===== */
     .puzzle-main-wrapper {
@@ -114,7 +61,7 @@
       box-sizing: border-box;
     }
 
-    /* Sub-header & Mode Selector */
+    /* Sub-header: 2 hàng tab (luật + chế độ) */
     .mode-bar {
       display: flex;
       justify-content: space-between;
@@ -204,6 +151,21 @@
       box-shadow: 0 0 6px rgba(241, 196, 15, 0.3);
     }
     .creator-select:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* Hộp khai cuộc Swap2 */
+    .swap-box {
+      background: linear-gradient(135deg, rgba(139,0,0,0.25), rgba(241,196,15,0.08));
+      border: 1px solid #8b5a2b;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 14px;
+      font-size: 0.86rem;
+      color: #e8dcc6;
+    }
+    .swap-box p { margin-bottom: 10px; line-height: 1.55; }
+    .swap-box p:last-child { margin-bottom: 0; }
+    .swap-actions { display: flex; flex-direction: column; gap: 8px; }
+    .swap-actions .btn-act { justify-content: center; }
 
     /* Bảng tỉ số */
     .score-box {
@@ -320,19 +282,32 @@
     .cell:focus-visible { outline: 2px solid #f1c40f; outline-offset: -2px; }
     .cell .stone-x { color: #1d4ed8; text-shadow: 0 1px 0 rgba(255,255,255,0.45); }
     .cell .stone-o { color: #dc2626; text-shadow: 0 1px 0 rgba(255,255,255,0.45); }
+    /* Quân Đen / Trắng (luật quốc tế) */
+    .cell .stone-b, .cell .stone-w {
+      display: block;
+      width: 76%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+    }
+    .cell .stone-b { background: radial-gradient(circle at 35% 30%, #4b5563, #111827 70%); box-shadow: 0 2px 4px rgba(0,0,0,0.55); }
+    .cell .stone-w { background: radial-gradient(circle at 35% 30%, #ffffff, #d1d5db 70%); border: 1px solid #6b7280; box-shadow: 0 2px 4px rgba(0,0,0,0.45); }
     /* Ô vừa đi: viền xanh như ảnh mẫu */
     .cell.last { background: rgba(37, 99, 235, 0.18); box-shadow: inset 0 0 0 2px #2563eb; }
     /* Nước thắng: tô vàng */
     .cell.win { background: rgba(241, 196, 15, 0.45); box-shadow: inset 0 0 0 2px #f1c40f; animation: winPulse 0.8s ease-in-out infinite alternate; }
     @keyframes winPulse { from { background: rgba(241,196,15,0.35); } to { background: rgba(241,196,15,0.65); } }
     /* Xem trước nước đi khi rê chuột (chỉ khi tới lượt người) */
-    .caro-board.human-turn .cell.empty:hover::after {
-      content: var(--ghost, 'X');
-      opacity: 0.35;
-      font-weight: 900;
-    }
-    .caro-board.human-turn .cell.empty:hover::after { color: #1d4ed8; }
+    .caro-board.human-turn .cell.empty:hover::after { opacity: 0.35; font-weight: 900; }
+    .caro-board.human-turn.ghost-x .cell.empty:hover::after { content: 'X'; color: #1d4ed8; }
     .caro-board.human-turn.ghost-o .cell.empty:hover::after { content: 'O'; color: #dc2626; }
+    .caro-board.human-turn.ghost-b .cell.empty:hover::after {
+      content: ''; width: 68%; aspect-ratio: 1; border-radius: 50%;
+      background: #111827; opacity: 0.35;
+    }
+    .caro-board.human-turn.ghost-w .cell.empty:hover::after {
+      content: ''; width: 68%; aspect-ratio: 1; border-radius: 50%;
+      background: #ffffff; border: 1px solid #6b7280; opacity: 0.45;
+    }
     .caro-board:not(.human-turn) .cell { cursor: default; }
 
     .board-actions {
@@ -462,15 +437,18 @@
 </head>
 <body>
 
-  <!-- Không có navbar riêng trong trang: Blogger đã có sẵn điều hướng của theme
-       (bạn vừa bỏ navbar ở trang Sảnh Game vì lý do này) -->
+  <!-- Không có navbar riêng trong trang: Blogger đã có sẵn điều hướng của theme -->
 
   <!-- MAIN ARENA -->
   <main class="puzzle-main-wrapper">
 
-    <!-- SUBHEADER & CHỌN CHẾ ĐỘ NHANH -->
+    <!-- SUBHEADER: 2 HÀNG TAB — LUẬT CHƠI + CHẾ ĐỘ -->
     <div class="mode-bar">
-      <div class="mode-tabs">
+      <div class="mode-tabs" role="group" aria-label="Chọn luật chơi">
+        <button class="mode-btn active" id="btn-rule-vn" onclick="selectRule('vn')">🇻🇳 Caro Việt Nam</button>
+        <button class="mode-btn" id="btn-rule-intl" onclick="selectRule('intl')">🌏 Gomoku Quốc Tế</button>
+      </div>
+      <div class="mode-tabs" role="group" aria-label="Chọn chế độ chơi">
         <button class="mode-btn active" id="btn-tab-ai" onclick="selectQuickMode('ai')">🤖 Đấu Với Máy</button>
         <button class="mode-btn" id="btn-tab-2p" onclick="selectQuickMode('2p')">👥 2 Người Chơi</button>
       </div>
@@ -484,6 +462,20 @@
 
       <!-- CỘT 1: THIẾT LẬP + TỈ SỐ -->
       <aside class="puzzle-panel left-col">
+
+        <!-- Hộp khai cuộc Swap2 (chỉ hiện ở luật quốc tế, trong giai đoạn khai cuộc) -->
+        <div class="swap-box" id="swap-box" style="display: none;">
+          <p id="swap-text"></p>
+          <div class="swap-actions" id="swap-choice-actions" style="display: none;">
+            <button class="btn-act btn-primary" id="btn-swap-accept">✅ Chấp Nhận — Cầm Trắng</button>
+            <button class="btn-act" id="btn-swap-swap">🔄 Đổi Bên — Cầm Đen</button>
+            <button class="btn-act" id="btn-swap-add2">➕ Đặt Thêm 2 Quân</button>
+          </div>
+          <div class="swap-actions" id="swap-color-actions" style="display: none;">
+            <button class="btn-act btn-primary" id="btn-color-black">⚫ Cầm Đen</button>
+            <button class="btn-act" id="btn-color-white">⚪ Cầm Trắng</button>
+          </div>
+        </div>
 
         <div class="panel-header">
           <span>⚙️ THIẾT LẬP VÁN CỜ</span>
@@ -500,6 +492,14 @@
           <select id="side" class="creator-select">
             <option value="1">X — đi trước</option>
             <option value="2">O — đi sau</option>
+          </select>
+        </div>
+
+        <div class="creator-form-group" id="variant-group" style="display: none;">
+          <label for="variant">Biến thể quốc tế (luật hơn 5 quân)</label>
+          <select id="variant" class="creator-select">
+            <option value="standard" selected>Standard — đúng 5 mới thắng, hơn 5 không thắng</option>
+            <option value="free">Free — từ 5 quân trở lên là thắng</option>
           </select>
         </div>
 
@@ -524,8 +524,8 @@
           <span style="font-size: 0.8rem; color: #a8947d;" id="score-mode-label">Đấu với máy</span>
         </div>
         <div class="score-box">
-          <div class="score-item score-x"><span>X thắng</span><strong id="score-x">0</strong></div>
-          <div class="score-item score-o"><span>O thắng</span><strong id="score-o">0</strong></div>
+          <div class="score-item score-x"><span id="score-a-label">X thắng</span><strong id="score-x">0</strong></div>
+          <div class="score-item score-o"><span id="score-b-label">O thắng</span><strong id="score-o">0</strong></div>
           <div class="score-item score-d"><span>Hòa</span><strong id="score-d">0</strong></div>
         </div>
         <div style="text-align: center;">
@@ -539,7 +539,7 @@
           <div class="puzzle-tags">
             <span class="tag-tier" id="tag-turn">Lượt: X</span>
             <span class="tag-index" id="tag-moves">Nước: 0</span>
-            <span class="tag-index" id="tag-mode-info">Đấu với máy — Vừa</span>
+            <span class="tag-index" id="tag-mode-info">Caro Việt Nam · Đấu với máy — Vừa</span>
           </div>
           <div id="st-notice" style="font-size: 0.88rem; color: #f1c40f; font-weight: 700;"></div>
         </div>
@@ -564,7 +564,9 @@
       <div class="panel-header">
         <span>📜 CÁCH CHƠI CỜ CARO</span>
       </div>
-      <div class="rules-grid">
+
+      <!-- Luật Việt Nam -->
+      <div class="rules-grid" id="rules-vn">
         <div>
           <h4>🎯 Mục tiêu &amp; lượt đi</h4>
           <ul>
@@ -584,6 +586,28 @@
           </ul>
         </div>
       </div>
+
+      <!-- Luật quốc tế -->
+      <div class="rules-grid" id="rules-intl" style="display: none;">
+        <div>
+          <h4>🌏 Khai cuộc Swap2 — công bằng cho cả 2 bên</h4>
+          <ul>
+            <li><strong>Đen đi trước</strong>, đặt <strong>3 quân mở đầu</strong> tùy ý: quân 1–2 màu <strong>Đen</strong>, quân 3 màu <strong>Trắng</strong>. Quân đầu tiên luôn là Đen.</li>
+            <li><strong>Trắng chọn 1 trong 3:</strong> (1) <strong>Chấp nhận</strong> — cầm Trắng, đánh tiếp từ nước 4; (2) <strong>Đổi bên</strong> — cầm Đen, Đen cũ cầm Trắng; (3) <strong>Đặt thêm 2 quân</strong> (1 Đen, 1 Trắng) rồi để Đen <strong>chọn màu</strong>.</li>
+            <li>Sau khi chọn xong, 2 bên đánh luân phiên như thường lệ, <strong>Trắng đi nước tiếp theo</strong>.</li>
+            <li>Quân cờ: <strong>Đen / Trắng</strong> thay cho X / O.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>🏆 Luật thắng quốc tế (Standard / Free)</h4>
+          <ul>
+            <li><strong>Standard:</strong> phải có <strong>đúng 5 quân</strong> liên tiếp mới thắng. Hàng <strong>hơn 5 quân (overline)</strong> không được tính là thắng — ván tiếp tục cho đến khi có bên đạt đúng 5, hoặc <strong>hòa</strong> nếu không ai đạt được.</li>
+            <li><strong>Free:</strong> chỉ cần <strong>từ 5 quân trở lên</strong> là thắng, không cần đúng 5.</li>
+            <li><strong>Không có luật 4 mở</strong> như Caro Việt Nam — 4 quân dù mở 2 đầu cũng chưa thắng.</li>
+            <li><strong>Mẹo:</strong> ở Standard, tránh nối 2 cụm thành 6 quân (overline phí nước); ở Free thì cứ nối dài là thắng.</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -597,11 +621,11 @@
 
       <div class="reward-box">
         <div class="reward-item">
-          <span>X thắng:</span>
+          <span id="win-a-label">X thắng:</span>
           <strong id="win-x">0</strong>
         </div>
         <div class="reward-item">
-          <span>O thắng:</span>
+          <span id="win-b-label">O thắng:</span>
           <strong id="win-o">0</strong>
         </div>
         <div class="reward-item">
@@ -612,14 +636,14 @@
 
       <div class="modal-actions">
         <button class="btn-act btn-primary" id="btn-win-new">⚔️ Ván Mới</button>
-        <button class="btn-act" id="btn-win-swap">🔄 Đổi Phe (X ↔ O)</button>
+        <button class="btn-act" id="btn-win-swap">🔄 Đổi Phe</button>
         <button class="btn-act" id="btn-win-close">👀 Xem Bàn Cờ</button>
       </div>
     </div>
   </div>
 
 <script>
-/* ===== ENGINE (pure, testable) — luật Caro Việt Nam + AI ===== */
+/* ===== ENGINE (pure, testable) — luật Caro VN + Gomoku quốc tế + AI ===== */
 const N = 15;
 const DIRS = [[0, 1], [1, 0], [1, 1], [1, -1]];
 const inB = (r, c) => r >= 0 && r < N && c >= 0 && c < N;
@@ -637,24 +661,44 @@ function runInfo(B, r, c, p, d) {
   return { n, open };
 }
 
+function collectCells(B, r, c, p, d) {
+  const cells = [[r, c]];
+  for (const s of [1, -1]) {
+    let rr = r + d[0] * s, cc = c + d[1] * s;
+    while (inB(rr, cc) && B[rr][cc] === p) { cells.push([rr, cc]); rr += d[0] * s; cc += d[1] * s; }
+  }
+  return cells;
+}
+
 // Luật thắng VN: 5+ liên tiếp thắng mọi trường hợp; đúng 4 mà 2 đầu đều trống (4 mở) thắng ngay.
 function winInfo(B, r, c, p) {
   for (const d of DIRS) {
     const { n, open } = runInfo(B, r, c, p, d);
     if (n >= 5 || (n === 4 && open === 2)) {
-      const cells = [[r, c]];
-      for (const s of [1, -1]) {
-        let rr = r + d[0] * s, cc = c + d[1] * s;
-        while (inB(rr, cc) && B[rr][cc] === p) { cells.push([rr, cc]); rr += d[0] * s; cc += d[1] * s; }
-      }
-      return { win: true, cells, reason: n >= 5 ? '5 quân liên tiếp' : '4 quân mở cả 2 đầu' };
+      return { win: true, cells: collectCells(B, r, c, p, d), reason: n >= 5 ? '5 quân liên tiếp' : '4 quân mở cả 2 đầu' };
     }
   }
   return null;
 }
-function isWinAt(B, r, c, p) { return !!winInfo(B, r, c, p); }
 
-// Điểm của một nước đặt tại (r,c) cho phe p: 4 mở = thắng ngay nên điểm tối đa.
+// Luật thắng quốc tế: Standard — đúng 5 mới thắng (hơn 5 = overline, không thắng);
+// Free — từ 5 trở lên là thắng. Không có luật 4 mở.
+function winInfoIntl(B, r, c, p, variant) {
+  for (const d of DIRS) {
+    const { n } = runInfo(B, r, c, p, d);
+    const wins = variant === 'free' ? n >= 5 : n === 5;
+    if (wins) {
+      return { win: true, cells: collectCells(B, r, c, p, d), reason: variant === 'free' ? '5 quân liên tiếp trở lên' : 'đúng 5 quân liên tiếp' };
+    }
+  }
+  return null;
+}
+
+function winAt(B, r, c, p, rules) {
+  return rules.type === 'vn' ? winInfo(B, r, c, p) : winInfoIntl(B, r, c, p, rules.variant);
+}
+
+// Điểm nước VN: 4 mở = thắng ngay nên điểm tối đa.
 function cellScore(B, r, c, p) {
   let s = 0;
   for (const d of DIRS) {
@@ -666,6 +710,25 @@ function cellScore(B, r, c, p) {
     else s += open === 2 ? 300 : 30;
   }
   return s;
+}
+
+// Điểm nước quốc tế: 4 mở chỉ là đòn hiểm (100k), chưa thắng; overline ở Standard coi như hướng chết.
+function cellScoreIntl(B, r, c, p, variant) {
+  let s = 0;
+  for (const d of DIRS) {
+    const { n, open } = runInfo(B, r, c, p, d);
+    if (variant === 'free' ? n >= 5 : n === 5) s += 1000000;
+    else if (n > 5) s += 50;
+    else if (n === 4) s += open === 2 ? 100000 : open === 1 ? 10000 : 100;
+    else if (n === 3) s += open === 2 ? 10000 : open === 1 ? 1000 : 50;
+    else if (n === 2) s += open === 2 ? 1000 : open === 1 ? 100 : 10;
+    else s += open === 2 ? 200 : 20;
+  }
+  return s;
+}
+
+function scoreCell(B, r, c, p, rules) {
+  return rules.type === 'vn' ? cellScore(B, r, c, p) : cellScoreIntl(B, r, c, p, rules.variant);
 }
 
 // Chỉ xét ô trống gần quân đã có (trong vòng 2 ô) để AI tính nhanh.
@@ -683,13 +746,13 @@ function candidates(B) {
   return [...set];
 }
 
-function greedyMove(B, me) {
+function greedyMove(B, me, rules) {
   const foe = me === 1 ? 2 : 1;
   let best = null, bestScore = -1;
   for (const k of candidates(B)) {
     const r = (k / N) | 0, c = k % N;
-    const atk = cellScore(B, r, c, me);
-    const def = cellScore(B, r, c, foe);
+    const atk = scoreCell(B, r, c, me, rules);
+    const def = scoreCell(B, r, c, foe, rules);
     const center = 14 - (Math.abs(r - 7) + Math.abs(c - 7));
     const score = atk + def * 0.95 + center;
     if (score > bestScore) { bestScore = score; best = [r, c]; }
@@ -698,23 +761,23 @@ function greedyMove(B, me) {
 }
 
 // Khó: xét 8 nước tốt nhất, trừ điểm nước đáp trả tốt nhất của đối thủ.
-function hardMove(B, me) {
+function hardMove(B, me, rules) {
   const foe = me === 1 ? 2 : 1;
   const scored = candidates(B).map(k => {
     const r = (k / N) | 0, c = k % N;
-    return { r, c, s: cellScore(B, r, c, me) + cellScore(B, r, c, foe) * 0.95 };
+    return { r, c, s: scoreCell(B, r, c, me, rules) + scoreCell(B, r, c, foe, rules) * 0.95 };
   });
   scored.sort((a, b) => b.s - a.s);
   let best = scored[0], bestVal = -Infinity;
   for (const m of scored.slice(0, 8)) {
     B[m.r][m.c] = me;
     let val;
-    if (isWinAt(B, m.r, m.c, me)) val = 1e9;
+    if (winAt(B, m.r, m.c, me, rules)) val = 1e9;
     else {
-      const rep = greedyMove(B, foe);
-      const oppScore = cellScore(B, rep[0], rep[1], foe);
+      const rep = greedyMove(B, foe, rules);
+      const oppScore = scoreCell(B, rep[0], rep[1], foe, rules);
       B[rep[0]][rep[1]] = foe;
-      const oppWin = isWinAt(B, rep[0], rep[1], foe);
+      const oppWin = !!winAt(B, rep[0], rep[1], foe, rules);
       B[rep[0]][rep[1]] = 0;
       val = m.s - (oppWin ? 1e8 : oppScore);
     }
@@ -724,22 +787,45 @@ function hardMove(B, me) {
   return [best.r, best.c];
 }
 
-function bestMove(B, me, level) {
+function bestMove(B, me, level, rules) {
   const cands = candidates(B);
   if (!cands.length) return null;
   if (level === 'easy' && Math.random() < 0.45) {
     const k = cands[(Math.random() * cands.length) | 0];
     return [(k / N) | 0, k % N];
   }
-  if (level === 'hard') return hardMove(B, me);
-  return greedyMove(B, me);
+  if (level === 'hard') return hardMove(B, me, rules);
+  return greedyMove(B, me, rules);
+}
+
+// Điểm tốt nhất mà phe p có thể đạt được ở thế cờ hiện tại (dùng cho quyết định Swap2).
+function maxCellScore(B, p, rules) {
+  let best = 0;
+  for (const k of candidates(B)) {
+    const r = (k / N) | 0, c = k % N;
+    best = Math.max(best, scoreCell(B, r, c, p, rules));
+  }
+  return best;
 }
 /* ===== /ENGINE ===== */
 
 /* ===== UI ===== */
-const X = 1, O = 2;
-let B, cur, humans, over, hist, moveCount, lastMove, winCells, aiTimer;
+const X = 1, O = 2; // VN: X=1, O=2 — Quốc tế: Đen=1, Trắng=2
+let B, cur, humans, over, hist, moveCount, lastMove, winCells, aiTimer, playHistStart;
 let mode = 'ai';
+let rules = { type: 'vn', variant: 'standard' };
+let humanColor = 1, aiColor = 2, humanIsFirst = true;
+let swap = null; // {phase: 'place3'|'choice'|'place2'|'chooseColor'|'play', placed: n}
+
+// Các thế mở Swap2 mẫu (2 Đen + 1 Trắng): [đen, đen, trắng]
+const SWAP2_OPENINGS = [
+  [[7, 7], [7, 8], [8, 7]],
+  [[7, 7], [8, 7], [7, 6]],
+  [[7, 7], [6, 7], [8, 8]],
+  [[7, 7], [7, 6], [6, 8]],
+  [[7, 7], [8, 8], [6, 7]],
+  [[7, 7], [6, 6], [8, 7]],
+];
 
 const boardEl = document.getElementById('board');
 const cells = [];
@@ -761,13 +847,23 @@ const cells = [];
 })();
 
 function cellAt(r, c) { return cells[r * N + c]; }
+function colorLabel(p) {
+  return rules.type === 'vn' ? (p === X ? 'X' : 'O') : (p === 1 ? 'Đen' : 'Trắng');
+}
+function playerName(p) {
+  if (mode === 'ai') return p === humanColor ? 'Bạn' : 'Máy';
+  return colorLabel(p);
+}
 
 function renderCell(r, c) {
   const el = cellAt(r, c);
   const v = B[r][c];
   el.classList.toggle('empty', v === 0);
-  el.innerHTML = v === X ? '<span class="stone-x">X</span>'
-    : v === O ? '<span class="stone-o">O</span>' : '';
+  if (rules.type === 'intl') {
+    el.innerHTML = v === 1 ? '<span class="stone-b"></span>' : v === 2 ? '<span class="stone-w"></span>' : '';
+  } else {
+    el.innerHTML = v === X ? '<span class="stone-x">X</span>' : v === O ? '<span class="stone-o">O</span>' : '';
+  }
   el.classList.toggle('last', !!lastMove && lastMove[0] === r && lastMove[1] === c);
 }
 
@@ -777,27 +873,12 @@ function renderAll() {
   if (winCells) winCells.forEach(([r, c]) => cellAt(r, c).classList.add('win'));
 }
 
-function playerName(p) {
-  if (mode === 'ai') return p === humans[0] ? 'Bạn' : 'Máy';
-  return p === X ? 'X' : 'O';
-}
-
-function updateTurnTag() {
-  const tag = document.getElementById('tag-turn');
-  const notice = document.getElementById('st-notice');
-  if (over) {
-    tag.textContent = 'Ván đã kết thúc';
-  } else {
-    tag.textContent = 'Lượt: ' + (cur === X ? 'X' : 'O') + (mode === 'ai' ? ' (' + playerName(cur) + ')' : '');
-  }
-  document.getElementById('tag-moves').textContent = 'Nước: ' + moveCount;
-  const ghostO = cur === O;
-  boardEl.classList.toggle('human-turn', !over && humans.includes(cur));
-  boardEl.classList.toggle('ghost-o', ghostO);
-  boardEl.style.setProperty('--ghost', cur === X ? "'X'" : "'O'");
-  if (notice) notice.textContent = '';
-  document.getElementById('btn-undo').disabled = hist.length === 0;
-  document.getElementById('btn-undo-2').disabled = hist.length === 0;
+function syncRuleTabs() {
+  document.getElementById('btn-rule-vn').classList.toggle('active', rules.type === 'vn');
+  document.getElementById('btn-rule-intl').classList.toggle('active', rules.type === 'intl');
+  document.getElementById('variant-group').style.display = rules.type === 'intl' ? '' : 'none';
+  document.getElementById('rules-vn').style.display = rules.type === 'vn' ? '' : 'none';
+  document.getElementById('rules-intl').style.display = rules.type === 'intl' ? '' : 'none';
 }
 
 function syncModeTabs() {
@@ -806,14 +887,40 @@ function syncModeTabs() {
     if (btn) btn.classList.toggle('active', mode === t);
   });
   const isAi = mode === 'ai';
-  document.getElementById('side-group').style.display = isAi ? '' : 'none';
+  const sideSelect = document.getElementById('side');
+  const sideLabel = document.getElementById('side-label');
+  const oldVal = sideSelect.value;
+  if (rules.type === 'intl') {
+    sideLabel.textContent = 'Bạn là';
+    sideSelect.innerHTML = `
+      <option value="1">Người đi trước (cầm Đen, đặt 3 quân mở đầu)</option>
+      <option value="2">Người đi sau (cầm Trắng, quyết định thế cờ)</option>
+    `;
+  } else {
+    sideLabel.textContent = 'Bạn cầm quân';
+    sideSelect.innerHTML = `
+      <option value="1">X — đi trước</option>
+      <option value="2">O — đi sau</option>
+    `;
+  }
+  if (['1', '2'].includes(oldVal)) sideSelect.value = oldVal;
+  else sideSelect.value = '1';
+  sideSelect.disabled = !isAi;
   document.getElementById('diff-group').style.display = isAi ? '' : 'none';
   document.getElementById('btn-win-swap').style.display = isAi ? '' : 'none';
   document.getElementById('score-mode-label').textContent = isAi ? 'Đấu với máy' : '2 người chơi';
+  const ruleName = rules.type === 'vn' ? 'Caro Việt Nam'
+    : 'Gomoku Quốc Tế (' + (rules.variant === 'standard' ? 'Standard' : 'Free') + ')';
   const diffLabel = { easy: 'Dễ', medium: 'Vừa', hard: 'Khó' }[document.getElementById('diff').value] || 'Vừa';
   document.getElementById('tag-mode-info').textContent = isAi
-    ? 'Đấu với máy — ' + diffLabel + ' (Bạn cầm ' + (humans[0] === X ? 'X' : 'O') + ')'
-    : '2 người chơi chung máy';
+    ? ruleName + ' · Đấu với máy — ' + diffLabel
+    : ruleName + ' · 2 người chơi chung máy';
+}
+
+function selectRule(t) {
+  if (rules.type === t) return;
+  rules.type = t;
+  init();
 }
 
 function selectQuickMode(m) {
@@ -824,33 +931,256 @@ function selectQuickMode(m) {
 
 function init() {
   B = Array.from({ length: N }, () => Array(N).fill(0));
-  cur = X; // X luôn đi trước
+  cur = 1; // X / Đen luôn đi trước
   over = false;
   hist = [];
   moveCount = 0;
   lastMove = null;
   winCells = null;
+  playHistStart = 0;
   clearTimeout(aiTimer);
   hideModal();
-  if (mode === 'ai') {
-    humans = [+document.getElementById('side').value];
+  const sideVal = +document.getElementById('side').value || 1;
+  if (rules.type === 'intl') {
+    rules.variant = document.getElementById('variant').value || 'standard';
+    humanIsFirst = mode === '2p' ? true : sideVal === 1;
+    if (mode === 'ai') { humanColor = sideVal; aiColor = 3 - sideVal; }
+    humans = mode === 'ai' ? [humanColor] : [1, 2];
+    swap = { phase: 'place3', placed: 0 };
   } else {
-    humans = [X, O];
+    swap = null;
+    if (mode === 'ai') { humanColor = sideVal; aiColor = 3 - sideVal; humans = [sideVal]; }
+    else humans = [1, 2];
   }
   renderAll();
+  syncRuleTabs();
   syncModeTabs();
+  renderScore();
+  updateSwapBox();
+  updateTurnTag();
+  if (rules.type === 'intl') maybeAiOpening();
+  else maybeAiMove();
+}
+
+/* ===== Khai cuộc Swap2 ===== */
+function isOpeningActorHuman() {
+  if (mode === '2p') return true;
+  if (!swap) return false;
+  if (swap.phase === 'place3') return humanIsFirst;
+  if (swap.phase === 'place2') return !humanIsFirst;
+  return false;
+}
+
+function placeOpeningStone(r, c) {
+  if (B[r][c] !== 0 || !swap) return false;
+  let color;
+  if (swap.phase === 'place3') color = swap.placed < 2 ? 1 : 2; // quân 1-2 Đen, quân 3 Trắng
+  else if (swap.phase === 'place2') color = swap.placed < 1 ? 1 : 2; // quân 1 Đen, quân 2 Trắng
+  else return false;
+  B[r][c] = color;
+  hist.push({ r, c, p: color, opening: true });
+  moveCount++;
+  lastMove = [r, c];
+  swap.placed++;
+  renderAll();
+  updateSwapBox();
+  updateTurnTag();
+  if (swap.phase === 'place3' && swap.placed === 3) {
+    swap.phase = 'choice';
+    cur = 2; // Trắng quyết định
+    updateSwapBox();
+    updateTurnTag();
+    maybeAiSwapDecision();
+  } else if (swap.phase === 'place2' && swap.placed === 2) {
+    swap.phase = 'chooseColor';
+    updateSwapBox();
+    updateTurnTag();
+    maybeAiChooseColor();
+  }
+  return true;
+}
+
+// Máy (Đen) đặt 3 quân mở đầu, lần lượt từng quân cho tự nhiên.
+function aiPlaceOpening3() {
+  const opening = SWAP2_OPENINGS[(Math.random() * SWAP2_OPENINGS.length) | 0];
+  let i = 0;
+  const stepFn = () => {
+    if (!swap || swap.phase !== 'place3' || over) return;
+    placeOpeningStone(opening[i][0], opening[i][1]);
+    i++;
+    if (i < opening.length) aiTimer = setTimeout(stepFn, 380);
+  };
+  aiTimer = setTimeout(stepFn, 450);
+}
+
+// Máy (Trắng) đặt thêm 2 quân: 1 Đen ở điểm tốt nhất cho Đen, 1 Trắng ở điểm tốt nhất cho Trắng.
+function aiPlaceOpening2() {
+  const m1 = greedyMove(B, 1, rules);
+  const step2 = () => {
+    if (!swap || swap.phase !== 'place2' || over) return;
+    const m2 = greedyMove(B, 2, rules);
+    placeOpeningStone(m2[0], m2[1]);
+  };
+  aiTimer = setTimeout(() => {
+    if (!swap || swap.phase !== 'place2' || over) return;
+    placeOpeningStone(m1[0], m1[1]);
+    aiTimer = setTimeout(step2, 380);
+  }, 450);
+}
+
+function maybeAiOpening() {
+  if (rules.type !== 'intl' || !swap || mode !== 'ai') return;
+  if (swap.phase === 'place3' && !humanIsFirst) aiPlaceOpening3();
+  else if (swap.phase === 'place2' && humanIsFirst) aiPlaceOpening2();
+}
+
+// Máy (Trắng) quyết định thế cờ: Đen quá mạnh thì đổi bên; Trắng mạnh hơn hẳn thì chấp nhận;
+// còn lại đặt thêm 2 quân để cân bằng rồi để người chọn màu.
+function aiSwapDecision() {
+  const bBest = maxCellScore(B, 1, rules);
+  const wBest = maxCellScore(B, 2, rules);
+  if (bBest >= 100000) return 'swap';
+  if (wBest >= 50000 && wBest > bBest * 1.2) return 'accept';
+  return 'add2';
+}
+
+function maybeAiSwapDecision() {
+  if (rules.type !== 'intl' || !swap || swap.phase !== 'choice') return;
+  if (mode === 'ai' && humanIsFirst) {
+    const notice = document.getElementById('st-notice');
+    if (notice) notice.textContent = 'Máy đang quyết định thế cờ…';
+    aiTimer = setTimeout(() => {
+      if (!swap || swap.phase !== 'choice' || over) return;
+      resolveSwapChoice(aiSwapDecision());
+    }, 650);
+  }
+}
+
+// Máy (Đen, người đi trước) chọn màu sau khi Trắng đặt thêm 2 quân.
+function maybeAiChooseColor() {
+  if (rules.type !== 'intl' || !swap || swap.phase !== 'chooseColor') return;
+  if (mode === 'ai' && !humanIsFirst) {
+    const notice = document.getElementById('st-notice');
+    if (notice) notice.textContent = 'Máy đang chọn màu…';
+    aiTimer = setTimeout(() => {
+      if (!swap || swap.phase !== 'chooseColor' || over) return;
+      const bBest = maxCellScore(B, 1, rules);
+      const wBest = maxCellScore(B, 2, rules);
+      resolveChooseColor(bBest >= wBest ? 1 : 2);
+    }, 650);
+  }
+}
+
+function resolveSwapChoice(choice) {
+  if (!swap || swap.phase !== 'choice') return;
+  if (choice === 'accept') {
+    swap.phase = 'play';
+    cur = 2; // Trắng đánh nước 4
+  } else if (choice === 'swap') {
+    if (mode === 'ai') {
+      const t = humanColor; humanColor = aiColor; aiColor = t;
+      humans = [humanColor];
+    }
+    swap.phase = 'play';
+    cur = 2; // Trắng (người đi trước cũ) đánh nước 4
+  } else if (choice === 'add2') {
+    swap.phase = 'place2';
+    swap.placed = 0;
+    cur = 2; // Trắng đặt thêm 2 quân
+    updateSwapBox();
+    updateTurnTag();
+    maybeAiOpening();
+    return;
+  }
+  playHistStart = hist.length;
+  updateSwapBox();
   updateTurnTag();
   maybeAiMove();
 }
 
+function resolveChooseColor(color) {
+  if (!swap || swap.phase !== 'chooseColor') return;
+  if (mode === 'ai') {
+    if (humanIsFirst) { humanColor = color; aiColor = 3 - color; }
+    else { aiColor = color; humanColor = 3 - color; }
+    humans = [humanColor];
+  }
+  swap.phase = 'play';
+  cur = 2; // Trắng đánh nước tiếp theo (nước 6)
+  playHistStart = hist.length;
+  updateSwapBox();
+  updateTurnTag();
+  maybeAiMove();
+}
+
+function updateSwapBox() {
+  const box = document.getElementById('swap-box');
+  const text = document.getElementById('swap-text');
+  const choiceActions = document.getElementById('swap-choice-actions');
+  const colorActions = document.getElementById('swap-color-actions');
+  if (rules.type !== 'intl' || !swap || swap.phase === 'play') {
+    box.style.display = 'none';
+    return;
+  }
+  box.style.display = '';
+  choiceActions.style.display = 'none';
+  colorActions.style.display = 'none';
+  const firstName = mode === 'ai' ? (humanIsFirst ? 'Bạn' : 'Máy') : 'Đen';
+  const secondName = mode === 'ai' ? (humanIsFirst ? 'Máy' : 'Bạn') : 'Trắng';
+  if (swap.phase === 'place3') {
+    const nextColor = swap.placed < 2 ? 'Đen' : 'Trắng';
+    text.innerHTML = '<strong>🔰 Khai cuộc Swap2</strong> — ' + firstName + ' đặt 3 quân mở đầu (quân 1–2 màu Đen, quân 3 màu Trắng).<br/>Đã đặt: <strong>' + swap.placed + '/3</strong> — quân tiếp theo: <strong>' + nextColor + '</strong>.';
+  } else if (swap.phase === 'choice') {
+    text.innerHTML = '<strong>⚖️ ' + secondName + ' quyết định thế cờ:</strong> chấp nhận (cầm Trắng), đổi bên (cầm Đen), hay đặt thêm 2 quân để ' + firstName + ' chọn màu?';
+    if (mode === '2p' || !humanIsFirst) choiceActions.style.display = '';
+    else text.innerHTML += '<br/>Máy đang quyết định…';
+  } else if (swap.phase === 'place2') {
+    const nextColor = swap.placed < 1 ? 'Đen' : 'Trắng';
+    text.innerHTML = '<strong>➕ ' + secondName + ' đặt thêm 2 quân</strong> (quân 1 Đen, quân 2 Trắng) để ' + firstName + ' chọn màu.<br/>Đã đặt: <strong>' + swap.placed + '/2</strong> — quân tiếp theo: <strong>' + nextColor + '</strong>.';
+  } else if (swap.phase === 'chooseColor') {
+    text.innerHTML = '<strong>🎨 ' + firstName + ' chọn màu:</strong> cầm Đen hay Trắng? Người còn lại cầm màu kia, Trắng đánh nước tiếp theo.';
+    if (mode === '2p' || humanIsFirst) colorActions.style.display = '';
+    else text.innerHTML += '<br/>Máy đang chọn màu…';
+  }
+}
+
+/* ===== Ván đấu thường ===== */
+function updateTurnTag() {
+  const tag = document.getElementById('tag-turn');
+  const notice = document.getElementById('st-notice');
+  if (over) {
+    tag.textContent = 'Ván đã kết thúc';
+  } else if (rules.type === 'intl' && swap && swap.phase !== 'play') {
+    if (swap.phase === 'place3') tag.textContent = 'Khai cuộc: Đen đặt quân ' + (swap.placed + 1) + '/3';
+    else if (swap.phase === 'choice') tag.textContent = 'Trắng quyết định thế cờ';
+    else if (swap.phase === 'place2') tag.textContent = 'Trắng đặt thêm quân ' + (swap.placed + 1) + '/2';
+    else if (swap.phase === 'chooseColor') tag.textContent = 'Đen chọn màu';
+  } else {
+    tag.textContent = 'Lượt: ' + colorLabel(cur) + (mode === 'ai' ? ' (' + playerName(cur) + ')' : '');
+  }
+  document.getElementById('tag-moves').textContent = 'Nước: ' + moveCount;
+  const inPlay = !over && (!swap || swap.phase === 'play');
+  const humanTurn = inPlay && humans.includes(cur);
+  boardEl.classList.toggle('human-turn', humanTurn);
+  boardEl.classList.remove('ghost-x', 'ghost-o', 'ghost-b', 'ghost-w');
+  if (humanTurn) {
+    boardEl.classList.add(rules.type === 'intl' ? (cur === 1 ? 'ghost-b' : 'ghost-w') : (cur === X ? 'ghost-x' : 'ghost-o'));
+  }
+  if (notice && (!swap || swap.phase === 'play')) notice.textContent = '';
+  const undoOk = hist.length > 0 && (!swap || swap.phase === 'play') && hist.length > playHistStart;
+  document.getElementById('btn-undo').disabled = !undoOk;
+  document.getElementById('btn-undo-2').disabled = !undoOk;
+}
+
 function maybeAiMove() {
-  if (over || mode !== 'ai' || humans.includes(cur)) return;
+  if (over || mode !== 'ai' || !humans || humans.includes(cur)) return;
+  if (swap && swap.phase !== 'play') return;
   const notice = document.getElementById('st-notice');
   if (notice) notice.textContent = 'Máy đang suy nghĩ…';
   boardEl.classList.remove('human-turn');
   aiTimer = setTimeout(() => {
     if (over) return;
-    const m = bestMove(B, cur, document.getElementById('diff').value);
+    const m = bestMove(B, cur, document.getElementById('diff').value, rules);
     if (m) doPlace(m[0], m[1]);
   }, 380);
 }
@@ -862,7 +1192,7 @@ function doPlace(r, c) {
   moveCount++;
   lastMove = [r, c];
   renderAll();
-  const w = winInfo(B, r, c, p);
+  const w = winAt(B, r, c, p, rules);
   if (w) {
     over = true;
     winCells = w.cells;
@@ -885,16 +1215,24 @@ function doPlace(r, c) {
 }
 
 function onCell(r, c) {
-  if (over || B[r][c] !== 0 || !humans.includes(cur)) return;
-  if (mode === 'ai' && !humans.includes(cur)) return;
+  if (over || B[r][c] !== 0) return;
+  if (rules.type === 'intl' && swap && swap.phase !== 'play') {
+    if ((swap.phase === 'place3' || swap.phase === 'place2') && isOpeningActorHuman()) {
+      placeOpeningStone(r, c);
+    }
+    return;
+  }
+  if (!humans.includes(cur)) return;
   doPlace(r, c);
 }
 
 function undo() {
   if (!hist.length) return;
+  if (swap && swap.phase !== 'play') return;
+  if (hist.length <= playHistStart) return;
   clearTimeout(aiTimer);
   hideModal();
-  const n = mode === 'ai' ? Math.min(2, hist.length) : 1;
+  const n = mode === 'ai' ? Math.min(2, hist.length - playHistStart) : 1;
   for (let i = 0; i < n; i++) {
     const m = hist.pop();
     B[m.r][m.c] = 0;
@@ -903,37 +1241,47 @@ function undo() {
   over = false;
   winCells = null;
   lastMove = hist.length ? [hist[hist.length - 1].r, hist[hist.length - 1].c] : null;
-  cur = hist.length ? 3 - hist[hist.length - 1].p : X;
+  cur = hist.length ? 3 - hist[hist.length - 1].p : 1;
   renderAll();
   updateTurnTag();
   maybeAiMove();
 }
 
-/* ===== Tỉ số (lưu localStorage) ===== */
-const SCORE_KEY = 'kybien_caro_score_v1';
-let score = { x: 0, o: 0, d: 0 };
-try {
-  const raw = localStorage.getItem(SCORE_KEY);
-  if (raw) { const s = JSON.parse(raw); score = { x: s.x | 0, o: s.o | 0, d: s.d | 0 }; }
-} catch (e) { /* bỏ qua, dùng tỉ số 0 */ }
-function saveScore() { try { localStorage.setItem(SCORE_KEY, JSON.stringify(score)); } catch (e) {} }
+/* ===== Tỉ số (lưu localStorage, riêng từng luật) ===== */
+const SCORE_KEYS = { vn: 'kybien_caro_score_v1', intl: 'kybien_caro_score_intl_v1' };
+const scores = { vn: { x: 0, o: 0, d: 0 }, intl: { x: 0, o: 0, d: 0 } };
+for (const k of ['vn', 'intl']) {
+  try {
+    const raw = localStorage.getItem(SCORE_KEYS[k]);
+    if (raw) { const s = JSON.parse(raw); scores[k] = { x: s.x | 0, o: s.o | 0, d: s.d | 0 }; }
+  } catch (e) { /* bỏ qua, dùng tỉ số 0 */ }
+}
+function saveScore() { try { localStorage.setItem(SCORE_KEYS[rules.type], JSON.stringify(scores[rules.type])); } catch (e) {} }
 function renderScore() {
-  document.getElementById('score-x').textContent = score.x;
-  document.getElementById('score-o').textContent = score.o;
-  document.getElementById('score-d').textContent = score.d;
-  document.getElementById('win-x').textContent = score.x;
-  document.getElementById('win-o').textContent = score.o;
-  document.getElementById('win-d').textContent = score.d;
+  const s = scores[rules.type];
+  const aLabel = rules.type === 'vn' ? 'X thắng' : 'Đen thắng';
+  const bLabel = rules.type === 'vn' ? 'O thắng' : 'Trắng thắng';
+  document.getElementById('score-a-label').textContent = aLabel;
+  document.getElementById('score-b-label').textContent = bLabel;
+  document.getElementById('win-a-label').textContent = aLabel + ':';
+  document.getElementById('win-b-label').textContent = bLabel + ':';
+  document.getElementById('score-x').textContent = s.x;
+  document.getElementById('score-o').textContent = s.o;
+  document.getElementById('score-d').textContent = s.d;
+  document.getElementById('win-x').textContent = s.x;
+  document.getElementById('win-o').textContent = s.o;
+  document.getElementById('win-d').textContent = s.d;
 }
 function addScore(p) {
-  if (p === X) score.x++;
-  else if (p === O) score.o++;
-  else score.d++;
+  const s = scores[rules.type];
+  if (p === 1) s.x++;
+  else if (p === 2) s.o++;
+  else s.d++;
   saveScore();
   renderScore();
 }
 document.getElementById('btn-reset-score').onclick = () => {
-  score = { x: 0, o: 0, d: 0 };
+  scores[rules.type] = { x: 0, o: 0, d: 0 };
   saveScore();
   renderScore();
 };
@@ -943,18 +1291,18 @@ function showModal() { document.getElementById('win-modal').classList.add('show'
 function hideModal() { document.getElementById('win-modal').classList.remove('show'); }
 function showWin(p, reason) {
   const who = mode === 'ai'
-    ? (p === humans[0] ? 'BẠN THẮNG!' : 'MÁY THẮNG!')
-    : (p === X ? 'X THẮNG!' : 'O THẮNG!');
+    ? (p === humanColor ? 'BẠN THẮNG!' : 'MÁY THẮNG!')
+    : (colorLabel(p).toUpperCase() + ' THẮNG!');
   document.getElementById('win-icon').textContent = '🏆';
   document.getElementById('win-title').textContent = who;
-  document.getElementById('win-desc').textContent = (p === X ? 'X' : 'O') + ' thắng bằng ' + reason + ' — tuyệt diệu!';
+  document.getElementById('win-desc').textContent = colorLabel(p) + ' thắng bằng ' + reason + ' — tuyệt diệu!';
   renderScore();
   showModal();
 }
 function showDraw() {
   document.getElementById('win-icon').textContent = '🤝';
   document.getElementById('win-title').textContent = 'HÒA!';
-  document.getElementById('win-desc').textContent = 'Bàn cờ đã đầy mà chưa bên nào tạo được thế thắng.';
+  document.getElementById('win-desc').textContent = 'Bàn cờ đã đầy mà chưa bên nào đáp ứng điều kiện thắng.';
   renderScore();
   showModal();
 }
@@ -972,6 +1320,12 @@ document.getElementById('btn-undo').onclick = undo;
 document.getElementById('mode').onchange = () => { mode = document.getElementById('mode').value; init(); };
 document.getElementById('side').onchange = init;
 document.getElementById('diff').onchange = () => { syncModeTabs(); };
+document.getElementById('variant').onchange = () => { rules.variant = document.getElementById('variant').value; init(); };
+document.getElementById('btn-swap-accept').onclick = () => resolveSwapChoice('accept');
+document.getElementById('btn-swap-swap').onclick = () => resolveSwapChoice('swap');
+document.getElementById('btn-swap-add2').onclick = () => resolveSwapChoice('add2');
+document.getElementById('btn-color-black').onclick = () => resolveChooseColor(1);
+document.getElementById('btn-color-white').onclick = () => resolveChooseColor(2);
 
 /* ===== Khởi động ===== */
 renderScore();
