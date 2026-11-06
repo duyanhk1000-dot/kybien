@@ -1454,7 +1454,7 @@ function updateRollUI() {
   btn.classList.toggle('pulse', humanTurn);
   btn.textContent = consecutiveSixes > 0 ? '\u{1F3B2} Gieo Tiếp' : '\u{1F3B2} Lắc';
   if (phase === 'roll') {
-    if (isHuman(curColor())) setStatus('Lượt của bạn \u2014 bấm <span class="hl">Lắc</span> ở giữa bàn để gieo.');
+    if (isHuman(curColor())) setStatus('Lượt của bạn \u2014 bấm <span class="hl">Lắc</span>' + (diceMobileMQ.matches ? ' ở dưới bàn' : ' ở giữa bàn') + ' để gieo.');
     else setStatus('Máy đang chuẩn bị gieo...');
   }
 }
