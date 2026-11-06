@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sảnh Game — Kỳ Biến | Cờ Thế, Cờ Tam Quốc, Cờ Caro</title>
-  <meta name="description" content="Sảnh Game Kỳ Biến: chơi Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Cá Ngựa, Cờ Nhảy — một sảnh, đủ loại cờ, vào là chơi."/>
+  <title>Sảnh Game — Kỳ Biến | Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây</title>
+  <meta name="description" content="Sảnh Game Kỳ Biến: chơi Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Nhảy — một sảnh, đủ loại cờ, vào là chơi."/>
 
   <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC (giống co-the.html) -->
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap" rel="stylesheet"/>
@@ -308,6 +308,13 @@
         repeating-linear-gradient(90deg, transparent 0 21px, #8a6a42 21px 22px),
         linear-gradient(135deg, #e9c88f, #d9a860);
     }
+    /* Cờ Vây: bàn gỗ + lưới 19x19 thu nhỏ + 2 quân */
+    .thumb-covay {
+      background:
+        repeating-linear-gradient(0deg, transparent 0 13px, #8a6a42 13px 14px),
+        repeating-linear-gradient(90deg, transparent 0 13px, #8a6a42 13px 14px),
+        linear-gradient(135deg, #e9c88f, #d9a860);
+    }
     /* Cờ Cá Ngựa: 4 góc màu */
     .thumb-cangua {
       background:
@@ -414,7 +421,7 @@
 </head>
 <body>
 
-  <h1 class="kb-sr-only">Sảnh Game — Kỳ Biến: Cờ Thế, Cờ Tam Quốc, Cờ Caro</h1>
+  <h1 class="kb-sr-only">Sảnh Game — Kỳ Biến: Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây</h1>
 
 
   <!-- MAIN -->
@@ -423,10 +430,9 @@
     <!-- HERO -->
     <section class="hub-hero">
       <h1>🏮 SẢNH GAME</h1>
-      <p>Một sảnh, đủ loại cờ — vào là chơi. Cờ Thế, Cờ Tam Quốc, Cờ Caro và nhiều game nữa đang trên đường tới.</p>
+      <p>Một sảnh, đủ loại cờ — vào là chơi. Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây và nhiều game nữa đang trên đường tới.</p>
      
         <span id="hub-online-text">Đang kiểm tra máy chủ…</span>
-      </div>
     </section>
 
     <!-- FILTERS -->
@@ -511,6 +517,26 @@
         </div>
       </a>
 
+      <!-- CỜ VÂY -->
+      <a class="game-card" href="https://kybien.blogspot.com/p/co-vay.html" data-cat="2-nguoi dau-may">
+        <div class="game-thumb thumb-covay">
+          <span class="game-badge badge-new">MỚI</span>
+          <div class="mini-pieces">
+            <span class="mini-piece stone-b">●</span>
+            <span class="mini-piece stone-w">●</span>
+            <span class="mini-piece stone-b">●</span>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Vây</h3>
+          <p>Bao vây lãnh thổ trên bàn 9×9, 13×13, 19×19. Chấp quân, komi, luật ko — đấu máy hoặc 2 người.</p>
+          <div class="game-meta">
+            <span>2 người · Đấu máy</span>
+            <span class="game-cta">Chơi ngay ›</span>
+          </div>
+        </div>
+      </a>
+
       <!-- CỜ CÁ NGỰA — SẮP RA MẮT -->
       <article class="game-card is-coming" data-cat="nhieu-nguoi sap-ra-mat" aria-label="Cờ Cá Ngựa — sắp ra mắt">
         <div class="game-thumb thumb-cangua">
@@ -557,7 +583,7 @@
 
     <!-- FOOTER NOTE -->
     <section class="hub-footer">
-      <div>✨ <strong>Mới cập nhật:</strong> vừa thêm Cờ Tam Quốc — ba phe tranh bá, và Cờ Caro theo luật Việt Nam. Sắp tới: Cờ Cá Ngựa, Cờ Nhảy.</div>
+      <div>✨ <strong>Mới cập nhật:</strong> vừa thêm Cờ Vây — bao vây lãnh thổ, bàn 9×9/13×13/19×19, có chấp quân và tính điểm. Sắp tới: Cờ Cá Ngựa, Cờ Nhảy.</div>
       </section>
 
   </main>
