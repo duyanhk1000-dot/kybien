@@ -387,16 +387,6 @@
       margin-bottom: 8px;
       font-family: 'Noto Serif TC', serif;
     }
-    .rules-note {
-      margin-top: 14px;
-      border-top: 1px dashed #3d2716;
-      padding-top: 12px;
-      font-size: 0.82rem;
-      color: #a8947d;
-      line-height: 1.6;
-    }
-    .rules-note strong { color: #e8dcc6; }
-
     /* Responsive */
     @media (max-width: 950px) {
       .puzzle-grid { grid-template-columns: 1fr; }
@@ -576,7 +566,6 @@
           </ul>
         </div>
       </div>
-
     </div>
 
   </main>
@@ -902,9 +891,10 @@ function syncModeTabs() {
   }
   const komiVal = +komiSel.value || 7.5;
   const diffLabel = { easy: 'Dễ', medium: 'Vừa', hard: 'Khó' }[document.getElementById('diff').value] || 'Vừa';
+  // Dùng mã \uXXXX cho × · — vì Blogger chuyển các ký tự này trong <script> thành entity (&#215;...) mà textContent hiện nguyên văn.
   document.getElementById('tag-mode-info').textContent =
-    size + ' × ' + size + (hc > 0 ? ' · Chấp ' + hc + ' quân' : ' · Komi ' + komiVal) +
-    (isAi ? ' · Đấu với máy — ' + diffLabel + ' · Bạn: ' + colorName(humanColor) : ' · 2 người chơi');
+    size + ' \u00D7 ' + size + (hc > 0 ? ' \u00B7 Chấp ' + hc + ' quân' : ' \u00B7 Komi ' + komiVal) +
+    (isAi ? ' \u00B7 Đấu với máy \u2014 ' + diffLabel + ' \u00B7 Bạn: ' + colorName(humanColor) : ' \u00B7 2 người chơi');
 }
 
 function selectQuickMode(m) {
@@ -1023,7 +1013,7 @@ wrapEl.addEventListener('mouseleave', () => {
 function updateTurnTag() {
   const tag = document.getElementById('tag-turn');
   const notice = document.getElementById('st-notice');
-  if (phase === 'scoring') tag.textContent = '🧮 Giai đoạn tính điểm';
+  if (phase === 'scoring') tag.textContent = '\u{1F9EE} Giai đoạn tính điểm';
   else if (phase === 'ended') tag.textContent = 'Ván đã kết thúc';
   else if (over) tag.textContent = 'Ván đã kết thúc';
   else tag.textContent = 'Lượt: ' + colorName(cur) + (mode === 'ai' ? ' (' + playerName(cur) + ')' : '');
@@ -1049,13 +1039,13 @@ function renderCaptured() {
 function renderHistory() {
   const box = document.getElementById('move-history');
   if (!moveList.length) {
-    box.innerHTML = '<div class="history-line">Chưa có nước đi nào — Đen đi trước.</div>';
+    box.innerHTML = '<div class="history-line">Chưa có nước đi nào \u2014 Đen đi trước.</div>';
     return;
   }
   box.innerHTML = moveList.map((m, i) => {
     const num = i + 1;
     if (m.pass) return `<div class="history-line"><b>${num}.</b> ${m.who} bỏ lượt.</div>`;
-    const cap = m.captured ? ` — ăn ${m.captured} quân` : '';
+    const cap = m.captured ? ` \u2014 ăn ${m.captured} quân` : '';
     return `<div class="history-line"><b>${num}.</b> ${m.who} ${m.coord}${cap}</div>`;
   }).join('');
   box.scrollTop = box.scrollHeight;
@@ -1095,7 +1085,7 @@ function onPoint(r, c) {
   if (!res.ok) {
     hist.pop();
     const notice = document.getElementById('st-notice');
-    if (notice) notice.textContent = res.reason === 'ko' ? '⛔ Phạm luật ko — không được ăn lại ngay!' : res.reason === 'suicide' ? '⛔ Nước tự sát — không được đi!' : '⛔ Nước không hợp lệ!';
+    if (notice) notice.textContent = res.reason === 'ko' ? '\u26D4 Phạm luật ko \u2014 không được ăn lại ngay!' : res.reason === 'suicide' ? '\u26D4 Nước tự sát \u2014 không được đi!' : '\u26D4 Nước không hợp lệ!';
     return;
   }
   maybeAiMove();
@@ -1128,7 +1118,7 @@ function passBy(color) {
 function maybeAiMove() {
   if (over || phase !== 'play' || mode !== 'ai' || cur !== aiColor) return;
   const notice = document.getElementById('st-notice');
-  if (notice) notice.textContent = 'Máy đang suy nghĩ…';
+  if (notice) notice.textContent = 'Máy đang suy nghĩ\u2026';
   aiTimer = setTimeout(() => {
     if (over || phase !== 'play') return;
     const res = bestGoMove(B, size, aiColor, document.getElementById('diff').value, prevHash, lastMove, moveCount);
@@ -1205,7 +1195,7 @@ function finalizeScore() {
   const title = s.winner === 0 ? 'HÒA!' : (s.winner === 1 ? 'ĐEN THẮNG!' : 'TRẮNG THẮNG!');
   const desc = s.winner === 0
     ? 'Hai bên bằng điểm nhau.'
-    : colorName(s.winner) + ' thắng ' + s.margin + ' điểm — Đen ' + s.black + ' : Trắng ' + s.white + '.';
+    : colorName(s.winner) + ' thắng ' + s.margin + ' điểm \u2014 Đen ' + s.black + ' : Trắng ' + s.white + '.';
   showEndModal(s.winner, desc, title);
 }
 
@@ -1226,7 +1216,7 @@ function resumePlay() {
 function showModal() { document.getElementById('win-modal').classList.add('show'); }
 function hideModal() { document.getElementById('win-modal').classList.remove('show'); }
 function showEndModal(winner, desc, title) {
-  document.getElementById('win-icon').textContent = winner === 0 ? '🤝' : '🏆';
+  document.getElementById('win-icon').textContent = winner === 0 ? '\u{1F91D}' : '\u{1F3C6}';
   document.getElementById('win-title').textContent = title || (winner === 1 ? 'ĐEN THẮNG!' : 'TRẮNG THẮNG!');
   document.getElementById('win-desc').textContent = desc;
   if (scoreResult) {
