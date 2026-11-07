@@ -340,7 +340,7 @@ const RELICS=[
 function relicFx(P){const f={};for(const id of P.relics){const r=RELICS.find(x=>x.id===id);for(const k in r.fx)f[k]=(f[k]||0)+r.fx[k];}return f;}
 
 /* --- kho tuong chung (pool) --- */
-const POOL_BY_COST={1:18,2:16,3:14,4:9,5:7};
+const POOL_BY_COST={1:45,2:40,3:35,4:23,5:18};
 function poolInit(){const pool={};for(const id in HERO)pool[id]=POOL_BY_COST[HERO[id].cost];return pool;}
 function poolCount(G,hid){return (G.pool&&G.pool[hid])||0;}
 function poolTake(G,hid){if(!G.pool||!G.pool[hid])return false;G.pool[hid]--;return true;}
