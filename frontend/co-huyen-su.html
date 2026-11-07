@@ -468,8 +468,8 @@ function castSkill(B,u){
     else list=[u];
     for(const a of list){
       if(!a)continue;
-      if(sk.heal)healRaw(B,a,sk.heal*m);
-      if(sk.sh){giveShield(a,sk.sh*m,sk.dur||5);em(B,{k:'shield',id:a.id});}
+      if(sk.heal)healRaw(B,a,sk.heal*m*sp);
+      if(sk.sh){giveShield(a,sk.sh*m*sp,sk.dur||5);em(B,{k:'shield',id:a.id});}
       if(sk.ad||sk.as){a.bf.push({ad:sk.ad||0,as:sk.as||0,t:sk.dur||6});em(B,{k:'buff',id:a.id});}
     }
   }
@@ -836,7 +836,7 @@ function renderShop(){
       +'<button class="i" data-info="'+hid+'" aria-label="Xem '+H.name+'">i</button>'
       +'<div class="em">'+H.ico+'</div><div class="cn">'+H.name+'</div>'
       +'<div class="tt"><span title="'+TR[H.o].name+'">'+TR[H.o].ico+'</span><span title="'+TR[H.c].name+'">'+CS[H.c].ico+'</span></div>'
-      +'<div class="co">🪙 '+H.cost+' \u00B7 kho '+poolCount(G,hid)+'</div></div>';
+      +'<div class="co">🪙 '+H.cost+'</div></div>';
   });
   $('#cards').innerHTML=h;
 }
