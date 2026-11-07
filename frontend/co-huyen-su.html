@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cờ Huyền Sử — Auto chess thần tướng Việt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Spectral:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e6e0cf;--panel:#f5f0e1;--panel2:#ebe3ce;--ink:#2a1e12;--ink2:#6a5840;--line:#c2b18a;
+  --bronze:#8f5f16;--cinn:#b3281d;--jade:#23735f;--gold:#d6a335;--btn:#2a1e12;--btnink:#f5ecd4;
+  --c:56px;
+  --r1:#8e8777;--r2:#2e9c80;--r3:#3f72d1;--r4:#9a4fc4;--r5:#d9a22b;
+  --serif:'Spectral','Palatino Linotype',Palatino,Georgia,serif;
+  --sans:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --spd:1;
+}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#120d09;--panel:#1f1710;--panel2:#2a1f15;--ink:#f0e5cc;--ink2:#b3a283;--line:#4d3a22;--bronze:#d5a55a;--cinn:#e0503f;--jade:#4cb094;--btn:#d5a55a;--btnink:#1a1109}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:radial-gradient(1100px 520px at 50% -8%,rgba(214,163,53,.16),transparent 62%),var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#app{height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--line);min-height:46px}
+.brand{display:flex;align-items:center;gap:7px;font-family:var(--serif);font-weight:800;font-size:17px;white-space:nowrap}
+.seal{width:24px;height:24px;display:grid;place-items:center;background:var(--cinn);color:#ffe9b0;border-radius:4px;transform:rotate(-4deg);font-style:normal;font-size:14px}
+.rbox{display:flex;flex-direction:column;line-height:1.1;min-width:64px}
+.rbox b{font-family:var(--serif);font-size:15px}.rbox small{color:var(--ink2);font-size:11px}
+.tbar{flex:1;height:22px;border-radius:11px;background:var(--panel2);border:1px solid var(--line);position:relative;overflow:hidden;min-width:40px}
+.tbar i{position:absolute;inset:0 auto 0 0;width:100%;background:linear-gradient(90deg,var(--jade),var(--gold));transition:width .25s linear}
+.tbar span{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--ink);text-shadow:0 0 3px var(--panel)}
+.chip{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:5px 9px;font-weight:600;font-size:12px}
+.go{border:0;border-radius:10px;padding:8px 14px;background:var(--cinn);color:#ffe9b0;font-family:var(--serif);font-weight:800;font-size:16px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.go:disabled{opacity:.45;cursor:default}
+.go.armed{animation:pulse .7s infinite alternate}
+@keyframes pulse{to{box-shadow:0 0 0 4px rgba(214,163,53,.55)}}
+.game{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px;overflow-y:auto;overflow-x:hidden}
+.side{width:calc(var(--c)*7)}
+.right{order:0}.left{order:1}.stage{order:2}
+.sh{display:none;font-family:var(--serif);font-weight:800;margin:0 0 6px;color:var(--ink2)}
+.box{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}
+.box::-webkit-scrollbar{display:none}
+.stage{width:calc(var(--c)*7);display:flex;flex-direction:column;gap:6px}
+@media(min-width:980px){
+  .game{flex-direction:row;align-items:flex-start;justify-content:center;gap:16px;padding:12px}
+  .side{width:232px}.left{order:0}.stage{order:1}.right{order:2}
+  .box{flex-direction:column;overflow:visible}.sh{display:block}
+}
+/* traits + players */
+.tr{flex:none;display:flex;align-items:center;gap:6px;padding:4px 8px 4px 4px;border-radius:999px;background:var(--panel);border:1.5px solid var(--line);opacity:.6;cursor:pointer;font-size:12px}
+.tr.on{opacity:1;border-color:var(--tc);box-shadow:inset 0 0 0 1px var(--tc)}
+.tr .ti{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#2a1c12;font-size:13px;box-shadow:0 0 0 2px var(--tc)}
+.tr b{font-family:var(--serif);font-weight:800;white-space:nowrap}
+.tr .tn{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tr .tn u{text-decoration:none;color:var(--ink2)}.tr .tn u.a{color:var(--bronze);font-weight:800}
+@media(min-width:980px){.tr{border-radius:12px;padding:6px 10px 6px 6px;font-size:13px}.tr .ti{width:30px;height:30px}}
+.pl{flex:none;display:flex;align-items:center;gap:5px;padding:3px 8px 3px 3px;border-radius:999px;background:var(--panel);border:1.5px solid var(--line);font-size:12px;position:relative}
+.pl .av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#2a1c12;font-size:14px}
+.pl .hp{font-weight:700;font-variant-numeric:tabular-nums}
+.pl .nm{display:none}.pl .bar{display:none}
+.pl.me{border-color:var(--gold)}.pl.opp{border-color:var(--cinn);box-shadow:0 0 0 2px rgba(179,40,29,.3)}
+.pl.dead{opacity:.45;filter:grayscale(1)}
+@media(min-width:980px){.pl{border-radius:12px;padding:6px 10px 6px 6px;font-size:13px;gap:8px}.pl .av{width:30px;height:30px}.pl .nm{display:block;flex:1;font-weight:600}.pl .bar{display:block;width:60px;height:6px;border-radius:3px;background:var(--panel2);overflow:hidden}.pl .bar i{display:block;height:100%;background:var(--jade)}}
+/* arena */
+.arena{position:relative;width:calc(var(--c)*7);height:calc(var(--c)*8);border-radius:14px;overflow:hidden;background:#1c130d;box-shadow:0 0 0 2px #8a6528,0 0 0 5px #1b130d,0 12px 36px rgba(0,0,0,.45);touch-action:manipulation}
+.tiles{position:absolute;inset:0;display:grid;grid-template:repeat(8,1fr)/repeat(7,1fr)}
+.tile{background:#2a1d14}.tile.b{background:#33241a}
+.tile.e{background:#2b1a15}.tile.e.b{background:#341f18}
+.tile.p{background:#1f2a22}.tile.p.b{background:#25332a}
+.drum{position:absolute;left:50%;top:50%;width:calc(var(--c)*3.6);height:calc(var(--c)*3.6);transform:translate(-50%,-50%);opacity:.3;pointer-events:none}
+.mid{position:absolute;left:0;right:0;top:calc(var(--c)*4 - 1px);height:2px;background:linear-gradient(90deg,transparent,#d6a335 20%,#d6a335 80%,transparent)}
+.ribbon{position:absolute;left:50%;top:calc(var(--c)*2);transform:translate(-50%,-50%);background:#2a1a12;border:1.5px solid #d6a335;color:#f3e8cf;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:600;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;z-index:4}
+.arena.battle .ribbon{display:none}
+.hint{position:absolute;left:12%;right:12%;top:12%;text-align:center;color:#c9b58a;font-size:12px;line-height:1.5;pointer-events:none}
+.cells{position:absolute;left:0;right:0;bottom:0;height:calc(var(--c)*4);display:grid;grid-template:repeat(4,1fr)/repeat(7,1fr);z-index:2}
+.cell{position:relative;display:grid;place-items:center;font-size:calc(var(--c)*.46)}
+.cell.can{box-shadow:inset 0 0 0 2px rgba(214,163,53,.5)}
+.cell.over,.slot.over{background:rgba(214,163,53,.28)}
+.bl{position:absolute;inset:0;z-index:3;pointer-events:none}
+.arena:not(.battle) .bl{display:none}
+.arena.battle .cells{visibility:hidden}
+/* tokens */
+.tok{position:relative;width:82%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;line-height:1;
+  background:radial-gradient(circle at 35% 28%,#6a4e36,#2a1c12 72%);
+  box-shadow:0 0 0 calc(var(--c)*.04) var(--rc,#8e8777),0 4px 10px rgba(0,0,0,.55),inset 0 0 0 calc(var(--c)*.06) rgba(0,0,0,.35)}
+.tok .cg{position:absolute;right:-6%;bottom:-4%;width:38%;height:38%;border-radius:50%;background:#1b130d;display:grid;place-items:center;font-size:.36em;font-style:normal;box-shadow:0 0 0 1px #8a6528}
+.st{position:absolute;left:0;right:0;top:0;text-align:center;font-size:calc(var(--c)*.2);color:#ffd36a;text-shadow:0 1px 2px #000;letter-spacing:-1px;line-height:1;pointer-events:none}
+.st.s3{color:#fff0a8;text-shadow:0 0 6px #ffb52e,0 1px 2px #000}
+.pu{position:relative;width:100%;height:100%;display:grid;place-items:center;touch-action:none;cursor:grab}
+.pu.sel .tok{box-shadow:0 0 0 3px #fff,0 0 14px 4px var(--gold)}
+.pu .nm{display:none;position:absolute;bottom:0;left:-4%;right:-4%;text-align:center;font-size:10px;font-weight:600;color:#f3e8cf;text-shadow:0 1px 2px #000,0 0 3px #000;pointer-events:none;white-space:nowrap;overflow:hidden}
+.big .pu .nm{display:block}
+.bench{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;height:calc(var(--c)*.8)}
+.slot{position:relative;border-radius:8px;background:rgba(0,0,0,.22);border:1px dashed var(--line);display:grid;place-items:center;font-size:calc(var(--c)*.34)}
+.slot .tok{width:86%}.slot .st{font-size:calc(var(--c)*.15)}
+/* battle units */
+.bu{position:absolute;left:0;top:0;width:var(--c);height:var(--c);display:grid;place-items:center;font-size:calc(var(--c)*.46);transition:transform calc(.45s / var(--spd)) linear;will-change:transform}
+.bu .tok{margin-top:calc(var(--c)*.1)}
+.bu.e .tok{box-shadow:0 0 0 calc(var(--c)*.05) #c4382c,0 4px 10px rgba(0,0,0,.55)}
+.bu .st{top:calc(var(--c)*.1)}
+.bars{position:absolute;left:10%;right:10%;top:calc(var(--c)*.02);height:calc(var(--c)*.1);background:#000a;border-radius:3px;overflow:hidden;z-index:2}
+.bars .hf{position:absolute;inset:0 auto 0 0;background:#58c27d;width:100%}
+.bu.e .hf{background:#e0503f}
+.bars .sf{position:absolute;inset:0 auto 0 0;background:#e8e8f4cc;width:0}
+.mp{position:absolute;left:10%;right:10%;top:calc(var(--c)*.13);height:calc(var(--c)*.04);background:#0008;border-radius:2px;overflow:hidden;z-index:2}
+.mp i{display:block;height:100%;background:#58a6ff;width:0}
+.bu.stun::after{content:'💫';position:absolute;top:-2%;right:6%;font-size:calc(var(--c)*.28)}
+.ft{position:absolute;pointer-events:none;font-weight:800;font-size:calc(var(--c)*.26);text-shadow:0 1px 2px #000,0 0 4px #000;color:#fff;z-index:6;transform:translate(-50%,0)}
+.ft.crit{color:#ffd36a;font-size:calc(var(--c)*.34)}.ft.mag{color:#d9a8ff}.ft.heal{color:#7dffa6}
+.sk{position:absolute;pointer-events:none;white-space:nowrap;font-family:var(--serif);font-weight:800;font-size:calc(var(--c)*.27);color:#ffe9b0;text-shadow:0 0 8px #d6a335,0 1px 2px #000;z-index:7;transform:translate(-50%,0)}
+.ring{position:absolute;pointer-events:none;border-radius:50%;border:3px solid #ffd36a;background:rgba(255,211,106,.12);z-index:1}
+.proj{position:absolute;left:0;top:0;width:calc(var(--c)*.2);height:calc(var(--c)*.2);margin:calc(var(--c)*-.1);border-radius:50%;background:#ffe9b0;box-shadow:0 0 8px 2px #ffb52e;z-index:5}
+.banner{position:absolute;inset:0;z-index:20;display:none;place-items:center;text-align:center;background:rgba(14,9,6,.72);padding:12px;cursor:pointer}
+.banner.show{display:grid;animation:fade .25s}
+.banner h2{margin:0;font-family:var(--serif);font-weight:800;font-size:calc(var(--c)*.8);color:#ffd36a;text-shadow:0 2px 0 #7a2a14,0 0 22px rgba(214,163,53,.6)}
+.banner.lose h2{color:#e8a094;text-shadow:0 2px 0 #4a1710}
+.banner p{margin:6px 0 0;color:#f3e8cf;font-size:13px;line-height:1.5}
+.banner small{display:block;margin-top:10px;color:#b9a98a}
+@keyframes fade{from{opacity:0}}
+/* peek card */
+.peek{position:absolute;left:6px;right:6px;top:6px;max-height:calc(var(--c)*4 - 16px);overflow-y:auto;background:rgba(32,22,14,.96);border:1.5px solid #8a6528;border-radius:12px;padding:8px 10px;color:#f3e8cf;z-index:5;display:none;font-size:12px;line-height:1.45}
+.peek.show{display:block}
+.peek .hd{display:flex;gap:8px;align-items:center}
+.peek .hd .tk{width:46px;flex:none;font-size:24px;position:relative}
+.peek h4{margin:0;font-family:var(--serif);font-size:16px;font-weight:800}
+.peek .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.tag{border-radius:999px;padding:1px 8px;background:#3a2a1c;border:1px solid var(--tc,#8a6528);font-size:11px}
+.peek .stats{display:grid;grid-template-columns:repeat(5,auto);gap:2px 8px;margin:6px 0;font-size:11px;color:#d8c9a6}
+.peek .stats b{color:#fff;display:block;font-size:12px}
+.peek .skl b{color:#ffd36a;font-family:var(--serif)}
+.peek .acts{display:flex;gap:6px;margin-top:6px;justify-content:flex-end}
+.peek .acts button{border-radius:8px;border:1px solid #8a6528;background:#3a2a1c;color:#f3e8cf;padding:4px 10px;font-size:12px}
+.peek .acts .sell{background:var(--cinn);border-color:var(--cinn);color:#ffe9b0;font-weight:700}
+.peek .tiers div{padding:1px 0;color:#b9a98a}.peek .tiers .a{color:#ffd36a;font-weight:700}
+.peek .heads{margin-top:4px;font-size:18px;letter-spacing:2px}
+/* shop */
+.shop{position:relative;display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px}
+.ctl{display:flex;align-items:center;gap:8px}
+.lv{flex:1;min-width:0}
+.lv b{font-family:var(--serif);font-size:14px}
+.lv .xp{height:6px;border-radius:3px;background:var(--panel2);overflow:hidden;margin-top:3px;border:1px solid var(--line)}
+.lv .xp i{display:block;height:100%;background:var(--jade);width:0;transition:width .3s}
+.lv small{color:var(--ink2);font-size:11px}
+.gold{font-family:var(--serif);font-weight:800;font-size:17px;white-space:nowrap}
+.gold small{font-family:var(--sans);font-size:11px;color:var(--ink2);font-weight:600}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.btn{border:1.5px solid var(--bronze);border-radius:10px;background:var(--panel2);padding:7px 6px;font-weight:700;font-size:13px;display:flex;justify-content:center;gap:6px;align-items:center}
+.btn small{font-weight:600;color:var(--ink2)}
+.btn:disabled{opacity:.45;cursor:default}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.card{position:relative;border:2px solid var(--rc);border-radius:10px;background:linear-gradient(180deg,#3e2d1e,#1d140d);color:#f3e8cf;padding:6px 3px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:92px}
+.card .em{font-size:26px;line-height:1.1}
+.card .cn{font-family:var(--serif);font-weight:800;font-size:11px;line-height:1.1;text-align:center;min-height:2.2em;display:grid;place-items:center}
+.card .tt{display:flex;gap:3px;font-size:11px}
+.card .co{font-size:11px;font-weight:700;color:#ffd36a}
+.card .i{position:absolute;top:1px;right:1px;width:20px;height:20px;border-radius:50%;border:0;background:#0006;color:#f3e8cf;font-size:11px;line-height:1;padding:0}
+.card.no{opacity:.55}
+.card.gone{visibility:hidden}
+.card.pair{box-shadow:0 0 0 2px #fff,0 0 12px 2px var(--gold)}
+.sellz{position:absolute;inset:0;border-radius:12px;background:rgba(179,40,29,.88);color:#ffe9b0;display:none;place-items:center;font-family:var(--serif);font-weight:800;font-size:18px;z-index:5}
+.shop.selling .sellz{display:grid}.shop.selling.over .sellz{background:rgba(214,60,40,1)}
+.ghost{position:fixed;left:0;top:0;z-index:99;pointer-events:none;display:grid;place-items:center;transform:translate(-50%,-50%)}
+/* overlays */
+.ov{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(10,6,4,.8);padding:14px;overflow-y:auto}
+.ov.show{display:grid}
+.dlg{position:relative;width:min(460px,100%);background:var(--panel);border:1.5px solid var(--bronze);border-radius:16px;padding:20px 18px;box-shadow:0 20px 60px rgba(0,0,0,.6);max-height:96dvh;overflow-y:auto}
+.dlg h1{font-family:var(--serif);font-weight:800;font-size:38px;margin:0;line-height:1;color:var(--cinn)}
+.dlg h2{font-family:var(--serif);font-weight:800;font-size:24px;margin:0 0 6px}
+.dlg p{margin:8px 0;color:var(--ink2);line-height:1.55}
+.row{display:flex;align-items:center;gap:10px;margin:12px 0;flex-wrap:wrap}
+.row>label{font-weight:600;min-width:84px}
+.seg{display:inline-flex;border:1.5px solid var(--bronze);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:6px 12px;font-weight:600}
+.seg button.on{background:var(--btn);color:var(--btnink)}
+.big-go{width:100%;margin-top:6px;padding:12px;font-size:20px;border-radius:12px}
+.how{margin:10px 0 0;padding-left:18px;color:var(--ink2);line-height:1.6;font-size:13px}
+.how li{margin:3px 0}
+.relics{display:grid;gap:8px;margin-top:10px}
+.relic{display:flex;gap:12px;align-items:center;text-align:left;border:1.5px solid var(--bronze);border-radius:12px;background:var(--panel2);padding:10px}
+.relic .ri{font-size:30px;width:44px;text-align:center}
+.relic b{font-family:var(--serif);font-size:16px}.relic span{display:block;color:var(--ink2);font-size:12.5px}
+.relic:hover{background:var(--panel)}
+.drumbg{position:absolute;right:-40px;top:-40px;width:200px;height:200px;opacity:.14;pointer-events:none}
+#toast{position:fixed;left:50%;top:58px;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
+#toast div{background:#2a1a12;color:#ffe9b0;border:1px solid #d6a335;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;animation:tst 2.4s forwards;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+@keyframes tst{0%{opacity:0;transform:translateY(-8px)}10%,80%{opacity:1;transform:none}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand"><i class="seal">✺</i><span>Cờ Huyền Sử</span></div>
+    <div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div>
+    <div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div>
+    <button class="chip" id="spd" title="Tốc độ trận đấu">×1</button>
+    <button class="go" id="ready">Chiến!</button>
+  </header>
+  <div class="game" id="game">
+    <aside class="side left"><div class="sh">Tộc và Hệ</div><div class="box" id="traits"></div></aside>
+    <main class="stage" id="stage">
+      <div class="arena" id="arena">
+        <div class="tiles" id="tiles"></div>
+        <svg class="drum" id="drum" viewBox="-100 -100 200 200"></svg>
+        <div class="mid"></div>
+        <div class="hint" id="hint"></div>
+        <div class="peek" id="peek"></div>
+        <div class="cells" id="cells"></div>
+        <div class="bl" id="bl"></div>
+        <div class="ribbon" id="ribbon"></div>
+        <div class="banner" id="banner"></div>
+      </div>
+      <div class="bench" id="bench"></div>
+      <section class="shop" id="shop" data-drop="sell">
+        <div class="ctl">
+          <div class="lv"><b id="lvt"></b> <small id="xpt"></small><div class="xp"><i id="xpf"></i></div></div>
+          <div class="gold" id="gold"></div>
+        </div>
+        <div class="btns">
+          <button class="btn" id="bxp">Mua kinh nghiệm <small>4 vàng</small></button>
+          <button class="btn" id="rrl">Làm mới cửa hàng <small>2 vàng</small></button>
+        </div>
+        <div class="cards" id="cards"></div>
+        <div class="btns"><button class="btn" id="auto">Tự xếp đội hình</button><button class="btn" id="help">Cách chơi</button></div>
+        <div class="sellz" id="sellz"></div>
+      </section>
+    </main>
+    <aside class="side right"><div class="sh">Người chơi</div><div class="box" id="plist"></div></aside>
+  </div>
+</div>
+<div id="toast"></div>
+<div class="ov" id="ov"></div>
+
+<script>
+/*ENGINE_START*/
+'use strict';
+const W=7,HH=8,TICK=0.05,MOVE_CD=0.45;
+const HPC=[560,720,900,1150,1500],ADC=[48,60,76,100,135],SKM=[1,1.8,3.2];
+const COSTCOL=['#8e8777','#2e9c80','#3f72d1','#9a4fc4','#d9a22b'];
+const ODDS=[null,[100,0,0,0,0],[100,0,0,0,0],[75,25,0,0,0],[55,30,15,0,0],[45,33,20,2,0],[30,40,25,5,0],[19,30,40,10,1],[18,25,36,18,3],[10,20,25,35,10]];
+const XPN={2:2,3:6,4:10,5:20,6:36,7:56,8:80};
+const PVE_ROUNDS=[1,2,3,8,15,22];
+const PVE_RW={1:{cost:1},2:{cost:1},3:{cost:2},8:{cost:3,relic:1},15:{cost:4,relic:1},22:{cost:5,relic:1}};
+const rnd=n=>Math.floor(Math.random()*n);
+const pickOf=a=>a[rnd(a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+let UID=1;
+
+const CS={
+  chienbinh:{name:'Chiến Binh',ico:'⚔️',hp:1.05,ad:1,armor:35,range:1,as:.7,mana0:0,crit:0},
+  hove:{name:'Hộ Vệ',ico:'🛡️',hp:1.4,ad:.65,armor:60,range:1,as:.55,mana0:20,crit:0},
+  cungno:{name:'Cung Nỏ',ico:'🏹',hp:.78,ad:1,armor:15,range:4,as:.85,mana0:0,crit:.05},
+  thuatsi:{name:'Thuật Sĩ',ico:'✨',hp:.75,ad:.7,armor:10,range:3,as:.65,mana0:10,crit:0},
+  dukich:{name:'Du Kích',ico:'🗡️',hp:.85,ad:1.1,armor:25,range:1,as:.9,mana0:0,crit:.15}
+};
+const TR={
+  hongbang:{name:'Hồng Bàng',kind:'Tộc',ico:'🐉',col:'#e0a93b',scope:'self',desc:'Con Rồng cháu Tiên, thuở dựng nước. Tướng Hồng Bàng mạnh kỹ năng và vào trận với sẵn nộ.',tiers:[{n:2,fx:{spell:.25,mana:10}},{n:4,fx:{spell:.55,mana:25}},{n:6,fx:{spell:1,mana:45}}]},
+  aulac:{name:'Âu Lạc',kind:'Tộc',ico:'🏯',col:'#8fbf7a',scope:'team',desc:'Thành Cổ Loa, nỏ thần Kim Quy. Cả đội được thêm giáp.',tiers:[{n:2,fx:{armor:20}},{n:4,fx:{armor:50}}]},
+  khoinghia:{name:'Khởi Nghĩa',kind:'Tộc',ico:'🔥',col:'#e0603f',scope:'self',desc:'Đứng lên giành lại giang sơn. Tướng Khởi Nghĩa đánh nhanh hơn.',tiers:[{n:2,fx:{as:.2}},{n:4,fx:{as:.45}},{n:6,fx:{as:.8}}]},
+  lytran:{name:'Lý \u2013 Trần',kind:'Tộc',ico:'🌊',col:'#5b8fdc',scope:'team',desc:'Hào khí Đông A. Cả đội được thêm máu tối đa.',tiers:[{n:2,fx:{hp:.12}},{n:4,fx:{hp:.3}},{n:6,fx:{hp:.55}}]},
+  lamson:{name:'Lam Sơn',kind:'Tộc',ico:'🗡️',col:'#4fb577',scope:'team',desc:'Lam Sơn tụ nghĩa. Cả đội được thêm sát thương.',tiers:[{n:2,fx:{ad:.15}},{n:4,fx:{ad:.4}}]},
+  tayson:{name:'Tây Sơn',kind:'Tộc',ico:'🐘',col:'#f08a3c',scope:'self',desc:'Thần tốc Tây Sơn. Tướng Tây Sơn thêm sát thương và hút máu.',tiers:[{n:2,fx:{ad:.25,ls:.12}},{n:3,fx:{ad:.5,ls:.25}}]},
+  chienbinh:{name:'Chiến Binh',kind:'Hệ',ico:'⚔️',col:'#cdbf9f',scope:'self',desc:'Tiền tuyến vững chãi. Chiến Binh thêm giáp.',tiers:[{n:2,fx:{armor:25}},{n:4,fx:{armor:60}},{n:6,fx:{armor:110}}]},
+  hove:{name:'Hộ Vệ',kind:'Hệ',ico:'🛡️',col:'#cdbf9f',scope:'self',desc:'Lá chắn của đội. Hộ Vệ thêm máu tối đa.',tiers:[{n:2,fx:{hp:.2}},{n:4,fx:{hp:.45}},{n:6,fx:{hp:.9}}]},
+  cungno:{name:'Cung Nỏ',kind:'Hệ',ico:'🏹',col:'#cdbf9f',scope:'self',desc:'Bắn từ xa. Cung Nỏ đánh nhanh hơn.',tiers:[{n:2,fx:{as:.25}},{n:4,fx:{as:.6}},{n:6,fx:{as:1.1}}]},
+  thuatsi:{name:'Thuật Sĩ',kind:'Hệ',ico:'✨',col:'#cdbf9f',scope:'self',desc:'Pháp thuật huyền bí. Thuật Sĩ tăng sức mạnh kỹ năng.',tiers:[{n:2,fx:{spell:.3}},{n:4,fx:{spell:.7}},{n:6,fx:{spell:1.3}}]},
+  dukich:{name:'Du Kích',kind:'Hệ',ico:'🗡️',col:'#cdbf9f',scope:'self',desc:'Đầu trận nhảy ra sau lưng địch. Du Kích thêm chí mạng và sát thương.',tiers:[{n:2,fx:{crit:.2,ad:.1}},{n:4,fx:{crit:.45,ad:.2}}]}
+};
+const FXN={hp:['% máu',1],ad:['% sát thương',1],as:['% tốc đánh',1],armor:[' giáp',0],spell:['% sức mạnh kỹ năng',1],crit:['% chí mạng',1],ls:['% hút máu',1],mana:[' nộ khởi đầu',0]};
+function fxText(fx){return Object.keys(fx).map(k=>'+'+(FXN[k][1]?Math.round(fx[k]*100):fx[k])+FXN[k][0]).join(', ');}
+
+const HEROES_RAW=[
+['chudongtu','Chử Đồng Tử','🎣','hongbang','thuatsi',1,{nm:'Nón Thần',t:'none',heal:200,al:'low',mana:50}],
+['caolo','Cao Lỗ','🏹','aulac','cungno',1,{nm:'Nỏ Liên Châu',t:'volley',k:3,d:85,mana:60}],
+['maithucloan','Mai Thúc Loan','🛡️','khoinghia','hove',1,{nm:'Hắc Đế Hộ Thân',t:'none',sh:260,al:'self',dur:5,mana:50}],
+['yetkieu','Yết Kiêu','🐟','lytran','dukich',1,{nm:'Lặn Đục Thuyền',t:'dash',d:260,tg:'low',mana:50}],
+['lelai','Lê Lai','🥋','lamson','hove',1,{nm:'Liều Mình Cứu Chúa',t:'none',sh:150,al:'near',ar:1.5,dur:5,mana:60}],
+['nguyenxi','Nguyễn Xí','🎯','lamson','cungno',1,{nm:'Tên Xuyên Giáp',t:'nuke',d:280,mana:70}],
+['datuong','Dã Tượng','🦬','lytran','chienbinh',1,{nm:'Voi Chiến Giẫm',t:'aoe',d:140,r:1.5,cen:'self',stun:1,mana:60}],
+['tiendung','Tiên Dung','🌸','hongbang','thuatsi',2,{nm:'Mưa Hoa Sen',t:'none',heal:120,al:'all',mana:80}],
+['lyongtrong','Lý Ông Trọng','🗿','aulac','hove',2,{nm:'Tượng Đồng Trấn Ải',t:'aoe',d:120,r:1.5,cen:'self',stun:1.5,sh:200,al:'self',dur:5,mana:70}],
+['trungnhi','Trưng Nhị','🌺','khoinghia','dukich',2,{nm:'Kiếm Nữ Truy Sát',t:'dash',d:340,tg:'low',mana:60}],
+['phunghung','Phùng Hưng','🪓','khoinghia','hove',2,{nm:'Bố Cái Đại Vương',t:'none',sh:200,ad:.4,al:'self',dur:5,mana:60}],
+['tranquoctoan','Trần Quốc Toản','🍊','lytran','dukich',2,{nm:'Bóp Nát Quả Cam',t:'dash',d:300,stun:1,mana:60}],
+['phamngulao','Phạm Ngũ Lão','🔱','lytran','cungno',2,{nm:'Mưa Tên Đông A',t:'volley',k:4,d:100,mana:70}],
+['tranquangdieu','Trần Quang Diệu','🚩','tayson','cungno',2,{nm:'Xạ Tiễn Tây Sơn',t:'nuke',d:380,mana:70}],
+['batrieu','Bà Triệu','🐘','khoinghia','dukich',2,{nm:'Cưỡi Voi Trận',t:'dash',d:240,r:1.5,tg:'far',mana:70}],
+['thuytinh','Thủy Tinh','🌊','hongbang','thuatsi',3,{nm:'Dâng Nước',t:'aoe',d:320,r:2,cen:'tgt',stun:.8,mana:90}],
+['aucơ','Âu Cơ','🦢','hongbang','hove',3,{nm:'Mẹ Che Chở',t:'none',sh:230,al:'all',dur:6,mana:90}],
+['anduongvuong','An Dương Vương','🏯','aulac','chienbinh',3,{nm:'Nỏ Thần Cổ Loa',t:'volley',k:5,d:150,mana:90}],
+['kimquy','Kim Quy','🐢','aulac','hove',3,{nm:'Móng Rùa Thần',t:'aoe',d:200,r:2.5,cen:'self',stun:1.5,sh:300,al:'self',dur:5,mana:90}],
+['lythuongkiet','Lý Thường Kiệt','📜','lytran','thuatsi',3,{nm:'Nam Quốc Sơn Hà',t:'aoe',d:290,r:2.5,cen:'tgt',stun:1.2,mana:90}],
+['nguyentrai','Nguyễn Trãi','✒️','lamson','thuatsi',3,{nm:'Bình Ngô Sách',t:'none',as:.45,heal:80,al:'all',dur:6,mana:80}],
+['buithixuan','Bùi Thị Xuân','⚔️','tayson','cungno',3,{nm:'Phi Tiễn Xuyên Tâm',t:'nuke',d:540,mana:100}],
+['sontinh','Sơn Tinh','⛰️','hongbang','hove',4,{nm:'Núi Tản Dựng Thành',t:'aoe',d:350,r:2.5,cen:'self',stun:2,sh:500,al:'self',dur:6,mana:100}],
+['thanhgiong','Thánh Gióng','🐎','hongbang','chienbinh',4,{nm:'Ngựa Sắt Phun Lửa',t:'dash',d:560,r:1.5,tg:'far',mana:90}],
+['leloi','Lê Lợi','👑','lamson','chienbinh',4,{nm:'Gươm Thần Lam Sơn',t:'aoe',d:400,r:2,cen:'tgt',ad:.3,al:'all',dur:6,mana:100}],
+['trungtrac','Trưng Trắc','🎌','khoinghia','chienbinh',4,{nm:'Hát Môn Thệ Sư',t:'aoe',d:380,r:2.5,cen:'self',as:.35,al:'all',dur:6,mana:100}],
+['ngoquyen','Ngô Quyền','⚓','khoinghia','cungno',4,{nm:'Cọc Bạch Đằng',t:'volley',k:6,d:190,mana:100}],
+['laclongquan','Lạc Long Quân','🐉','hongbang','thuatsi',5,{nm:'Rồng Nước Triều Dâng',t:'aoe',d:700,r:3,cen:'tgt',stun:1.5,heal:150,al:'all',mana:120}],
+['tranhungdao','Trần Hưng Đạo','🎖️','lytran','chienbinh',5,{nm:'Hịch Tướng Sĩ',t:'aoe',d:450,r:2,cen:'tgt',ad:.5,as:.3,al:'all',dur:7,mana:120}],
+['nguyenhue','Nguyễn Huệ','🔥','tayson','dukich',5,{nm:'Thần Tốc',t:'dash',d:760,r:2,tg:'far',stun:1,as:.5,al:'self',dur:6,mana:100}]
+];
+const HERO={},BYCOST=[[],[],[],[],[],[]];
+for(const [id,name,ico,o,c,cost,sk] of HEROES_RAW){HERO[id]={id,name,ico,o,c,cost,sk};BYCOST[cost].push(id);}
+const ALN={self:'bản thân',all:'cả đội',low:'đồng minh yếu nhất',near:'đồng minh xung quanh'};
+function skillText(sk,star){
+  const m=SKM[star-1],f=v=>Math.round(v*m),a=[];
+  if(sk.d){
+    if(sk.t==='nuke')a.push('Gây '+f(sk.d)+' sát thương lên mục tiêu');
+    else if(sk.t==='volley')a.push('Bắn '+sk.k+' mũi tên, mỗi mũi '+f(sk.d)+' sát thương vào kẻ địch ngẫu nhiên');
+    else if(sk.t==='dash')a.push('Lao vào '+(sk.tg==='low'?'kẻ địch yếu máu nhất':sk.tg==='far'?'kẻ địch xa nhất':'mục tiêu')+', gây '+f(sk.d)+' sát thương'+(sk.r?' trong '+sk.r+' ô':''));
+    else a.push('Gây '+f(sk.d)+' sát thương trong '+sk.r+' ô');
+  }
+  if(sk.stun)a.push('làm choáng '+sk.stun+' giây');
+  const who=ALN[sk.al||'self'];
+  if(sk.heal)a.push('hồi '+f(sk.heal)+' máu cho '+who);
+  if(sk.sh)a.push('tạo khiên '+f(sk.sh)+' cho '+who);
+  if(sk.ad)a.push('+'+Math.round(sk.ad*100)+'% sát thương trong '+sk.dur+' giây cho '+who);
+  if(sk.as)a.push('+'+Math.round(sk.as*100)+'% tốc đánh trong '+(sk.dur||6)+' giây cho '+who);
+  return a.join('; ')+'.';
+}
+function heroStats(hid,star){
+  const H=HERO[hid],cs=CS[H.c];
+  return {hp:Math.round(HPC[H.cost-1]*cs.hp*Math.pow(1.8,star-1)),ad:Math.round(ADC[H.cost-1]*cs.ad*Math.pow(1.5,star-1)),armor:cs.armor,range:cs.range,as:cs.as};
+}
+const RELICS=[
+  {id:'trongdong',name:'Trống Đồng Đông Sơn',ico:'🥁',desc:'Cả đội +12% máu và +10 giáp.',fx:{hp:.12,armor:10}},
+  {id:'guomthan',name:'Gươm Thần',ico:'🗡️',desc:'Cả đội +12% sát thương.',fx:{ad:.12}},
+  {id:'nothan',name:'Nỏ Thần',ico:'🏹',desc:'Cả đội +15% tốc đánh.',fx:{as:.15}},
+  {id:'non',name:'Nón Chử Đồng Tử',ico:'👒',desc:'Cả đội +25% sức mạnh kỹ năng.',fx:{spell:.25}},
+  {id:'giap',name:'Áo Giáp Sắt Thánh Gióng',ico:'🛡️',desc:'Cả đội +25 giáp.',fx:{armor:25}},
+  {id:'banh',name:'Bánh Chưng, Bánh Giầy',ico:'🍙',desc:'Cả đội +8% máu và +8% sát thương.',fx:{hp:.08,ad:.08}},
+  {id:'hogom',name:'Hồ Gươm',ico:'🐢',desc:'Cả đội hút 8% máu.',fx:{ls:.08}},
+  {id:'trau',name:'Trầu Cau',ico:'🌿',desc:'Nhận ngay 10 vàng.',fx:{},gold:10},
+  {id:'ngoc',name:'Ngọc Như Ý',ico:'💎',desc:'Cả đội vào trận với 20 nộ.',fx:{mana:20}}
+];
+function relicFx(P){const f={};for(const id of P.relics){const r=RELICS.find(x=>x.id===id);for(const k in r.fx)f[k]=(f[k]||0)+r.fx[k];}return f;}
+
+/* --- đội hình & thuộc tính --- */
+function traitCounts(list){
+  const sets={};
+  for(const u of list){const H=HERO[u.h];for(const t of [H.o,H.c]){(sets[t]=sets[t]||new Set()).add(u.h);}}
+  const c={};for(const k in sets)c[k]=sets[k].size;return c;
+}
+function tierOf(t,n){let idx=-1;TR[t].tiers.forEach((x,i)=>{if(n>=x.n)idx=i;});return idx;}
+function boardList(P){return P.board.filter(Boolean);}
+function boardCount(P){return P.board.reduce((a,u)=>a+(u?1:0),0);}
+function bareUnit(o){return Object.assign({alive:true,acd:0,mcd:0,stun:0,sh:0,shT:0,bf:[],tgt:null,mana:0,maxMana:0,sk:null,crit:0,spell:0,ls:0,star:1,cost:1,cls:'mon'},o);}
+function mkBU(u,side,x,y,counts,rfx){
+  const H=HERO[u.h],cs=CS[H.c],s=u.s;
+  let hp=HPC[H.cost-1]*cs.hp*Math.pow(1.8,s-1),ad=ADC[H.cost-1]*cs.ad*Math.pow(1.5,s-1);
+  const f={hp:0,ad:0,as:0,armor:0,spell:0,crit:cs.crit,ls:0,mana:cs.mana0};
+  const add=fx=>{for(const k in fx)f[k]=(f[k]||0)+fx[k];};
+  for(const t in counts){const i=tierOf(t,counts[t]);if(i<0)continue;const T=TR[t];if(T.scope==='team'||H.o===t||H.c===t)add(T.tiers[i].fx);}
+  add(rfx);
+  hp=Math.round(hp*(1+f.hp));ad*=1+f.ad;
+  return bareUnit({id:UID++,side,x,y,h:u.h,star:s,name:H.name,ico:H.ico,cost:H.cost,cls:H.c,org:H.o,max:hp,hp,ad,armor:cs.armor+f.armor,as:cs.as*(1+f.as),range:cs.range,crit:f.crit,spell:f.spell,ls:f.ls,sk:H.sk,maxMana:H.sk.mana,mana:Math.min(f.mana,Math.floor(H.sk.mana*.6))});
+}
+function boardToUnits(P,side){
+  const counts=traitCounts(boardList(P)),rfx=relicFx(P),out=[];
+  P.board.forEach((u,i)=>{if(!u)return;const r=Math.floor(i/W),c=i%W;out.push(mkBU(u,side,side===0?c:W-1-c,side===0?4+r:3-r,counts,rfx));});
+  return out;
+}
+function mon(nm,ico,hp,ad,armor,range,as,x,y,sk){return bareUnit({id:UID++,side:1,x,y,name:nm,ico,max:hp,hp,ad,armor,as,range,sk:sk||null,maxMana:sk?sk.mana:0,mon:true,cost:1});}
+function pveUnits(r){
+  const boss={nm:'Yêu Pháp',t:'aoe',d:240,r:2.5,cen:'self',stun:1,mana:60};
+  switch(r){
+    case 1:return [mon('Hồ Quái','🦊',330,26,10,1,.7,2,2),mon('Hồ Quái','🦊',330,26,10,1,.7,4,2)];
+    case 2:return [mon('Hồ Quái','🦊',380,32,10,1,.7,1,2),mon('Hồ Quái','🦊',380,32,10,1,.7,3,2),mon('Hồ Quái','🦊',380,32,10,1,.7,5,2)];
+    case 3:return [mon('Mộc Quái','🌳',460,36,20,1,.7,1,2),mon('Mộc Quái','🌳',460,36,20,1,.7,5,2),mon('Mộc Quái','🌳',460,36,20,1,.7,3,2),mon('Ngư Quái','🦑',330,40,5,3,.7,3,0)];
+    case 8:return [mon('Hồ Tinh','🦊',4600,70,40,1,.65,3,3,boss),mon('Hồ Quái','🦊',650,45,15,1,.7,1,2),mon('Hồ Quái','🦊',650,45,15,1,.7,5,2)];
+    case 15:return [mon('Ngư Tinh','🐙',9000,110,50,1,.65,3,3,boss),mon('Ngư Quái','🦑',900,60,10,3,.7,1,1),mon('Ngư Quái','🦑',900,60,10,3,.7,5,1),mon('Ngư Quái','🦑',900,60,20,1,.7,2,3),mon('Ngư Quái','🦑',900,60,20,1,.7,4,3)];
+    default:return [mon('Mộc Tinh','🌲',16000,160,70,1,.65,3,3,Object.assign({},boss,{d:400,r:3})),mon('Mộc Quái','🌳',1500,90,30,1,.7,1,3),mon('Mộc Quái','🌳',1500,90,30,1,.7,5,3),mon('Mộc Quái','🌳',1500,90,30,1,.7,2,2),mon('Mộc Quái','🌳',1500,90,30,1,.7,4,2)];
+  }
+}
+const PVE_NAME={1:'Hồ Quái',2:'Hồ Quái',3:'Mộc Quái, Ngư Quái',8:'Boss Hồ Tinh',15:'Boss Ngư Tinh',22:'Boss Mộc Tinh'};
+function pveName(r){const k=Object.keys(PVE_NAME).map(Number).filter(x=>x<=r).pop();return PVE_NAME[k]||'Yêu quái';}
+
+/* --- mô phỏng trận đánh --- */
+const DIRS=[[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[1,-1],[-1,1],[1,1]];
+function em(B,e){if(B.ev)B.ev.push(e);}
+function newBattle(units,withEvents){
+  const B={units,t:0,over:false,winner:1,surv:0,occ:new Array(W*HH).fill(null),ev:withEvents?[]:null};
+  for(const u of units)B.occ[u.y*W+u.x]=u;
+  for(const u of units){
+    if(u.cls!=='dukich')continue;
+    const foes=units.filter(f=>f.side!==u.side);if(!foes.length)continue;
+    let far=foes[0];for(const f of foes)if(d2(u,f)>d2(u,far))far=f;
+    jumpAdj(B,u,far,true);u.tgt=far;
+  }
+  return B;
+}
+const d2=(a,b)=>(a.x-b.x)**2+(a.y-b.y)**2;
+const cheb=(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
+const alv=(B,side)=>B.units.filter(u=>u.alive&&u.side===side);
+function nearest(B,u){let b=null,bd=1e9;for(const f of B.units){if(!f.alive||f.side===u.side)continue;const d=d2(u,f);if(d<bd){bd=d;b=f;}}return b;}
+function adMul(u){let s=1;for(const b of u.bf)s+=b.ad;return s;}
+function asMul(u){let s=1;for(const b of u.bf)s+=b.as;return s;}
+function jumpAdj(B,u,d,behind){
+  let best=null,bs=1e9;
+  for(const [dx,dy] of DIRS){
+    const nx=d.x+dx,ny=d.y+dy;if(nx<0||ny<0||nx>=W||ny>=HH||B.occ[ny*W+nx])continue;
+    const sc=behind?(u.side===0?ny:-ny)*10+Math.abs(nx-d.x):d2({x:nx,y:ny},u);
+    if(sc<bs){bs=sc;best=[nx,ny];}
+  }
+  if(best){B.occ[u.y*W+u.x]=null;u.x=best[0];u.y=best[1];B.occ[u.y*W+u.x]=u;em(B,{k:'jump',id:u.id});}
+}
+function healRaw(B,u,v){if(!u.alive)return;const h=Math.min(u.max-u.hp,v);if(h<=0)return;u.hp+=h;em(B,{k:'dmg',id:u.id,v:Math.round(h),type:'heal'});}
+function giveShield(u,v,dur){u.sh+=v;u.shT=Math.max(u.shT,dur);}
+function dealDamage(B,src,dst,amt,type,crit){
+  if(!dst.alive)return;
+  let d=type==='phys'?amt*100/(100+dst.armor):amt;
+  const total=d;
+  if(dst.sh>0){const ab=Math.min(dst.sh,d);dst.sh-=ab;d-=ab;}
+  dst.hp-=d;
+  if(src&&src.ls&&total>0)healRaw(B,src,total*src.ls);
+  if(dst.maxMana)dst.mana=Math.min(dst.maxMana,dst.mana+8);
+  em(B,{k:'dmg',id:dst.id,v:Math.round(total),crit:!!crit,type});
+  if(dst.hp<=0){dst.hp=0;dst.alive=false;B.occ[dst.y*W+dst.x]=null;em(B,{k:'die',id:dst.id});}
+}
+function needsRange(sk){return sk.t==='nuke'||(sk.t==='aoe'&&sk.cen==='tgt');}
+function attack(B,u,t){
+  const crit=Math.random()<u.crit;
+  u.acd=1/(u.as*asMul(u));
+  if(u.maxMana)u.mana=Math.min(u.maxMana,u.mana+12);
+  em(B,{k:'atk',id:u.id,tid:t.id,ranged:u.range>1});
+  dealDamage(B,u,t,u.ad*adMul(u)*(crit?1.6:1),'phys',crit);
+}
+function castSkill(B,u){
+  const sk=u.sk,m=SKM[u.star-1],sp=1+u.spell;
+  u.mana=0;u.acd=Math.max(u.acd,.6);
+  em(B,{k:'cast',id:u.id,nm:sk.nm});
+  const foes=alv(B,1-u.side);let t=u.tgt;
+  if(sk.t==='dash'&&foes.length){
+    let d=t;
+    if(sk.tg==='low')d=foes.reduce((a,b)=>(!a||b.hp<a.hp)?b:a,null);
+    else if(sk.tg==='far')d=foes.reduce((a,b)=>(!a||d2(u,b)>d2(u,a))?b:a,null);
+    if(d){if(cheb(u,d)>1)jumpAdj(B,u,d,false);u.tgt=d;t=d;}
+  }
+  if(sk.d&&foes.length){
+    const dmg=sk.d*m*sp,hits=[];
+    if(sk.t==='nuke'||(sk.t==='dash'&&!sk.r)){if(t&&t.alive)hits.push(t);}
+    else if(sk.t==='aoe'||sk.t==='dash'){
+      const c=(sk.cen==='tgt'&&t)?t:u;
+      for(const f of foes)if(Math.hypot(f.x-c.x,f.y-c.y)<=sk.r+.01)hits.push(f);
+      em(B,{k:'ring',x:c.x,y:c.y,r:sk.r});
+    }else if(sk.t==='volley'){for(let i=0;i<sk.k;i++){const f=pickOf(foes);hits.push(f);em(B,{k:'shot',id:u.id,tid:f.id});}}
+    for(const f of hits){dealDamage(B,u,f,dmg,'mag',false);if(sk.stun&&f.alive){f.stun=Math.max(f.stun,sk.stun);em(B,{k:'stun',id:f.id});}}
+  }
+  const al=sk.al||((sk.heal||sk.sh||sk.ad||sk.as)?'self':null);
+  if(al){
+    const allies=alv(B,u.side);let list;
+    if(al==='all')list=allies;
+    else if(al==='low')list=[allies.reduce((a,b)=>(!a||b.hp/b.max<a.hp/a.max)?b:a,null)];
+    else if(al==='near')list=allies.filter(a=>Math.hypot(a.x-u.x,a.y-u.y)<=(sk.ar||1.5));
+    else list=[u];
+    for(const a of list){
+      if(!a)continue;
+      if(sk.heal)healRaw(B,a,sk.heal*m*sp);
+      if(sk.sh){giveShield(a,sk.sh*m*sp,sk.dur||5);em(B,{k:'shield',id:a.id});}
+      if(sk.ad||sk.as){a.bf.push({ad:sk.ad||0,as:sk.as||0,t:sk.dur||6});em(B,{k:'buff',id:a.id});}
+    }
+  }
+}
+function moveToward(B,u,t){
+  const start=u.y*W+u.x,prev=new Int16Array(W*HH).fill(-2);prev[start]=-1;const q=[start];let goal=-1;
+  for(let qi=0;qi<q.length;qi++){
+    const cur=q[qi],cx=cur%W,cy=(cur/W)|0;
+    if(cur!==start&&Math.max(Math.abs(cx-t.x),Math.abs(cy-t.y))<=u.range){goal=cur;break;}
+    for(const [dx,dy] of DIRS){const nx=cx+dx,ny=cy+dy;if(nx<0||ny<0||nx>=W||ny>=HH)continue;const ni=ny*W+nx;if(prev[ni]!==-2||B.occ[ni])continue;prev[ni]=cur;q.push(ni);}
+  }
+  if(goal<0)return;
+  let c=goal;while(prev[c]!==start)c=prev[c];
+  B.occ[start]=null;u.x=c%W;u.y=(c/W)|0;B.occ[c]=u;u.mcd=MOVE_CD;
+}
+function act(B,u){
+  let t=u.tgt;if(!t||!t.alive)t=u.tgt=nearest(B,u);
+  if(!t)return;
+  let d=cheb(u,t);
+  if(d>u.range){const n=nearest(B,u);if(n&&cheb(u,n)<=u.range){u.tgt=n;t=n;d=cheb(u,n);}}
+  const inR=d<=u.range,sk=u.sk;
+  if(sk&&u.mana>=u.maxMana&&u.acd<=0&&(inR||!needsRange(sk))){castSkill(B,u);return;}
+  if(inR){if(u.acd<=0)attack(B,u,t);}
+  else if(u.mcd<=0)moveToward(B,u,t);
+}
+function step(B,dt){
+  if(B.over)return;
+  B.t+=dt;
+  if(B.t>30){const k=.006*(B.t-30)*dt;for(const u of B.units)if(u.alive){u.hp-=u.max*k;if(u.hp<=0){u.hp=0;u.alive=false;B.occ[u.y*W+u.x]=null;em(B,{k:'die',id:u.id});}}}
+  for(const u of B.units){
+    if(!u.alive)continue;
+    if(u.acd>0)u.acd-=dt;if(u.mcd>0)u.mcd-=dt;
+    if(u.shT>0){u.shT-=dt;if(u.shT<=0)u.sh=0;}
+    if(u.bf.length){for(const b of u.bf)b.t-=dt;u.bf=u.bf.filter(b=>b.t>0);}
+    if(u.maxMana&&u.mana<u.maxMana)u.mana=Math.min(u.maxMana,u.mana+1.5*dt);
+    if(u.stun>0){u.stun-=dt;continue;}
+    act(B,u);
+  }
+  let a0=0,a1=0;for(const u of B.units)if(u.alive){if(u.side)a1++;else a0++;}
+  if(a0===0||a1===0){B.over=true;B.winner=a0>0?0:1;B.surv=a0>0?a0:a1;if(a0===0&&a1===0)B.surv=0;}
+  else if(B.t>=70){B.over=true;let h0=0,h1=0;for(const u of B.units)if(u.alive){if(u.side)h1+=u.hp;else h0+=u.hp;}B.winner=h0>h1?0:1;B.surv=B.winner?a1:a0;}
+}
+function runBattle(B){let n=0;while(!B.over&&n++<2000)step(B,TICK);return B;}
+
+/* --- người chơi, cửa hàng, gộp sao --- */
+function newPlayer(name,human,i,av){return {id:i,name,human,av,hp:100,gold:6,lvl:2,xp:0,bench:Array(9).fill(null),board:Array(28).fill(null),shop:[],streak:0,lastWin:false,alive:true,place:0,relics:[],fav:[],log:[]};}
+function mkUnitObj(h,s){return {uid:UID++,h,s:s||1};}
+function levelCheck(p){while(p.lvl<9&&p.xp>=XPN[p.lvl]){p.xp-=XPN[p.lvl];p.lvl++;}if(p.lvl>=9)p.xp=0;}
+function rollShop(p){
+  const od=ODDS[p.lvl],out=[];
+  for(let i=0;i<5;i++){let r=rnd(100),c=0;while(c<4&&r>=od[c]){r-=od[c];c++;}out.push(pickOf(BYCOST[c+1]));}
+  return out;
+}
+function mergeAll(P){
+  let again=true;
+  while(again){
+    again=false;
+    const locs=[];
+    P.board.forEach((u,i)=>u&&locs.push({a:'board',i,u}));
+    P.bench.forEach((u,i)=>u&&locs.push({a:'bench',i,u}));
+    const groups={};
+    for(const l of locs){const k=l.u.h+'|'+l.u.s;(groups[k]=groups[k]||[]).push(l);}
+    for(const k in groups){
+      const g=groups[k];
+      if(g.length>=3&&g[0].u.s<3){
+        g[0].u.s++;for(const r of g.slice(1,3))P[r.a][r.i]=null;
+        P.log.push({h:g[0].u.h,s:g[0].u.s});again=true;break;
+      }
+    }
+  }
+}
+function addUnit(P,u){
+  const i=P.bench.indexOf(null);
+  if(i>=0){P.bench[i]=u;mergeAll(P);return true;}
+  P.bench.push(u);mergeAll(P);
+  if(P.bench.length>9){if(P.bench[9]===null){P.bench.length=9;return true;}P.bench.pop();return false;}
+  return true;
+}
+function canAdd(P,h){
+  if(P.bench.indexOf(null)>=0)return true;
+  const n=[...P.board,...P.bench].filter(u=>u&&u.h===h&&u.s===1).length;
+  return n>=2;
+}
+function buyUnit(P,i){
+  const h=P.shop[i];if(!h)return false;
+  const cost=HERO[h].cost;if(P.gold<cost||!canAdd(P,h))return false;
+  if(!addUnit(P,mkUnitObj(h,1)))return false;
+  P.gold-=cost;P.shop[i]=null;return true;
+}
+function sellValue(u){const c=HERO[u.h].cost;return u.s===1?c:c*Math.pow(3,u.s-1)-(c>1?1:0);}
+function sellUnit(P,k,i){const u=P[k][i];if(!u)return 0;const v=sellValue(u);P.gold+=v;P[k][i]=null;return v;}
+function moveUnit(P,f,t){
+  if(f.k===t.k&&f.i===t.i)return false;
+  const u=P[f.k][f.i];if(!u)return false;
+  const v=P[t.k][t.i];
+  if(t.k==='board'&&f.k==='bench'&&!v&&boardCount(P)>=P.lvl)return false;
+  P[f.k][f.i]=v||null;P[t.k][t.i]=u;return true;
+}
+function buyXp(P){if(P.gold<4||P.lvl>=9)return false;P.gold-=4;P.xp+=4;levelCheck(P);return true;}
+function reroll(P){if(P.gold<2)return false;P.gold-=2;P.shop=rollShop(P);return true;}
+const MELEE=['hove','chienbinh','dukich'];
+function autoArrange(P){
+  const all=[];P.board.forEach(u=>u&&all.push(u));P.bench.forEach(u=>u&&all.push(u));
+  const cap=Math.min(P.lvl,all.length),chosen=[],pool=all.slice();
+  while(chosen.length<cap){
+    let bi=-1,bs=-1e9;
+    pool.forEach((u,i)=>{
+      const H=HERO[u.h];let sc=H.cost*Math.pow(2.2,u.s-1)+u.s*1.5;
+      for(const t of [H.o,H.c]){
+        const set=new Set(chosen.map(x=>x.h).filter(h=>HERO[h].o===t||HERO[h].c===t));
+        if(!set.has(u.h)){const n=set.size;if(tierOf(t,n+1)>tierOf(t,n))sc+=3;else if(n>0)sc+=.6;}
+        if(P.fav&&P.fav.includes(t))sc+=1;
+      }
+      if(sc>bs){bs=sc;bi=i;}
+    });
+    chosen.push(pool.splice(bi,1)[0]);
+  }
+  P.board.fill(null);P.bench.fill(null);
+  const rest=pool;rest.forEach((u,i)=>{P.bench[i]=u;});
+  const order=[3,2,4,1,5,0,6];
+  const melee=chosen.filter(u=>MELEE.includes(HERO[u.h].c)).sort((a,b)=>MELEE.indexOf(HERO[a.h].c)-MELEE.indexOf(HERO[b.h].c));
+  const rng=chosen.filter(u=>!MELEE.includes(HERO[u.h].c));
+  melee.forEach((u,i)=>{P.board[(i<7?0:1)*W+order[i%7]]=u;});
+  rng.forEach((u,i)=>{P.board[(i<7?3:2)*W+order[i%7]]=u;});
+}
+
+/* --- ván đấu --- */
+const lossDamage=(r,s)=>Math.round((2+Math.floor(r*.6)+s*2)*(r>28?1.5:1));
+const isPve=r=>PVE_ROUNDS.includes(r);
+function incomeOf(p,r){
+  const base=r<=2?2:r===3?3:r===4?4:5,s=Math.abs(p.streak);
+  const sb=s<2?0:s<4?1:s<5?2:3;
+  return {base,interest:Math.min(5,Math.floor(p.gold/10)),streak:sb,win:p.lastWin&&p.streak>0?1:0};
+}
+const BOT_NAMES=['Quan Lang','Mị Nương','Lạc Hầu','Lạc Tướng','Bồ Chính','Phụ Đạo','Hùng Vương'];
+const BOT_AV=['🐯','🐃','🦚','🐍','🦅','🐘','🦌'];
+function newGame(cfg){
+  cfg=cfg||{};
+  const G={players:[],round:0,matches:[],diff:cfg.diff||1,auto:!!cfg.auto,over:false,winner:null,inc:null};
+  const me=newPlayer('Bạn',!cfg.auto,0,'🐲');G.players.push(me);G.me=me;
+  for(let i=0;i<7;i++){const b=newPlayer(BOT_NAMES[i],false,i+1,BOT_AV[i]);b.fav=[pickOf(['hongbang','aulac','khoinghia','lytran','lamson','tayson']),pickOf(['chienbinh','hove','cungno','thuatsi','dukich'])];G.players.push(b);}
+  for(const p of G.players)addUnit(p,mkUnitObj(pickOf(BYCOST[1]),1));
+  return G;
+}
+function startRound(G){
+  G.round++;const r=G.round;G.inc=null;
+  for(const p of G.players){
+    if(!p.alive)continue;
+    if(r>1){
+      const inc=incomeOf(p,r);let tot=inc.base+inc.interest+inc.streak+inc.win;
+      if(!p.human)tot+=G.diff>1?1:G.diff<1?-1:0;
+      p.gold+=Math.max(0,tot);p.xp+=2;levelCheck(p);
+      if(p.human)G.inc={tot:Math.max(0,tot),inc};
+    }
+    if(p.human&&!G.auto)p.shop=rollShop(p);else botPrep(G,p);
+  }
+  G.matches=makeMatches(G);
+}
+function makeMatches(G){
+  const A=G.players.filter(p=>p.alive);
+  if(isPve(G.round))return A.map(p=>({a:p,b:null,pve:true}));
+  shuffle(A);const ms=[];
+  for(let i=0;i+1<A.length;i+=2)ms.push({a:A[i],b:A[i+1]});
+  if(A.length%2){const last=A[A.length-1],others=A.filter(x=>x!==last);ms.push({a:last,b:pickOf(others),ghost:true});}
+  for(const m of ms)if(!m.pve&&!m.ghost&&m.b.human){const t=m.a;m.a=m.b;m.b=t;}
+  return ms;
+}
+function matchUnits(G,m){return [boardToUnits(m.a,0),m.pve?pveUnits(G.round):boardToUnits(m.b,1)];}
+function simMatch(G,m){const [ua,ub]=matchUnits(G,m);const B=runBattle(newBattle(ua.concat(ub),false));return {win0:B.winner===0,surv:B.surv};}
+function giveReward(G,p,r){
+  const rw=PVE_RW[r];if(!rw)return null;
+  const h=pickOf(BYCOST[rw.cost]);
+  if(!addUnit(p,mkUnitObj(h,1)))p.gold+=rw.cost;
+  return {h,relic:!!rw.relic};
+}
+function addRelic(p,id){const r=RELICS.find(x=>x.id===id);p.relics.push(id);if(r.gold)p.gold+=r.gold;}
+function applyRound(G){
+  const info={};
+  for(const m of G.matches){
+    if(!m.res)m.res=simMatch(G,m);
+    const {win0,surv}=m.res;
+    if(m.pve){
+      if(win0){if(m.a.human)info.reward=PVE_RW[G.round];else{const x=giveReward(G,m.a,G.round);if(x&&x.relic)addRelic(m.a,pickOf(RELICS).id);}}
+      continue;
+    }
+    const dmg=lossDamage(G.round,surv);
+    const win=p=>{p.streak=p.streak>0?p.streak+1:1;p.lastWin=true;};
+    const lose=(p,d)=>{p.streak=p.streak<0?p.streak-1:-1;p.lastWin=false;p.hp-=d;};
+    if(win0){win(m.a);if(!m.ghost)lose(m.b,dmg);}else{lose(m.a,dmg);if(!m.ghost)win(m.b);}
+    if(m.a.human||(m.b&&m.b.human&&!m.ghost))info.dmg=dmg;
+  }
+  const n=G.players.filter(p=>p.alive).length;
+  const dead=G.players.filter(p=>p.alive&&p.hp<=0).sort((a,b)=>b.hp-a.hp);
+  dead.forEach((p,i)=>{p.alive=false;p.hp=Math.max(0,p.hp);p.place=n-dead.length+1+i;});
+  const left=G.players.filter(p=>p.alive);
+  if(left.length<=1){G.over=true;if(left[0]){left[0].place=1;G.winner=left[0];}}
+  if(G.round>=70&&!G.over){G.over=true;const s=left.sort((a,b)=>b.hp-a.hp);s.forEach((p,i)=>p.place=i+1);G.winner=s[0];}
+  return info;
+}
+
+/* --- máy chơi --- */
+function ownedWeight(P,h){let n=0;for(const u of [...P.board,...P.bench])if(u&&u.h===h)n+=Math.pow(3,u.s-1);return n;}
+function buyScore(P,h){
+  const H=HERO[h];let sc=H.cost*1.2;const own=ownedWeight(P,h);
+  if(own>=1)sc+=4+own;if(own>=2)sc+=6;
+  for(const t of [H.o,H.c])if(P.fav.includes(t))sc+=2;
+  const have=traitCounts(boardList(P));for(const t of [H.o,H.c])if(have[t])sc+=1;
+  if(H.cost>P.lvl-1&&own<1)sc-=2;
+  return sc;
+}
+function bankKeep(r){return r<4?0:r<9?10:r<16?20:30;}
+function targetLvl(r){return Math.min(9,2+Math.floor((r+1)/3.2));}
+function benchSpace(P,h){
+  if(canAdd(P,h))return true;
+  let wi=-1,ws=1e9;
+  P.bench.forEach((u,i)=>{if(!u||u.h===h)return;const v=HERO[u.h].cost*Math.pow(3,u.s-1);if(v<ws){ws=v;wi=i;}});
+  if(wi>=0){sellUnit(P,'bench',wi);return true;}
+  return false;
+}
+function botPrep(G,b){
+  b.shop=rollShop(b);
+  const k=G.diff,keep=bankKeep(G.round);let rerolls=0,guard=0;
+  while(guard++<16){
+    if(Math.random()>k)break;
+    let did=false;
+    const sc=b.shop.map((h,i)=>h?{i,h,s:buyScore(b,h)}:null).filter(Boolean).sort((x,y)=>y.s-x.s);
+    for(const s of sc){
+      const c=HERO[s.h].cost,pair=ownedWeight(b,s.h)>=1;
+      if(b.gold>=c&&(b.gold-c>=keep||pair)&&s.s>0&&benchSpace(b,s.h)){if(buyUnit(b,s.i)){did=true;break;}}
+    }
+    if(did)continue;
+    if(b.lvl<9&&b.lvl<targetLvl(G.round)&&b.gold>=4&&b.gold-4>=Math.max(0,keep-10)){buyXp(b);continue;}
+    if(rerolls<4&&b.gold-2>=Math.max(keep,G.round>5?20:0)&&G.round>2){reroll(b);rerolls++;continue;}
+    break;
+  }
+  autoArrange(b);
+}
+function playAuto(G,maxRounds){
+  while(!G.over&&G.round<(maxRounds||80)){startRound(G);applyRound(G);}
+  return G;
+}
+/*ENGINE_END*/
+</script>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+let G=null;
+const U={sel:null,peek:null,drag:null,armed:false,speed:1,noTimer:false,diff:1,timer:0,prepTime:40,B:null,lm:null,els:{},raf:0,relicPending:false,tick:0};
+const arena=$('#arena'),cellsEl=$('#cells'),benchEl=$('#bench'),blEl=$('#bl');
+
+/* ---------- khởi tạo hình ---------- */
+function buildStatic(){
+  const t=$('#tiles');let h='';
+  for(let y=0;y<8;y++)for(let x=0;x<7;x++)h+='<i class="tile '+(y<4?'e':'p')+((x+y)%2?' b':'')+'"></i>';
+  t.innerHTML=h;
+  // trống đồng
+  let s='<g fill="none" stroke="#d6a335" stroke-width="1.6">';
+  [94,86,64,54,24].forEach(r=>s+='<circle r="'+r+'"/>');
+  let star='',zig='';
+  for(let i=0;i<28;i++){const r=i%2?22:50,a=i*Math.PI/14;star+=(i?'L':'M')+(Math.cos(a)*r).toFixed(1)+' '+(Math.sin(a)*r).toFixed(1);}
+  for(let i=0;i<48;i++){const r=i%2?66:84,a=i*Math.PI/24;zig+=(i?'L':'M')+(Math.cos(a)*r).toFixed(1)+' '+(Math.sin(a)*r).toFixed(1);}
+  s+='<path d="'+star+'Z"/><path d="'+zig+'Z"/></g>';
+  $('#drum').innerHTML=s;
+  let c='';for(let i=0;i<28;i++)c+='<div class="cell" data-drop="board" data-i="'+i+'"></div>';
+  cellsEl.innerHTML=c;
+  let b='';for(let i=0;i<9;i++)b+='<div class="slot" data-drop="bench" data-i="'+i+'"></div>';
+  benchEl.innerHTML=b;
+}
+function fit(){
+  const w=innerWidth,h=innerHeight,desk=w>=980;
+  let c=Math.min((w-(desk?560:14))/7,(h-(desk?250:322))/8.85);
+  c=Math.max(40,Math.min(88,c));
+  document.documentElement.style.setProperty('--c',c.toFixed(1)+'px');
+  document.body.classList.toggle('big',c>=60);
+  U.c=c;
+}
+const toast=m=>{const d=document.createElement('div');d.textContent=m;$('#toast').appendChild(d);setTimeout(()=>d.remove(),2500);};
+const costCol=h=>COSTCOL[HERO[h].cost-1];
+const tokHTML=(h,s,extra)=>{const H=HERO[h];return '<div class="tok" style="--rc:'+costCol(h)+'">'+H.ico+'<i class="cg">'+CS[H.c].ico+'</i></div><div class="st s'+s+'">'+'\u2605'.repeat(s)+'</div>'+(extra||'');};
+const shortName=n=>{const p=n.split(' ');return p.length>2?p.slice(-2).join(' '):n;};
+
+/* ---------- vẽ giao diện chuẩn bị ---------- */
+function me(){return G.me;}
+function renderAll(){
+  if(!G)return;
+  renderTop();renderBoard();renderBench();renderShop();renderTraits();renderPlayers();renderPeek();
+}
+function phaseText(){return U.phase==='prep'?(isPve(G.round)?'Chuẩn bị \u00B7 quái vật':'Chuẩn bị'):U.phase==='battle'?'Giao tranh':'Kết quả';}
+function renderTop(){
+  $('#rd').textContent='Vòng '+G.round;$('#ph').textContent=phaseText();
+  const r=$('#ready');r.disabled=U.phase!=='prep';r.classList.toggle('armed',U.armed);
+  r.textContent=U.phase==='prep'?'Chiến!':'\u2026';
+  const opp=oppLabel();$('#ribbon').textContent=opp;
+  $('#hint').textContent=(U.phase==='prep'&&!U.peek)?(G.round===1?'Kéo tướng từ hàng chờ lên bàn. Chạm vào tướng để xem kỹ năng và bán.':'Kéo để đổi chỗ. Hàng trước chịu đòn, hàng sau bắn.'):'';
+}
+function oppLabel(){
+  const m=G.matches.find(x=>x.a.human);if(!m)return '';
+  if(m.pve)return '☠ '+pveName(G.round);
+  if(m.ghost)return '⚔ Bóng đội hình của '+m.b.name;
+  return '⚔ '+m.b.name+' \u00B7 '+m.b.hp+' máu';
+}
+function renderBoard(){
+  const P=me(),cap=P.lvl,cnt=boardCount(P);
+  [...cellsEl.children].forEach((cell,i)=>{
+    const u=P.board[i];
+    cell.className='cell';
+    cell.innerHTML=u?puHTML('board',i,u):'';
+  });
+  $('#hint').dataset.cnt=cnt;
+}
+function puHTML(k,i,u){
+  const sel=U.sel&&U.sel.k===k&&U.sel.i===i;
+  return '<div class="pu'+(sel?' sel':'')+'" data-unit="1" data-kind="'+k+'" data-i="'+i+'" title="'+HERO[u.h].name+'">'+tokHTML(u.h,u.s,'<span class="nm">'+shortName(HERO[u.h].name)+'</span>')+'</div>';
+}
+function renderBench(){
+  const P=me();
+  [...benchEl.children].forEach((s,i)=>{const u=P.bench[i];s.innerHTML=u?puHTML('bench',i,u):'';});
+}
+function renderShop(){
+  const P=me();
+  $('#lvt').textContent='Cấp '+P.lvl+' \u00B7 '+boardCount(P)+'/'+P.lvl+' trên bàn';
+  const need=XPN[P.lvl];
+  $('#xpt').textContent=P.lvl>=9?'tối đa':'KN '+P.xp+'/'+need;
+  $('#xpf').style.width=(P.lvl>=9?100:P.xp/need*100)+'%';
+  const intr=Math.min(5,Math.floor(P.gold/10));
+  $('#gold').innerHTML='🪙 '+P.gold+' <small>lãi +'+intr+'</small>';
+  const prep=U.phase==='prep';
+  $('#bxp').disabled=!prep||P.gold<4||P.lvl>=9;
+  $('#rrl').disabled=!prep||P.gold<2;
+  $('#auto').disabled=!prep;
+  let h='';
+  P.shop.forEach((hid,i)=>{
+    if(!hid){h+='<div class="card gone"></div>';return;}
+    const H=HERO[hid],afford=P.gold>=H.cost&&canAdd(P,hid);
+    const own=[...P.board,...P.bench].filter(u=>u&&u.h===hid&&u.s===1).length;
+    h+='<div class="card'+(afford?'':' no')+(own>=2?' pair':'')+'" style="--rc:'+COSTCOL[H.cost-1]+'" role="button" tabindex="0" data-buy="'+i+'" aria-label="Mua '+H.name+', '+H.cost+' vàng">'
+      +'<button class="i" data-info="'+hid+'" aria-label="Xem '+H.name+'">i</button>'
+      +'<div class="em">'+H.ico+'</div><div class="cn">'+H.name+'</div>'
+      +'<div class="tt"><span title="'+TR[H.o].name+'">'+TR[H.o].ico+'</span><span title="'+TR[H.c].name+'">'+CS[H.c].ico+'</span></div>'
+      +'<div class="co">🪙 '+H.cost+'</div></div>';
+  });
+  $('#cards').innerHTML=h;
+}
+function renderTraits(){
+  const counts=traitCounts(boardList(me()));
+  const ids=Object.keys(counts).sort((a,b)=>(tierOf(b,counts[b])-tierOf(a,counts[a]))||(counts[b]-counts[a]));
+  let h='';
+  for(const t of ids){
+    const T=TR[t],ti=tierOf(t,counts[t]);
+    h+='<div class="tr'+(ti>=0?' on':'')+'" style="--tc:'+T.col+'" data-trait="'+t+'"><span class="ti">'+T.ico+'</span><b>'+T.name+'</b><span class="tn"><b>'+counts[t]+'</b> '+T.tiers.map((x,i)=>'<u class="'+(i===ti?'a':'')+'">'+x.n+'</u>').join('›')+'</span></div>';
+  }
+  $('#traits').innerHTML=h||'<div style="color:var(--ink2);font-size:12px;padding:4px">Đặt tướng lên bàn để kích hoạt cộng hưởng.</div>';
+}
+function renderPlayers(){
+  const m=G.matches.find(x=>x.a.human),opp=m&&!m.pve&&!m.ghost?m.b:null;
+  const list=G.players.slice().sort((a,b)=>(b.alive-a.alive)||(b.hp-a.hp));
+  $('#plist').innerHTML=list.map(p=>'<div class="pl'+(p.human?' me':'')+(p===opp?' opp':'')+(p.alive?'':' dead')+'"><span class="av">'+p.av+'</span><span class="nm">'+p.name+'</span><span class="bar"><i style="width:'+Math.max(0,p.hp)+'%"></i></span><span class="hp">'+(p.alive?Math.max(0,p.hp):'#'+p.place)+'</span></div>').join('');
+}
+/* ---------- thẻ xem nhanh ---------- */
+function renderPeek(){
+  const el=$('#peek'),pk=U.peek;
+  if(!pk||U.phase!=='prep'){el.className='peek';el.innerHTML='';return;}
+  let h='';
+  if(pk.type==='hero'){
+    const H=HERO[pk.h],st=heroStats(pk.h,pk.s),sk=H.sk;
+    const sel=pk.k?me()[pk.k][pk.i]:null;
+    h='<div class="hd"><div class="tk" style="--c:46px;font-size:24px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" style="--tc:'+TR[H.o].col+'">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'">🪙 '+H.cost+'</span></div></div></div>'
+     +'<div class="stats"><span>Máu<b>'+st.hp+'</b></span><span>Sát thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
+     +'<div class="skl"><b>'+sk.nm+'</b> (cần '+sk.mana+' nộ): '+skillText(sk,pk.s)+(H.c==='dukich'?' Đầu trận nhảy ra sau lưng địch.':'')+'</div>'
+     +'<div class="acts">'+(sel?'<button class="sell" data-sell="1">Bán +'+sellValue(sel)+' vàng</button>':'')+'<button data-closepeek="1">Đóng</button></div>';
+  }else{
+    const T=TR[pk.t],counts=traitCounts(boardList(me())),n=counts[pk.t]||0,ti=tierOf(pk.t,n);
+    const heads=Object.values(HERO).filter(x=>x.o===pk.t||x.c===pk.t).sort((a,b)=>a.cost-b.cost).map(x=>x.ico).join(' ');
+    h='<div class="hd"><div class="tk" style="font-size:26px;width:auto">'+T.ico+'</div><div style="flex:1"><h4>'+T.name+' <span style="font-weight:500;font-size:12px;color:#b9a98a">'+T.kind+' \u00B7 đang có '+n+'</span></h4></div></div><div style="margin:4px 0">'+T.desc+'</div>'
+     +'<div class="tiers">'+T.tiers.map((x,i)=>'<div class="'+(i===ti?'a':'')+'">'+x.n+' tướng: '+fxText(x.fx)+(T.scope==='team'?' (cả đội)':'')+'</div>').join('')+'</div><div class="heads">'+heads+'</div><div class="acts"><button data-closepeek="1">Đóng</button></div>';
+  }
+  el.innerHTML=h;el.className='peek show';
+}
+
+/* ---------- kéo thả ---------- */
+document.addEventListener('pointerdown',e=>{
+  if(U.phase!=='prep')return;
+  const t=e.target.closest('[data-unit]');if(!t)return;
+  U.drag={k:t.dataset.kind,i:+t.dataset.i,sx:e.clientX,sy:e.clientY,moved:false,ghost:null};
+});
+document.addEventListener('pointermove',e=>{
+  const d=U.drag;if(!d)return;
+  if(!d.moved&&Math.hypot(e.clientX-d.sx,e.clientY-d.sy)>8){
+    d.moved=true;
+    const u=me()[d.k][d.i];if(!u){U.drag=null;return;}
+    const g=document.createElement('div');g.className='ghost';g.style.width=(U.c*.9)+'px';g.style.height=(U.c*.9)+'px';g.style.fontSize=(U.c*.46)+'px';g.style.setProperty('--c',U.c+'px');
+    g.innerHTML=tokHTML(u.h,u.s);document.body.appendChild(g);d.ghost=g;
+    $('#shop').classList.add('selling');$('#sellz').textContent='Thả vào đây để bán +'+sellValue(u)+' vàng';
+  }
+  if(d.moved){
+    e.preventDefault();
+    d.ghost.style.left=e.clientX+'px';d.ghost.style.top=e.clientY+'px';
+    document.querySelectorAll('.over').forEach(x=>x.classList.remove('over'));
+    const tg=document.elementFromPoint(e.clientX,e.clientY),dz=tg&&tg.closest('[data-drop]');
+    if(dz)dz.classList.add('over');
+  }
+},{passive:false});
+function endDrag(e,cancel){
+  const d=U.drag;if(!d)return;U.drag=null;
+  document.querySelectorAll('.over').forEach(x=>x.classList.remove('over'));
+  $('#shop').classList.remove('selling');
+  if(d.ghost)d.ghost.remove();
+  if(cancel)return;
+  if(!d.moved){U.suppress=true;setTimeout(()=>U.suppress=false,80);selectUnit(d.k,d.i);return;}
+  U.suppress=true;setTimeout(()=>U.suppress=false,60);
+  const tg=document.elementFromPoint(e.clientX,e.clientY),dz=tg&&tg.closest('[data-drop]');
+  if(!dz)return;
+  const kind=dz.dataset.drop;
+  if(kind==='sell'){const v=sellUnit(me(),d.k,d.i);if(v)toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;}
+  else{moveUnit(me(),{k:d.k,i:d.i},{k:kind,i:+dz.dataset.i});U.sel=null;U.peek=null;}
+  renderAll();
+}
+document.addEventListener('pointerup',e=>endDrag(e,false));
+document.addEventListener('pointercancel',e=>endDrag(e,true));
+function selectUnit(k,i){
+  const u=me()[k][i];if(!u)return;
+  if(U.sel&&U.sel.k===k&&U.sel.i===i){U.sel=null;U.peek=null;}
+  else{U.sel={k,i};U.peek={type:'hero',h:u.h,s:u.s,k,i};}
+  renderAll();
+}
+document.addEventListener('click',e=>{
+  if(U.suppress||U.phase!=='prep')return;
+  if(e.target.closest('[data-unit]'))return;
+  const dz=e.target.closest('.cell,.slot');
+  if(dz&&U.sel){
+    const ok=moveUnit(me(),U.sel,{k:dz.dataset.drop,i:+dz.dataset.i});
+    if(!ok&&dz.dataset.drop==='board'&&boardCount(me())>=me().lvl)toast('Bàn đã đủ '+me().lvl+' tướng. Lên cấp để thêm chỗ.');
+    U.sel=null;U.peek=null;renderAll();return;
+  }
+});
+
+/* ---------- các nút ---------- */
+$('#cards').addEventListener('click',e=>{
+  if(U.phase!=='prep')return;
+  const inf=e.target.closest('[data-info]');
+  if(inf){U.sel=null;U.peek={type:'hero',h:inf.dataset.info,s:1};renderAll();return;}
+  const c=e.target.closest('[data-buy]');if(!c)return;
+  doBuy(+c.dataset.buy);
+});
+$('#cards').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset.buy!==undefined){e.preventDefault();doBuy(+e.target.dataset.buy);}});
+function doBuy(i){
+  const P=me(),h=P.shop[i];if(!h)return;
+  if(P.gold<HERO[h].cost){toast('Không đủ vàng');return;}
+  if(!canAdd(P,h)){toast('Hàng chờ đã đầy');return;}
+  buyUnit(P,i);flushLog();renderAll();
+}
+function flushLog(){const P=me();for(const l of P.log)toast('Gộp sao! '+HERO[l.h].name+' lên '+'\u2605'.repeat(l.s));P.log=[];}
+$('#rrl').onclick=()=>{if(reroll(me()))renderAll();};
+$('#bxp').onclick=()=>{if(buyXp(me())){renderAll();}};
+$('#auto').onclick=()=>{autoArrange(me());U.sel=null;U.peek=null;renderAll();};
+$('#help').onclick=()=>showHelp();
+$('#traits').addEventListener('click',e=>{const t=e.target.closest('[data-trait]');if(!t||U.phase!=='prep')return;U.sel=null;U.peek={type:'trait',t:t.dataset.trait};renderAll();});
+$('#peek').addEventListener('click',e=>{
+  if(e.target.closest('[data-closepeek]')){U.peek=null;U.sel=null;renderAll();}
+  else if(e.target.closest('[data-sell]')&&U.sel){const v=sellUnit(me(),U.sel.k,U.sel.i);toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;renderAll();}
+});
+$('#spd').onclick=()=>{U.speed=U.speed===1?2:U.speed===2?3:1;$('#spd').textContent='\u00D7'+U.speed;document.documentElement.style.setProperty('--spd',U.speed);};
+$('#ready').onclick=()=>readyGo(false);
+document.addEventListener('keydown',e=>{
+  if($('#ov').classList.contains('show')||!G||U.phase!=='prep')return;
+  if(e.key==='d'||e.key==='D'){if(reroll(me()))renderAll();}
+  else if(e.key==='f'||e.key==='F'){if(buyXp(me()))renderAll();}
+  else if(e.key==='Enter'){readyGo(false);}
+});
+function readyGo(force){
+  if(U.phase!=='prep')return;
+  const P=me(),free=Math.min(P.lvl,boardCount(P)+P.bench.filter(Boolean).length)-boardCount(P);
+  if(!force&&free>0){
+    if(!U.armed){U.armed=true;renderTop();toast('Còn '+free+' ô trống trên bàn. Bấm Chiến! lần nữa để vào trận.');setTimeout(()=>{U.armed=false;if(U.phase==='prep')renderTop();},3500);return;}
+  }
+  if(force){if(boardCount(P)===0)autoArrange(P);else fillBoard(P);}
+  U.armed=false;startCombat();
+}
+
+function fillBoard(P){
+  const order=[3,2,4,1,5,0,6];
+  const list=P.bench.map((u,i)=>u?{u,i}:null).filter(Boolean).sort((a,b)=>HERO[b.u.h].cost*b.u.s-HERO[a.u.h].cost*a.u.s);
+  for(const b of list){
+    if(boardCount(P)>=P.lvl)break;
+    const rows=MELEE.includes(HERO[b.u.h].c)?[0,1,2,3]:[3,2,1,0];let done=false;
+    for(const r of rows){for(const c of order){const idx=r*7+c;if(!P.board[idx]){P.board[idx]=b.u;P.bench[b.i]=null;done=true;break;}}if(done)break;}
+  }
+}
+/* ---------- vòng chơi ---------- */
+function beginRound(){
+  startRound(G);U.phase='prep';U.sel=null;U.peek=null;U.armed=false;U.timer=U.prepTime+(G.round===1?20:0);
+  arena.classList.remove('battle');blEl.innerHTML='';$('#banner').className='banner';
+  renderAll();
+  if(G.inc&&G.round>1){const i=G.inc.inc;toast('Thu nhập +'+G.inc.tot+' vàng'+(i.interest?' (lãi '+i.interest+')':''));}
+  if(isPve(G.round)&&G.round>=8)toast('Vòng quái vật đầu lĩnh! Thắng để nhận bảo vật.');
+}
+function startCombat(){
+  U.phase='battle';U.sel=null;U.peek=null;
+  const lm=G.matches.find(m=>m.a.human);U.lm=lm;
+  for(const m of G.matches)if(m!==lm)m.res=simMatch(G,m);
+  const [ua,ub]=matchUnits(G,lm);
+  const B=newBattle(ua.concat(ub),true);U.B=B;U.els={};
+  blEl.innerHTML='';arena.classList.add('battle');renderTop();renderShop();renderPeek();
+  for(const u of B.units){
+    const d=document.createElement('div');d.className='bu'+(u.side?' e':'');
+    d.innerHTML='<div class="bars"><i class="hf"></i><i class="sf"></i></div><div class="mp"><i></i></div>'+
+      '<div class="tok" style="--rc:'+(u.mon?'#7a2a14':costCol(u.h))+'">'+u.ico+(u.mon?'':'<i class="cg">'+CS[u.cls].ico+'</i>')+'</div>'+(u.mon?'':'<div class="st s'+u.star+'">'+'\u2605'.repeat(u.star)+'</div>');
+    d.style.transform='translate('+(u.x*U.c)+'px,'+(u.y*U.c)+'px)';
+    blEl.appendChild(d);U.els[u.id]={d,tok:d.querySelector('.tok'),hf:d.querySelector('.hf'),sf:d.querySelector('.sf'),mp:d.querySelector('.mp i')};
+  }
+  U.last=performance.now();U.acc=0;U.raf=requestAnimationFrame(loop);
+}
+function loop(now){
+  const B=U.B;if(U.phase!=='battle'||!B)return;
+  const dt=Math.min(.1,(now-U.last)/1000);U.last=now;U.acc+=dt*U.speed;
+  let n=0;while(U.acc>=TICK&&!B.over&&n<14){step(B,TICK);U.acc-=TICK;n++;}
+  sync(B);events(B);
+  $('#ttxt').textContent='Giao tranh '+Math.floor(B.t)+'s';$('#tfill').style.width=Math.max(0,100-B.t/70*100)+'%';
+  if(B.over){setTimeout(()=>endBattle(B),500);return;}
+  U.raf=requestAnimationFrame(loop);
+}
+function sync(B){
+  for(const u of B.units){
+    const e=U.els[u.id];if(!e)continue;
+    e.d.style.transform='translate('+(u.x*U.c)+'px,'+(u.y*U.c)+'px)';
+    e.hf.style.width=(u.hp/u.max*100)+'%';
+    e.sf.style.width=Math.min(100,u.sh/u.max*100)+'%';
+    e.mp.style.width=u.maxMana?(u.mana/u.maxMana*100)+'%':'0';
+    e.d.classList.toggle('stun',u.alive&&u.stun>0);
+  }
+}
+const byId=(B,id)=>B.units.find(u=>u.id===id);
+function ctr(u){return [u.x*U.c+U.c/2,u.y*U.c+U.c*.5];}
+function floatText(x,y,txt,cls){const f=document.createElement('div');f.className='ft '+(cls||'');f.textContent=txt;f.style.left=x+'px';f.style.top=y+'px';blEl.appendChild(f);f.animate([{transform:'translate(-50%,0)',opacity:1},{transform:'translate(-50%,'+(-U.c*.7)+'px)',opacity:0}],{duration:800/U.speed,easing:'ease-out'}).onfinish=()=>f.remove();}
+function events(B){
+  const evs=B.ev.splice(0);
+  for(const e of evs){
+    const u=e.id?byId(B,e.id):null,els=u&&U.els[u.id];
+    if(e.k==='dmg'&&u){const p=ctr(u);floatText(p[0],p[1]-U.c*.2,(e.type==='heal'?'+':'')+e.v,e.type==='heal'?'heal':e.crit?'crit':e.type==='mag'?'mag':'');
+      if(e.type!=='heal'&&els)els.tok.animate([{filter:'brightness(2.4)'},{filter:'none'}],{duration:180});}
+    else if(e.k==='atk'&&u){
+      const t=byId(B,e.tid);if(!t||!els)continue;
+      const a=ctr(u),b=ctr(t);
+      if(e.ranged){const pj=document.createElement('div');pj.className='proj';blEl.appendChild(pj);pj.animate([{transform:'translate('+a[0]+'px,'+a[1]+'px)'},{transform:'translate('+b[0]+'px,'+b[1]+'px)'}],{duration:200/U.speed,easing:'linear'}).onfinish=()=>pj.remove();}
+      else{const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1,k=U.c*.32/l;els.tok.animate([{transform:'translate(0,0)'},{transform:'translate('+dx*k+'px,'+dy*k+'px)'},{transform:'translate(0,0)'}],{duration:230/U.speed});}
+    }
+    else if(e.k==='shot'&&u){const t=byId(B,e.tid);if(!t)continue;const a=ctr(u),b=ctr(t),pj=document.createElement('div');pj.className='proj';blEl.appendChild(pj);pj.animate([{transform:'translate('+a[0]+'px,'+a[1]+'px)'},{transform:'translate('+b[0]+'px,'+b[1]+'px)'}],{duration:260/U.speed}).onfinish=()=>pj.remove();}
+    else if(e.k==='cast'&&u){const p=ctr(u);const s=document.createElement('div');s.className='sk';s.textContent=e.nm;s.style.left=Math.max(U.c*1.2,Math.min(U.c*5.8,p[0]))+'px';s.style.top=(p[1]-U.c*.75)+'px';blEl.appendChild(s);s.animate([{transform:'translate(-50%,0)',opacity:0},{transform:'translate(-50%,-6px)',opacity:1,offset:.2},{transform:'translate(-50%,'+(-U.c*.5)+'px)',opacity:0}],{duration:1300/U.speed}).onfinish=()=>s.remove();
+      if(els)els.tok.animate([{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:320/U.speed});}
+    else if(e.k==='ring'){const r=document.createElement('div');r.className='ring';const s=e.r*2*U.c;r.style.width=s+'px';r.style.height=s+'px';r.style.left=(e.x*U.c+U.c/2-s/2)+'px';r.style.top=(e.y*U.c+U.c/2-s/2)+'px';blEl.appendChild(r);r.animate([{transform:'scale(.2)',opacity:.9},{transform:'scale(1)',opacity:0}],{duration:520/U.speed,easing:'ease-out'}).onfinish=()=>r.remove();}
+    else if(e.k==='die'&&els){els.tok.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.3)'}],{duration:350/U.speed,fill:'forwards'}).onfinish=()=>{els.d.style.display='none';};}
+    else if(e.k==='shield'&&els)els.tok.animate([{boxShadow:'0 0 0 3px #bfe3ff,0 0 16px 6px #8fc7ff'},{boxShadow:'0 0 0 0 transparent'}],{duration:600/U.speed});
+    else if(e.k==='buff'&&els)els.tok.animate([{filter:'brightness(1.8) saturate(1.6)'},{filter:'none'}],{duration:500/U.speed});
+    else if(e.k==='jump'&&els)els.d.style.transitionDuration='0s',setTimeout(()=>{if(els.d)els.d.style.transitionDuration='';},60);
+  }
+}
+function endBattle(B){
+  U.phase='result';
+  const m=U.lm;m.res={win0:B.winner===0,surv:B.surv};
+  const before=me().hp;
+  const info=applyRound(G);
+  const won=B.winner===0,P=me();
+  let line='';
+  if(m.pve)line=won?'Quái vật đã bị đánh bại.':'Quái vật còn mạnh hơn đội của bạn. Không mất máu.';
+  else line=won?'Hạ '+(m.ghost?'bóng đội hình của '+m.b.name:m.b.name)+(m.ghost?'.':', '+m.b.name+' mất '+(info.dmg||0)+' máu.'):'Bạn mất '+(before-P.hp)+' máu.';
+  let extra='';
+  if(info.reward){const x=giveReward(G,P,G.round);if(x){extra='Nhận tướng '+HERO[x.h].ico+' '+HERO[x.h].name+'.';flushLog();}U.relicPending=!!(x&&x.relic);}
+  const bn=$('#banner');bn.className='banner show'+(won?'':' lose');
+  bn.innerHTML='<div><h2>'+(won?'Thắng!':'Thua')+'</h2><p>'+line+(extra?'<br>'+extra:'')+'</p><small>Chạm để tiếp tục</small></div>';
+  renderTop();renderPlayers();renderShop();
+  U.bannerT=setTimeout(afterBanner,3200);
+  bn.onclick=afterBanner;
+}
+function afterBanner(){
+  if(U.phase!=='result')return;
+  clearTimeout(U.bannerT);U.phase='next';
+  $('#banner').onclick=null;
+  if(!me().alive||G.over)return showEnd();
+  if(U.relicPending){U.relicPending=false;return pickRelic(()=>beginRound());}
+  beginRound();
+}
+function pickRelic(done){
+  const opts=shuffle(RELICS.filter(r=>!me().relics.includes(r.id))).slice(0,3);
+  const ov=$('#ov');
+  ov.innerHTML='<div class="dlg"><h2>Chọn một bảo vật</h2><p>Bảo vật có hiệu lực suốt ván đấu.</p><div class="relics">'+opts.map(r=>'<button class="relic" data-r="'+r.id+'"><span class="ri">'+r.ico+'</span><div><b>'+r.name+'</b><span>'+r.desc+'</span></div></button>').join('')+'</div></div>';
+  ov.className='ov show';
+  ov.onclick=e=>{const b=e.target.closest('[data-r]');if(!b)return;addRelic(me(),b.dataset.r);ov.className='ov';ov.onclick=null;toast('Nhận bảo vật: '+RELICS.find(r=>r.id===b.dataset.r).name);done();};
+}
+function showEnd(){
+  const P=me(),won=G.winner===P;
+  const ov=$('#ov');
+  const rank=G.players.slice().sort((a,b)=>(a.place||99)-(b.place||99)).map(p=>'<div style="display:flex;gap:8px;padding:2px 0"><b style="width:26px">#'+(p.place||'?')+'</b><span>'+p.av+' '+p.name+'</span></div>').join('');
+  ov.innerHTML='<div class="dlg"><h1 style="font-size:34px">'+(won?'Thiên hạ thái bình':'Bạn đã bại trận')+'</h1><p>'+(won?'Bạn là người đứng cuối cùng sau '+G.round+' vòng.':'Bạn về hạng '+P.place+' trên 8 người, ở vòng '+G.round+'.')+'</p><div style="margin:8px 0;color:var(--ink)">'+rank+'</div><button class="go big-go" id="again">Chơi lại</button></div>';
+  ov.className='ov show';ov.onclick=null;
+  $('#again').onclick=()=>{ov.className='ov';showStart();};
+}
+/* ---------- màn hình đầu và hướng dẫn ---------- */
+const HOW='<ol class="how"><li>Mỗi vòng có thời gian chuẩn bị: mua tướng ở cửa hàng, kéo hoặc chạm để đặt lên bàn. Số tướng trên bàn bằng cấp của bạn.</li><li>Hết giờ, tướng tự giao tranh. Thua thì mất máu; hết máu là bị loại. Người cuối cùng còn lại thắng.</li><li>3 tướng giống nhau gộp thành 1 tướng \u2605\u2605 mạnh hơn. 3 tướng \u2605\u2605 gộp thành \u2605\u2605\u2605.</li><li>Tướng cùng Tộc hoặc cùng Hệ kích hoạt cộng hưởng. Chạm vào ô Tộc/Hệ bên cạnh để xem chi tiết.</li><li>Vòng 1, 2, 3, 8, 15, 22 đánh quái vật. Thắng để nhận tướng; vòng đầu lĩnh còn có bảo vật.</li><li>Giữ 10 vàng để có lãi, tối đa +5 mỗi vòng. Thắng hoặc thua liên tiếp cũng được thưởng vàng.</li><li>Phím tắt trên máy tính: D làm mới, F mua kinh nghiệm, Enter vào trận.</li></ol>';
+function showHelp(){
+  const ov=$('#ov');
+  ov.innerHTML='<div class="dlg"><h2>Cách chơi</h2>'+HOW+'<button class="go big-go" id="closehelp">Đã hiểu</button></div>';
+  ov.className='ov show';$('#closehelp').onclick=()=>ov.className='ov';ov.onclick=null;
+}
+function showStart(){
+  const ov=$('#ov');
+  ov.innerHTML='<div class="dlg"><svg class="drumbg" viewBox="-100 -100 200 200">'+$('#drum').innerHTML.replace(/#d6a335/g,'#b3281d')+'</svg><h1>Cờ Huyền Sử</h1><p style="margin-top:6px">Cờ nhân phẩm với thần tướng nước Việt. Bạn đấu với 7 đối thủ máy, người cuối cùng còn trụ là người thắng.</p>'
+   +'<div class="row"><label>Độ khó máy</label><div class="seg" id="sd"><button data-v="0.6">Dễ</button><button data-v="1" class="on">Thường</button><button data-v="1.5">Khó</button></div></div>'
+   +'<div class="row"><label>Đồng hồ chuẩn bị</label><div class="seg" id="st"><button data-v="40" class="on">40 giây</button><button data-v="0">Không giới hạn</button></div></div>'
+   +'<button class="go big-go" id="play">Vào trận</button>'+HOW+'</div>';
+  ov.className='ov show';ov.onclick=null;
+  const seg=(id)=>{$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$(id).children].forEach(x=>x.classList.remove('on'));b.classList.add('on');};};
+  seg('#sd');seg('#st');
+  $('#play').onclick=()=>{
+    const dv=+$('#sd .on').dataset.v,tv=+$('#st .on').dataset.v;
+    U.diff=dv;U.noTimer=!tv;U.prepTime=tv||40;
+    G=newGame({diff:dv>=1.5?2:dv>=1?1:0.6});
+    G.diff=dv>=1.5?2:dv>=1?1:0.6;
+    ov.className='ov';beginRound();
+  };
+}
+/* đồng hồ */
+setInterval(()=>{
+  if(!G||U.phase!=='prep')return;
+  const now=performance.now(),dt=Math.min(.5,(now-(U.tick||now))/1000);U.tick=now;
+  if(U.noTimer){$('#ttxt').textContent='Không giới hạn';$('#tfill').style.width='100%';return;}
+  if($('#ov').classList.contains('show'))return;
+  U.timer-=dt;
+  $('#ttxt').textContent=Math.max(0,Math.ceil(U.timer))+' giây';
+  $('#tfill').style.width=Math.max(0,U.timer/(U.prepTime+(G.round===1?20:0))*100)+'%';
+  if(U.timer<=0){readyGo(true);}
+},200);
+addEventListener('resize',fit);
+buildStatic();fit();
+U.phase='menu';
+G=newGame({});G.matches=[];
+renderAll();
+showStart();
+})();
+</script>
+</body>
+</html>
