@@ -339,6 +339,14 @@ const RELICS=[
 ];
 function relicFx(P){const f={};for(const id of P.relics){const r=RELICS.find(x=>x.id===id);for(const k in r.fx)f[k]=(f[k]||0)+r.fx[k];}return f;}
 
+/* --- kho tuong chung (pool) --- */
+const POOL_BY_COST={1:18,2:16,3:14,4:9,5:7};
+function poolInit(){const pool={};for(const id in HERO)pool[id]=POOL_BY_COST[HERO[id].cost];return pool;}
+function poolCount(G,hid){return (G.pool&&G.pool[hid])||0;}
+function poolTake(G,hid){if(!G.pool||!G.pool[hid])return false;G.pool[hid]--;return true;}
+function poolReturn(G,hid,n){if(!G.pool)return;const max=POOL_BY_COST[HERO[hid].cost];G.pool[hid]=Math.min(max,(G.pool[hid]||0)+n);}
+function copiesOf(u){return Math.pow(3,u.s-1);}
+
 /* --- đội hình & thuộc tính --- */
 function traitCounts(list){
   const sets={};
@@ -509,10 +517,21 @@ function runBattle(B){let n=0;while(!B.over&&n++<2000)step(B,TICK);return B;}
 function newPlayer(name,human,i,av){return {id:i,name,human,av,hp:100,gold:6,lvl:2,xp:0,bench:Array(9).fill(null),board:Array(28).fill(null),shop:[],streak:0,lastWin:false,alive:true,place:0,relics:[],fav:[],log:[]};}
 function mkUnitObj(h,s){return {uid:UID++,h,s:s||1};}
 function levelCheck(p){while(p.lvl<9&&p.xp>=XPN[p.lvl]){p.xp-=XPN[p.lvl];p.lvl++;}if(p.lvl>=9)p.xp=0;}
-function rollShop(p){
+function rollShop(G,p){
   const od=ODDS[p.lvl],out=[];
-  for(let i=0;i<5;i++){let r=rnd(100),c=0;while(c<4&&r>=od[c]){r-=od[c];c++;}out.push(pickOf(BYCOST[c+1]));}
+  for(let i=0;i<5;i++){let r=rnd(100),c=0;while(c<4&&r>=od[c]){r-=od[c];c++;}out.push(pickFromPool(G,c+1));}
   return out;
+}
+function pickFromPool(G,cost){
+  for(let d=0;d<5;d++){
+    const costs=d===0?[cost]:[];
+    if(d>0){if(cost+d<=5)costs.push(cost+d);if(cost-d>=1)costs.push(cost-d);}
+    for(const cc of costs){
+      const avail=BYCOST[cc].filter(h=>poolCount(G,h)>0);
+      if(avail.length)return pickOf(avail);
+    }
+  }
+  return null;
 }
 function mergeAll(P){
   let again=true;
@@ -544,14 +563,16 @@ function canAdd(P,h){
   const n=[...P.board,...P.bench].filter(u=>u&&u.h===h&&u.s===1).length;
   return n>=2;
 }
-function buyUnit(P,i){
+function buyUnit(G,P,i){
   const h=P.shop[i];if(!h)return false;
   const cost=HERO[h].cost;if(P.gold<cost||!canAdd(P,h))return false;
-  if(!addUnit(P,mkUnitObj(h,1)))return false;
+  if(poolCount(G,h)<=0){P.shop[i]=null;return false;}
+  if(!poolTake(G,h))return false;
+  if(!addUnit(P,mkUnitObj(h,1))){poolReturn(G,h,1);return false;}
   P.gold-=cost;P.shop[i]=null;return true;
 }
 function sellValue(u){const c=HERO[u.h].cost;return u.s===1?c:c*Math.pow(3,u.s-1)-(c>1?1:0);}
-function sellUnit(P,k,i){const u=P[k][i];if(!u)return 0;const v=sellValue(u);P.gold+=v;P[k][i]=null;return v;}
+function sellUnit(G,P,k,i){const u=P[k][i];if(!u)return 0;const v=sellValue(u);P.gold+=v;P[k][i]=null;poolReturn(G,u.h,copiesOf(u));return v;}
 function moveUnit(P,f,t){
   if(f.k===t.k&&f.i===t.i)return false;
   const u=P[f.k][f.i];if(!u)return false;
@@ -560,7 +581,7 @@ function moveUnit(P,f,t){
   P[f.k][f.i]=v||null;P[t.k][t.i]=u;return true;
 }
 function buyXp(P){if(P.gold<4||P.lvl>=9)return false;P.gold-=4;P.xp+=4;levelCheck(P);return true;}
-function reroll(P){if(P.gold<2)return false;P.gold-=2;P.shop=rollShop(P);return true;}
+function reroll(G,P){if(P.gold<2)return false;P.gold-=2;P.shop=rollShop(G,P);return true;}
 const MELEE=['hove','chienbinh','dukich'];
 function autoArrange(P){
   const all=[];P.board.forEach(u=>u&&all.push(u));P.bench.forEach(u=>u&&all.push(u));
@@ -599,10 +620,14 @@ const BOT_NAMES=['Quan Lang','Mị Nương','Lạc Hầu','Lạc Tướng','Bồ
 const BOT_AV=['🐯','🐃','🦚','🐍','🦅','🐘','🦌'];
 function newGame(cfg){
   cfg=cfg||{};
-  const G={players:[],round:0,matches:[],diff:cfg.diff||1,auto:!!cfg.auto,over:false,winner:null,inc:null};
+  const G={players:[],round:0,matches:[],diff:cfg.diff||1,auto:!!cfg.auto,over:false,winner:null,inc:null,pool:poolInit()};
   const me=newPlayer('Bạn',!cfg.auto,0,'🐲');G.players.push(me);G.me=me;
   for(let i=0;i<7;i++){const b=newPlayer(BOT_NAMES[i],false,i+1,BOT_AV[i]);b.fav=[pickOf(['hongbang','aulac','khoinghia','lytran','lamson','tayson']),pickOf(['chienbinh','hove','cungno','thuatsi','dukich'])];G.players.push(b);}
-  for(const p of G.players)addUnit(p,mkUnitObj(pickOf(BYCOST[1]),1));
+  for(const p of G.players){
+    const avail=BYCOST[1].filter(h=>poolCount(G,h)>0);
+    const h=avail.length?pickOf(avail):pickOf(BYCOST[1]);
+    if(addUnit(p,mkUnitObj(h,1)))poolTake(G,h);
+  }
   return G;
 }
 function startRound(G){
@@ -615,7 +640,7 @@ function startRound(G){
       p.gold+=Math.max(0,tot);p.xp+=2;levelCheck(p);
       if(p.human)G.inc={tot:Math.max(0,tot),inc};
     }
-    if(p.human&&!G.auto)p.shop=rollShop(p);else botPrep(G,p);
+    if(p.human&&!G.auto)p.shop=rollShop(G,p);else botPrep(G,p);
   }
   G.matches=makeMatches(G);
 }
@@ -632,9 +657,16 @@ function matchUnits(G,m){return [boardToUnits(m.a,0),m.pve?pveUnits(G.round):boa
 function simMatch(G,m){const [ua,ub]=matchUnits(G,m);const B=runBattle(newBattle(ua.concat(ub),false));return {win0:B.winner===0,surv:B.surv};}
 function giveReward(G,p,r){
   const rw=PVE_RW[r];if(!rw)return null;
-  const h=pickOf(BYCOST[rw.cost]);
-  if(!addUnit(p,mkUnitObj(h,1)))p.gold+=rw.cost;
-  return {h,relic:!!rw.relic};
+  const avail=BYCOST[rw.cost].filter(h=>poolCount(G,h)>0);
+  if(avail.length){
+    const h=pickOf(avail);
+    if(canAdd(p,h)&&poolTake(G,h)){
+      if(addUnit(p,mkUnitObj(h,1)))return {h,relic:!!rw.relic};
+      poolReturn(G,h,1);
+    }
+  }
+  p.gold+=rw.cost;
+  return {gold:rw.cost,relic:!!rw.relic};
 }
 function addRelic(p,id){const r=RELICS.find(x=>x.id===id);p.relics.push(id);if(r.gold)p.gold+=r.gold;}
 function applyRound(G){
@@ -654,7 +686,7 @@ function applyRound(G){
   }
   const n=G.players.filter(p=>p.alive).length;
   const dead=G.players.filter(p=>p.alive&&p.hp<=0).sort((a,b)=>b.hp-a.hp);
-  dead.forEach((p,i)=>{p.alive=false;p.hp=Math.max(0,p.hp);p.place=n-dead.length+1+i;});
+  dead.forEach((p,i)=>{p.alive=false;p.hp=Math.max(0,p.hp);p.place=n-dead.length+1+i;for(const u of [...p.board,...p.bench])if(u)poolReturn(G,u.h,copiesOf(u));});
   const left=G.players.filter(p=>p.alive);
   if(left.length<=1){G.over=true;if(left[0]){left[0].place=1;G.winner=left[0];}}
   if(G.round>=70&&!G.over){G.over=true;const s=left.sort((a,b)=>b.hp-a.hp);s.forEach((p,i)=>p.place=i+1);G.winner=s[0];}
@@ -673,15 +705,15 @@ function buyScore(P,h){
 }
 function bankKeep(r){return r<4?0:r<9?10:r<16?20:30;}
 function targetLvl(r){return Math.min(9,2+Math.floor((r+1)/3.2));}
-function benchSpace(P,h){
+function benchSpace(G,P,h){
   if(canAdd(P,h))return true;
   let wi=-1,ws=1e9;
   P.bench.forEach((u,i)=>{if(!u||u.h===h)return;const v=HERO[u.h].cost*Math.pow(3,u.s-1);if(v<ws){ws=v;wi=i;}});
-  if(wi>=0){sellUnit(P,'bench',wi);return true;}
+  if(wi>=0){sellUnit(G,P,'bench',wi);return true;}
   return false;
 }
 function botPrep(G,b){
-  b.shop=rollShop(b);
+  b.shop=rollShop(G,b);
   const k=G.diff,keep=bankKeep(G.round);let rerolls=0,guard=0;
   while(guard++<16){
     if(Math.random()>k)break;
@@ -689,11 +721,11 @@ function botPrep(G,b){
     const sc=b.shop.map((h,i)=>h?{i,h,s:buyScore(b,h)}:null).filter(Boolean).sort((x,y)=>y.s-x.s);
     for(const s of sc){
       const c=HERO[s.h].cost,pair=ownedWeight(b,s.h)>=1;
-      if(b.gold>=c&&(b.gold-c>=keep||pair)&&s.s>0&&benchSpace(b,s.h)){if(buyUnit(b,s.i)){did=true;break;}}
+      if(b.gold>=c&&(b.gold-c>=keep||pair)&&s.s>0&&benchSpace(G,b,s.h)){if(buyUnit(G,b,s.i)){did=true;break;}}
     }
     if(did)continue;
     if(b.lvl<9&&b.lvl<targetLvl(G.round)&&b.gold>=4&&b.gold-4>=Math.max(0,keep-10)){buyXp(b);continue;}
-    if(rerolls<4&&b.gold-2>=Math.max(keep,G.round>5?20:0)&&G.round>2){reroll(b);rerolls++;continue;}
+    if(rerolls<4&&b.gold-2>=Math.max(keep,G.round>5?20:0)&&G.round>2){reroll(G,b);rerolls++;continue;}
     break;
   }
   autoArrange(b);
@@ -802,7 +834,7 @@ function renderShop(){
       +'<button class="i" data-info="'+hid+'" aria-label="Xem '+H.name+'">i</button>'
       +'<div class="em">'+H.ico+'</div><div class="cn">'+H.name+'</div>'
       +'<div class="tt"><span title="'+TR[H.o].name+'">'+TR[H.o].ico+'</span><span title="'+TR[H.c].name+'">'+CS[H.c].ico+'</span></div>'
-      +'<div class="co">🪙 '+H.cost+'</div></div>';
+      +'<div class="co">🪙 '+H.cost+' \u00B7 kho '+poolCount(G,hid)+'</div></div>';
   });
   $('#cards').innerHTML=h;
 }
@@ -829,7 +861,7 @@ function renderPeek(){
   if(pk.type==='hero'){
     const H=HERO[pk.h],st=heroStats(pk.h,pk.s),sk=H.sk;
     const sel=pk.k?me()[pk.k][pk.i]:null;
-    h='<div class="hd"><div class="tk" style="--c:46px;font-size:24px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" style="--tc:'+TR[H.o].col+'">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'">🪙 '+H.cost+'</span></div></div></div>'
+    h='<div class="hd"><div class="tk" style="--c:46px;font-size:24px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" style="--tc:'+TR[H.o].col+'">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'">🪙 '+H.cost+'</span><span class="tag">Kho còn '+poolCount(G,pk.h)+'</span></div></div></div>'
      +'<div class="stats"><span>Máu<b>'+st.hp+'</b></span><span>Sát thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
      +'<div class="skl"><b>'+sk.nm+'</b> (cần '+sk.mana+' nộ): '+skillText(sk,pk.s)+(H.c==='dukich'?' Đầu trận nhảy ra sau lưng địch.':'')+'</div>'
      +'<div class="acts">'+(sel?'<button class="sell" data-sell="1">Bán +'+sellValue(sel)+' vàng</button>':'')+'<button data-closepeek="1">Đóng</button></div>';
@@ -876,7 +908,7 @@ function endDrag(e,cancel){
   const tg=document.elementFromPoint(e.clientX,e.clientY),dz=tg&&tg.closest('[data-drop]');
   if(!dz)return;
   const kind=dz.dataset.drop;
-  if(kind==='sell'){const v=sellUnit(me(),d.k,d.i);if(v)toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;}
+  if(kind==='sell'){const v=sellUnit(G,me(),d.k,d.i);if(v)toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;}
   else{moveUnit(me(),{k:d.k,i:d.i},{k:kind,i:+dz.dataset.i});U.sel=null;U.peek=null;}
   renderAll();
 }
@@ -912,23 +944,24 @@ function doBuy(i){
   const P=me(),h=P.shop[i];if(!h)return;
   if(P.gold<HERO[h].cost){toast('Không đủ vàng');return;}
   if(!canAdd(P,h)){toast('Hàng chờ đã đầy');return;}
-  buyUnit(P,i);flushLog();renderAll();
+  if(poolCount(G,h)<=0){toast('Đã hết bản sao của '+HERO[h].name);P.shop[i]=null;renderAll();return;}
+  buyUnit(G,P,i);flushLog();renderAll();
 }
 function flushLog(){const P=me();for(const l of P.log)toast('Gộp sao! '+HERO[l.h].name+' lên '+'\u2605'.repeat(l.s));P.log=[];}
-$('#rrl').onclick=()=>{if(reroll(me()))renderAll();};
+$('#rrl').onclick=()=>{if(reroll(G,me()))renderAll();};
 $('#bxp').onclick=()=>{if(buyXp(me())){renderAll();}};
 $('#auto').onclick=()=>{autoArrange(me());U.sel=null;U.peek=null;renderAll();};
 $('#help').onclick=()=>showHelp();
 $('#traits').addEventListener('click',e=>{const t=e.target.closest('[data-trait]');if(!t||U.phase!=='prep')return;U.sel=null;U.peek={type:'trait',t:t.dataset.trait};renderAll();});
 $('#peek').addEventListener('click',e=>{
   if(e.target.closest('[data-closepeek]')){U.peek=null;U.sel=null;renderAll();}
-  else if(e.target.closest('[data-sell]')&&U.sel){const v=sellUnit(me(),U.sel.k,U.sel.i);toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;renderAll();}
+  else if(e.target.closest('[data-sell]')&&U.sel){const v=sellUnit(G,me(),U.sel.k,U.sel.i);toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;renderAll();}
 });
 $('#spd').onclick=()=>{U.speed=U.speed===1?2:U.speed===2?3:1;$('#spd').textContent='\u00D7'+U.speed;document.documentElement.style.setProperty('--spd',U.speed);};
 $('#ready').onclick=()=>readyGo(false);
 document.addEventListener('keydown',e=>{
   if($('#ov').classList.contains('show')||!G||U.phase!=='prep')return;
-  if(e.key==='d'||e.key==='D'){if(reroll(me()))renderAll();}
+  if(e.key==='d'||e.key==='D'){if(reroll(G,me()))renderAll();}
   else if(e.key==='f'||e.key==='F'){if(buyXp(me()))renderAll();}
   else if(e.key==='Enter'){readyGo(false);}
 });
@@ -1029,7 +1062,7 @@ function endBattle(B){
   if(m.pve)line=won?'Quái vật đã bị đánh bại.':'Quái vật còn mạnh hơn đội của bạn. Không mất máu.';
   else line=won?'Hạ '+(m.ghost?'bóng đội hình của '+m.b.name:m.b.name)+(m.ghost?'.':', '+m.b.name+' mất '+(info.dmg||0)+' máu.'):'Bạn mất '+(before-P.hp)+' máu.';
   let extra='';
-  if(info.reward){const x=giveReward(G,P,G.round);if(x){extra='Nhận tướng '+HERO[x.h].ico+' '+HERO[x.h].name+'.';flushLog();}U.relicPending=!!(x&&x.relic);}
+  if(info.reward){const x=giveReward(G,P,G.round);if(x){extra=x.h?('Nhận tướng '+HERO[x.h].ico+' '+HERO[x.h].name+'.'):('Hết tướng trong kho, nhận '+x.gold+' vàng.');flushLog();}U.relicPending=!!(x&&x.relic);}
   const bn=$('#banner');bn.className='banner show'+(won?'':' lose');
   bn.innerHTML='<div><h2>'+(won?'Thắng!':'Thua')+'</h2><p>'+line+(extra?'<br>'+extra:'')+'</p><small>Chạm để tiếp tục</small></div>';
   renderTop();renderPlayers();renderShop();
