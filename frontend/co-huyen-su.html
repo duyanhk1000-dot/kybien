@@ -418,15 +418,16 @@ function jumpAdj(B,u,d,behind){
 }
 function healRaw(B,u,v){if(!u.alive)return;const h=Math.min(u.max-u.hp,v);if(h<=0)return;u.hp+=h;em(B,{k:'dmg',id:u.id,v:Math.round(h),type:'heal'});}
 function giveShield(u,v,dur){u.sh+=v;u.shT=Math.max(u.shT,dur);}
-function dealDamage(B,src,dst,amt,type,crit){
+function dealDamage(B,src,dst,amt,type,crit,opts){
   if(!dst.alive)return;
-  let d=type==='phys'?amt*100/(100+dst.armor):amt;
+  opts=opts||{};
+  let d=type==='phys'?amt*100/(100+(dst.armor||0)):amt;
   const total=d;
-  if(dst.sh>0){const ab=Math.min(dst.sh,d);dst.sh-=ab;d-=ab;}
+  if(!opts.ignoreShield&&dst.sh>0){const ab=Math.min(dst.sh,d);dst.sh-=ab;d-=ab;}
   dst.hp-=d;
   if(src&&src.ls&&total>0)healRaw(B,src,total*src.ls);
-  if(dst.maxMana)dst.mana=Math.min(dst.maxMana,dst.mana+8);
-  em(B,{k:'dmg',id:dst.id,v:Math.round(total),crit:!!crit,type});
+  if(!opts.noMana&&dst.maxMana)dst.mana=Math.min(dst.maxMana,dst.mana+8);
+  if(!opts.silent)em(B,{k:'dmg',id:dst.id,v:Math.round(total),crit:!!crit,type});
   if(dst.hp<=0){dst.hp=0;dst.alive=false;B.occ[dst.y*W+dst.x]=null;em(B,{k:'die',id:dst.id});}
 }
 function needsRange(sk){return sk.t==='nuke'||(sk.t==='aoe'&&sk.cen==='tgt');}
@@ -467,8 +468,8 @@ function castSkill(B,u){
     else list=[u];
     for(const a of list){
       if(!a)continue;
-      if(sk.heal)healRaw(B,a,sk.heal*m*sp);
-      if(sk.sh){giveShield(a,sk.sh*m*sp,sk.dur||5);em(B,{k:'shield',id:a.id});}
+      if(sk.heal)healRaw(B,a,sk.heal*m);
+      if(sk.sh){giveShield(a,sk.sh*m,sk.dur||5);em(B,{k:'shield',id:a.id});}
       if(sk.ad||sk.as){a.bf.push({ad:sk.ad||0,as:sk.as||0,t:sk.dur||6});em(B,{k:'buff',id:a.id});}
     }
   }
@@ -497,7 +498,7 @@ function act(B,u){
 function step(B,dt){
   if(B.over)return;
   B.t+=dt;
-  if(B.t>30){const k=.006*(B.t-30)*dt;for(const u of B.units)if(u.alive){u.hp-=u.max*k;if(u.hp<=0){u.hp=0;u.alive=false;B.occ[u.y*W+u.x]=null;em(B,{k:'die',id:u.id});}}}
+  if(B.t>30){const k=.006*(B.t-30)*dt;for(const u of B.units)if(u.alive)dealDamage(B,null,u,u.max*k,'true',false,{ignoreShield:true,noMana:true,silent:true});}
   for(const u of B.units){
     if(!u.alive)continue;
     if(u.acd>0)u.acd-=dt;if(u.mcd>0)u.mcd-=dt;
@@ -508,8 +509,8 @@ function step(B,dt){
     act(B,u);
   }
   let a0=0,a1=0;for(const u of B.units)if(u.alive){if(u.side)a1++;else a0++;}
-  if(a0===0||a1===0){B.over=true;B.winner=a0>0?0:1;B.surv=a0>0?a0:a1;if(a0===0&&a1===0)B.surv=0;}
-  else if(B.t>=70){B.over=true;let h0=0,h1=0;for(const u of B.units)if(u.alive){if(u.side)h1+=u.hp;else h0+=u.hp;}B.winner=h0>h1?0:1;B.surv=B.winner?a1:a0;}
+  if(a0===0||a1===0){B.over=true;if(a0===0&&a1===0){B.winner=null;B.surv=0;}else{B.winner=a0>0?0:1;B.surv=a0>0?a0:a1;}}
+  else if(B.t>=70){B.over=true;let h0=0,h1=0;for(const u of B.units)if(u.alive){if(u.side)h1+=u.hp;else h0+=u.hp;}if(h0===h1){B.winner=null;B.surv=0;}else{B.winner=h0>h1?0:1;B.surv=B.winner?a1:a0;}}
 }
 function runBattle(B){let n=0;while(!B.over&&n++<2000)step(B,TICK);return B;}
 
@@ -654,7 +655,7 @@ function makeMatches(G){
   return ms;
 }
 function matchUnits(G,m){return [boardToUnits(m.a,0),m.pve?pveUnits(G.round):boardToUnits(m.b,1)];}
-function simMatch(G,m){const [ua,ub]=matchUnits(G,m);const B=runBattle(newBattle(ua.concat(ub),false));return {win0:B.winner===0,surv:B.surv};}
+function simMatch(G,m){const [ua,ub]=matchUnits(G,m);const B=runBattle(newBattle(ua.concat(ub),false));return {win0:B.winner===0,surv:B.surv,draw:B.winner===null};}
 function giveReward(G,p,r){
   const rw=PVE_RW[r];if(!rw)return null;
   const avail=BYCOST[rw.cost].filter(h=>poolCount(G,h)>0);
@@ -673,6 +674,7 @@ function applyRound(G){
   const info={};
   for(const m of G.matches){
     if(!m.res)m.res=simMatch(G,m);
+    if(m.res.draw)continue;
     const {win0,surv}=m.res;
     if(m.pve){
       if(win0){if(m.a.human)info.reward=PVE_RW[G.round];else{const x=giveReward(G,m.a,G.round);if(x&&x.relic)addRelic(m.a,pickOf(RELICS).id);}}
@@ -998,7 +1000,7 @@ function startCombat(){
   for(const m of G.matches)if(m!==lm)m.res=simMatch(G,m);
   const [ua,ub]=matchUnits(G,lm);
   const B=newBattle(ua.concat(ub),true);U.B=B;U.els={};
-  blEl.innerHTML='';arena.classList.add('battle');renderTop();renderShop();renderPeek();
+  blEl.innerHTML='';arena.classList.add('battle');renderTop();renderBench();renderShop();renderPeek();
   for(const u of B.units){
     const d=document.createElement('div');d.className='bu'+(u.side?' e':'');
     d.innerHTML='<div class="bars"><i class="hf"></i><i class="sf"></i></div><div class="mp"><i></i></div>'+
@@ -1054,17 +1056,18 @@ function events(B){
 }
 function endBattle(B){
   U.phase='result';
-  const m=U.lm;m.res={win0:B.winner===0,surv:B.surv};
+  const m=U.lm;m.res={win0:B.winner===0,surv:B.surv,draw:B.winner===null};
   const before=me().hp;
   const info=applyRound(G);
-  const won=B.winner===0,P=me();
+  const won=B.winner===0,draw=B.winner===null,P=me();
   let line='';
-  if(m.pve)line=won?'Quái vật đã bị đánh bại.':'Quái vật còn mạnh hơn đội của bạn. Không mất máu.';
+  if(draw)line='Hai đội cùng ngã xuống. Không ai mất máu.';
+  else if(m.pve)line=won?'Quái vật đã bị đánh bại.':'Quái vật còn mạnh hơn đội của bạn. Không mất máu.';
   else line=won?'Hạ '+(m.ghost?'bóng đội hình của '+m.b.name:m.b.name)+(m.ghost?'.':', '+m.b.name+' mất '+(info.dmg||0)+' máu.'):'Bạn mất '+(before-P.hp)+' máu.';
   let extra='';
   if(info.reward){const x=giveReward(G,P,G.round);if(x){extra=x.h?('Nhận tướng '+HERO[x.h].ico+' '+HERO[x.h].name+'.'):('Hết tướng trong kho, nhận '+x.gold+' vàng.');flushLog();}U.relicPending=!!(x&&x.relic);}
-  const bn=$('#banner');bn.className='banner show'+(won?'':' lose');
-  bn.innerHTML='<div><h2>'+(won?'Thắng!':'Thua')+'</h2><p>'+line+(extra?'<br>'+extra:'')+'</p><small>Chạm để tiếp tục</small></div>';
+  const bn=$('#banner');bn.className='banner show'+(draw?'':won?'':' lose');
+  bn.innerHTML='<div><h2>'+(draw?'Hòa!':won?'Thắng!':'Thua')+'</h2><p>'+line+(extra?'<br>'+extra:'')+'</p><small>Chạm để tiếp tục</small></div>';
   renderTop();renderPlayers();renderShop();
   U.bannerT=setTimeout(afterBanner,3200);
   bn.onclick=afterBanner;
