@@ -223,10 +223,30 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .avp button.on{background:var(--btn);box-shadow:0 0 0 2px var(--gold)}
 .dlg .note{font-size:12.5px;color:var(--ink2);border-left:3px solid var(--gold);padding-left:10px;margin:10px 0}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+
+/* ---- che do Xem chieu (demo) ---- */
+.demobar{display:none;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel);border:1.5px solid var(--bronze);border-radius:12px;padding:10px 14px;margin:0 auto 10px;max-width:760px}
+body.demo .demobar{display:flex}
+body.demo .side,body.demo .bench,body.demo .shop,body.demo #ready,body.demo #spd,body.demo .rbox{display:none}
+body.demo .game{display:block}
+body.demo .stage{max-width:760px;margin:0 auto}
+.demobar .dtok{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:24px;line-height:1;background:radial-gradient(circle at 35% 28%,#6a4e36,#2a1c12 72%);box-shadow:0 0 0 2px var(--rc,#8e8777),0 0 0 4px #1b130d,0 0 0 5px #d6a335;flex:none}
+.demobar .dtok img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.demobar .dinfo{flex:1;min-width:160px}
+.demobar .dinfo b{font-family:var(--serif);font-size:16px;color:#ffd36a}
+.demobar .dinfo small{display:block;color:var(--ink2);font-size:12px}
+.demobar .dspd{display:flex;gap:4px}
+.demobar .dspd button{border:1.5px solid var(--bronze);background:var(--panel2);border-radius:999px;padding:5px 12px;font-weight:700;font-size:12px}
+.demobar .dspd button.on{background:var(--bronze);color:#1a1109}
+.demobar .dbtn{border:1.5px solid var(--bronze);background:var(--panel2);border-radius:999px;padding:6px 14px;font-weight:700;font-size:13px}
+.demobar .dbtn.go{background:var(--btn);color:#fff;border-color:var(--btn)}
+.demobar .dres{width:100%;font-size:13px;color:#ffd36a;font-weight:600;display:none}
+.demobar .dres.show{display:block}
 </style>
 </head>
 <body>
 <div id="app">
+  <div class="demobar" id="demobar"></div>
   <header class="top">
     <div class="brand"><i class="seal">✺</i><span>Cờ Huyền Sử</span></div>
     <div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div>
@@ -1402,7 +1422,39 @@ function mkEl(u){
   U.els[u.id]={d,tok:d.querySelector('.tok'),hf:d.querySelector('.hf'),sf:d.querySelector('.sf'),mp:d.querySelector('.mp i'),stt:d.querySelector('.stt'),sttv:'',mt:null,gr:false,hid:false};
   return U.els[u.id];
 }
+function startDemo(heroId){
+  const H=HERO[heroId];if(!H)return;
+  cancelAnimationFrame(U.raf);
+  U.demo=heroId;U.phase='battle';U.sel=null;U.peek=null;
+  const hero=mkBU({h:heroId,s:3},0,3,6,{},{});hero.mana=hero.maxMana;hero.max*=3;hero.hp=hero.max;
+  const foes=['caolo','lelai','nguyenxi'].map((f,i)=>mkBU({h:f,s:3},1,[2,3,4][i],2,{},{}));
+  const B=newBattle([hero].concat(foes),true);
+  U.B=B;U.els={};U.zel={};
+  ulEl.innerHTML='';zlEl.innerHTML='';fxl.innerHTML='';PT.length=0;PJ.length=0;
+  arena.classList.add('battle');
+  document.body.classList.add('demo');
+  const db=$('#demobar');
+  db.innerHTML='<div class="dtok" style="--rc:'+costCol(heroId)+'">'+ico(heroId)+'</div>'
+    +'<div class="dinfo"><b>'+H.name+' \u2014 '+H.sk.nm+'</b><small>Xem chiêu \u2022 tốc độ \u00d70.2 (chậm hơn 80%)</small></div>'
+    +'<div class="dspd"><button data-s="0.2" class="on">\u00d70.2</button><button data-s="0.5">\u00d70.5</button><button data-s="1">\u00d71</button></div>'
+    +'<button class="dbtn go" id="dreplay">\u21bb Xem lại</button>'
+    +'<button class="dbtn" id="dback">\u2190 Quay lại</button>'
+    +'<div class="dres" id="dres"></div>';
+  db.querySelectorAll('.dspd button').forEach(b=>b.onclick=()=>{U.speed=+b.dataset.s;db.querySelectorAll('.dspd button').forEach(x=>x.classList.toggle('on',x===b));});
+  $('#dreplay').onclick=()=>startDemo(heroId);
+  $('#dback').onclick=()=>{location.href='https://kybien.blogspot.com/p/tieu-diem-tuong.html';};
+  for(const u of B.units)mkEl(u);
+  U.speed=0.2;U.last=performance.now();U.acc=0;U.raf=requestAnimationFrame(loop);
+}
+function endDemo(B){
+  U.phase='demo-end';
+  const H=HERO[U.demo];
+  const r=$('#dres');
+  r.textContent=(B.winner===0?('\u2713 '+H.name+' thắng trận demo.'):('\u2717 '+H.name+' đã ngã xuống.'))+' Bấm \u201cXem lại\u201d để xem chiêu lần nữa.';
+  r.className='dres show';
+}
 function startCombat(){
+
   U.phase='battle';U.sel=null;U.peek=null;
   const lm=G.matches.find(m=>m.a.human);U.lm=lm;
   for(const m of G.matches)if(m!==lm)m.res=simMatch(G,m);
@@ -1421,7 +1473,7 @@ function loop(now){
   let n=0;while(U.acc>=TICK&&!B.over&&n<14){step(B,TICK);U.acc-=TICK;n++;}
   events(B);sync(B);drawFx(dt*U.speed);
   $('#ttxt').textContent='Giao tranh '+Math.floor(B.t)+'s';$('#tfill').style.width=Math.max(0,100-B.t/70*100)+'%';
-  if(B.over){setTimeout(()=>endBattle(B),600);return;}
+  if(B.over){setTimeout(()=>{if(U.demo)endDemo(B);else endBattle(B);},600);return;}
   U.raf=requestAnimationFrame(loop);
 }
 function sync(B){
@@ -1562,7 +1614,8 @@ buildStatic();fit();setFxLabel();
 U.phase='menu';
 G=newGame({});G.matches=[];
 renderAll();
-showStart();
+const dm=new URLSearchParams(location.search).get('demo');
+if(dm&&HERO[dm])startDemo(dm);else showStart();
 /*UI_END*/
 })();
 </script>
