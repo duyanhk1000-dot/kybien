@@ -61,8 +61,8 @@ header p{margin:6px 0 0;color:var(--ink2)}
 .dskill p{margin:4px 0 0;color:#d8c9a6;font-size:13px}
 .hist{margin-top:12px;border:1.5px solid var(--gold);outline:1px solid rgba(214,163,53,.35);outline-offset:3px;border-radius:4px;background:rgba(214,163,53,.06);padding:10px 12px;color:#e8d9b0;font-size:13px;font-style:italic}
 .hist b{color:var(--gold);display:block;margin-bottom:4px;font-family:var(--serif);font-size:14px;font-style:normal;letter-spacing:.5px}
-.hist b::before{content:'❖ '}
-.hist b::after{content:' ❖'}
+.hist b::before{content:'\2756\ '}
+.hist b::after{content:' \2756'}
 .res{margin-top:12px;font-size:13px;color:var(--ink2)}
 .res b{color:var(--ink)}
 .res .tiers{margin-top:4px}
@@ -269,7 +269,7 @@ function render(){
     +'<div class="top"><div class="tok" style="--rc:'+COSTCOL[h.cost-1]+'">'+ico(h.id)+'</div><div><h3>'+h.name+'</h3><div class="sub">'+TR[h.o].name+' \u00b7 '+CS[h.c].name+'</div><span class="cost">💰 '+h.cost+' vàng</span></div></div>'
     +'<div class="tags"><span class="tag" style="--tc:'+TR[h.o].col+'">'+TR[h.o].ico+' '+TR[h.o].name+'</span><span class="tag">'+CS[h.c].ico+' '+CS[h.c].name+'</span><span class="tag">'+skillKind(h.sk)+'</span></div>'
     +'<div class="skill"><img src="'+skillIcon(h.sk)+'" alt=""><div><b>'+h.sk.nm+'</b><p>'+skillText(h.sk,1)+'</p></div></div>'
-    +'<div class="stats"><span>Máu<b>'+st.hp+'</b></span><span>Sát thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm<b>'+st.range+'</b></span><span>Tốc<b>'+st.as.toFixed(2)+'</b></span></div>'
+    +'<div class="stats"><span>Máu<b>'+st.hp+'</b></span><span>S.Thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm<b>'+st.range+'</b></span><span>Tốc<b>'+st.as.toFixed(2)+'</b></span></div>'
     +'</article>';
   }).join('');
 }
@@ -282,7 +282,7 @@ function openDetail(id,star){
   +'<div class="hd"><div class="tok" style="--rc:'+COSTCOL[h.cost-1]+'">'+ico(id)+'</div><div><h2>'+h.name+'</h2><div class="sub" style="color:var(--ink2);font-size:13px">'+TR[h.o].name+' \u00b7 '+CS[h.c].name+' \u00b7 💰 '+h.cost+' vàng</div>'
   +'<div class="stars">'+[1,2,3].map(n=>'<button data-star="'+n+'" class="'+(n===state.star?'on':'')+'">'+'★'.repeat(n)+'</button>').join('')+'</div></div></div>'
   +'<div class="hist"><b>Lịch sử</b>'+HISTORY[id]+'</div>'
-  +'<div class="dstats"><span>Máu<b>'+st.hp+'</b></span><span>Sát thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
+  +'<div class="dstats"><span>Máu<b>'+st.hp+'</b></span><span>S.Thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
   +'<div class="dskill"><img src="'+skillIcon(h.sk)+'" alt=""><div><b>'+h.sk.nm+'</b> (cần '+h.sk.mana+' nộ)<p>'+skillText(h.sk,state.star)+'</p></div></div>'
   +'<a class="watch" href="https://kybien.blogspot.com/p/co-huyen-su.html?demo='+id+'" target="_blank" rel="noopener">\u25b6 Xem chiêu trên bàn cờ (chậm \u00d70.2)</a>'
 

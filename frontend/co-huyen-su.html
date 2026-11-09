@@ -139,10 +139,11 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .zone.stakes{background:radial-gradient(circle,rgba(150,110,60,.28),transparent 70%);border:1.5px dashed rgba(220,180,120,.55)}
 .zone .sp{position:absolute;width:14%;height:34%;color:#d9c29a;transform-origin:50% 100%}
 .zone .sp svg{width:100%;height:100%;fill:currentColor}
-.cf{position:absolute;left:0;right:0;top:calc(var(--c)*3);height:calc(var(--c)*2);z-index:9;pointer-events:none;display:flex;align-items:center;gap:12px;padding:0 14px;background:linear-gradient(90deg,transparent,rgba(20,10,6,.88) 18%,rgba(20,10,6,.88) 82%,transparent);overflow:hidden}
-.cf .tk{width:calc(var(--c)*1.5);height:calc(var(--c)*1.5);flex:none;border-radius:50%;display:grid;place-items:center;font-size:calc(var(--c)*.85);background:radial-gradient(circle at 35% 28%,#7a5a3c,#2a1c12 72%);box-shadow:0 0 0 3px var(--rc),0 0 0 5px #1b130d,0 0 0 7px #d6a335,0 0 24px var(--rc)}
-.cf b{font-family:var(--serif);font-weight:800;font-size:calc(var(--c)*.5);color:#ffe9b0;text-shadow:0 0 12px var(--rc),0 2px 2px #000;line-height:1.05}
-.cf i{display:block;font-style:normal;font-family:var(--sans);font-size:calc(var(--c)*.26);font-weight:600;color:#d8c9a6}
+.cf{position:absolute;left:0;right:0;bottom:6px;top:auto;height:auto;z-index:9;pointer-events:none;display:flex;justify-content:center}
+.cfb{display:flex;align-items:center;gap:10px;padding:5px 16px 5px 6px;background:rgba(20,10,6,.9);border:1.5px solid #d6a335;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.55);max-width:94%}
+.cf .tk{width:calc(var(--c)*.95);height:calc(var(--c)*.95);flex:none;border-radius:50%;display:grid;place-items:center;font-size:calc(var(--c)*.55);background:radial-gradient(circle at 35% 28%,#7a5a3c,#2a1c12 72%);box-shadow:0 0 0 2px var(--rc),0 0 0 4px #1b130d,0 0 0 5px #d6a335}
+.cf b{font-family:var(--serif);font-weight:800;font-size:calc(var(--c)*.32);color:#ffe9b0;text-shadow:0 0 12px var(--rc),0 2px 2px #000;line-height:1.05;white-space:nowrap}
+.cf i{display:block;font-style:normal;font-family:var(--sans);font-size:calc(var(--c)*.2);font-weight:600;color:#d8c9a6;white-space:nowrap}
 .banner{position:absolute;inset:0;z-index:20;display:none;place-items:center;text-align:center;background:rgba(14,9,6,.72);padding:12px;cursor:pointer}
 .banner.show{display:grid;animation:fade .25s}
 .banner h2{margin:0;font-family:var(--serif);font-weight:800;font-size:calc(var(--c)*.8);color:#ffd36a;text-shadow:0 2px 0 #7a2a14,0 0 22px rgba(214,163,53,.6)}
@@ -1111,7 +1112,7 @@ function pumpCF(){
   if(cfBusy||!CF.length)return;
   const e=CF.shift(),H=HERO[e.h];if(!H)return;cfBusy=true;
   const d=document.createElement('div');d.className='cf';d.style.setProperty('--rc',e.col);
-  d.innerHTML='<div class="tk">'+ico(e.h)+'</div><div><b>'+H.name+' '+'\u2605'.repeat(e.s)+'</b><i>'+e.nm+'</i></div>';
+  d.innerHTML='<div class="cfb"><div class="tk">'+ico(e.h)+'</div><div><b>'+H.name+' '+'\u2605'.repeat(e.s)+'</b><i>'+e.nm+'</i></div></div>';
   arena.appendChild(d);
   d.animate([{transform:'translateX(-100%)',opacity:0},{transform:'translateX(0)',opacity:1,offset:.2},{transform:'translateX(0)',opacity:1,offset:.75},{transform:'translateX(100%)',opacity:0}],{duration:900/U.speed,easing:'ease-out'}).onfinish=()=>{d.remove();cfBusy=false;pumpCF();};
 }
@@ -1175,14 +1176,14 @@ VF.hich=e=>{const [x,y]=px(e.x1,e.y1);shape('cuon',x,y-U.c*.6,U.c*1.8,'#ffe9b0',
 /* ---------- trạng thái và vùng ---------- */
 function statusStr(u,B){
   let s='';
-  if(u.press>0)s+='⛰️';
-  else if(u.stun>0&&!(u.hide>0))s+='💫';
-  if(u.slow)s+='🐌';
-  if(u.forced)s+='🎯';
-  if(u.mslow>0)s+='🕸️';
-  if(u.burst)s+='💥';
-  if(u.imm>0)s+='✨';
-  const rv=B.rev[u.side];if(rv&&rv.t>0&&!rv.used&&!u.sm&&!u.mon)s+='🕊️';
+  if(u.press>0)s+='\u26F0\uFE0F';
+  else if(u.stun>0&&!(u.hide>0))s+='\uD83D\uDCAB';
+  if(u.slow)s+='\uD83D\uDC0C';
+  if(u.forced)s+='\uD83D\uDCAF';
+  if(u.mslow>0)s+='\uD83D\uDD78\uFE0F';
+  if(u.burst)s+='\uD83D\uDCA5';
+  if(u.imm>0)s+='\u2728';
+  const rv=B.rev[u.side];if(rv&&rv.t>0&&!rv.used&&!u.sm&&!u.mon)s+='\uD83D\uDD4A\uFE0F';
   return s;
 }
 function buildZone(z){
