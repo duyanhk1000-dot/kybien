@@ -228,8 +228,26 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .demobar{display:none;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel);border:1.5px solid var(--bronze);border-radius:12px;padding:10px 14px;margin:0 auto 10px;max-width:760px}
 body.demo .demobar{display:flex}
 body.demo .side,body.demo .bench,body.demo .shop,body.demo #ready,body.demo #spd,body.demo .rbox{display:none}
-body.demo .game{display:block}
-body.demo .stage{max-width:760px;margin:0 auto}
+body.demo .game{display:flex;gap:14px;align-items:flex-start;justify-content:center}
+body.demo .stage{flex:1;max-width:760px;margin:0;min-width:0}
+.skill-panel{display:none;width:300px;flex:none;background:var(--panel);border:1.5px solid var(--bronze);border-radius:12px;padding:14px}
+body.demo .skill-panel{display:block}
+.skill-panel h3{margin:0 0 8px;font-family:var(--serif);color:var(--gold);font-size:16px}
+.skill-panel h4{margin:14px 0 6px;font-size:13px;color:var(--ink2)}
+.sp-skill{display:flex;gap:10px;align-items:flex-start}
+.sp-skill .stok{width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:24px;line-height:1;background:radial-gradient(circle at 35% 28%,#6a4e36,#2a1c12 72%);box-shadow:0 0 0 2px var(--rc,#8e8777),0 0 0 4px #1b130d}
+.sp-skill .stok img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.sp-skill b{font-family:var(--serif);color:#ffd36a;font-size:15px}
+.sp-skill small{display:block;color:var(--ink2);font-size:11.5px}
+.sp-skill p{margin:4px 0 0;color:#d8c9a6;font-size:12.5px}
+.sp-row{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:13px;color:var(--ink2)}
+.sp-row b{color:#fff;white-space:nowrap}
+.sp-log{max-height:220px;overflow-y:auto;font-size:12.5px}
+.sp-cast{padding:5px 0;border-top:1px solid var(--line)}
+.sp-cast .ct{color:var(--ink2)}
+.sp-cast .cd{color:#ffd36a}
+.sp-empty{color:var(--ink2);font-style:italic}
+@media(max-width:900px){body.demo .game{flex-direction:column;align-items:center}.skill-panel{width:100%;max-width:760px}}
 .demobar .dtok{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:24px;line-height:1;background:radial-gradient(circle at 35% 28%,#6a4e36,#2a1c12 72%);box-shadow:0 0 0 2px var(--rc,#8e8777),0 0 0 4px #1b130d,0 0 0 5px #d6a335;flex:none}
 .demobar .dtok img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 .demobar .dinfo{flex:1;min-width:160px}
@@ -283,6 +301,7 @@ body.demo .stage{max-width:760px;margin:0 auto}
         <div class="sellz" id="sellz"></div>
       </section>
     </main>
+    <aside class="skill-panel" id="skillpanel"></aside>
     <aside class="side right"><div class="sh">Người chơi</div><div class="box" id="plist"></div></aside>
   </div>
 </div>
@@ -1422,12 +1441,38 @@ function mkEl(u){
   U.els[u.id]={d,tok:d.querySelector('.tok'),hf:d.querySelector('.hf'),sf:d.querySelector('.sf'),mp:d.querySelector('.mp i'),stt:d.querySelector('.stt'),sttv:'',mt:null,gr:false,hid:false};
   return U.els[u.id];
 }
+function demoTrack(B){
+  if(!U.demo)return;
+  for(const e of B.ev){
+    if(e.k==='dmg'){
+      const t=e.id?byId(B,e.id):null;
+      if(t&&t.side===1&&e.type!=='heal'){
+        U.demoDmg=(U.demoDmg||0)+e.v;
+        const el=$('#sptotal');if(el)el.textContent=U.demoDmg;
+      }
+    }else if(e.k==='cast'&&e.h===U.demo){
+      if(U.demoLastCast){
+        const dmg=U.demoDmg-U.demoLastCast.dmg;
+        if(U.demoLastCast.el)U.demoLastCast.el.querySelector('.cd').textContent='g\u00e2y '+dmg+' s\u00e1t th\u01b0\u01a1ng';
+      }
+      const log=$('#castlog');
+      if(log){
+        const em2=log.querySelector('.sp-empty');if(em2)em2.remove();
+        const div=document.createElement('div');
+        div.className='sp-cast';
+        div.innerHTML='<span class="ct">'+B.t.toFixed(1)+'s</span> <b>'+e.nm+'</b> <span class="cd">\u2026</span>';
+        log.prepend(div);
+        U.demoLastCast={dmg:U.demoDmg,el:div};
+      }
+    }
+  }
+}
 function startDemo(heroId){
   const H=HERO[heroId];if(!H)return;
   cancelAnimationFrame(U.raf);
-  U.demo=heroId;U.phase='battle';U.sel=null;U.peek=null;
+  U.demo=heroId;U.demoDmg=0;U.demoLastCast=null;U.phase='battle';U.sel=null;U.peek=null;
   const hero=mkBU({h:heroId,s:3},0,3,6,{},{});hero.mana=hero.maxMana;hero.max*=3;hero.hp=hero.max;
-  const foes=['caolo','lelai','nguyenxi'].map((f,i)=>mkBU({h:f,s:3},1,[2,3,4][i],2,{},{}));
+  const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,2,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,3,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,4,2)];
   const B=newBattle([hero].concat(foes),true);
   U.B=B;U.els={};U.zel={};
   ulEl.innerHTML='';zlEl.innerHTML='';fxl.innerHTML='';PT.length=0;PJ.length=0;
@@ -1444,9 +1489,25 @@ function startDemo(heroId){
   $('#dreplay').onclick=()=>startDemo(heroId);
   $('#dback').onclick=()=>{location.href='https://kybien.blogspot.com/p/tieu-diem-tuong.html';};
   for(const u of B.units)mkEl(u);
+  const sk=H.sk,sp=1+hero.spell;
+  let dmgLine='';
+  if(sk.d)dmgLine+='S\u00e1t th\u01b0\u01a1ng c\u01a1 b\u1ea3n: <b>'+Math.round(sc(sk.d,3)*sp)+'</b>';
+  if(sk.heal)dmgLine+=(dmgLine?'<br>':'')+'H\u1ed3i m\u00e1u: <b>'+Math.round(sc(sk.heal,3)*sp)+'</b>';
+  if(sk.sh)dmgLine+=(dmgLine?'<br>':'')+'Khi\u00ean: <b>'+Math.round(sc(sk.sh,3)*sp)+'</b>';
+  const sp2=$('#skillpanel');
+  sp2.innerHTML='<h3>\u2694\ufe0f K\u1ef9 n\u0103ng</h3>'
+    +'<div class="sp-skill"><div class="stok" style="--rc:'+costCol(heroId)+'">'+ico(heroId)+'</div><div><b>'+sk.nm+'</b><small>C\u1ea7n '+sk.mana+' n\u1ed9 \u2022 \u2605\u2605\u2605</small><p>'+skillText(sk,3)+'</p></div></div>'
+    +(dmgLine?'<div class="sp-row"><span>'+dmgLine+'</span></div>':'')
+    +'<div class="sp-row"><span>T\u1ed5ng s\u00e1t th\u01b0\u01a1ng \u0111\u00e3 g\u00e2y</span><b id="sptotal">0</b></div>'
+    +'<h4>\u1f4dc Nh\u1eadt k\u00fd xu\u1ea5t chi\u00eau</h4><div class="sp-log" id="castlog"><div class="sp-empty">Ch\u01b0a xu\u1ea5t chi\u00eau\u2026</div></div>';
   U.speed=0.2;U.last=performance.now();U.acc=0;U.raf=requestAnimationFrame(loop);
 }
 function endDemo(B){
+  if(U.demoLastCast&&U.demoLastCast.el){
+    const dmg=U.demoDmg-U.demoLastCast.dmg;
+    U.demoLastCast.el.querySelector('.cd').textContent='g\u00e2y '+dmg+' s\u00e1t th\u01b0\u01a1ng';
+    U.demoLastCast=null;
+  }
   U.phase='demo-end';
   const H=HERO[U.demo];
   const r=$('#dres');
@@ -1471,7 +1532,7 @@ function loop(now){
   if(now<U.freeze){drawFx(dt*U.speed*.25);U.raf=requestAnimationFrame(loop);return;}
   U.acc+=dt*U.speed;
   let n=0;while(U.acc>=TICK&&!B.over&&n<14){step(B,TICK);U.acc-=TICK;n++;}
-  events(B);sync(B);drawFx(dt*U.speed);
+  if(U.demo)demoTrack(B);events(B);sync(B);drawFx(dt*U.speed);
   $('#ttxt').textContent='Giao tranh '+Math.floor(B.t)+'s';$('#tfill').style.width=Math.max(0,100-B.t/70*100)+'%';
   if(B.over){setTimeout(()=>{if(U.demo)endDemo(B);else endBattle(B);},600);return;}
   U.raf=requestAnimationFrame(loop);
