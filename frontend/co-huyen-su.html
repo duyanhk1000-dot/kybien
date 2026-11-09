@@ -166,7 +166,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .peek .acts .sell{background:var(--cinn);border-color:var(--cinn);color:#ffe9b0;font-weight:700}
 .peek .tiers div{padding:1px 0;color:#b9a98a}.peek .tiers .a{color:#ffd36a;font-weight:700}
 .peek .heads{margin-top:4px;font-size:18px;letter-spacing:2px}
-.shop{position:relative;display:flex;flex-direction:column;gap:6px;background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='100'%20height='100'%20viewBox='0%200%20100%20100'%20preserveAspectRatio='none'%3E%3Cg%20fill='none'%20stroke='%23d6a335'%20stroke-width='2.5'%20stroke-linecap='round'%20vector-effect='non-scaling-stroke'%3E%3Cpath%20d='M3%2018%20V7%20Q3%203%207%203%20H18'/%3E%3Cpath%20d='M82%203%20H93%20Q97%203%2097%207%20V18'/%3E%3Cpath%20d='M97%2082%20V93%20Q97%2097%2093%2097%20H82'/%3E%3Cpath%20d='M18%2097%20H7%20Q3%2097%203%2093%20V82'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:inset 0 0 0 1px rgba(214,163,53,.3)}
+.shop{position:relative;display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px}
 .ctl{display:flex;align-items:center;gap:8px}
 .lv{flex:1;min-width:0}
 .lv b{font-family:var(--serif);font-size:14px}
@@ -181,7 +181,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .btn small{font-weight:600;color:var(--ink2)}
 .btn:disabled{opacity:.45;cursor:default}
 .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-.card{position:relative;border:2px solid var(--rc);border-radius:10px;background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='100'%20height='100'%20viewBox='0%200%20100%20100'%20preserveAspectRatio='none'%3E%3Cg%20fill='none'%20stroke='%23d6a335'%20stroke-width='2.5'%20stroke-linecap='round'%20vector-effect='non-scaling-stroke'%3E%3Cpath%20d='M3%2018%20V7%20Q3%203%207%203%20H18'/%3E%3Cpath%20d='M82%203%20H93%20Q97%203%2097%207%20V18'/%3E%3Cpath%20d='M97%2082%20V93%20Q97%2097%2093%2097%20H82'/%3E%3Cpath%20d='M18%2097%20H7%20Q3%2097%203%2093%20V82'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,linear-gradient(180deg,#3e2d1e,#1d140d);color:#f3e8cf;padding:6px 3px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:96px;box-shadow:inset 0 0 0 1px rgba(214,163,53,.3)}
+.card{position:relative;border:2px solid var(--rc);border-radius:10px;background:linear-gradient(180deg,#3e2d1e,#1d140d);color:#f3e8cf;padding:6px 3px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:96px}
 .card .em{font-size:26px;line-height:1.1}
 .card .cn{font-family:var(--serif);font-weight:800;font-size:11px;line-height:1.1;text-align:center;min-height:2.2em;display:grid;place-items:center}
 .card .tt{display:flex;gap:3px;font-size:11px}
@@ -196,7 +196,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .ghost{position:fixed;left:0;top:0;z-index:99;pointer-events:none;display:grid;place-items:center;transform:translate(-50%,-50%)}
 .ov{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(10,6,4,.8);padding:14px;overflow-y:auto}
 .ov.show{display:grid}
-.dlg{position:relative;width:min(460px,100%);background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='100'%20height='100'%20viewBox='0%200%20100%20100'%20preserveAspectRatio='none'%3E%3Cg%20fill='none'%20stroke='%23d6a335'%20stroke-width='2.5'%20stroke-linecap='round'%20vector-effect='non-scaling-stroke'%3E%3Cpath%20d='M3%2018%20V7%20Q3%203%207%203%20H18'/%3E%3Cpath%20d='M82%203%20H93%20Q97%203%2097%207%20V18'/%3E%3Cpath%20d='M97%2082%20V93%20Q97%2097%2093%2097%20H82'/%3E%3Cpath%20d='M18%2097%20H7%20Q3%2097%203%2093%20V82'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,var(--panel);border:1.5px solid var(--bronze);border-radius:16px;padding:20px 18px;box-shadow:inset 0 0 0 1px rgba(214,163,53,.35),0 20px 60px rgba(0,0,0,.6);max-height:96dvh;overflow-y:auto}
+.dlg{position:relative;width:min(460px,100%);background:var(--panel);border:1.5px solid var(--bronze);border-radius:16px;padding:20px 18px;box-shadow:0 20px 60px rgba(0,0,0,.6);max-height:96dvh;overflow-y:auto}
 .dlg h1{font-family:var(--serif);font-weight:800;font-size:38px;margin:0;line-height:1;color:var(--cinn)}
 .dlg h2{font-family:var(--serif);font-weight:800;font-size:24px;margin:0 0 6px}
 .dlg p{margin:8px 0;color:var(--ink2);line-height:1.55}
