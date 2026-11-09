@@ -1489,7 +1489,7 @@ function startDemo(heroId){
     +'<button class="dbtn" id="dback">\u2190 Quay lại</button>'
     +'<div class="dres" id="dres"></div>';
   db.querySelectorAll('.dspd button').forEach(b=>b.onclick=()=>{U.speed=+b.dataset.s;db.querySelectorAll('.dspd button').forEach(x=>x.classList.toggle('on',x===b));});
-  const tb=document.querySelector('.tbar');if(tb)db.appendChild(tb);
+  let tb=document.querySelector('.tbar');if(!tb){tb=document.createElement('div');tb.className='tbar';tb.innerHTML='<i id="tfill"></i><span id="ttxt"></span>';}db.appendChild(tb);
   $('#dreplay').onclick=()=>startDemo(heroId);
   $('#dback').onclick=()=>{location.href='https://kybien.blogspot.com/p/tieu-diem-tuong.html';};
   for(const u of B.units)mkEl(u);
@@ -1537,7 +1537,7 @@ function loop(now){
   U.acc+=dt*U.speed;
   let n=0;while(U.acc>=TICK&&!B.over&&n<14){step(B,TICK);U.acc-=TICK;n++;}
   if(U.demo)demoTrack(B);events(B);sync(B);drawFx(dt*U.speed);
-  $('#ttxt').textContent='Giao tranh '+Math.floor(B.t)+'s';$('#tfill').style.width=Math.max(0,100-B.t/70*100)+'%';
+  const _tx=$('#ttxt'),_tf=$('#tfill');if(_tx)_tx.textContent='Giao tranh '+Math.floor(B.t)+'s';if(_tf)_tf.style.width=Math.max(0,100-B.t/70*100)+'%';
   if(B.over){setTimeout(()=>{if(U.demo)endDemo(B);else endBattle(B);},600);return;}
   U.raf=requestAnimationFrame(loop);
 }
