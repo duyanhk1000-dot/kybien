@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sảnh Game — Kỳ Biến | Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa</title>
-  <meta name="description" content="Sảnh Game Kỳ Biến: chơi Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Nhảy — một sảnh, đủ loại cờ, vào là chơi."/>
+  <title>Sảnh Game — Kỳ Biến | Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Huyền Sử</title>
+  <meta name="description" content="Sảnh Game Kỳ Biến: chơi Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Nhảy, Cờ Huyền Sử — một sảnh, đủ loại cờ, vào là chơi."/>
 
   <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC (giống co-the.html) -->
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap" rel="stylesheet"/>
@@ -327,6 +327,8 @@
       background: linear-gradient(45deg, transparent 49.5%, rgba(0,0,0,0.35) 49.5% 50.5%, transparent 50.5%),
                    linear-gradient(-45deg, transparent 49.5%, rgba(0,0,0,0.35) 49.5% 50.5%, transparent 50.5%);
     }
+    /* Cờ Huyền Sử: sơn mài đỏ – vàng đồng */
+    .thumb-huyensu { background: linear-gradient(135deg, #4a0000, #8b5a2b 55%, #2c1a0e); }
     /* Cờ Nhảy: nền tối + chấm */
     .thumb-conhay { background: radial-gradient(circle at 50% 30%, #2c1a0e, #150b05); }
     .mini-pieces {
@@ -421,7 +423,7 @@
 </head>
 <body>
 
-  <h1 class="kb-sr-only">Sảnh Game — Kỳ Biến: Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa</h1>
+  <h1 class="kb-sr-only">Sảnh Game — Kỳ Biến: Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Huyền Sử</h1>
 
 
   <!-- MAIN -->
@@ -430,7 +432,7 @@
     <!-- HERO -->
     <section class="hub-hero">
       <h1>🏮 SẢNH GAME</h1>
-      <p>Một sảnh, đủ loại cờ — vào là chơi. Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa và nhiều game nữa đang trên đường tới.</p>
+      <p>Một sảnh, đủ loại cờ — vào là chơi. Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Huyền Sử và nhiều game nữa đang trên đường tới.</p>
      
         <span id="hub-online-text">Đang kiểm tra máy chủ…</span>
     </section>
@@ -558,6 +560,26 @@
         </div>
       </a>
 
+      <!-- CỜ HUYỀN SỬ -->
+      <a class="game-card" href="https://kybien.blogspot.com/p/co-huyen-su.html" data-cat="dau-may">
+        <div class="game-thumb thumb-huyensu">
+          <span class="game-badge badge-new">MỚI</span>
+          <div class="mini-pieces">
+            <span class="mini-piece red">趙</span>
+            <span class="mini-piece green">風</span>
+            <span class="mini-piece blue">陳</span>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Huyền Sử</h3>
+          <p>Auto chess 30 thần tướng Việt — mua tướng, kích tộc/hệ, đấu 7 máy tới vòng cuối.</p>
+          <div class="game-meta">
+            <span>1 người · Đấu 7 máy</span>
+            <span class="game-cta">Chơi ngay ›</span>
+          </div>
+        </div>
+      </a>
+
       <!-- CỜ NHẢY — SẮP RA MẮT -->
       <article class="game-card is-coming" data-cat="nhieu-nguoi sap-ra-mat" aria-label="Cờ Nhảy — sắp ra mắt">
         <div class="game-thumb thumb-conhay">
@@ -583,7 +605,7 @@
 
     <!-- FOOTER NOTE -->
     <section class="hub-footer">
-      <div>✨ <strong>Mới cập nhật:</strong> vừa thêm Cờ Cá Ngựa — đua ngựa về đích, có luật bay số 1 và chế độ 2 xúc xắc. Sắp tới: Cờ Nhảy.</div>
+      <div>✨ <strong>Mới cập nhật:</strong> vừa thêm Cờ Huyền Sử — auto chess 30 thần tướng Việt, đấu 7 máy. <a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html">Tiêu điểm tướng</a> xem chiêu trực tiếp trên bàn thật. Sắp tới: Cờ Nhảy.</div>
       </section>
 
   </main>
