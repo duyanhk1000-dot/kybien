@@ -73,6 +73,17 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .ribbon{position:absolute;left:50%;top:calc(var(--c)*2);transform:translate(-50%,-50%);background:#2a1a12;border:1.5px solid #d6a335;color:#f3e8cf;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:600;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;z-index:4}
 .arena.battle .ribbon{display:none}
 .hint{position:absolute;left:12%;right:12%;top:12%;text-align:center;color:#c9b58a;font-size:12px;line-height:1.5;pointer-events:none}
+.bhud{position:absolute;left:50%;top:calc(var(--c)*2.5);transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:6px;width:min(86%,340px);pointer-events:none}
+.bhud>*{pointer-events:auto}
+.bhud .rbox{align-items:center;text-align:center;min-width:0}
+.bhud .rbox b{font-size:17px}.bhud .rbox small{font-size:12px}
+.bhud .tbar{width:100%;flex:none}
+.cbtns{position:absolute;right:10px;bottom:10px;z-index:7;display:flex;flex-direction:column;gap:8px;opacity:0;pointer-events:none;transition:opacity 1.2s ease}
+.cbtns.show{opacity:1;pointer-events:auto}
+.cbtn{width:52px;height:52px;border-radius:50%;border:2px solid #d6a335;background:#1b130d;color:#ffd36a;font-family:var(--serif);font-weight:800;display:grid;place-items:center;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.cbtn.clock i{position:absolute;left:0;right:0;bottom:0;height:100%;background:linear-gradient(180deg,var(--gold),var(--jade));opacity:.9;transition:height .25s linear}
+.cbtn.clock span{position:relative;z-index:1;font-size:13px;color:#1a1109;text-shadow:0 0 3px #ffe9b0}
+.cbtn.spd{font-size:17px}
 .cells{position:absolute;left:0;right:0;bottom:0;height:calc(var(--c)*4);display:grid;grid-template:repeat(4,1fr)/repeat(7,1fr);z-index:2}
 .cell{position:relative;display:grid;place-items:center;font-size:calc(var(--c)*.46)}
 .cell.over,.slot.over{background:rgba(214,163,53,.28)}
@@ -187,14 +198,15 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .btn:disabled{opacity:.45;cursor:default}
 .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
 .card{position:relative;border:2px solid var(--rc);border-radius:10px;background:linear-gradient(180deg,#3e2d1e,#1d140d);color:#f3e8cf;padding:0;display:flex;flex-direction:column;align-items:stretch;overflow:hidden}
-.card .em{width:100%;aspect-ratio:8/9;display:grid;place-items:center;background:radial-gradient(circle at 50% 32%,#5a4632,#241a10 78%);font-size:52px;line-height:1}
+.card .em{position:relative;width:100%;aspect-ratio:8/9;display:grid;place-items:center;background:radial-gradient(circle at 50% 32%,#5a4632,#241a10 78%);font-size:52px;line-height:1}
 .card .em .pimg{width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block}
 .card .em .himg{width:104px;height:104px}
 .card .cn{position:relative;font-family:var(--serif);font-weight:800;font-size:12.5px;line-height:1.2;text-align:center;color:#1a1109;background:var(--tc,#8e8777);border-top:2px solid #d6a335;box-shadow:inset 0 0 0 1px rgba(27,19,13,.55),inset 0 0 0 3px rgba(214,163,53,.4);padding:6px 4px;min-height:2.6em;display:grid;place-items:center;z-index:2}
-.card .tt{position:absolute;top:5px;left:5px;display:flex;flex-direction:column;gap:4px;pointer-events:none;z-index:2}
-.card .tt span{width:19px;height:19px;border-radius:50%;background:#1b130d;border:1.5px solid #d6a335;display:grid;place-items:center;font-size:10px;line-height:1}
+.card .tt{position:absolute;left:5px;right:5px;bottom:-5px;display:flex;flex-direction:row;justify-content:space-between;pointer-events:none;z-index:2}
+.card .tt span{width:23px;height:23px;border-radius:50%;background:#1b130d;border:1.5px solid #d6a335;display:grid;place-items:center;font-size:12px;line-height:1}
 .card .co{font-size:12px;font-weight:700;color:#ffd36a;text-align:center;line-height:1.15;padding:4px 0 5px;background:#1d140d}
 .card .co small{display:block;font-size:9.5px;font-weight:600;color:#b9a98a}
+.coin{width:1.25em;height:1.25em;vertical-align:-.28em;object-fit:contain}
 .card .i{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;border:0;background:#0009;color:#f3e8cf;font-size:11px;line-height:1;padding:0;z-index:3}
 .card.no{opacity:.55}
 .card.gone{visibility:hidden}
@@ -237,7 +249,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 body.demo .demobar{display:flex;flex-wrap:wrap}
 body.demo .top{display:none}
 .demobar .tbar{flex:1 1 100%;margin-top:6px}
-body.demo .side,body.demo .bench,body.demo .shop,body.demo #ready,body.demo #spd,body.demo .rbox{display:none}
+body.demo .side,body.demo .bench,body.demo .shop,body.demo #ready,body.demo #spd,body.demo .rbox,body.demo .bhud,body.demo .cbtns{display:none}
 body.demo .game{display:grid;grid-template-columns:max-content 300px;gap:14px;justify-content:center;align-items:start}
 body.demo .stage{grid-column:1;grid-row:1;flex:none;width:100%;max-width:none;margin:0;min-width:0}
 .skill-panel{display:none;width:300px;flex:none;background:var(--panel);border:1.5px solid var(--bronze);border-radius:12px;padding:14px}
@@ -276,19 +288,14 @@ body.demo .skill-panel{display:block;grid-column:2;grid-row:1}
 <body>
 <div id="app">
   <div class="demobar" id="demobar"></div>
-  <header class="top">
-    <div class="brand"><i class="seal">✺</i><span>Cờ Huyền Sử</span></div>
-    <div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div>
-    <div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div>
-    <button class="chip" id="spd" title="Tốc độ trận đấu">×1</button>
-    <button class="go" id="ready">Chiến!</button>
-  </header>
   <div class="game" id="game">
     <aside class="side left"><div class="sh">Tộc và Hệ</div><div class="box" id="traits"></div></aside>
     <main class="stage" id="stage">
       <div class="arena" id="arena">
         <div class="tiles" id="tiles"></div>
         <svg class="drum" id="drum" viewBox="-100 -100 200 200"></svg>
+        <div class="bhud" id="bhud"><div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div><div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div><button class="go" id="ready">Chiến!</button></div>
+        <div class="cbtns" id="cbtns"><div class="cbtn clock" id="clockBtn" title="Thời gian"><i id="clockFill"></i><span id="clockTxt"></span></div><button class="cbtn spd" id="spd" title="Tốc độ trận đấu">×1</button></div>
         <div class="mid"></div>
         <div class="hint" id="hint"></div>
         <div class="peek" id="peek"></div>
@@ -1019,6 +1026,7 @@ function portrait(h){return HIMG_P[h]?'<img class="pimg" draggable="false" src="
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
 const MON_IMG={'Hồ Quái':MON_BASE+'ho-quai.webp?v=2','Mộc Quái':MON_BASE+'moc-quai.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh.webp?v=2','Ngư Tinh':MON_BASE+'ngu-tinh.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh.webp?v=2'};
 const FXIMG_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/fx/';
+const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const ARROW_IMG={};
 for(const k of ['arrow-gold','arrow-wood','arrow-wood-bright']){const im=new Image();im.src=FXIMG_BASE+k+'.webp';ARROW_IMG[k]=im;}
 function arrowByCost(c){return ARROW_IMG[c<=1?'arrow-wood':c<=3?'arrow-wood-bright':'arrow-gold'];}
@@ -1277,7 +1285,7 @@ function renderShop(){
   const need=XPN[P.lvl];
   $('#xpt').textContent=P.lvl>=9?'tối đa':'KN '+P.xp+'/'+need;
   $('#xpf').style.width=(P.lvl>=9?100:P.xp/need*100)+'%';
-  $('#gold').innerHTML='💰 '+P.gold+' <small>lãi +'+Math.min(5,Math.floor(P.gold/10))+'</small>';
+  $('#gold').innerHTML='<img class="coin" src="'+COIN_IMG+'" alt=""> '+P.gold+' <small>lãi +'+Math.min(5,Math.floor(P.gold/10))+'</small>';
   const prep=U.phase==='prep';
   $('#bxp').disabled=!prep||P.gold<4||P.lvl>=9;
   $('#rrl').disabled=!prep||P.gold<2;
@@ -1289,9 +1297,8 @@ function renderShop(){
     const own=[...P.board,...P.bench].filter(u=>u&&u.h===hid&&u.s===1).length;
     h+='<div class="card'+(afford?'':' no')+(own>=2?' pair':'')+'" style="--rc:'+COSTCOL[H.cost-1]+';--tc:'+TR[H.o].col+'" role="button" tabindex="0" data-buy="'+i+'" aria-label="Mua '+H.name+', '+H.cost+' vàng">'
       +'<button class="i" data-info="'+hid+'" aria-label="Xem '+H.name+'">i</button>'
-      +'<div class="em">'+portrait(hid)+'</div><div class="cn">'+H.name+'</div>'
-      +'<div class="tt"><span title="'+TR[H.o].name+'">'+TR[H.o].ico+'</span><span title="'+TR[H.c].name+'">'+CS[H.c].ico+'</span></div>'
-      +'<div class="co">💰 '+H.cost+'</div></div>';
+      +'<div class="em">'+portrait(hid)+'<div class="tt"><span title="'+TR[H.o].name+'">'+TR[H.o].ico+'</span><span title="'+TR[H.c].name+'">'+CS[H.c].ico+'</span></div></div><div class="cn">'+H.name+'</div>'
+      +'<div class="co"><img class="coin" src="'+COIN_IMG+'" alt=""> '+H.cost+'</div></div>';
   });
   $('#cards').innerHTML=h;
 }
@@ -1317,7 +1324,7 @@ function renderPeek(){
   if(pk.type==='hero'){
     const H=HERO[pk.h],st=heroStats(pk.h,pk.s),sk=H.sk;
     const sel=pk.k?me()[pk.k][pk.i]:null;
-    h='<div class="hd"><div class="tk" style="--c:46px;font-size:24px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" style="--tc:'+TR[H.o].col+'">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'">💰 '+H.cost+'</span><span class="tag">Kho còn '+poolCount(G,pk.h)+'</span></div></div></div>'
+    h='<div class="hd"><div class="tk" style="--c:46px;font-size:24px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" style="--tc:'+TR[H.o].col+'">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'"><img class="coin" src="'+COIN_IMG+'" alt=""> '+H.cost+'</span><span class="tag">Kho còn '+poolCount(G,pk.h)+'</span></div></div></div>'
      +'<div class="tags" style="margin:5px 0 0">'+[1,2,3].map(n=>'<span class="tag pst'+(n===pk.s?' on':'')+'" data-pstar="'+n+'">Xem '+'\u2605'.repeat(n)+'</span>').join('')+'</div>'
      +'<div class="stats"><span>Máu<b>'+st.hp+'</b></span><span>Sát thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
      +'<div class="skl"><b>'+sk.nm+'</b> (cần '+sk.mana+' nộ): '+skillText(sk,pk.s)+(H.c==='dukich'?' Đầu trận nhảy ra sau lưng địch.':'')+'</div>'
@@ -1445,7 +1452,7 @@ function fillBoard(P){
 
 /* ---------- vòng chơi ---------- */
 function beginRound(){
-  startRound(G);U.phase='prep';U.sel=null;U.peek=null;U.armed=false;U.timer=U.prepTime+(G.round===1?20:0);
+  startRound(G);U.phase='prep';if(!U.cornerShown){U.cornerShown=true;setTimeout(()=>{const cb=$('#cbtns');if(cb)cb.classList.add('show');},3000);}U.sel=null;U.peek=null;U.armed=false;U.timer=U.prepTime+(G.round===1?20:0);
   arena.classList.remove('battle');ulEl.innerHTML='';zlEl.innerHTML='';fxl.innerHTML='';PT.length=0;PJ.length=0;ctx.clearRect(0,0,cv.width,cv.height);
   $('#banner').className='banner';
   renderAll();
@@ -1556,7 +1563,7 @@ function loop(now){
   U.acc+=dt*U.speed;
   let n=0;while(U.acc>=TICK&&!B.over&&n<14){step(B,TICK);U.acc-=TICK;n++;}
   if(U.demo)demoTrack(B);events(B);sync(B);drawFx(dt*U.speed);
-  const _tx=$('#ttxt'),_tf=$('#tfill');if(_tx)_tx.textContent='Giao tranh '+Math.floor(B.t)+'s';if(_tf)_tf.style.width=Math.max(0,100-B.t/70*100)+'%';
+  const _tx=$('#ttxt'),_tf=$('#tfill');if(_tx)_tx.textContent='Giao tranh '+Math.floor(B.t)+'s';if(_tf)_tf.style.width=Math.max(0,100-B.t/70*100)+'%';const _ct=$('#clockTxt'),_cf=$('#clockFill');if(_ct)_ct.textContent=Math.max(0,Math.ceil(70-B.t));if(_cf)_cf.style.height=Math.max(0,100-B.t/70*100)+'%';
   if(B.over){setTimeout(()=>{if(U.demo)endDemo(B);else endBattle(B);},600);return;}
   U.raf=requestAnimationFrame(loop);
 }
@@ -1686,11 +1693,11 @@ function showStart(){
 setInterval(()=>{
   if(!G||U.phase!=='prep')return;
   const now=performance.now(),dt=Math.min(.5,(now-(U.tick||now))/1000);U.tick=now;
-  if(U.noTimer){$('#ttxt').textContent='Không giới hạn';$('#tfill').style.width='100%';return;}
+  if(U.noTimer){$('#ttxt').textContent='Không giới hạn';$('#tfill').style.width='100%';const _ct=$('#clockTxt'),_cf=$('#clockFill');if(_ct)_ct.textContent='\u221e';if(_cf)_cf.style.height='100%';return;}
   if($('#ov').classList.contains('show'))return;
   U.timer-=dt;
   $('#ttxt').textContent=Math.max(0,Math.ceil(U.timer))+' giây';
-  $('#tfill').style.width=Math.max(0,U.timer/(U.prepTime+(G.round===1?20:0))*100)+'%';
+  $('#tfill').style.width=Math.max(0,U.timer/(U.prepTime+(G.round===1?20:0))*100)+'%';const _ct=$('#clockTxt'),_cf=$('#clockFill');if(_ct)_ct.textContent=Math.max(0,Math.ceil(U.timer));if(_cf)_cf.style.height=Math.max(0,U.timer/(U.prepTime+(G.round===1?20:0))*100)+'%';
   if(U.timer<=0){readyGo(true);}
 },200);
 addEventListener('resize',fit);
