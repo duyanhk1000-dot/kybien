@@ -1060,7 +1060,7 @@ function drawFx(dt){
   for(let i=PJ.length-1;i>=0;i--){
     const p=PJ[i];p.t+=dt;const k=Math.min(1,p.t/p.dur);
     const x=p.a[0]+(p.b[0]-p.a[0])*k,y=p.a[1]+(p.b[1]-p.a[1])*k;
-    if(p.img&&p.img.complete&&p.img.naturalWidth){if(p.trail){const k0=Math.max(0,k-.3),x0=p.a[0]+(p.b[0]-p.a[0])*k0,y0=p.a[1]+(p.b[1]-p.a[1])*k0;ctx.save();ctx.globalCompositeOperation='lighter';ctx.strokeStyle=p.trail;ctx.lineWidth=3;ctx.lineCap='round';ctx.shadowColor=p.trail;ctx.shadowBlur=8;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x,y);ctx.stroke();ctx.restore();}const ang=Math.atan2(p.b[1]-p.a[1],p.b[0]-p.a[0]),w=U.c*1.15,h=w*p.img.naturalHeight/p.img.naturalWidth;ctx.save();ctx.globalCompositeOperation='lighter';ctx.translate(x,y);ctx.rotate(ang);ctx.drawImage(p.img,-w,-h/2,w,h);ctx.restore();}
+    if(p.img&&p.img.complete&&p.img.naturalWidth){if(p.trail){const k0=Math.max(0,k-.3),x0=p.a[0]+(p.b[0]-p.a[0])*k0,y0=p.a[1]+(p.b[1]-p.a[1])*k0;ctx.save();ctx.globalCompositeOperation='lighter';ctx.strokeStyle=p.trail;ctx.lineWidth=3;ctx.lineCap='round';ctx.shadowColor=p.trail;ctx.shadowBlur=8;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x,y);ctx.stroke();ctx.restore();}const ang=Math.atan2(p.b[1]-p.a[1],p.b[0]-p.a[0]),w=U.c*0.69,h=w*p.img.naturalHeight/p.img.naturalWidth;ctx.save();ctx.globalCompositeOperation='lighter';ctx.translate(x,y);ctx.rotate(ang);ctx.drawImage(p.img,-w,-h/2,w,h);ctx.restore();}
     else{const k0=Math.max(0,k-.22),x0=p.a[0]+(p.b[0]-p.a[0])*k0,y0=p.a[1]+(p.b[1]-p.a[1])*k0;
     ctx.strokeStyle=p.col;ctx.lineWidth=p.w;ctx.lineCap='round';ctx.shadowColor=p.col;ctx.shadowBlur=8;
     ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x,y);ctx.stroke();ctx.shadowBlur=0;}
