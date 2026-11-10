@@ -101,6 +101,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   box-shadow:0 0 0 calc(var(--c)*.03) var(--rc,#8e8777),0 0 0 calc(var(--c)*.055) #1b130d,0 0 0 calc(var(--c)*.075) #d6a335,0 4px 10px rgba(0,0,0,.55),inset 0 0 0 calc(var(--c)*.06) rgba(0,0,0,.35)}
 /* token có ảnh chân dung: ảnh lấp đầy vòng tròn, bỏ viền trang trí (giữ vòng chọn + bóng đổ) */
 .tok>.himg{width:100%;height:100%}
+/* trứng Tiên: bằng 3/4 icon tướng */
+.tok>.eggimg{width:75%;height:75%;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,211,106,.8))}
 .tok:has(>img.himg){box-shadow:0 0 0 calc(var(--c)*.035) var(--rc,#8e8777),0 0 0 calc(var(--c)*.06) #1b130d,0 4px 10px rgba(0,0,0,.55)}
 .bu.e .tok:has(>img.himg){box-shadow:0 0 0 calc(var(--c)*.035) #c4382c,0 0 0 calc(var(--c)*.06) #1b130d,0 4px 10px rgba(0,0,0,.55)}
 .pu[data-s="1"],.bu[data-s="1"]{--tw:72%}
@@ -390,7 +392,7 @@ const HEROES_RAW=[
 ['tranquangdieu','Trần Quang Diệu','🚩','tayson','cungno',2,{nm:'Tây Sơn Thần Xạ',t:'nuke',v:'ten',d:380,mana:70}],
 ['batrieu','Bà Triệu','👸','khoinghia','dukich',2,{nm:'Tượng Đạp Lãng',t:'dash',v:'voi',d:240,r:1.5,tg:'far',mana:70}],
 ['thuytinh','Thủy Tinh','🌊','hongbang','thuatsi',3,{nm:'Nộ Đào Cuồng Lan',t:'aoe',v:'lu',d:150,r:1.5,cen:'tgt',mana:90,zone:{kind:'flood',r:1.5,dur:6,dps:[60,100,170],slow:.3,delay:.6,cen:'tgt'}}],
-['aucơ','Âu Cơ','🦢','hongbang','hove',3,{nm:'Bách Tộc Tỳ Hựu',t:'none',v:'hoisinh',sh:100,al:'all',dur:6,mana:90,revive:{pct:[.4,.5,.6],dur:8}}],
+['aucơ','Âu Cơ','🦢','hongbang','hove',3,{nm:'Trứng Tiên',t:'none',v:'trungtien',mana:90,egg:{hpPct:[.45,.5,.55],hatch:2.5,reviveHp:[.6,.8,1],reviveMana:.5,knock:1,reHeal:[.3,.4,.5]}}],
 ['anduongvuong','An Dương Vương','🏯','aulac','chienbinh',3,{nm:'Loa Thành Thiết Bích',t:'none',v:'khiendong',sh:[250,430,700],al:'self',dur:6,mana:90,burst:{d:[200,340,560],r:2}}],
 ['kimquy','Kim Quy','🐢','aulac','hove',3,{nm:'Thần Quy Linh Giáp',t:'aoe',v:'kim',d:200,r:2.5,cen:'self',stun:[1.2,1.8,2.5],sh:300,al:'self',dur:5,mana:90}],
 ['lythuongkiet','Lý Thường Kiệt','📜','lytran','thuatsi',3,{nm:'Nam Quốc Sơn Hà',t:'aoe',v:'chu',d:290,r:2.5,cen:'tgt',stun:[1,1.2,1.5],mana:90}],
@@ -431,7 +433,7 @@ function skillText(sk,star){
   if(sk.sh&&!sk.taunt)a.push('tạo khiên '+f(sk.sh)+' cho '+who);
   else if(sk.sh&&sk.taunt)a.push('khiên '+f(sk.sh));
   if(sk.burst)a.push('khiên vỡ do bị đánh thì nổ '+f(sk.burst.d)+' sát thương trong '+sk.burst.r+' ô');
-  if(sk.revive)a.push('trong '+sk.revive.dur+' giây, đồng minh chết kế tiếp hồi sinh với '+pc(sk.revive.pct)+'% máu (1 lần, không hồi sinh lính)');
+  if(sk.egg)a.push('đặt ấn Trứng Tiên lên đồng minh thấp máu nhất (chỉ 1 ấn, đến khi tướng đó chết; xuất chiêu lại thì chuyển ấn, hoặc hồi '+pc(sk.egg.reHeal)+'% máu nếu vẫn là người đó). Tướng mang ấn nhận sát thương kết liễu sẽ hóa trứng với '+pc(sk.egg.hpPct)+'% máu, ấp '+sk.egg.hatch+' giây: trứng vỡ thì chết hẳn, sống sót thì tái sinh '+pc(sk.egg.reviveHp)+'% máu, 50% nộ, đẩy lùi địch 1 ô');
   if(sk.ad&&!sk.grow)a.push('+'+pc(sk.ad)+'% sát thương trong '+sk.dur+' giây cho '+who);
   if(sk.as)a.push('+'+pc(sk.as)+'% tốc đánh trong '+(sk.dur||6)+' giây cho '+who);
   const s=a.join('; ');return s.charAt(0).toUpperCase()+s.slice(1)+'.';
@@ -470,7 +472,7 @@ function traitCounts(list){
 function tierOf(t,n){let idx=-1;TR[t].tiers.forEach((x,i)=>{if(n>=x.n)idx=i;});return idx;}
 function boardList(P){return P.board.filter(Boolean);}
 function boardCount(P){return P.board.reduce((a,u)=>a+(u?1:0),0);}
-function bareUnit(o){return Object.assign({alive:true,acd:0,mcd:0,stun:0,press:0,hide:0,imm:0,mslow:0,slow:null,forced:null,tarm:[],pend:[],burst:null,life:0,revived:false,sm:false,boss:false,sh:0,shT:0,bf:[],tgt:null,mana:0,maxMana:0,sk:null,crit:0,spell:0,ls:0,star:1,cost:1,cls:'mon',col:'#c4382c'},o);}
+function bareUnit(o){return Object.assign({alive:true,acd:0,mcd:0,stun:0,press:0,hide:0,imm:0,mslow:0,slow:null,forced:null,tarm:[],pend:[],burst:null,life:0,revived:false,sm:false,boss:false,sh:0,shT:0,bf:[],tgt:null,mana:0,maxMana:0,sk:null,crit:0,spell:0,ls:0,star:1,cost:1,cls:'mon',col:'#c4382c',egg:null,eggMark:null},o);}
 function mkBU(u,side,x,y,counts,rfx){
   const H=HERO[u.h],cs=CS[H.c],s=u.s;
   let hp=HPC[H.cost-1]*cs.hp*Math.pow(1.8,s-1),ad=ADC[H.cost-1]*cs.ad*Math.pow(1.5,s-1);
@@ -510,7 +512,7 @@ const d2=(a,b)=>(a.x-b.x)**2+(a.y-b.y)**2;
 const cheb=(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
 const alv=(B,side)=>B.units.filter(u=>u.alive&&u.side===side);
 function newBattle(units,withEvents){
-  const B={units,t:0,over:false,winner:1,surv:0,occ:new Array(W*HH).fill(null),ev:withEvents?[]:null,zones:[],zid:1,rev:[null,null],byId:{}};
+  const B={units,t:0,over:false,winner:1,surv:0,occ:new Array(W*HH).fill(null),ev:withEvents?[]:null,zones:[],zid:1,byId:{}};
   for(const u of units){B.occ[u.y*W+u.x]=u;B.byId[u.id]=u;}
   for(const u of units){
     if(u.cls!=='dukich')continue;
@@ -552,12 +554,33 @@ function healRaw(B,u,v){if(!u.alive)return;const h=Math.min(u.max-u.hp,v);if(h<=
 function giveShield(u,v,dur){u.sh+=v;u.shT=Math.max(u.shT,dur);}
 function killUnit(B,u,noRevive){
   if(!u.alive)return;
-  const rv=B.rev[u.side];
-  if(!noRevive&&rv&&rv.t>0&&!rv.used&&!u.sm&&!u.mon&&!u.revived&&!B.over){
-    rv.used=true;u.revived=true;u.hp=Math.max(1,Math.round(u.max*rv.pct));u.imm=.5;u.stun=0;u.press=0;u.mana=0;u.sh=0;u.burst=null;
-    em(B,{k:'revive',id:u.id});return;
+  if(!noRevive&&u.eggMark&&!u.sm&&!u.mon&&!u.egg&&!B.over){
+    const E=HERO['aucơ'].sk.egg,s=u.eggMark.star;
+    const eggHp=Math.max(1,Math.round(u.max*sv(E.hpPct,s)));
+    u.eggMark=null;
+    u.egg={t:E.hatch,star:s,maxHp:eggHp};
+    u.hp=eggHp;
+    u.stun=Math.max(u.stun,E.hatch);u.imm=0;u.press=0;u.sh=0;u.burst=null;
+    em(B,{k:'egg',id:u.id});return;
   }
   u.hp=0;u.alive=false;B.occ[u.y*W+u.x]=null;em(B,{k:'die',id:u.id});
+}
+function knockback(B,src,dst){
+  const dx=Math.sign(dst.x-src.x),dy=Math.sign(dst.y-src.y);
+  let nx=dst.x,ny=dst.y;
+  if(Math.abs(dst.x-src.x)>=Math.abs(dst.y-src.y))nx=dst.x+dx;else ny=dst.y+dy;
+  if(nx<0||ny<0||nx>=W||ny>=HH||B.occ[ny*W+nx])return;
+  B.occ[dst.y*W+dst.x]=null;dst.x=nx;dst.y=ny;B.occ[dst.y*W+dst.x]=dst;
+  em(B,{k:'knock',id:dst.id});
+}
+function hatchEgg(B,u){
+  const E=HERO['aucơ'].sk.egg,s=u.egg.star;
+  u.egg=null;u.stun=0;u.press=0;
+  u.hp=Math.max(1,Math.round(u.max*sv(E.reviveHp,s)));
+  u.mana=u.maxMana?Math.round(u.maxMana*E.reviveMana):0;
+  u.imm=.5;
+  for(const f of alv(B,1-u.side))if(!f.boss&&Math.hypot(f.x-u.x,f.y-u.y)<=E.knock+.01)knockback(B,u,f);
+  em(B,{k:'hatch',id:u.id});
 }
 function explodeBurst(B,u){
   const b=u.burst;u.burst=null;if(!b)return;
@@ -700,7 +723,17 @@ function castSkill(B,u){
     u.tarm.push({v:sv(sk.tarm,s),t:sk.dur||6});
   }
   if(sk.grow){u.bf.push({ad:sv(sk.grow.ad,s),as:0,arm:sv(sk.grow.arm,s),grow:1,t:sv(sk.grow.dur,s)});em(B,{k:'grow',id:u.id});}
-  if(sk.revive){B.rev[u.side]={t:sk.revive.dur,pct:sv(sk.revive.pct,s),used:false};em(B,{k:'aura',side:u.side});}
+  if(sk.egg){
+    const E=sk.egg;
+    const allies=alv(B,u.side).filter(a=>!a.sm&&!a.egg);
+    if(allies.length){
+      const low=allies.reduce((a,b)=>(!a||b.hp/b.max<a.hp/a.max)?b:a,null);
+      const cur=allies.find(a=>a.eggMark);
+      if(cur&&cur!==low){cur.eggMark=null;low.eggMark={star:s};em(B,{k:'eggmark',id:low.id,from:u.id});}
+      else if(cur&&cur===low){healRaw(B,low,low.max*sv(E.reHeal,s));em(B,{k:'eggheal',id:low.id,from:u.id});}
+      else{low.eggMark={star:s};em(B,{k:'eggmark',id:low.id,from:u.id});}
+    }
+  }
   if(sk.burst){u.burst={d:sc(sk.burst.d,s),r:sk.burst.r};}
   const al=sk.al||((sk.heal||sk.sh||(sk.ad&&!sk.grow)||sk.as)?'self':null);
   if(al){
@@ -757,13 +790,13 @@ function act(B,u){
 function step(B,dt){
   if(B.over)return;
   B.t+=dt;
-  for(const r of B.rev)if(r&&r.t>0)r.t-=dt;
   if(B.t>30){const k=.006*(B.t-30)*dt;for(const u of B.units)if(u.alive)dealDamage(B,null,u,u.max*k,'true',false,{ignoreShield:true,noMana:true,silent:true,pierce:true,noBurst:true});}
   stepZones(B,dt);
   for(const u of B.units){
     if(!u.alive)continue;
     if(u.acd>0)u.acd-=dt;if(u.mcd>0)u.mcd-=dt;
     if(u.imm>0)u.imm-=dt;if(u.hide>0)u.hide-=dt;if(u.press>0)u.press-=dt;if(u.mslow>0)u.mslow-=dt;
+    if(u.egg){u.egg.t-=dt;if(u.stun>0)u.stun-=dt;if(u.egg.t<=0)hatchEgg(B,u);continue;}
     if(u.slow){u.slow.t-=dt;if(u.slow.t<=0)u.slow=null;}
     if(u.forced){u.forced.t-=dt;if(u.forced.t<=0)u.forced=null;}
     if(u.tarm.length){for(const a of u.tarm)a.t-=dt;u.tarm=u.tarm.filter(a=>a.t>0);}
@@ -1030,6 +1063,7 @@ const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend
 const MON_IMG={'Hồ Quái':MON_BASE+'ho-quai.webp?v=2','Mộc Quái':MON_BASE+'moc-quai.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh.webp?v=2','Ngư Tinh':MON_BASE+'ngu-tinh.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh.webp?v=2'};
 const FXIMG_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/fx/';
 const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
+const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
 const ARROW_IMG={};
 for(const k of ['arrow-gold','arrow-wood','arrow-wood-bright']){const im=new Image();im.src=FXIMG_BASE+k+'.webp';ARROW_IMG[k]=im;}
 function arrowByCost(c){return ARROW_IMG[c<=1?'arrow-wood':c<=3?'arrow-wood-bright':'arrow-gold'];}
@@ -1212,7 +1246,7 @@ function statusStr(u,B){
   if(u.mslow>0)s+='\uD83D\uDD78\uFE0F';
   if(u.burst)s+='\uD83D\uDCA5';
   if(u.imm>0)s+='\u2728';
-  const rv=B.rev[u.side];if(rv&&rv.t>0&&!rv.used&&!u.sm&&!u.mon)s+='\uD83D\uDD4A\uFE0F';
+  if(u.eggMark&&!u.sm&&!u.mon)s+='\uD83E\uDD5A';
   return s;
 }
 function buildZone(z){
@@ -1470,7 +1504,7 @@ function mkEl(u){
     '<div class="tok" style="--rc:'+(u.mon?'#7a2a14':costCol(u.h))+'">'+(u.h?ico(u.h):u.mon&&MON_IMG[u.name]?'<img class="himg" draggable="false" src="'+MON_IMG[u.name]+'" alt="">':u.ico)+((u.mon||u.sm)?'':'<i class="cg">'+CS[u.cls].ico+'</i>')+'</div>'+((u.mon||u.sm)?'':'<div class="st s'+u.star+'">'+'\u2605'.repeat(u.star)+'</div>')+'<div class="stt"></div>';
   d.style.transform='translate('+(u.x*U.c)+'px,'+(u.y*U.c)+'px)';
   ulEl.appendChild(d);
-  U.els[u.id]={d,tok:d.querySelector('.tok'),hf:d.querySelector('.hf'),sf:d.querySelector('.sf'),mp:d.querySelector('.mp i'),stt:d.querySelector('.stt'),sttv:'',mt:null,gr:false,hid:false};
+  U.els[u.id]={d,tok:d.querySelector('.tok'),hf:d.querySelector('.hf'),sf:d.querySelector('.sf'),mp:d.querySelector('.mp i'),stt:d.querySelector('.stt'),sttv:'',mt:null,gr:false,hid:false,isEgg:false};
   return U.els[u.id];
 }
 function demoTrack(B){
@@ -1574,7 +1608,13 @@ function sync(B){
   for(const u of B.units){
     const e=U.els[u.id];if(!e)continue;
     e.d.style.transform='translate('+(u.x*U.c)+'px,'+(u.y*U.c)+'px)';
-    e.hf.style.width=(u.hp/u.max*100)+'%';
+    e.hf.style.width=(u.egg?(u.hp/u.egg.maxHp*100):(u.hp/u.max*100))+'%';
+    const isEgg=!!u.egg;
+    if(isEgg!==e.isEgg){
+      e.isEgg=isEgg;
+      if(isEgg){e.tok.innerHTML='<img class="eggimg" draggable="false" src="'+EGG_IMG+'" alt="">';}
+      else{e.tok.innerHTML=(u.h?ico(u.h):u.mon&&MON_IMG[u.name]?'<img class="himg" draggable="false" src="'+MON_IMG[u.name]+'" alt="">':u.ico)+((u.mon||u.sm)?'':'<i class="cg">'+CS[u.cls].ico+'</i>');}
+    }
     e.sf.style.width=Math.min(100,u.sh/u.max*100)+'%';
     e.mp.style.width=u.maxMana?(u.mana/u.maxMana*100)+'%':'0';e.mp.classList.toggle('full',!!u.maxMana&&u.mana>=u.maxMana);
     const st=u.alive?statusStr(u,B):'';
@@ -1611,7 +1651,11 @@ function events(B){
     case 'pull':{const f=byId(B,e.from);if(u&&f){proj(ctr(f),ctr(u),.18,'#ffe9b0',4);const p=ctr(u);spawnP(p[0],p[1],6,{col:'#ffe9b0',sp:50,life:.4});}break;}
     case 'taunt':if(u){const p=ctr(u);floatText(p[0],p[1]-U.c*.5,'🎯','big');}break;
     case 'exec':if(u){const p=ctr(u);floatText(p[0],p[1]-U.c*.4,'\u2620','big');spawnP(p[0],p[1],14,{col:'#ff5a4a',sp:110,g:80,life:.6});hitstop(60);}break;
-    case 'revive':if(u){const p=ctr(u);ringFx(p[0],p[1],U.c*1.1,'#ffd36a',620,true);spawnP(p[0],p[1],20,{col:'#fff3c4',sp:90,g:-80,life:.9,size:3});shape('hoa',p[0],p[1]-U.c*.4,U.c*1.2,'#fff3c4',[{opacity:0,transform:'translateY(20px) scale(.5)'},{opacity:1,transform:'translateY(-10px) scale(1)',offset:.4},{opacity:0,transform:'translateY(-40px)'}],900,1.25);floatText(p[0],p[1]-U.c*.6,'HỒI SINH','big');}break;
+    case 'eggmark':if(u){const p=ctr(u);ringFx(p[0],p[1],U.c*.9,'#ffd36a',500,true);spawnP(p[0],p[1],10,{col:'#fff3c4',sp:60,g:-40,life:.7,size:2.5});floatText(p[0],p[1]-U.c*.6,'TRỨNG TIÊN','big');}break;
+    case 'eggheal':if(u){const p=ctr(u);spawnP(p[0],p[1],12,{col:'#9fe8a8',sp:60,g:-60,life:.8,size:3});}break;
+    case 'egg':if(u){const p=ctr(u);ringFx(p[0],p[1],U.c*1.1,'#ffd36a',700,true);spawnP(p[0],p[1],22,{col:'#fff3c4',sp:100,g:-60,life:1,size:3});shape('hoa',p[0],p[1]-U.c*.4,U.c*1.2,'#fff3c4',[{opacity:0,transform:'translateY(20px) scale(.5)'},{opacity:1,transform:'translateY(-10px) scale(1)',offset:.4},{opacity:0,transform:'translateY(-40px)'}],900,1.25);floatText(p[0],p[1]-U.c*.6,'HÓA TRỨNG','big');}break;
+    case 'hatch':if(u){const p=ctr(u);ringFx(p[0],p[1],U.c*1.4,'#ffd36a',700,true);spawnP(p[0],p[1],26,{col:'#fff3c4',sp:130,g:-100,life:1,size:3.5});spawnP(p[0],p[1],12,{col:'#ffd36a',sp:70,g:60,life:.8,size:3});floatText(p[0],p[1]-U.c*.6,'TÁI SINH','big');}break;
+    case 'knock':if(u){const p=ctr(u);spawnP(p[0],p[1],8,{col:'#ffd36a',sp:90,g:40,life:.5,size:3});}break;
     case 'burst':{const p=px(e.x,e.y);ringFx(p[0],p[1],e.r*U.c,'#e8c07a',520,true);spawnP(p[0],p[1],18,{col:'#e8c07a',sp:130,g:80,life:.6,shape:'q',size:3.5});shake(4,260);break;}
     case 'shield':if(els)els.tok.animate([{boxShadow:'0 0 0 3px #bfe3ff,0 0 16px 6px #8fc7ff'},{boxShadow:'0 0 0 0 transparent'}],{duration:600/U.speed});break;
     case 'buff':if(els)els.tok.animate([{filter:'brightness(1.8) saturate(1.6)'},{filter:'none'}],{duration:500/U.speed});break;
