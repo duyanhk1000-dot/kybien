@@ -22,6 +22,9 @@ body{background:radial-gradient(1100px 520px at 50% -8%,rgba(214,163,53,.16),tra
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 #app{min-height:100dvh;display:flex;flex-direction:column}
+.pagefoot{text-align:center;padding:12px 10px 16px;color:var(--ink2);font-size:13px}
+.pagefoot a{color:var(--gold);text-decoration:none;font-weight:600}
+.pagefoot a:hover{text-decoration:underline}
 .top{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--line);min-height:46px}
 .brand{display:flex;align-items:center;gap:7px;font-family:var(--serif);font-weight:800;font-size:17px;white-space:nowrap}
 .seal{width:24px;height:24px;display:grid;place-items:center;background:var(--cinn);color:#ffe9b0;border-radius:4px;transform:rotate(-4deg);font-style:normal;font-size:14px}
@@ -327,6 +330,7 @@ body.demo .skill-panel{display:block;grid-column:2;grid-row:1}
     <aside class="skill-panel" id="skillpanel"></aside>
     <aside class="side right"><div class="sh">Người chơi</div><div class="box" id="plist"></div></aside>
   </div>
+  <footer class="pagefoot"><a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html">★ Tiêu điểm tướng</a> · <a href="https://kybien.blogspot.com/">« Sảnh Game</a></footer>
 </div>
 <div id="toast"></div>
 <div class="ov" id="ov"></div>
@@ -784,6 +788,7 @@ function act(B,u){
   if(d>u.range&&!u.forced){const n=nearest(B,u);if(n&&cheb(u,n)<=u.range){u.tgt=n;t=n;d=cheb(u,n);}}
   const inR=d<=u.range,sk=u.sk;
   if(sk&&u.mana>=u.maxMana&&u.acd<=0&&(inR||!needsRange(sk))){castSkill(B,u);return;}
+  if(u.demoHold)return;
   if(inR){if(u.acd<=0)attack(B,u,t);}
   else if(u.mcd<=0)moveToward(B,u,t);
 }
@@ -1538,8 +1543,11 @@ function startDemo(heroId){
   cancelAnimationFrame(U.raf);
   U.demo=heroId;U.demoDmg=0;U.demoLastCast=null;U.phase='battle';U.sel=null;U.peek=null;
   const hero=mkBU({h:heroId,s:3},0,3,6,{},{});hero.mana=hero.maxMana;hero.max*=3;hero.hp=hero.max;
+  let allies=[hero];
+  if(heroId==='auc\u01a1'){hero.x=3;hero.y=7;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,3,5,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,2,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,3,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,4,2)];
-  const B=newBattle([hero].concat(foes),true);
+  for(const f of foes){f.maxMana=100;f.mana=50;}
+  const B=newBattle(allies.concat(foes),true);
   U.B=B;U.els={};U.zel={};
   ulEl.innerHTML='';zlEl.innerHTML='';fxl.innerHTML='';PT.length=0;PJ.length=0;
   arena.classList.add('battle');
@@ -1724,7 +1732,8 @@ function showStart(){
    +'<div class="row"><label>Độ khó máy</label><div class="seg" id="sd"><button data-v="0.6">Dễ</button><button data-v="1" class="on">Thường</button><button data-v="1.5">Khó</button></div></div>'
    +'<div class="row"><label>Đồng hồ chuẩn bị</label><div class="seg" id="st"><button data-v="40" class="on">40 giây</button><button data-v="0">Không giới hạn</button></div></div>'
    +'<div class="row"><label>Biểu tượng</label><div class="avp" id="sav">'+AV8.map(a=>'<button data-a="'+a+'" class="'+(a===selAv?'on':'')+'">'+a+'</button>').join('')+'</div></div>'
-   +'<button class="go big-go" id="play">Vào trận</button>'+HOW+'</div>';
+   +'<button class="go big-go" id="play">Vào trận</button>'
+   +'<p style="text-align:center;margin:10px 0 0"><a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank" rel="noopener">\u2605 Ti\u00eau \u0111i\u1ec3m t\u01b0\u1edbng \u2014 xem chi\u00eau t\u1eebng t\u01b0\u1edbng</a></p>'+HOW+'</div>';
   ov.className='ov show';ov.onclick=null;
   const seg=(id)=>{$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$(id).children].forEach(x=>x.classList.remove('on'));b.classList.add('on');};};
   seg('#sd');seg('#st');

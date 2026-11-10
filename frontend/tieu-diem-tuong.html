@@ -71,12 +71,16 @@ header p{margin:6px 0 0;color:var(--ink2)}
 .res .tiers .a{color:#ffd36a;font-weight:700}
 .watch{display:block;text-align:center;margin-top:12px;background:var(--bronze);color:#1a1109;font-weight:700;text-decoration:none;border-radius:999px;padding:10px 16px}
 .back{display:inline-block;margin-top:18px;color:var(--bronze);font-weight:600;text-decoration:none}
+.pagenav{display:flex;justify-content:space-between;gap:12px;margin:14px 0 0}
+.pagenav a{color:var(--bronze);font-weight:600;text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
 footer{text-align:center;color:var(--ink2);font-size:12px;margin-top:26px}
 @media(max-width:560px){header h1{font-size:27px}.grid{grid-template-columns:1fr 1fr}.card{padding:10px}.tok{width:52px;height:52px;font-size:25px}.card h3{font-size:15px}.skill p{display:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <nav class="pagenav"><a href="https://kybien.blogspot.com/">« Sảnh Game</a><a href="https://kybien.blogspot.com/p/co-huyen-su.html">Cờ Huyền Sử »</a></nav>
   <header>
     <h1>Tiêu điểm tướng</h1>
     <p>Cờ Huyền Sử — 30 thần tướng Việt, 11 tộc / hệ, 9 bảo vật.</p>
@@ -91,7 +95,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;margin-top:26px}
   <p class="count" id="count"></p>
   <div class="grid" id="grid"></div>
   <p class="empty" id="empty">Không tìm thấy tướng nào khớp bộ lọc.</p>
-  <a class="back" href="https://kybien.blogspot.com/p/co-huyen-su.html">← Chơi Cờ Huyền Sử</a>
+  <nav class="pagenav"><a href="https://kybien.blogspot.com/">« Sảnh Game</a><a href="https://kybien.blogspot.com/p/co-huyen-su.html">Cờ Huyền Sử »</a></nav>
   <footer>Cờ Huyền Sử · Sảnh Game Kỳ Biến</footer>
 </div>
 <div class="ov" id="ov"></div>
