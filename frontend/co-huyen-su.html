@@ -46,14 +46,15 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .box::-webkit-scrollbar{display:none}
 .stage{width:calc(var(--c)*8);display:flex;flex-direction:column;gap:6px}
 .boardrow{display:flex;flex-direction:column;align-items:center;gap:6px}
-.boardrow .tiltwrap{order:0}.boardrow .benchL{order:1}.boardrow .benchR{order:2}
+.boardrow .boardwrap{order:0}.boardrow .benchL{order:1}.boardrow .benchR{order:2}
+.boardwrap{position:relative;flex:none;width:calc(var(--c)*8);display:flex;flex-direction:column;justify-content:flex-end}
 .tiltwrap{flex:none;transition:transform .45s ease,height .45s ease}
 .tiltwrap.tilt{transform:perspective(950px) rotateX(38deg);transform-origin:50% 100%;display:flex;flex-direction:column;justify-content:flex-end}
 .tiltwrap.tilt .arena{overflow:visible;flex:none}
 @media(min-width:980px){
   .stage{width:calc(var(--c)*9.8 + 12px)}
   .boardrow{flex-direction:row;align-items:stretch;justify-content:center}
-  .boardrow .benchL{order:0}.boardrow .tiltwrap{order:1}.boardrow .benchR{order:2}
+  .boardrow .benchL{order:0}.boardrow .boardwrap{order:1}.boardrow .benchR{order:2}
   .boardrow.tilted .bench{align-self:flex-end}
 }
 @media(min-width:980px){
@@ -170,11 +171,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 /* goc nhin nghieng: dung token/sprite thang len (billboard gia: keo dai doc 1/cos38) */
 .tiltwrap.tilt .bu .tok,.tiltwrap.tilt .pu .tok{transform:translateY(calc(var(--c)*.08)) scaleY(1.27);transform-origin:50% 100%}
 .tiltwrap.tilt .bu.has-spr .tok{transform:translateY(calc(var(--c)*-.45)) scaleY(1.27)}
-.tiltwrap.tilt .peek{transform:scaleY(1.27);transform-origin:50% 100%}
 .tiltwrap.tilt .hint{transform:translateY(-50%) scaleY(1.27)}
 .tiltwrap.tilt .cbtns{transform:scaleY(1.27);transform-origin:50% 100%}
-.tiltwrap.tilt .ribbon{transform:translateY(-50%) scaleY(1.27)}
-.tiltwrap.tilt .bhud{transform:scaleY(1.27);transform-origin:100% 0}
 .tiltwrap.tilt .banner{transform:scaleY(1.27)}
 .bu .st{top:calc(var(--c)*.1)}
 .bars{position:absolute;left:10%;right:10%;top:calc(var(--c)*.02);height:calc(var(--c)*.1);background:#000a;border-radius:3px;overflow:hidden;z-index:2}
@@ -219,7 +217,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .banner p{margin:6px 0 0;color:#f3e8cf;font-size:13px;line-height:1.5}
 .banner small{display:block;margin-top:10px;color:#b9a98a}
 @keyframes fade{from{opacity:0}}
-.peek{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(var(--c)*4 - 16px);overflow-y:auto;background:rgba(32,22,14,.96);border:1.5px solid #8a6528;border-radius:12px;padding:8px 10px;color:#f3e8cf;z-index:15;display:none;font-size:12px;line-height:1.45}
+.peek{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(var(--c)*3);overflow-y:auto;background:rgba(32,22,14,.96);border:1.5px solid #8a6528;border-radius:12px;padding:8px 10px;color:#f3e8cf;z-index:15;display:none;font-size:12px;line-height:1.45}
 .peek.show{display:block}
 .peek .hd{display:flex;gap:8px;align-items:center}
 .peek .hd .tk{width:46px;flex:none;font-size:24px;position:relative}
@@ -346,20 +344,22 @@ body.demo .skill-panel{display:block;grid-column:2;grid-row:1}
     <main class="stage" id="stage">
       <div class="boardrow" id="boardrow">
       <div class="bench benchL" id="benchL"></div>
+      <div class="boardwrap" id="boardwrap">
       <div class="tiltwrap" id="tiltwrap">
       <div class="arena" id="arena">
         <div class="tiles" id="tiles"></div>
         <svg class="drum" id="drum" viewBox="-100 -100 200 200"></svg>
         <div class="cbtns" id="cbtns"><div class="cbtn clock" id="clockBtn" title="Thời gian"><i id="clockFill"></i><span id="clockTxt"></span></div><button class="cbtn spd" id="spd" title="Tốc độ trận đấu">×1</button></div>
-        <div class="bhud" id="bhud"><div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div><div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div><button class="go" id="ready">Chiến!</button></div>
         <div class="mid"></div>
         <div class="hint" id="hint"></div>
-        <div class="peek" id="peek"></div>
         <div class="cells" id="cells"></div>
         <div class="bl" id="bl"><div id="zl"></div><div id="ul"></div><canvas id="fxc"></canvas><div id="fxl"></div></div>
-        <div class="ribbon" id="ribbon"></div>
         <div class="banner" id="banner"></div>
       </div>
+      </div>
+      <div class="bhud" id="bhud"><div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div><div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div><button class="go" id="ready">Chiến!</button></div>
+      <div class="peek" id="peek"></div>
+      <div class="ribbon" id="ribbon"></div>
       </div>
       <div class="bench benchR" id="benchR"></div>
       </div>
@@ -1514,12 +1514,14 @@ $('#help').onclick=()=>showHelp();
 $('#fxm').onclick=()=>{const ks=['full','lite','min'];fxKey=ks[(ks.indexOf(fxKey)+1)%3];FX=FXM[fxKey];store.set('chs_fx',fxKey);setFxLabel();toast('Hiệu ứng: '+FX.n+' (chỉ đổi hình ảnh, không đổi kết quả trận)');};
 let VIEW_TILT=store.get('chs_view')!=='flat';
 function applyView(){const w=$('#tiltwrap');if(w)w.classList.toggle('tilt',VIEW_TILT);const br=$('#boardrow');if(br)br.classList.toggle('tilted',VIEW_TILT);const b=$('#viewBtn');if(b)b.textContent=VIEW_TILT?'Góc: Nghiêng':'Góc: Phẳng';store.set('chs_view',VIEW_TILT?'tilt':'flat');syncBench();}
-function syncBench(){const w=$('#tiltwrap'),bL=$('#benchL'),ar=$('#arena');
+function syncBench(){const w=$('#tiltwrap'),bw=$('#boardwrap'),bL=$('#benchL'),ar=$('#arena');
   if(!w||!bL||!ar)return;
-  if(!w.classList.contains('tilt')||innerWidth<980){bL.style.height='';bL.style.width='';bL.style.setProperty('--bs','');w.style.height='';return;}
+  if(!w.classList.contains('tilt')||innerWidth<980){bL.style.height='';bL.style.width='';bL.style.setProperty('--bs','');w.style.height='';if(bw)bw.style.height='';[...bL.children].forEach(s=>{s.style.transform='';});return;}
   const H=ar.offsetHeight,V=Math.round(H*0.788*950/(950+H*0.616)),s=Math.max(28,Math.floor((V-24)/9));
-  w.style.height=V+'px';
+  w.style.height=V+'px';if(bw)bw.style.height=V+'px';
   bL.style.height=V+'px';bL.style.width=s+'px';bL.style.setProperty('--bs',s+'px');
+  const c=U.c||100,maxShift=4*c*(0.616*H/(950+0.616*H));
+  [...bL.children].forEach((el,i)=>{const prog=(8-i)/8*maxShift,alt=(i%2===0?-0.08:0.08)*c;el.style.transform='translateX('+(prog+alt).toFixed(1)+'px)';});
 }
 $('#viewBtn').onclick=()=>{VIEW_TILT=!VIEW_TILT;applyView();};
 $('#traits').addEventListener('click',e=>{const t=e.target.closest('[data-trait]');if(!t||U.phase!=='prep')return;U.sel=null;U.peek={type:'trait',t:t.dataset.trait};renderAll();});
