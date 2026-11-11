@@ -52,9 +52,9 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .tiltwrap.tilt .arena{overflow:visible}
 @media(min-width:980px){
   .stage{width:calc(var(--c)*9.8 + 12px)}
-  .boardrow{flex-direction:row;align-items:stretch}
+  .boardrow{flex-direction:row;align-items:stretch;justify-content:center}
   .boardrow .benchL{order:0}.boardrow .tiltwrap{order:1}.boardrow .benchR{order:2}
-  .boardrow.tilted .bench{height:calc(var(--c)*5.5);align-self:flex-end}
+  .boardrow.tilted .bench{align-self:flex-end}
 }
 @media(min-width:980px){
   .game{flex-direction:row;align-items:flex-start;justify-content:center;gap:16px;padding:12px}
@@ -135,7 +135,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .benchL{grid-template-columns:repeat(4,1fr)}
 .benchR{grid-template-columns:repeat(5,1fr)}
 @media(min-width:980px){
-  .bench{width:calc(var(--c)*.9);height:auto;grid-template-columns:1fr;grid-auto-rows:calc(var(--c)*.9);align-content:space-between}
+  .bench{width:calc(var(--c)*.9);height:auto;grid-template-columns:1fr;grid-auto-rows:var(--bs,calc(var(--c)*.9));align-content:space-between}
 }
 .slot{position:relative;border-radius:50%;background:rgba(0,0,0,.22);border:1px dashed rgba(214,163,53,.5);display:grid;place-items:center;font-size:calc(var(--c)*.34)}
 .slot .st{font-size:calc(var(--c)*.15)}
@@ -1333,7 +1333,7 @@ function fit(){
   c=Math.max(40,Math.min(100,c));
   document.documentElement.style.setProperty('--c',c.toFixed(1)+'px');
   document.body.classList.toggle('big',c>=60);
-  U.c=c;sizeCanvas();
+  U.c=c;sizeCanvas();syncBench();
 }
 const toast=m=>{const d=document.createElement('div');d.textContent=m;$('#toast').appendChild(d);setTimeout(()=>d.remove(),2500);};
 const costCol=h=>COSTCOL[HERO[h].cost-1];
@@ -1508,7 +1508,13 @@ $('#auto').onclick=()=>{autoArrange(me());U.sel=null;U.peek=null;renderAll();};
 $('#help').onclick=()=>showHelp();
 $('#fxm').onclick=()=>{const ks=['full','lite','min'];fxKey=ks[(ks.indexOf(fxKey)+1)%3];FX=FXM[fxKey];store.set('chs_fx',fxKey);setFxLabel();toast('Hiệu ứng: '+FX.n+' (chỉ đổi hình ảnh, không đổi kết quả trận)');};
 let VIEW_TILT=store.get('chs_view')!=='flat';
-function applyView(){const w=$('#tiltwrap');if(w)w.classList.toggle('tilt',VIEW_TILT);const br=$('#boardrow');if(br)br.classList.toggle('tilted',VIEW_TILT);const b=$('#viewBtn');if(b)b.textContent=VIEW_TILT?'Góc: Nghiêng':'Góc: Phẳng';store.set('chs_view',VIEW_TILT?'tilt':'flat');}
+function applyView(){const w=$('#tiltwrap');if(w)w.classList.toggle('tilt',VIEW_TILT);const br=$('#boardrow');if(br)br.classList.toggle('tilted',VIEW_TILT);const b=$('#viewBtn');if(b)b.textContent=VIEW_TILT?'Góc: Nghiêng':'Góc: Phẳng';store.set('chs_view',VIEW_TILT?'tilt':'flat');syncBench();}
+function syncBench(){const w=$('#tiltwrap'),bL=$('#benchL'),bR=$('#benchR'),ar=$('#arena');
+  if(!w||!bL||!bR||!ar)return;
+  if(!w.classList.contains('tilt')||innerWidth<980){[bL,bR].forEach(b=>{b.style.height='';b.style.width='';b.style.setProperty('--bs','');});return;}
+  const H=ar.offsetHeight,V=Math.round(H*0.788*950/(950+H*0.616)),s=Math.max(30,Math.floor((V-12)/5));
+  [bL,bR].forEach(b=>{b.style.height=V+'px';b.style.width=s+'px';b.style.setProperty('--bs',s+'px');});
+}
 $('#viewBtn').onclick=()=>{VIEW_TILT=!VIEW_TILT;applyView();};
 $('#traits').addEventListener('click',e=>{const t=e.target.closest('[data-trait]');if(!t||U.phase!=='prep')return;U.sel=null;U.peek={type:'trait',t:t.dataset.trait};renderAll();});
 $('#peek').addEventListener('click',e=>{
