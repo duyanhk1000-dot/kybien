@@ -1619,7 +1619,7 @@ function startDemo(heroId){
     +'<button class="dbtn go" id="dreplay">\u21bb Xem lại</button>'
     +'<button class="dbtn" id="dback">\u2190 Quay lại</button>'
     +'<div class="dres" id="dres"></div>';
-  db.querySelectorAll('.dspd button').forEach(b=>b.onclick=()=>{U.speed=+b.dataset.s;db.querySelectorAll('.dspd button').forEach(x=>x.classList.toggle('on',x===b));});
+  db.querySelectorAll('.dspd button').forEach(b=>b.onclick=()=>{U.speed=+b.dataset.s;db.querySelectorAll('.dspd button').forEach(x=>x.classList.toggle('on',x===b));const sm=db.querySelector('.dinfo small');if(sm)sm.textContent='Xem chiêu \u2022 tốc độ \u00d7'+b.dataset.s+(b.dataset.s==='1'?'':b.dataset.s==='0.2'?' (chậm hơn 80%)':' (chậm hơn 50%)');});
   let tb=document.querySelector('.tbar');if(!tb){tb=document.createElement('div');tb.className='tbar';tb.innerHTML='<i id="tfill"></i><span id="ttxt"></span>';}db.appendChild(tb);
   $('#dreplay').onclick=()=>startDemo(heroId);
   $('#dback').onclick=()=>{location.href='https://kybien.blogspot.com/p/tieu-diem-tuong.html';};
@@ -1657,7 +1657,7 @@ function startCombat(){
   const [ua,ub]=matchUnits(G,lm);
   const B=newBattle(ua.concat(ub),true);U.B=B;U.els={};U.zel={};
   ulEl.innerHTML='';zlEl.innerHTML='';fxl.innerHTML='';PT.length=0;PJ.length=0;
-  arena.classList.add('battle');const _bh2=$('#bhud');if(_bh2)_bh2.style.display='none';renderTop();renderBench();renderShop();renderPeek();setTimeout(()=>{if(U.phase==='battle'){const cb=$('#cbtns');if(cb)cb.classList.add('show');}},5000);
+  arena.classList.add('battle');const _bh2=$('#bhud');if(_bh2)_bh2.style.display='none';renderTop();renderBench();renderShop();renderPeek();if(U.cbtnT)clearTimeout(U.cbtnT);U.cbtnT=setTimeout(()=>{if(U.phase==='battle'){const cb=$('#cbtns');if(cb)cb.classList.add('show');}},3000);
   for(const u of B.units)mkEl(u);
   U.last=performance.now();U.acc=0;U.raf=requestAnimationFrame(loop);
 }
@@ -1752,7 +1752,7 @@ function events(B){
   }
 }
 function endBattle(B){
-  U.phase='result';const _cb=$('#cbtns');if(_cb)_cb.classList.remove('show');
+  U.phase='result';const _cb=$('#cbtns');if(_cb)_cb.classList.remove('show');if(U.cbtnT){clearTimeout(U.cbtnT);U.cbtnT=null;}
   const m=U.lm;m.res={win0:B.winner===0,surv:B.surv,draw:B.winner===null};
   const before=me().hp;
   const info=applyRound(G);
