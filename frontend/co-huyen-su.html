@@ -141,7 +141,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .slot .st{font-size:calc(var(--c)*.15)}
 /* đơn vị trong trận */
 .bu{position:absolute;left:0;top:0;width:var(--c);height:var(--c);display:grid;place-items:center;font-size:calc(var(--c)*.46);transition:transform calc(.45s / var(--spd)) linear;will-change:transform}
-.bu .tok{margin-top:calc(var(--c)*.1);transition:width .2s,transform .3s,scale .18s}
+.bu .tok{margin-top:calc(var(--c)*.1);transition:width .2s,transform .3s,scale .18s,rotate .18s}
 .bu.e .tok{box-shadow:0 0 0 calc(var(--c)*.03) #c4382c,0 0 0 calc(var(--c)*.055) #1b130d,0 0 0 calc(var(--c)*.075) #d6a335,0 4px 10px rgba(0,0,0,.55),inset 0 0 0 calc(var(--c)*.06) rgba(0,0,0,.35)}
 .bu.sm{--tw:58%!important}.bu.sm .tok{opacity:.92;filter:hue-rotate(-20deg) brightness(1.1)}
 .bu.boss{--tw:104%!important}
@@ -160,6 +160,12 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bu[data-spr="attack_fire"] .tok{background-position:80% 0}
 .bu[data-spr="death"] .tok{background-position:100% 0}
 .bu.has-spr[data-face="-1"] .tok{scale:-1 1}
+/* token tron chua co sprite: nghieng 45 do, huong nghieng theo muc tieu */
+.bu:not(.has-spr)[data-face="1"] .tok{rotate:45deg}
+.bu:not(.has-spr)[data-face="-1"] .tok{rotate:-45deg}
+.benchL .pu .tok{rotate:45deg}
+.benchR .pu .tok{rotate:-45deg}
+#cells .pu .tok{rotate:45deg}
 @keyframes sprBob{0%,100%{translate:0 0}50%{translate:0 calc(var(--c)*-.05)}}
 .bu.has-spr[data-spr="idle"] .tok{animation:sprBob 2.6s ease-in-out infinite}
 /* goc nhin nghieng: dung token/sprite thang len (billboard gia: keo dai doc 1/cos38) */
@@ -1697,10 +1703,10 @@ function sync(B){
       else if(_now<e.atkUntil)setSpr(e,e.atkKind==='fire'?(_now<e.atkUntil-0.3?'attack_windup':'attack_fire'):'attack_windup');
       else{if(u.x!==e.lx||u.y!==e.ly){e.lx=u.x;e.ly=u.y;e.mvUntil=_now+0.45;}
         if(_now<e.mvUntil)setSpr(e,Math.floor(_now/0.225)%2?'gallop_b':'gallop_a');else setSpr(e,'idle');}
-      let _f=e.face;const _t=u.tgt;
-      if(_t&&_t.alive){if(_t.x>u.x)_f=1;else if(_t.x<u.x)_f=-1;}
-      if(_f!==e.face){e.face=_f;e.d.dataset.face=String(_f);}
     }
+    let _f=e.face;const _t=u.tgt;
+    if(_t&&_t.alive){if(_t.x>u.x)_f=1;else if(_t.x<u.x)_f=-1;}
+    if(_f!==e.face){e.face=_f;e.d.dataset.face=String(_f);}
     const pr=u.alive&&u.press>0;
     if(pr&&!e.mt&&FX.big){const m=document.createElement('div');m.className='mt';m.innerHTML=SV.nui;e.d.appendChild(m);e.mt=m;m.animate([{transform:'translateY(-'+(U.c*1.6)+'px)',opacity:0},{transform:'translateY(0)',opacity:1}],{duration:200/U.speed,easing:'ease-in'});}
     else if(!pr&&e.mt){e.mt.remove();e.mt=null;}
