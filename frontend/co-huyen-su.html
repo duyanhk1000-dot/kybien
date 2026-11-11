@@ -47,9 +47,9 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .stage{width:calc(var(--c)*8);display:flex;flex-direction:column;gap:6px}
 .boardrow{display:flex;flex-direction:column;align-items:center;gap:6px}
 .boardrow .tiltwrap{order:0}.boardrow .benchL{order:1}.boardrow .benchR{order:2}
-.tiltwrap{flex:none;transition:transform .45s ease}
-.tiltwrap.tilt{transform:perspective(950px) rotateX(38deg);transform-origin:50% 100%}
-.tiltwrap.tilt .arena{overflow:visible}
+.tiltwrap{flex:none;transition:transform .45s ease,height .45s ease}
+.tiltwrap.tilt{transform:perspective(950px) rotateX(38deg);transform-origin:50% 100%;display:flex;flex-direction:column;justify-content:flex-end}
+.tiltwrap.tilt .arena{overflow:visible;flex:none}
 @media(min-width:980px){
   .stage{width:calc(var(--c)*9.8 + 12px)}
   .boardrow{flex-direction:row;align-items:stretch;justify-content:center}
@@ -1517,8 +1517,9 @@ let VIEW_TILT=store.get('chs_view')!=='flat';
 function applyView(){const w=$('#tiltwrap');if(w)w.classList.toggle('tilt',VIEW_TILT);const br=$('#boardrow');if(br)br.classList.toggle('tilted',VIEW_TILT);const b=$('#viewBtn');if(b)b.textContent=VIEW_TILT?'Góc: Nghiêng':'Góc: Phẳng';store.set('chs_view',VIEW_TILT?'tilt':'flat');syncBench();}
 function syncBench(){const w=$('#tiltwrap'),bL=$('#benchL'),bR=$('#benchR'),ar=$('#arena');
   if(!w||!bL||!bR||!ar)return;
-  if(!w.classList.contains('tilt')||innerWidth<980){[bL,bR].forEach(b=>{b.style.height='';b.style.width='';b.style.setProperty('--bs','');});return;}
+  if(!w.classList.contains('tilt')||innerWidth<980){[bL,bR].forEach(b=>{b.style.height='';b.style.width='';b.style.setProperty('--bs','');});w.style.height='';return;}
   const H=ar.offsetHeight,V=Math.round(H*0.788*950/(950+H*0.616)),s=Math.max(30,Math.floor((V-12)/5));
+  w.style.height=V+'px';
   [bL,bR].forEach(b=>{b.style.height=V+'px';b.style.width=s+'px';b.style.setProperty('--bs',s+'px');});
 }
 $('#viewBtn').onclick=()=>{VIEW_TILT=!VIEW_TILT;applyView();};
