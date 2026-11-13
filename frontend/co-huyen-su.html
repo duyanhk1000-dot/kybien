@@ -99,7 +99,12 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bhud .rbox{text-align:right;min-width:0;flex:none}
 .bhud .rbox b{font-family:var(--sans);font-weight:700;font-style:normal;font-size:17px}
 .bhud .rbox small{font-size:12px;font-style:normal}
-.bhud .tbar{flex:none;width:200px;max-width:200px}
+.bhud .tbar{flex:none;width:125px;max-width:125px}
+.bhud-actions{display:flex;align-items:center;gap:6px;flex:none}
+.btn-quick{font-family:var(--sans);font-weight:700;font-style:normal;font-size:11px;padding:6px 9px;border-radius:10px;border:1px solid #d6a335;background:linear-gradient(180deg,#2e1e13,#1a110a);color:#ffe082;box-shadow:0 2px 0 rgba(0,0,0,.35);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;transition:all .15s ease}
+.btn-quick:hover{background:linear-gradient(180deg,#422a1a,#25180f);color:#fff;border-color:#ffd36a}
+.btn-quick:active{transform:translateY(1px);box-shadow:none}
+.btn-quick:disabled{opacity:.45;cursor:default}
 .bhud .go{font-family:var(--sans);font-weight:700;font-style:normal;font-size:11px;padding:6px 10px;flex:none}
 .cbtns{position:absolute;right:10px;bottom:10px;z-index:7;display:flex;flex-direction:column;gap:4px;opacity:0;pointer-events:none;transition:opacity 0s}
 .cbtns.show{opacity:1;pointer-events:auto;transition:opacity 1.2s ease}
@@ -206,8 +211,37 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .tiltwrap.tilt .bu.has-spr.sm .bars,.tiltwrap.tilt .bu.has-spr.sm .mp,.tiltwrap.tilt .bu.has-spr.sm .st{transform:translateY(calc(var(--c)*-.34 - 8px)) scaleY(1.36);transform-origin:50% 100%}
 .bu.has-spr .tok, .pu.has-spr .tok{margin-top:0!important;font-size:0!important;color:transparent!important;line-height:0!important;text-indent:-9999px!important;overflow:hidden;background:none;background-image:var(--spr);background-size:600% 100%;background-repeat:no-repeat;border-radius:0;box-shadow:none;filter:none!important}
 .bu.has-spr .tok *, .pu.has-spr .tok *{display:none!important}
-.pu.has-spr .nm{display:none!important}
+.slot .pu.has-spr .nm{display:none!important}
 .pu.has-spr.sel .tok{box-shadow:none!important;filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 16px var(--gold))!important}
+
+/* Tên tướng hiển thị dưới chân khi đặt trên bàn cờ ở chế độ chuẩn bị */
+.cell .pu .nm,
+.pu[data-kind="board"] .nm{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  position:absolute;bottom:calc(var(--c)*.10);left:50%;
+  transform:translateX(-50%);
+  width:max-content;max-width:calc(var(--c)*1.25);
+  padding:1px 6px;
+  font-family:var(--sans,sans-serif);font-size:10px;font-weight:700;line-height:1.2;
+  color:#fff4d6;background:rgba(18,12,7,.88);
+  border:1px solid rgba(214,163,53,.7);border-radius:8px;
+  box-shadow:0 2px 5px rgba(0,0,0,.75),0 0 5px rgba(214,163,53,.35);
+  text-shadow:0 1px 2px #000;
+  white-space:nowrap;pointer-events:none;z-index:5
+}
+.tiltwrap.tilt .cell .pu .nm,
+.tiltwrap.tilt .pu[data-kind="board"] .nm{
+  transform:translateX(-50%) scaleY(1.28);
+  transform-origin:50% 100%
+}
+@media(max-width:600px){
+  .cell .pu .nm, .pu[data-kind="board"] .nm{
+    font-size:8.5px;padding:0 4px;bottom:calc(var(--c)*.06);max-width:calc(var(--c)*1.05);overflow:hidden;text-overflow:ellipsis
+  }
+}
+/* Huy hiệu Nhân Duyên trong thanh Tộc / Hệ */
+.tr.tr-bond{border-radius:12px;background:linear-gradient(135deg,rgba(90,20,35,.9),rgba(35,12,20,.95));box-shadow:0 0 8px rgba(255,94,126,.5),inset 0 1px 2px rgba(255,180,200,.4);border-color:#ff8fa3!important}
+.tr.tr-bond .ti{filter:drop-shadow(0 0 3px #ff5e7e)}
 
 /* ============================================================
    LỰA CHỌN 1: ĐĨA HÀO QUANG DƯỚI CHÂN TƯỚNG SPRITE (CHUẨN TFT)
@@ -588,7 +622,7 @@ body.demo .skill-panel{display:block;grid-column:2;grid-row:1}
         <div class="banner" id="banner"></div>
       </div>
       </div>
-      <div class="bhud" id="bhud"><div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div><div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div><button class="go" id="ready">Chiến!</button></div>
+      <div class="bhud" id="bhud"><div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div><div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div><div class="bhud-actions"><button class="btn-quick" id="quickPick" title="Tự động xếp tướng mạnh nhất lên bàn">⚡ Chọn nhanh</button><button class="go" id="ready">Chiến!</button></div></div>
       <div class="peek" id="peek"></div>
       <div class="ribbon" id="ribbon"></div>
       </div>
@@ -701,6 +735,27 @@ const TR={
 const FXN={hp:['% máu',1],ad:['% sát thương',1],as:['% tốc đánh',1],armor:[' giáp',0],spell:['% sức mạnh kỹ năng',1],crit:['% chí mạng',1],ls:['% hút máu',1],mana:[' nộ khởi đầu',0]};
 function fxText(fx){return Object.keys(fx).map(k=>'+'+(FXN[k][1]?Math.round(fx[k]*100):fx[k])+FXN[k][0]).join(', ');}
 
+/* ===== Hệ thống Nhân Duyên Huyền Sử ===== */
+const BONDS=[
+  {id:'leloi_lelai',name:'Liều Mình Cứu Chúa',ico:'🗡️',heroes:['leloi','lelai'],scope:'members',desc:'Lê Lai liều mình đổi áo bào cứu Lê Lợi tại núi Chí Linh. Cả 2 tăng 10% Sát thương; Lê Lai thêm 25 Giáp, Lê Lợi vào trận nhận 20 Nộ.',fx:{ad:.1,armor:25,mana:20}},
+  {id:'trungtrac_trungnhi',name:'Mê Linh Đồng Khởi',ico:'🌺',heroes:['trungtrac','trungnhi'],scope:'members',desc:'Hai Bà Trưng phất cờ khởi nghĩa Mê Linh đền nợ nước trả thù nhà. Cả 2 tăng 25% Tốc đánh và 25 Nộ khởi đầu.',fx:{as:.25,mana:25}},
+  {id:'nu_anh_hao',name:'Hào Khí Nữ Nhi',ico:'👑',heroes:['trungtrac','trungnhi','batrieu'],scope:'team',desc:'Ba nữ kiệt lẫy lừng huyền sử Bách Việt. Cả đội tăng 12% Tốc đánh và 15% Sức mạnh kỹ năng.',fx:{as:.12,spell:.15}},
+  {id:'sontinh_thuytinh',name:'Sơn Thần Thủy Quái',ico:'⛰️',heroes:['sontinh','thuytinh'],scope:'members',desc:'Kỳ phùng địch thủ huyền sử núi Tản Viên và biển sâu. Cả 2 tăng 25% Sức mạnh kỹ năng, Thủy Tinh thêm 15% Hút máu, Sơn Tinh thêm 30 Giáp.',fx:{spell:.25,armor:30,ls:.15}},
+  {id:'chudongtu_tiendung',name:'Dạ Trạch Kỳ Duyên',ico:'🌸',heroes:['chudongtu','tiendung'],scope:'members',desc:'Mối duyên kỳ ngộ bãi cát Dạ Trạch, lập nên đầm Nhất Dạ cứu thế. Cả 2 tăng 20% Hút máu và 15% Máu tối đa.',fx:{ls:.2,hp:.15}},
+  {id:'laclongquan_auco',name:'Bách Noãn Khai Thiên',ico:'🐉',heroes:['laclongquan','auco'],scope:'team',desc:'Quốc Tổ Lạc Long Quân và Quốc Mẫu Âu Cơ sinh bọc trăm trứng Rồng Tiên. Toàn đội tăng 8% Máu tối đa, Lạc Long Quân vào trận có sẵn 40 Nộ.',fx:{hp:.08,mana:40}},
+  {id:'tranhungdao_giatuong',name:'Vương Gia Gia Tướng',ico:'🎖️',heroes:['tranhungdao','yetkieu','datuong'],scope:'members',desc:'Hưng Đạo Đại Vương cùng đôi gia tướng cận vệ vào sinh ra tử. Cả 3 nhận thêm 20% Máu, 25 Giáp và 15% Sát thương.',fx:{hp:.2,armor:25,ad:.15}},
+  {id:'donga_tuongsoai',name:'Hào Khí Đông A',ico:'🌊',heroes:['tranhungdao','tranquoctoan','phamngulao'],scope:'team',desc:'Thế hệ tướng soái lừng lẫy nhà Trần ba lần đánh tan quân Nguyên Mông. Toàn đội nhận thêm 15% Sát thương và 10% Chí mạng.',fx:{ad:.15,crit:.1}},
+  {id:'leloi_nguyentrai',name:'Quân Thần Tương Ngộ',ico:'📜',heroes:['leloi','nguyentrai'],scope:'team',desc:'Vua sáng tôi hiền Lam Sơn cùng soạn Bình Ngô Đại Cáo định quốc an dân. Toàn đội tăng 12% Sát thương và 15 Nộ khởi đầu.',fx:{ad:.12,mana:15}},
+  {id:'lamson_huynhde',name:'Lam Sơn Huynh Đệ',ico:'🔥',heroes:['leloi','lelai','nguyenxi'],scope:'members',desc:'Ba trụ cột khởi nghĩa Lam Sơn nằm gai nếm mật. Cả 3 tăng 20% Sát thương, 20 Giáp và 15% Tốc đánh.',fx:{ad:.2,armor:20,as:.15}},
+  {id:'tayson_haokiet',name:'Tây Sơn Hào Kiệt',ico:'🚩',heroes:['nguyenhue','tranquangdieu','buithixuan'],scope:'members',desc:'Hoàng đế Quang Trung cùng đôi hổ tướng Đô đốc Tây Sơn. Cả 3 tăng 20% Sát thương, 15% Chí mạng và 15% Tốc đánh.',fx:{ad:.2,crit:.15,as:.15}},
+  {id:'tranquangdieu_buithixuan',name:'Uyên Ương Trận Tuyến',ico:'⚔️',heroes:['tranquangdieu','buithixuan'],scope:'members',desc:'Cặp vợ chồng Đô đốc tiết liệt lừng danh Tây Sơn vào sinh ra tử. Cả 2 tăng 18% Sát thương, 20% Tốc đánh và 10% Hút máu.',fx:{ad:.18,as:.2,ls:.1}},
+  {id:'loathanh_nothan',name:'Loa Thành Nỏ Thần',ico:'🏯',heroes:['anduongvuong','caolo','kimquy'],scope:'team',desc:'Thần Kim Quy trao móng vuốt, Cao Lỗ chế tạo nỏ Liên Châu hộ thành. Toàn đội tăng 25 Giáp, Cao Lỗ tăng 20% Tốc đánh.',fx:{armor:25,as:.2}},
+  {id:'culuc_thanuy',name:'Cự Lực Thần Uy',ico:'🔨',heroes:['thanhgiong','phunghung'],scope:'members',desc:'Phù Đổng nhổ tre đánh giặc Ân kết hợp Phùng Hưng tay không đả hổ. Cả 2 tăng 25% Sát thương và 20% Máu tối đa.',fx:{ad:.25,hp:.2}},
+  {id:'bachdang_nhunguyet',name:'Giang Sơn Trấn Giữ',ico:'⚓',heroes:['ngoquyen','lythuongkiet'],scope:'members',desc:'Ngô Quyền phá quân Nam Hán trên sông Bạch Đằng và Lý Thường Kiệt thơ thần Như Nguyệt. Cả 2 tăng 25% Sức mạnh kỹ năng và 25 Nộ khởi đầu.',fx:{spell:.25,mana:25}}
+];
+function activeBonds(list){if(!list||!list.length)return [];const heroIds=new Set(list.map(u=>u.h));return BONDS.filter(b=>b.heroes.every(h=>heroIds.has(h)));}
+function heroBonds(hid){return BONDS.filter(b=>b.heroes.includes(hid));}
+
 /* ===== 30 tướng và kỹ năng =====
    d,heal,sh: số = nhân SKM (1/1,7/2,8); mảng = giá trị riêng ★1/★2/★3
    v = mã hiệu ứng hình ảnh */
@@ -803,19 +858,20 @@ function tierOf(t,n){let idx=-1;TR[t].tiers.forEach((x,i)=>{if(n>=x.n)idx=i;});r
 function boardList(P){return P.board.filter(Boolean);}
 function boardCount(P){return P.board.reduce((a,u)=>a+(u?1:0),0);}
 function bareUnit(o){return Object.assign({alive:true,acd:0,mcd:0,stun:0,press:0,hide:0,imm:0,mslow:0,slow:null,forced:null,tarm:[],pend:[],burst:null,life:0,revived:false,sm:false,boss:false,sh:0,shT:0,bf:[],tgt:null,mana:0,maxMana:0,sk:null,crit:0,spell:0,ls:0,star:1,cost:1,cls:'mon',col:'#c4382c',egg:null,eggMark:null},o);}
-function mkBU(u,side,x,y,counts,rfx){
+function mkBU(u,side,x,y,counts,rfx,bonds){
   const H=HERO[u.h],cs=CS[H.c],s=u.s;
   let hp=HPC[H.cost-1]*cs.hp*Math.pow(1.8,s-1),ad=ADC[H.cost-1]*cs.ad*Math.pow(1.5,s-1);
   const f={hp:0,ad:0,as:0,armor:0,spell:0,crit:cs.crit,ls:0,mana:cs.mana0};
-  const add=fx=>{for(const k in fx)f[k]=(f[k]||0)+fx[k];};
+  const add=fx=>{if(!fx)return;for(const k in fx)f[k]=(f[k]||0)+fx[k];};
   for(const t in counts){const i=tierOf(t,counts[t]);if(i<0)continue;const T=TR[t];if(T.scope==='team'||H.o===t||H.c===t)add(T.tiers[i].fx);}
   add(rfx);
+  if(bonds){for(const b of bonds){if(b.scope==='team'||b.heroes.includes(u.h))add(b.fx);}}
   hp=Math.round(hp*(1+f.hp));ad*=1+f.ad;
   return bareUnit({id:UID++,side,x,y,h:u.h,star:s,name:H.name,ico:H.ico,cost:H.cost,cls:H.c,org:H.o,col:TR[H.o].col,max:hp,hp,ad,armor:cs.armor+f.armor,as:cs.as*(1+f.as),range:cs.range,crit:f.crit,spell:f.spell,ls:f.ls,sk:H.sk,maxMana:H.sk.mana,mana:Math.min(f.mana,Math.floor(H.sk.mana*.6))});
 }
 function boardToUnits(P,side){
-  const counts=traitCounts(boardList(P)),rfx=relicFx(P),out=[];
-  P.board.forEach((u,i)=>{if(!u)return;const r=Math.floor(i/4),c=i%4;out.push(mkBU(u,side,side===0?c:W-1-c,r,counts,rfx));});
+  const bl=boardList(P),counts=traitCounts(bl),rfx=relicFx(P),bonds=activeBonds(bl),out=[];
+  P.board.forEach((u,i)=>{if(!u)return;const r=Math.floor(i/4),c=i%4;out.push(mkBU(u,side,side===0?c:W-1-c,r,counts,rfx,bonds));});
   return out;
 }
 function mon(nm,ico,hp,ad,armor,range,as,x,y,sk){return bareUnit({id:UID++,side:1,x,y,name:nm,ico,max:hp,hp,ad,armor,as,range,sk:sk||null,maxMana:sk?sk.mana:0,mon:true,cost:1});}
@@ -1696,6 +1752,7 @@ function renderTop(){
   $('#rd').textContent='Vòng '+G.round;$('#ph').textContent=phaseText();
   const r=$('#ready');r.disabled=U.phase!=='prep';r.classList.toggle('armed',U.armed);
   r.textContent=U.phase==='prep'?'Chiến!':'\u2026';
+  const qp=$('#quickPick');if(qp)qp.disabled=U.phase!=='prep';
   const prep=U.phase==='prep';
   const rb=$('#ribbon');
   if(rb){rb.textContent=prep?oppLabel():'';rb.style.display=prep?'':'none';rb.classList.toggle('battle-hide',!prep);}
@@ -1730,7 +1787,7 @@ function puHTML(k,i,u){
       +'<div class="bi-name">'+H.name+'</div>'
       +'</div>';
   }
-  return '<div class="pu'+(sel?' sel':'')+sprCls+'"'+sprSty+' data-s="'+u.s+'" data-unit="1" data-kind="'+k+'" data-i="'+i+'" title="'+(H?H.name:'')+'">'+tokHTML(u.h,u.s,'<span class="nm">'+shortName(H?H.name:'')+'</span>')+benchCard+'</div>';
+  return '<div class="pu'+(sel?' sel':'')+sprCls+'"'+sprSty+' data-s="'+u.s+'" data-unit="1" data-kind="'+k+'" data-i="'+i+'" title="'+(H?H.name:'')+'">'+tokHTML(u.h,u.s,'<span class="nm">'+(H?(k==='board'?H.name:shortName(H.name)):'')+'</span>')+benchCard+'</div>';
 }
 function renderBench(){const P=me();[...benchEl.children,...benchEl2.children].forEach((s,i)=>{const u=P.bench[i];s.innerHTML=u?puHTML('bench',i,u):'';});}
 function renderShop(){
@@ -1757,12 +1814,17 @@ function renderShop(){
   $('#cards').innerHTML=h;
 }
 function renderTraits(){
-  const counts=traitCounts(boardList(me()));
+  const bl=boardList(me());
+  const counts=traitCounts(bl);
   const ids=Object.keys(counts).sort((a,b)=>(tierOf(b,counts[b])-tierOf(a,counts[a]))||(counts[b]-counts[a]));
   let h='';
   for(const t of ids){
     const T=TR[t],ti=tierOf(t,counts[t]);
     h+='<div class="tr'+(ti>=0?' on':'')+'" style="--tc:'+T.col+'" data-trait="'+t+'"><span class="ti">'+T.ico+'</span></div>';
+  }
+  const ab=activeBonds(bl);
+  for(const b of ab){
+    h+='<div class="tr on tr-bond" style="--tc:#ff5e7e" data-bond="'+b.id+'" title="Nhân Duyên: '+b.name+'"><span class="ti">'+b.ico+'</span></div>';
   }
   $('#traits').innerHTML=h||'<div style="color:var(--ink2);font-size:12px;padding:4px">Đặt tướng lên bàn để kích hoạt cộng hưởng.</div>';
 }
@@ -1778,11 +1840,19 @@ function renderPeek(){
   if(pk.type==='hero'){
     const H=HERO[pk.h],st=heroStats(pk.h,pk.s),sk=H.sk;
     const sel=pk.k?me()[pk.k][pk.i]:null;
+    const hb=heroBonds(pk.h);
+    const bondsHTML=hb.length?'<div class="skl" style="margin-top:4px;color:#ffcad4"><b>Nhân Duyên:</b> '+hb.map(b=>'<span style="color:#ffd36a">'+b.ico+' '+b.name+'</span> ('+b.heroes.filter(x=>x!==pk.h).map(x=>HERO[x]?HERO[x].name:x).join(', ')+')').join('; ')+'</div>':'';
     h='<div class="hd"><div class="tk" style="--c:46px;font-size:24px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" style="--tc:'+TR[H.o].col+'">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'"><img class="coin" src="'+COIN_IMG+'" alt=""> '+H.cost+'</span><span class="tag">Kho còn '+poolCount(G,pk.h)+'</span></div></div></div>'
      +'<div class="tags" style="margin:5px 0 0">'+[1,2,3].map(n=>'<span class="tag pst'+(n===pk.s?' on':'')+'" data-pstar="'+n+'">Xem '+'\u2605'.repeat(n)+'</span>').join('')+'</div>'
      +'<div class="stats"><span>Máu<b>'+st.hp+'</b></span><span>Sát thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
      +'<div class="skl"><b>'+sk.nm+'</b> (cần '+sk.mana+' nộ): '+skillText(sk,pk.s)+(H.c==='dukich'?' Đầu trận nhảy ra sau lưng địch.':'')+'</div>'
+     +bondsHTML
      +'<div class="acts">'+(sel?'<button class="sell" data-sell="1">Bán +'+sellValue(sel)+' vàng</button>':'')+'<button data-closepeek="1">Đóng</button></div>';
+  }else if(pk.type==='bond'){
+    const B=pk.bond;
+    const heads=B.heroes.map(hid=>ico(hid)+' '+(HERO[hid]?HERO[hid].name:hid)).join(' \u00b7 ');
+    h='<div class="hd"><div class="tk" style="font-size:26px;width:auto">'+B.ico+'</div><div style="flex:1"><h4>'+B.name+' <span style="font-weight:500;font-size:12px;color:#ff8fa3">Nhân Duyên Kích Hoạt</span></h4></div></div><div style="margin:4px 0">'+B.desc+'</div>'
+     +'<div class="tiers"><div class="a">'+(B.scope==='team'?'Cả đội':'Các tướng trong bộ')+': '+fxText(B.fx)+'</div></div><div class="heads" style="font-size:12px;color:#ffd36a;margin-top:6px">'+heads+'</div><div class="acts"><button data-closepeek="1">Đóng</button></div>';
   }else{
     const T=TR[pk.t],counts=traitCounts(boardList(me())),n=counts[pk.t]||0,ti=tierOf(pk.t,n);
     const heads=Object.values(HERO).filter(x=>x.o===pk.t||x.c===pk.t).sort((a,b)=>a.cost-b.cost).map(x=>ico(x.id)).join(' ');
@@ -1898,7 +1968,16 @@ function syncBench(){const w=$('#tiltwrap'),bw=$('#boardwrap'),bL=$('#benchL'),a
   });
 }
 $('#viewBtn').onclick=()=>{VIEW_TILT=!VIEW_TILT;applyView();};
-$('#traits').addEventListener('click',e=>{const t=e.target.closest('[data-trait]');if(!t||U.phase!=='prep')return;U.sel=null;U.peek={type:'trait',t:t.dataset.trait};renderAll();});
+$('#traits').addEventListener('click',e=>{
+  if(U.phase!=='prep')return;
+  const bd=e.target.closest('[data-bond]');
+  if(bd){
+    const B=BONDS.find(x=>x.id===bd.dataset.bond);
+    if(B){U.sel=null;U.peek={type:'bond',bond:B};renderAll();return;}
+  }
+  const t=e.target.closest('[data-trait]');
+  if(t){U.sel=null;U.peek={type:'trait',t:t.dataset.trait};renderAll();}
+});
 $('#peek').addEventListener('click',e=>{
   if(e.target.closest('[data-closepeek]')){U.peek=null;U.sel=null;renderAll();}
   else if(e.target.closest('[data-sell]')&&U.sel){const v=sellUnit(G,me(),U.sel.k,U.sel.i);toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;renderAll();}
@@ -1906,6 +1985,25 @@ $('#peek').addEventListener('click',e=>{
 });
 $('#spd').onclick=()=>{U.speed=U.speed===1?2:U.speed===2?3:1;$('#spd').textContent='\u00d7'+U.speed;document.documentElement.style.setProperty('--spd',U.speed);};
 $('#ready').onclick=()=>readyGo(false);
+const qp=$('#quickPick');
+if(qp){
+  qp.onclick=()=>{
+    if(U.phase!=='prep')return;
+    const P=me();
+    if(boardCount(P)===0){
+      autoArrange(P);
+      toast('⚡ Đã tự động chọn và xếp đội hình!');
+    }else if(boardCount(P)<P.lvl){
+      fillBoard(P);
+      toast('⚡ Đã chọn nhanh tướng mạnh từ hàng chờ lên bàn!');
+    }else{
+      autoArrange(P);
+      toast('⚡ Đã tối ưu hóa lại vị trí toàn đội hình!');
+    }
+    U.sel=null;U.peek=null;
+    renderAll();
+  };
+}
 
 /* ---------- Bảng Thống Kê Chiến Trận (Kết thúc ván: Sát thương / Chống đỡ) ---------- */
 let qcMode='dmg';
