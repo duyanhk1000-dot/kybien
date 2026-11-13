@@ -1,0 +1,110 @@
+[
+  {
+    "id": "node_thao_duoc_ngoai_o",
+    "name": "Bụi Cỏ Thuốc Ngoại Ô Thôn",
+    "zone_id": "zone_thanh_ha_thon",
+    "place_id": "place_dong_phu_tan_tu",
+    "type": "HERB_PATCH",
+    "min_realm": "PHAM_NHAN",
+    "fatigue_cost": 5,
+    "success_rate": 0.95,
+    "description": "Ven bờ ruộng và chân đồi ngoại ô Thanh Hà Thôn mọc rất nhiều cỏ thuốc dại, dễ dàng tìm kiếm.",
+    "drops": [
+      {
+        "item_id": "item_thao_moc_linh_chi",
+        "item_name": "Thảo Mộc Linh Chi",
+        "chance": 0.8,
+        "min_qty": 1,
+        "max_qty": 2
+      },
+      {
+        "item_id": "item_kim_ngan_hoa",
+        "item_name": "Kim Ngân Hoa",
+        "chance": 0.6,
+        "min_qty": 1,
+        "max_qty": 3
+      }
+    ]
+  },
+  {
+    "id": "node_mo_sat_thanh_ha",
+    "name": "Mỏ Hắc Thiết Gò Đá Vôi",
+    "zone_id": "zone_thanh_ha_thon",
+    "place_id": "place_lo_ren",
+    "type": "ORE_VEIN",
+    "min_realm": "LUYEN_KHI_1",
+    "fatigue_cost": 8,
+    "success_rate": 0.9,
+    "description": "Các gò đá vôi lộ thiên có các vỉa quặng hắc thiết đen bóng, cần dùng cuốc chim để đục khai thác.",
+    "drops": [
+      {
+        "item_id": "item_thiet_khoang",
+        "item_name": "Hắc Thiết Khoáng",
+        "chance": 0.85,
+        "min_qty": 1,
+        "max_qty": 3
+      },
+      {
+        "item_id": "item_bach_luyen_tinh_thiet",
+        "item_name": "Bạch Luyện Tinh Thiết",
+        "chance": 0.25,
+        "min_qty": 1,
+        "max_qty": 1
+      }
+    ]
+  },
+  {
+    "id": "node_u_minh_linh_thao",
+    "name": "Vườn Nấm Linh Thao Đầm Trúc",
+    "zone_id": "zone_u_minh_truc_lam",
+    "place_id": "place_suoi_linh_tuyen",
+    "type": "HERB_PATCH",
+    "min_realm": "LUYEN_KHI_2",
+    "fatigue_cost": 10,
+    "success_rate": 0.85,
+    "description": "Ẩm ướt quanh dòng suối linh tuyền, nơi đây mọc các củ sâm lâu năm ngậm sương đêm.",
+    "drops": [
+      {
+        "item_id": "item_bach_nien_sam",
+        "item_name": "Bách Niên Sâm",
+        "chance": 0.65,
+        "min_qty": 1,
+        "max_qty": 2
+      },
+      {
+        "item_id": "item_thao_moc_linh_chi",
+        "item_name": "Thảo Mộc Linh Chi",
+        "chance": 0.9,
+        "min_qty": 2,
+        "max_qty": 4
+      }
+    ]
+  },
+  {
+    "id": "node_hac_phong_khoang_dong",
+    "name": "Hốc Đá Linh Tinh Hắc Phong",
+    "zone_id": "zone_hac_phong_nhai",
+    "place_id": "place_co_dong_bi_canh",
+    "type": "ORE_VEIN",
+    "min_realm": "LUYEN_KHI_4",
+    "fatigue_cost": 15,
+    "success_rate": 0.75,
+    "description": "Vách đá hiểm trở chịu gió bão cuồng phong mài mòn, làm lộ ra các tinh thể quặng linh thạch lấp lánh.",
+    "drops": [
+      {
+        "item_id": "item_khoang_thach_linh_tinh",
+        "item_name": "Linh Tinh Khoáng Thạch",
+        "chance": 0.5,
+        "min_qty": 1,
+        "max_qty": 2
+      },
+      {
+        "item_id": "item_bach_luyen_tinh_thiet",
+        "item_name": "Bạch Luyện Tinh Thiết",
+        "chance": 0.75,
+        "min_qty": 2,
+        "max_qty": 3
+      }
+    ]
+  }
+]

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="180" viewBox="0 0 400 180">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c1917"/>
+      <stop offset="100%" stop-color="#292524"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="180" rx="8" fill="url(#bgGrad)" stroke="#f59e0b" stroke-width="1.5" stroke-opacity="0.4"/>
+  <circle cx="200.0" cy="90.0" r="81.0" fill="url(#halo)"/>
+  <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="#f59e0b" font-family="'Noto Serif TC', serif, 'SimSun'" font-size="56px" font-weight="bold" opacity="0.9">府</text>
+  <text x="50%" y="166" text-anchor="middle" fill="#e2e8f0" font-family="sans-serif" font-size="22" opacity="0.85">Động Phủ Tàn Tích</text>
+</svg>

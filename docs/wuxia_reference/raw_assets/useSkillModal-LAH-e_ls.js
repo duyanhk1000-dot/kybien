@@ -1,0 +1,1 @@
+import{Rn as e}from"./ui-vendor-DqHKsdNW.js";var t=e(!1);function n(){t.value=!0}function r(){t.value=!1}export{n,t as r,r as t};

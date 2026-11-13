@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/assets/wuxialogo-6vBW2IfN.png" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+    <title>Wuxia Logs – Text-Based Game of Martial Choices</title>
+    <meta
+      name="description"
+      content="Live a martial life through choices. Explore Jianghu, master skills, and fight turn-based battles in this text-based wuxia game."
+    />
+    <meta name="theme-color" content="#191919" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="canonical" href="https://play.wuxialogs.com" />
+
+    <script>
+      (function () {
+        var h = window.location.hostname;
+        if (h === "playwuxia.pages.dev" || h.endsWith(".playwuxia.pages.dev")) {
+          window.location.replace(
+            "https://play.wuxialogs.com" +
+              window.location.pathname +
+              window.location.search +
+              window.location.hash
+          );
+        }
+
+        function handleChunkMismatch(msg) {
+          if (
+            msg &&
+            (msg.indexOf("dynamically imported module") !== -1 ||
+              msg.indexOf("Failed to fetch") !== -1 ||
+              msg.indexOf("Failed to load module") !== -1 ||
+              msg.indexOf("Importing a module") !== -1 ||
+              msg.indexOf("Expected a JavaScript-or-Wasm") !== -1)
+          ) {
+            var last = sessionStorage.getItem("last_chunk_reload");
+            var now = Date.now();
+            if (!last || now - parseInt(last, 10) > 8000) {
+              sessionStorage.setItem("last_chunk_reload", now.toString());
+              var url = new URL(window.location.href);
+              url.searchParams.set("_v", now.toString());
+              window.location.replace(url.toString());
+            }
+          }
+        }
+
+        window.addEventListener("error", function (e) {
+          handleChunkMismatch(e && e.message);
+        });
+
+        window.addEventListener("unhandledrejection", function (e) {
+          var reason = e && e.reason;
+          handleChunkMismatch(reason && (reason.message || String(reason)));
+        });
+      })();
+    </script>
+
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Wuxia Logs" />
+    <link rel="apple-touch-icon" href="/assets/wuxialogo-6vBW2IfN.png" />
+
+    <meta
+      property="og:title"
+      content="Wuxia Logs – Text-Based Game of Martial Choices"
+    />
+    <meta
+      property="og:description"
+      content="Explore Jianghu, build your path through decisions, and fight in turn-based battles — a quiet wuxia experience."
+    />
+    <meta
+      property="og:image"
+      content="https://wuxialogs.com/assets/wuxialogo.png"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://wuxialogs.com" />
+    <script type="module" crossorigin src="/assets/index-Di0RD3h2.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-lhHHWwHU.js">
+    <link rel="modulepreload" crossorigin href="/assets/ui-vendor-DqHKsdNW.js">
+    <link rel="modulepreload" crossorigin href="/assets/vue-core-C3WcfRwN.js">
+    <link rel="modulepreload" crossorigin href="/assets/useCurrentCharacter-BEjZP27x.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CJn87ZYv.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

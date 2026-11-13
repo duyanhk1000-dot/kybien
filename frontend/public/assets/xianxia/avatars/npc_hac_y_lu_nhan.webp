@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="80" height="80" rx="8" fill="url(#bgGrad)" stroke="#fbbf24" stroke-width="1.5" stroke-opacity="0.4"/>
+  <circle cx="40.0" cy="40.0" r="36.0" fill="url(#halo)"/>
+  <text x="50%" y="54%" dominant-baseline="central" text-anchor="middle" fill="#fbbf24" font-family="'Noto Serif TC', serif, 'SimSun'" font-size="36px" font-weight="bold" opacity="0.9">俠</text>
+  <text x="50%" y="74" text-anchor="middle" fill="#e2e8f0" font-family="sans-serif" font-size="9" opacity="0.85">Hắc Y Lữ Nhân</text>
+</svg>

@@ -1,0 +1,77 @@
+BẠN LÀ CHUYÊN GIA THIẾT KẾ UI/UX GAME & TECH LEAD KIẾM HIỆP/TIÊN HIỆP (CLAUDE CODE).
+
+Người dùng yêu cầu bạn:
+"Đánh giá về giao diện, UI/UX. Gửi giao diện, UI/UX game Giang hồ cho bạn và nhờ bạn phân tích mức độ tương thích để chuyển đổi game Tiên Lộ giống Giang Hồ. Sau đó đưa câu trả lời chi tiết, khách quan và chuyên sâu."
+
+Dưới đây là thông tin chi tiết và dữ liệu thực tế trích xuất từ 2 dự án trong repository:
+
+================================================================================
+I. KIẾN TRÚC GIAO DIỆN & UI/UX CỦA GAME "GIANG HỒ" (VÕ LÂM IDLE - HARY9X)
+Nguồn: D:\Lap trinh game\hary9x\ (index.html, ui/jx2.css, js/jxshell.js, PROJECT_ARCHITECTURE_MAP.md)
+================================================================================
+1. Triết lý thiết kế (Design Philosophy):
+   - Phong cách Võ Lâm Truyền Kỳ kinh điển (Retro 2005 JX1 phong cách Kingsoft hoài niệm).
+   - Tối ưu màn hình dọc di động (Mobile Portrait First) kết hợp co giãn linh hoạt trên Desktop.
+   - Viewport cố định (Fixed canvas 100dvh) dạng game client thu nhỏ, không cuộn trang web (Zero web scroll).
+
+2. Bố cục không gian (Screen Layout Layout Framework):
+   - Background & Sân đấu (Center Canvas #arena): Canvas 2.5D / 2D hiển thị nhân vật 8 hướng paperdoll, quái vật di chuyển, hiệu ứng chiêu thức (JFX sprite sheets), chữ số sát thương nhảy.
+   - HUD Trên Cùng (#top, cao 64px):
+     * Cụm máu/nội lực/kinh nghiệm kinh điển: Máu (HP Đỏ), Nội lực (MP Lam), Kinh nghiệm (XP Vàng), Cấp độ trong huy hiệu số.
+     * Tên nhân vật, Chiêu thức kích hoạt chính, Số lượng Vàng sở hữu.
+     * Thông tin Ải hiện tại (Khu vực, Thanh tiến độ diệt quái vượt ải, Tên bản đồ).
+   - Cột Điều Khiển Phải (#jxActs & #jxR):
+     * Cụm nút tròn xuất kích: [Vượt ải], [Luyện công (Sinh tồn)], [Công thành], [Tống Kim], [Leo tháp].
+     * Cột icon chức năng: [Nhật ký hành tẩu], [Nhận quà], [Tự cày (Auto thông minh)], [Việc hôm nay (Nhiệm vụ)], [Tự nhặt đồ], [Mở rộng menu (Tốc độ x1/x1.5/x2.5, Dọn đồ, Xoay chiêu, Hệ thống)].
+   - Cột Trái Dưới: Khung chat/nhật ký chiến đấu dã ngoại dạng gradient bán trong suốt.
+   - Bàn Phím Chiêu Thức & Dock Đáy (#bb & #pad, cao 92px):
+     * 4 ô kỹ năng xuất chiêu nhanh (phím 1, 2, 3, 4).
+     * Bình HP (Q), Bình MP (E), Thổ Địa Phù (TP) về thành dưỡng sức.
+     * Thanh đáy chứa 5 Tab điều hướng lớn (#tabs):
+       [Giang hồ] (Log/Bản đồ) | [Nhân vật] (C) | [Võ công] (S) | [Hành trang] (F) | [Khác] (Hệ thống).
+   - Hệ thống Cửa sổ & Modal (#panel, jxshell.js, jx_win.css):
+     * Khung gỗ hoàng kim/ngọc lục bảo phong cách JX, nút bấm kiểu tấm đá ngọc (plaque_0, 1, 2).
+     * Mở tab nào trồi lên cửa sổ đó, che mờ nền (#jxDim), kích thước vừa vặn ngón tay cái trên di động.
+
+================================================================================
+II. KIẾN TRÚC GIAO DIỆN & UI/UX CỦA GAME "TIÊN LỘ: VẠN GIỚI TRANH PHONG"
+Nguồn: D:\Lap trinh game\ky_bien\frontend\ (tien-lo.html, tienlo-engine.js, tienlo-coop.js, tienlo-worldboss.js)
+================================================================================
+1. Triết lý thiết kế (Design Philosophy):
+   - Phong cách Tiên Hiệp (Xianxia / Tu Chân Giới) hiện đại (Dark Fantasy Cổ Phong).
+   - Tông màu: Nền đen huyền bí, viền lục bảo ngọc thạch (--color-emerald), điểm nhấn hoàng kim ma đạo (--amber-glow).
+   - Dạng ứng dụng: Web App / Dashboard RPG (Quản lý tu vi, thẻ bài thám hiểm, clicker tu tiên).
+
+2. Bố cục không gian (Screen Layout):
+   - Top Header Wuxia (.wuxia-top-header): Thanh tài nguyên dính (Sticky) hiển thị Linh Thạch, Ngân Lượng, Thể Lực, Cảnh giới tu vi (Luyện Khí -> Kim Đan -> Nguyên Anh -> Đại Thừa), Nút Luân Hồi trùng sinh.
+   - Icon Navigation Bar (.wuxia-icon-nav): Thanh cuộn ngang chứa các nút phân hệ lớn:
+     [Động Phủ] | [Luyện Khí] | [Luyện Đan] | [Bát Hoang (Thám hiểm)] | [Đấu Trường] | [Bách Thú] | [Nhiệm Vụ] | [Tông Môn] | [Tổ Đội Co-op] | [Trảm Ma (World Boss)].
+   - Khu vực Nội dung chính (.main-content-layout):
+     * Chia thành các trang tab/card lớn dạng lưới (Grid/Cards).
+     * Chiến đấu: Turn-based thẻ bài văn bản (Text combat logs + avatar lắc + thanh HP 2 bên), không có thế giới mở di chuyển tự do bằng Canvas 2D.
+     * Các Modal lớn: Tổ Đội Co-op Realtime, Chiến trường Bí cảnh 3 người, Modal Trảm Ma Xích Diễm Ma Long với thanh HP khổng lồ và hiệu ứng sát thương bay.
+
+================================================================================
+III. YÊU CẦU ĐÁNH GIÁ & PHÂN TÍCH CHO CLAUDE
+================================================================================
+Hãy phân tích và trả lời chi tiết các câu hỏi sau:
+
+1. ĐÁNH GIÁ SO SÁNH UI/UX GIỮA HAI GAME:
+   - Ưu điểm và nhược điểm của phong cách "Giang hồ" (Võ Lâm Idle) vs "Tiên Lộ" (Xianxia Dashboard).
+   - Trải nghiệm người dùng (UX) trên Mobile (thao tác 1 tay, độ mỏi mắt, nhịp độ chơi).
+
+2. MỨC ĐỘ TƯƠNG THÍCH ĐỂ CHUYỂN ĐỔI GAME TIÊN LỘ GIỐNG GIANG HỒ:
+   - Đánh giá khả năng maping các tính năng của Tiên Lộ sang giao diện của Giang Hồ:
+     * Cảnh giới tu vi, Linh lực, Thể lực -> Máu, Nội lực, Cấp độ HUD trên.
+     * Luyện Đan, Luyện Khí, Động Phủ, Bát Hoang -> Các Ải luyện công và nút chức năng bên phải.
+     * Bách Thú Đồ Giám, Nhiệm vụ, Tông Môn -> Các Tab/Modal tương ứng.
+     * Tổ Đội Co-op và World Boss (M4.4) -> Đặt ở đâu trong layout Giang Hồ?
+   - Mức độ tương thích (%) về mặt Dữ liệu (Backend / State) và Giao diện (Frontend DOM / CSS).
+
+3. CÁC PHƯƠNG ÁN CHUYỂN ĐỔI KHẢ THI (Đưa ra ít nhất 2 phương án):
+   - Phương án 1: Reskin UI/UX Shell (Bọc layout HUD & Cửa sổ phong cách Giang hồ, giữ nguyên cơ chế combat thẻ bài/văn bản của Tiên Lộ).
+   - Phương án 2: Full Hybrid Conversion (Chuyển hẳn sang Canvas 2D sân đấu dã ngoại của Võ Lâm Idle kết hợp cốt truyện và hệ thống tu tiên của Tiên Lộ).
+   - So sánh độ khó, thời gian triển khai, và rủi ro của từng phương án.
+
+4. KẾT LUẬN & KHUYẾN NGHỊ CHO ĐỘI NGŨ PHÁT TRIỂN:
+   - Có nên chuyển đổi hay không? Nếu chuyển đổi thì nên đi theo hướng nào để tối ưu công sức và mang lại trải nghiệm tốt nhất cho người chơi?

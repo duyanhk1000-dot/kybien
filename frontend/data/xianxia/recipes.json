@@ -1,0 +1,222 @@
+[
+  {
+    "id": "recipe_luyen_dan_hoi_xuan",
+    "name": "Luyện Đan: Hồi Xuân Đan",
+    "discipline": "ALCHEMY",
+    "min_realm": "PHAM_NHAN",
+    "fatigue_cost": 6,
+    "silver_cost": 10,
+    "base_success_rate": 0.9,
+    "description": "Luyện chế từ Thảo Mộc Linh Chi và Kim Ngân Hoa để điều chế đan dược hồi phục 60 HP.",
+    "required_materials": [
+      {
+        "item_id": "item_thao_moc_linh_chi",
+        "item_name": "Thảo Mộc Linh Chi",
+        "quantity": 2
+      },
+      {
+        "item_id": "item_kim_ngan_hoa",
+        "item_name": "Kim Ngân Hoa",
+        "quantity": 1
+      }
+    ],
+    "result_success": {
+      "item_id": "item_hoi_xuan_dan",
+      "item_name": "Hồi Xuân Đan",
+      "quantity": 1,
+      "cultivation_gained": 15,
+      "exp_gained": 20
+    },
+    "result_failure": {
+      "item_id": "item_phe_dan",
+      "item_name": "Phế Đan Vỡ Nát",
+      "quantity": 1,
+      "narrative": "Lửa đan lô quá mạnh làm cháy sém thảo dược, sinh ra một viên phế đan cháy khét."
+    }
+  },
+  {
+    "id": "recipe_luyen_dan_duong_khi",
+    "name": "Luyện Đan: Dưỡng Khí Đan",
+    "discipline": "ALCHEMY",
+    "min_realm": "LUYEN_KHI_2",
+    "fatigue_cost": 12,
+    "silver_cost": 25,
+    "base_success_rate": 0.8,
+    "description": "Kết hợp Bách Niên Sâm với Yêu Đan Sơ Cấp tạo đan hoàn hồi 35 thể lực và 40 tu vi.",
+    "required_materials": [
+      {
+        "item_id": "item_bach_nien_sam",
+        "item_name": "Bách Niên Sâm",
+        "quantity": 1
+      },
+      {
+        "item_id": "item_yeu_dan_so_cap",
+        "item_name": "Yêu Đan Sơ Cấp",
+        "quantity": 1
+      }
+    ],
+    "result_success": {
+      "item_id": "item_duong_khi_dan",
+      "item_name": "Dưỡng Khí Đan",
+      "quantity": 1,
+      "cultivation_gained": 40,
+      "exp_gained": 50
+    },
+    "result_failure": {
+      "item_id": "item_phe_dan",
+      "item_name": "Phế Đan Vỡ Nát",
+      "quantity": 1,
+      "narrative": "Khí tức yêu thú trong nội đan phản phệ xung đột với sâm linh, đan lô bốc khói đen kịt tạo phế đan."
+    }
+  },
+  {
+    "id": "recipe_luyen_dan_truc_co",
+    "name": "Luyện Đan: Trúc Cơ Đan (Cực Phẩm)",
+    "discipline": "ALCHEMY",
+    "min_realm": "LUYEN_KHI_5",
+    "fatigue_cost": 25,
+    "silver_cost": 100,
+    "base_success_rate": 0.65,
+    "description": "Nghịch thiên chế đan giúp tu sĩ bước chân vào Trúc Cơ Kỳ, tăng 500 điểm Tu vi cực phẩm.",
+    "required_materials": [
+      {
+        "item_id": "item_huyen_am_thao",
+        "item_name": "Huyền Âm Thảo",
+        "quantity": 1
+      },
+      {
+        "item_id": "item_bach_nien_sam",
+        "item_name": "Bách Niên Sâm",
+        "quantity": 2
+      },
+      {
+        "item_id": "item_yeu_dan_so_cap",
+        "item_name": "Yêu Đan Sơ Cấp",
+        "quantity": 2
+      }
+    ],
+    "result_success": {
+      "item_id": "item_truc_co_dan",
+      "item_name": "Trúc Cơ Đan",
+      "quantity": 1,
+      "cultivation_gained": 250,
+      "exp_gained": 300
+    },
+    "result_failure": {
+      "item_id": "item_phe_dan",
+      "item_name": "Phế Đan Vỡ Nát",
+      "quantity": 2,
+      "narrative": "Dược tính cuồng bạo làm nứt đan phôi, lò đan nổ tung để lại hai viên phế đan vỡ nát."
+    }
+  },
+  {
+    "id": "recipe_ren_thanh_phong_kiem",
+    "name": "Luyện Khí: Thanh Phong Kiếm",
+    "discipline": "BLACKSMITHING",
+    "min_realm": "LUYEN_KHI_1",
+    "fatigue_cost": 10,
+    "silver_cost": 30,
+    "base_success_rate": 0.85,
+    "description": "Rèn thanh bảo kiếm từ Bạch Luyện Tinh Thiết và gân Lang Bì (+22 Công, +5 Tốc độ).",
+    "required_materials": [
+      {
+        "item_id": "item_bach_luyen_tinh_thiet",
+        "item_name": "Bạch Luyện Tinh Thiết",
+        "quantity": 2
+      },
+      {
+        "item_id": "item_lang_bi",
+        "item_name": "Lang Bì",
+        "quantity": 1
+      }
+    ],
+    "result_success": {
+      "item_id": "item_thanh_phong_kiem",
+      "item_name": "Thanh Phong Kiếm",
+      "quantity": 1,
+      "cultivation_gained": 30,
+      "exp_gained": 40
+    },
+    "result_failure": {
+      "item_id": "item_can_sat",
+      "item_name": "Xỉ Sắt Vụn",
+      "quantity": 1,
+      "narrative": "Nhiệt độ bễ thổi chưa đủ, phôi kiếm bị nứt đôi dưới búa tạ để lại xỉ sắt vụn."
+    }
+  },
+  {
+    "id": "recipe_ren_thiet_giap_y",
+    "name": "Luyện Khí: Thiết Giáp Y",
+    "discipline": "BLACKSMITHING",
+    "min_realm": "LUYEN_KHI_2",
+    "fatigue_cost": 12,
+    "silver_cost": 35,
+    "base_success_rate": 0.8,
+    "description": "Đúc giáp sắt kiên cố tăng 25 Phòng ngự từ Hắc Thiết Khoáng và Lang Bì.",
+    "required_materials": [
+      {
+        "item_id": "item_thiet_khoang",
+        "item_name": "Hắc Thiết Khoáng",
+        "quantity": 5
+      },
+      {
+        "item_id": "item_lang_bi",
+        "item_name": "Lang Bì",
+        "quantity": 2
+      }
+    ],
+    "result_success": {
+      "item_id": "item_thiet_giap_y",
+      "item_name": "Thiết Giáp Y",
+      "quantity": 1,
+      "cultivation_gained": 35,
+      "exp_gained": 45
+    },
+    "result_failure": {
+      "item_id": "item_can_sat",
+      "item_name": "Xỉ Sắt Vụn",
+      "quantity": 2,
+      "narrative": "Mối hàn phiến giáp bị gãy lệch khi tôi vào nước lạnh, tạo ra các xỉ sắt vô dụng."
+    }
+  },
+  {
+    "id": "recipe_luyen_dan_cuc_pham_truc_co",
+    "name": "Luyện Đan: Cực Phẩm Trúc Cơ Đan",
+    "discipline": "ALCHEMY",
+    "min_realm": "LUYEN_KHI_7",
+    "fatigue_cost": 35,
+    "silver_cost": 250,
+    "base_success_rate": 0.55,
+    "description": "Nghịch thiên luyện đan thuật phối chế Ngàn Năm Huyết Chi và Huyền Âm Thảo ngưng tụ Cực Phẩm Trúc Cơ Đan (+55% tỉ lệ, miễn phản phệ, +1200 Tu vi).",
+    "required_materials": [
+      {
+        "item_id": "item_ngan_nam_huyet_chi",
+        "item_name": "Ngàn Năm Huyết Chi",
+        "quantity": 1
+      },
+      {
+        "item_id": "item_huyen_am_thao",
+        "item_name": "Huyền Âm Thảo",
+        "quantity": 2
+      },
+      {
+        "item_id": "item_yeu_dan_so_cap",
+        "item_name": "Yêu Đan Sơ Cấp",
+        "quantity": 2
+      }
+    ],
+    "result_success": {
+      "item_id": "item_cuc_pham_truc_co_dan",
+      "item_name": "Cực Phẩm Trúc Cơ Đan",
+      "quantity": 1,
+      "cultivation_gained": 600,
+      "exp_gained": 800
+    },
+    "result_failure": {
+      "item_id": "item_phe_dan",
+      "item_name": "Phế Đan Vỡ Nát",
+      "quantity": 3,
+      "narrative": "Huyết sát và hàn khí xung đột dữ dội làm rạn nứt đỉnh đan lô, hóa thành 3 viên phế đan cháy khét."
+    }
+  }
+]

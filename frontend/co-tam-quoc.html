@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Cờ Tam Quốc (San-Kwo-K’i) - Kỳ Biến Sa Trường</title>
+  <meta name="description" content="Cờ Tam Quốc (San-Kwo-K’i) - Chiến trận ba nước Ngụy, Thục, Ngô trên bàn cờ lục giác sa trường Kỳ Biến."/>
+
+  <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC chuẩn giao diện Kỳ Biến -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet"/>
+
+  <!-- Nhận diện chế độ nhúng (Embed Blogger / Standalone) đồng bộ trang cờ thế -->
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var isEmbed = params.get('embed') === 'true' || params.get('embedded') === 'true' || params.get('no_header') === 'true' || (window.self !== window.top);
+        if (isEmbed) {
+          document.documentElement.classList.add('is-embedded');
+        }
+      } catch (e) {
+        document.documentElement.classList.add('is-embedded');
+      }
+    })();
+  </script>
+
+  <style>
+    /* ===== RESET & BASE WUXIA THEME (ĐỒNG BỘ TRANG CỜ THẾ) ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 0, #291e14, #0d0906);
+      color: #e8dcc6;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: #e5b36a; text-decoration: none; transition: all 0.2s ease; }
+    a:hover { color: #f1c40f; }
+
+
+.info-text,
+.small-text {
+  color: #ffffff; /* Màu trắng cho văn bản */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Hiệu ứng bóng chữ để tăng độ tương phản */
+}
+
+    /* ===== EMBED & STANDALONE BLOGGER MODE ===== */
+    html.is-embedded .kybien-navbar,
+    body.is-embedded .kybien-navbar {
+      display: none !important;
+    }
+    html.is-embedded .puzzle-main-wrapper,
+    body.is-embedded .puzzle-main-wrapper {
+      margin: 8px auto !important;
+      padding: 0 10px !important;
+      width: fit-content !important;
+      min-width: 100% !important;
+      max-width: 1300px !important;
+      box-sizing: border-box !important;
+    }
+
+    /* ===== NAVBAR ===== */
+    .kybien-navbar {
+      background: linear-gradient(135deg, #8b0000, #4a0000);
+      color: #ffffff;
+      padding: 12px 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid #f1c40f;
+    }
+    .nav-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand-logo {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Noto Serif TC', serif;
+    }
+    .brand-logo span { color: #f1c40f; }
+    .logo-general-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #c62828;
+      color: #ffffff;
+      border: 2px solid #f1c40f;
+      font-family: 'Noto Serif TC', serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px rgba(241,196,15,0.4);
+    }
+    .nav-links { display: flex; gap: 18px; list-style: none; align-items: center; }
+    .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.92rem; }
+    .nav-links a:hover, .nav-links a.active { color: #f1c40f; text-shadow: 0 0 6px rgba(241,196,15,0.5); }
+
+    /* ===== MAIN LAYOUT ===== */
+    .puzzle-main-wrapper {
+      max-width: 1300px;
+      margin: 18px auto;
+      padding: 0 16px;
+      flex: 1;
+      width: fit-content;
+      min-width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Sub-header & Mode Selector */
+    .mode-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #2c1a0e, #1a0f08);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 12px 20px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .mode-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+    .mode-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #5a3d22;
+      background: #1e120a;
+      color: #d1c0a5;
+      transition: all 0.2s ease;
+    }
+    .mode-btn.active {
+      background: #8b0000;
+      border-color: #f1c40f;
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(241,196,15,0.3);
+    }
+
+    /* BỐ CỤC 2 CỘT CHUẨN GIAO DIỆN TRANG CỜ THẾ */
+    .puzzle-grid {
+      display: grid;
+      grid-template-columns: 340px minmax(500px, 1fr);
+      gap: 20px;
+      align-items: start;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Cột Panel Trái (Quân Lực & Thiết Lập) */
+    .puzzle-panel {
+      background: linear-gradient(180deg, #24160c, #150b05);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    .panel-header {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.05rem;
+      color: #f1c40f;
+      border-bottom: 1px solid #5a3d22;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Form điều khiển */
+    .creator-form-group {
+      margin-bottom: 14px;
+    }
+    .creator-form-group label {
+      display: block;
+      color: #f1c40f;
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .creator-select {
+      width: 100%;
+      background: #140b05;
+      border: 1px solid #5a3d22;
+      border-radius: 6px;
+      color: #e8dcc6;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+      cursor: pointer;
+    }
+    .creator-select:focus {
+      border-color: #f1c40f;
+      box-shadow: 0 0 6px rgba(241, 196, 15, 0.3);
+    }
+
+    /* Cột Phải: Bàn Cờ Sa Trường */
+    .board-center-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .board-header-bar {
+      width: 100%;
+      background: linear-gradient(135deg, #2e1a0d, #1a0e06);
+      border: 1px solid #5a3d22;
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .puzzle-tags { display: flex; gap: 8px; font-size: 0.76rem; flex-wrap: wrap; align-items: center; }
+    .tag-tier {
+      background: #8b0000;
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border: 1px solid #a83a1f;
+      transition: all 0.3s ease;
+    }
+    .tag-index {
+      background: #332114;
+      color: #d4af37;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      border: 1px solid #5a3d22;
+      transition: all 0.3s ease;
+    }
+
+    .canvas-container {
+      background: #120904;
+      padding: 12px;
+      border-radius: 14px;
+      border: 2px solid #5a3d22;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #wrap {
+      width: 100%;
+      max-width: 630px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      touch-action: manipulation;
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5));
+    }
+
+    .board-actions {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-top: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-act {
+      background: linear-gradient(135deg, #3a2211, #24140a);
+      color: #e8dcc6;
+      border: 1px solid #5a3d22;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-act:hover {
+      background: #5a3d22;
+      color: #f1c40f;
+      border-color: #f1c40f;
+    }
+    .btn-act.btn-primary {
+      background: linear-gradient(135deg, #8b0000, #4a0000);
+      color: #ffffff;
+      border-color: #a83a1f;
+    }
+    .btn-act.btn-primary:hover {
+      background: #a83a1f;
+      border-color: #f1c40f;
+    }
+
+    /* Thẻ quân số 3 phe (Nằm phía trên cột Trái) */
+    .tamquoc-player-card {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 10px 12px;
+      background: #1b1007;
+      border: 1px solid #3d2716;
+      border-left: 4px solid #5a3d22;
+      border-radius: 8px;
+      margin-bottom: 9px;
+      transition: all 0.2s ease;
+    }
+    .tamquoc-player-card.dead {
+      opacity: 0.35;
+      filter: grayscale(80%);
+      text-decoration: line-through;
+    }
+    .pl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pl-faction {
+      font-family: 'Noto Serif TC', serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .pl-type {
+      font-size: 0.74rem;
+      color: #a8947d;
+      background: #120904;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid #2d1b0f;
+    }
+    .pl-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: #d1c0a5;
+    }
+    .pl-badge {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #332114;
+      color: #a8947d;
+      font-weight: 600;
+    }
+    .pl-badge.active-turn {
+      background: #143d1a;
+      color: #2ecc71;
+      border: 1px solid #27ae60;
+    }
+    .pl-badge.fallen {
+      background: #3d1414;
+      color: #e74c3c;
+    }
+
+    /* Quy tắc phá trận (Nằm dưới cả 2 cột) */
+    .rules-card-bottom {
+      margin-top: 20px;
+      background: linear-gradient(180deg, #24160c, #150b05);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .rules-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      font-size: 0.84rem;
+      color: #a8947d;
+      line-height: 1.6;
+    }
+    .rules-grid ul { padding-left: 18px; margin: 0; }
+    .rules-grid li { margin-bottom: 6px; }
+    .rules-grid strong { color: #e8dcc6; }
+
+    /* Responsive */
+    @media (max-width: 950px) {
+      .puzzle-grid {
+        grid-template-columns: 1fr;
+      }
+      .board-center-col { order: 1; }
+      .puzzle-panel.left-col { order: 2; }
+      .rules-grid { grid-template-columns: 1fr; gap: 8px; }
+    }
+
+@media (max-width: 768px) {
+  /* Điều chỉnh bố cục cho màn hình nhỏ hơn */
+  .puzzle-grid {
+    grid-template-columns: 1fr; /* Đặt bố cục thành 1 cột trên thiết bị di động */
+  }
+  .board-center-col {
+    order: 1; /* Đặt cột bàn cờ ở trên */
+  }
+  .puzzle-panel.left-col {
+    order: 2; /* Đặt cột thiết lập ở dưới */
+  }
+  /* Điều chỉnh khoảng cách và kích thước cho các thành phần */
+  .puzzle-panel {
+    padding: 12px; /* Giảm khoảng cách lề cho các bảng điều khiển */
+  }
+  .board-header-bar {
+    padding: 8px 12px; /* Giảm khoảng cách lề cho thanh tiêu đề bàn cờ */
+  }
+  /* ... */
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR CHUẨN KỲ BIẾN SA TRƯỜNG -->
+  <header class="kybien-navbar">
+    <div class="nav-container">
+      <div class="brand-logo">
+        <span class="logo-general-badge">帥</span>
+        <span>KỲ BIẾN</span> SA TRƯỜNG
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="arena-page.html">Sàn Đấu PvP</a></li>
+        <li><a href="co-the.html">Giải Cờ Thế</a></li>
+        <li><a href="co-tam-quoc.html" class="active">Cờ Tam Quốc</a></li>
+        <li><a href="cam-nang.html">Bí Pháp Cẩm Nang</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- MAIN ARENA -->
+  <main class="puzzle-main-wrapper">
+
+    <!-- SUBHEADER & CHỌN CHẾ ĐỘ NHANH -->
+    <div class="mode-bar">
+      <div class="mode-tabs">
+        <button class="mode-btn active" id="btn-tab-ai" onclick="selectQuickMode('ai')">🤖 1 Người Đấu 2 Máy</button>
+        <button class="mode-btn" id="btn-tab-2p" onclick="selectQuickMode('2p')">⚔️ 2 Người Đấu 1 Máy</button>
+        <button class="mode-btn" id="btn-tab-hot" onclick="selectQuickMode('hot')">👥 3 Người Chơi Chung Máy</button>
+      </div>
+      <!-- Thay "Chiến trận: Tam Phân Thiên Hạ..." bằng "CỜ TAM QUỐC · 三國棋" -->
+      <div style="font-size: 1.15rem; color: #f1c40f; font-family: 'Noto Serif TC', serif; font-weight: 700; letter-spacing: 0.5px;">
+        CỜ TAM QUỐC · 三國棋
+      </div>
+    </div>
+
+    <!-- BỐ CỤC 2 CỘT CHUẨN -->
+    <div class="puzzle-grid">
+
+      <!-- CỘT 1: GỒM "QUÂN LỰC TAM QUỐC" (Ở TRÊN) VÀ "THIẾT LẬP KỲ TRẬN" (Ở DƯỚI) -->
+      <aside class="puzzle-panel left-col">
+
+        <!-- 1. QUÂN LỰC TAM QUỐC (ĐẨY LÊN TRÊN THIẾT LẬP) -->
+        <div class="panel-header">
+          <span>⚔️ QUÂN LỰC TAM QUỐC</span>
+        </div>
+        <div id="pl"></div>
+
+        <!-- 2. THIẾT LẬP KỲ TRẬN -->
+        <div class="panel-header" style="margin-top: 18px;">
+          <span>⚙️ THIẾT LẬP KỲ TRẬN</span>
+        </div>
+
+        <!-- Bỏ phần "Chế độ chơi" hiển thị ngoài UI vì đã có chọn chế độ ở trên; giữ select ẩn để JS tương thích -->
+        <select id="mode" class="creator-select" style="display: none;">
+          <option value="ai">1 người đấu 2 máy</option>
+          <option value="2p">2 người đấu 1 máy</option>
+          <option value="hot">3 người chơi chung máy</option>
+        </select>
+
+        <div class="creator-form-group" id="side-group">
+          <label for="side" id="side-label">Phe bạn cầm quân</label>
+          <select id="side" class="creator-select">
+            <!-- Tự động cập nhật theo chế độ -->
+          </select>
+        </div>
+
+        <div class="creator-form-group">
+          <label for="first">Phe khai cuộc (Đi trước)</label>
+          <select id="first" class="creator-select">
+            <option value="0">Ngụy xuất quân trước</option>
+            <option value="1">Thục xuất quân trước</option>
+            <option value="2">Ngô xuất quân trước</option>
+          </select>
+        </div>
+
+        <div class="creator-form-group">
+          <label for="sp">Luật quân đặc biệt (Kỳ / Hỏa / Phong)</label>
+          <select id="sp" class="creator-select">
+            <option value="b">Bị cản (cần 2 ô thẳng trống)</option>
+            <option value="n">Không bị cản (nhảy qua quân)</option>
+          </select>
+        </div>
+
+        <button id="nw" class="btn-act btn-primary" style="width: 100%; justify-content: center; padding: 11px 16px; margin-top: 10px; font-size: 0.92rem;">
+          🔄 Khởi Động Ván Mới
+        </button>
+      </aside>
+
+      <!-- CỘT 2: BÀN CỜ SA TRƯỜNG -->
+      <section class="board-center-col">
+        <!-- Đã bỏ dòng "CỜ TAM QUỐC · 三國棋" ở main header -->
+        <div class="board-header-bar">
+          <div class="puzzle-tags">
+            <span class="tag-tier" id="tag-current-turn">Lượt: Ngụy</span>
+            <span class="tag-index" id="tag-view-angle" onclick="cycleViewSide()" style="cursor:pointer;" title="Bấm để xoay đổi góc nhìn bàn cờ">
+              Góc 6h: Thục 🔄
+            </span>
+            <span class="tag-index" id="tag-mode-info">1 Người vs 2 Máy</span>
+          </div>
+          <!-- Thông báo diễn biến đặc biệt (ăn Tướng, kết thúc...) -->
+          <div id="st-notice" style="font-size: 0.88rem; color: #f1c40f; font-weight: 700;"></div>
+        </div>
+
+        <!-- Khung bàn cờ viền sa trường -->
+        <div class="canvas-container">
+          <div id="wrap">
+            <svg id="sv" viewBox="-400 -400 800 800"></svg>
+          </div>
+        </div>
+
+        <!-- Các nút thao tác bàn cờ (Đã bỏ phần chữ "Lục giác 3 vùng · Tự xoay theo lượt") -->
+        <div class="board-actions">
+          <button class="btn-act btn-primary" onclick="init()">🔄 Đánh Lại</button>
+          <button class="btn-act" onclick="document.getElementById('nw').click()">⚔️ Ván Mới</button>
+          <button class="btn-act" onclick="cycleViewSide()">🔄 Xoay Bàn Cờ</button>
+        </div>
+
+        <!-- Đã bỏ thanh thông báo dưới bàn cờ; giữ phần tử ẩn để hàm status() tương thích hoàn toàn -->
+        <div id="st" style="display: none;"></div>
+      </section>
+
+    </div>
+
+    <!-- PHẦN "QUY TẮC PHÁ TRẬN" ĐỂ HẾT XUỐNG DƯỚI 2 CỘT -->
+    <div class="rules-card-bottom">
+      <div class="panel-header">
+        <span>📜 QUY TẮC PHÁ TRẬN</span>
+      </div>
+      <div class="rules-grid">
+        <ul>
+          <li><strong>Tuần hoàn lượt:</strong> <strong>Ngụy</strong> (Xanh dương) → <strong>Thục</strong> (Đỏ) → <strong>Ngô</strong> (Xanh lá).</li>
+          <li><strong>Tự động xoay bàn cờ:</strong> Bàn cờ tự động xoay phe của người chơi về vị trí 6h dễ quan sát; trong chế độ 2 người hoặc 3 người, đến lượt ai bàn cờ sẽ xoay theo góc nhìn của người đó.</li>
+        </ul>
+        <ul>
+          <li><strong>Trảm Tướng:</strong> Ăn Tướng phe nào thì phe đó bị loại, toàn bộ quân còn lại của phe đó thuộc về người ăn. Phe còn lại cuối cùng thắng!</li>
+          <li><strong>Quân đặc biệt:</strong> Ngụy (旗 Kỳ), Thục (火 Hỏa), Ngô (風 Phong) đi 2 ô thẳng rồi 1 ô chéo (Mã kéo dài).</li>
+          <li><strong>Tượng &amp; Tốt:</strong> Tượng không qua sông. Tốt chưa qua sông chỉ tiến; sang sông được đi ngang hoặc tiến, không được lùi.</li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+
+<script>
+const COL = ['#2563eb', '#dc2626', '#16a34a'];
+const NM = ['Ngụy', 'Thục', 'Ngô'];
+const RAD = 350, G = 0.84;
+const CH = {K: '將', A: '士', E: '象', H: '馬', R: '車', C: '炮', P: '卒', F: '火'};
+const VAL = {K: 1000, R9: 9, R: 9, C: 4.5, H: 4, E: 2, A: 2, P: 1, F: 3.5};
+const SP = ['旗', '火', '風'];
+const D = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+const BASE_ROT = [120, 0, 240].map(a => a * Math.PI / 180);
+const MIR = [1, 1, -1];
+
+// Góc nhìn bàn cờ hiện tại: phe nào ở góc 6h (0: Ngụy, 1: Thục, 2: Ngô)
+let viewSide = 1;
+
+function getRot(s) {
+  // Xoay toàn bộ hệ tọa độ sao cho viewSide có góc quay bằng 0 (ở vị trí 6h)
+  return BASE_ROT[s] - BASE_ROT[viewSide];
+}
+
+const X = (s, f) => {
+  const o = [], add = (a, b, l) => o.push([a, b, l]);
+  if (s === 0) {
+    if (f <= 4) add(2, f, 0);
+    if (f >= 4) add(1, 8 - f, 1);
+  } else if (s === 2) {
+    if (f <= 4) add(0, f, 0);
+    if (f >= 4) add(1, f, 0);
+  } else {
+    if (f <= 4) add(0, 8 - f, 1);
+    if (f >= 4) add(2, f, 0);
+  }
+  return o;
+};
+
+function step(st, vs) {
+  const [s, f, r] = st, d = vs[0], nf = f + d[0], nr = r + d[1];
+  if (nf < 0 || nf > 8 || nr < 0) return [];
+  if (nr <= 4) return [{st: [s, nf, nr], vs}];
+  return X(s, f).map(([s2, f2, fl]) => ({
+    st: [s2, f2, 4],
+    vs: vs.map(v => [fl ? -v[0] : v[0], -v[1]])
+  }));
+}
+
+const kk = st => st.join();
+const sq = (s, f, r) => [s, f, r].join();
+
+let B, cur, alive, sel, moves, over, last, humans;
+
+// Bộ nhớ đệm đồ họa bàn cờ cho 3 góc nhìn
+const bgCache = {};
+
+function updateSideOptions() {
+  const m = document.getElementById('mode').value;
+  const sideSelect = document.getElementById('side');
+  const sideLabel = document.getElementById('side-label');
+  const oldVal = sideSelect.value;
+
+  if (m === 'ai') {
+    sideLabel.textContent = 'Phe bạn cầm quân';
+    sideSelect.innerHTML = `
+      <option value="0">Ngụy (Xanh dương)</option>
+      <option value="1">Thục (Đỏ)</option>
+      <option value="2">Ngô (Xanh lá)</option>
+    `;
+    sideSelect.disabled = false;
+    if (['0', '1', '2'].includes(oldVal)) sideSelect.value = oldVal;
+    else sideSelect.value = '1';
+  } else if (m === '2p') {
+    sideLabel.textContent = 'Chọn 2 phe Người (Phe còn lại là Máy)';
+    sideSelect.innerHTML = `
+      <option value="0,1">Ngụy & Thục (Máy: Ngô)</option>
+      <option value="0,2">Ngụy & Ngô (Máy: Thục)</option>
+      <option value="1,2">Thục & Ngô (Máy: Ngụy)</option>
+    `;
+    sideSelect.disabled = false;
+    if (['0,1', '0,2', '1,2'].includes(oldVal)) sideSelect.value = oldVal;
+    else sideSelect.value = '0,1';
+  } else {
+    sideLabel.textContent = 'Người chơi điều khiển';
+    sideSelect.innerHTML = `
+      <option value="0,1,2">Cả 3 phe (Ngụy, Thục, Ngô)</option>
+    `;
+    sideSelect.disabled = true;
+  }
+}
+
+function init() {
+  B = new Map();
+  alive = [1, 1, 1];
+  cur = +document.getElementById('first').value;
+  sel = null;
+  moves = [];
+  over = false;
+  last = [];
+
+  const m = document.getElementById('mode').value;
+  const sideVal = document.getElementById('side').value;
+
+  if (m === 'ai') {
+    humans = [+sideVal];
+    // 1 người đấu 2 máy: mặc định phe người chơi chọn luôn ở góc 6h
+    viewSide = humans[0];
+  } else if (m === '2p') {
+    humans = sideVal.split(',').map(Number);
+    // 2 người đấu 1 máy: nếu phe đi trước là người chơi thì xoay theo phe đó, nếu máy đi trước thì để người chơi đầu tiên ở 6h
+    viewSide = humans.includes(cur) ? cur : humans[0];
+  } else {
+    humans = [0, 1, 2];
+    // 3 người chơi: bắt đầu với góc nhìn của phe khai cuộc
+    viewSide = cur;
+  }
+
+  for (let s = 0; s < 3; s++) {
+    const a = (t, f, r) => B.set(sq(s, f, r), {t, home: s, owner: s});
+    'RHEAKAEHR'.split('').forEach((t, f) => a(t, f, 0));
+    [1, 7].forEach(f => a('C', f, 2));
+    [3, 5].forEach(f => a('F', f, 2));
+    [0, 2, 4, 6, 8].forEach(f => a('P', f, 3));
+  }
+
+  syncModeTabs();
+  render();
+  next(true);
+}
+
+function selectQuickMode(m) {
+  document.getElementById('mode').value = m;
+  updateSideOptions();
+  init();
+}
+
+function syncModeTabs() {
+  const m = document.getElementById('mode').value;
+  ['ai', '2p', 'hot'].forEach(t => {
+    const btn = document.getElementById(`btn-tab-${t}`);
+    if (btn) {
+      if (m === t) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
+
+  const modeBadge = document.getElementById('tag-mode-info');
+  if (modeBadge) {
+    if (m === 'ai') modeBadge.textContent = `1 Người vs 2 Máy (${NM[humans[0]]})`;
+    else if (m === '2p') modeBadge.textContent = '2 Người vs 1 Máy';
+    else modeBadge.textContent = '3 Người Chơi Chung Máy';
+  }
+}
+
+// Bấm đổi góc nhìn bàn cờ thủ công
+function cycleViewSide() {
+  viewSide = (viewSide + 1) % 3;
+  render();
+}
+
+function gen(k, pc) {
+  const [s, f, r] = k.split(',').map(Number), out = new Set(), h = pc.home, t = pc.t, st0 = [s, f, r];
+  const foe = x => B.has(x) && B.get(x).owner !== pc.owner;
+  const ok = x => !B.has(x) || B.get(x).owner !== pc.owner;
+
+  if (t === 'R' || t === 'C') {
+    for (const d of D) {
+      const stack = [{st: st0, vs: [d], scr: false}];
+      while (stack.length) {
+        const c = stack.pop();
+        for (const n of step(c.st, c.vs)) {
+          const x = kk(n.st);
+          let scr = c.scr;
+          if (!B.has(x)) {
+            if (!scr) out.add(x);
+            stack.push({st: n.st, vs: n.vs, scr});
+          } else if (t === 'R') {
+            if (foe(x)) out.add(x);
+          } else if (!scr) {
+            stack.push({st: n.st, vs: n.vs, scr: true});
+          } else if (foe(x)) {
+            out.add(x);
+          }
+        }
+      }
+    }
+  } else if (t === 'H') {
+    for (const d of D) {
+      for (const p of [[-d[1], d[0]], [d[1], -d[0]]]) {
+        for (const a of step(st0, [d, p])) {
+          if (B.has(kk(a.st))) continue;
+          for (const b of step(a.st, a.vs)) {
+            for (const c of step(b.st, [b.vs[1]])) {
+              const x = kk(c.st);
+              if (ok(x)) out.add(x);
+            }
+          }
+        }
+      }
+    }
+  } else if (t === 'F') {
+    const blk = document.getElementById('sp').value === 'b';
+    for (const d of D) {
+      for (const p of [[-d[1], d[0]], [d[1], -d[0]]]) {
+        for (const a of step(st0, [d, p])) {
+          if (blk && B.has(kk(a.st))) continue;
+          for (const b of step(a.st, a.vs)) {
+            if (blk && B.has(kk(b.st))) continue;
+            for (const c of step(b.st, b.vs)) {
+              for (const e of step(c.st, [c.vs[1]])) {
+                const x = kk(e.st);
+                if (ok(x)) out.add(x);
+              }
+            }
+          }
+        }
+      }
+    }
+  } else if (t === 'K') {
+    for (const d of D) {
+      const a = f + d[0], b = r + d[1];
+      if (a >= 3 && a <= 5 && b >= 0 && b <= 2 && ok(sq(h, a, b))) out.add(sq(h, a, b));
+    }
+  } else if (t === 'A') {
+    for (const a of [-1, 1]) {
+      for (const b of [-1, 1]) {
+        const x = f + a, y = r + b;
+        if (x >= 3 && x <= 5 && y >= 0 && y <= 2 && ok(sq(h, x, y))) out.add(sq(h, x, y));
+      }
+    }
+  } else if (t === 'E') {
+    for (const a of [-2, 2]) {
+      for (const b of [-2, 2]) {
+        const x = f + a, y = r + b;
+        if (x < 0 || x > 8 || y < 0 || y > 4 || B.has(sq(h, f + a / 2, r + b / 2))) continue;
+        if (ok(sq(h, x, y))) out.add(sq(h, x, y));
+      }
+    }
+  } else if (t === 'P') {
+    for (const d of (s === h ? [[0, 1]] : D)) {
+      for (const n of step(st0, [d])) {
+        const x = kk(n.st);
+        if (s !== h && d[1] === 1 && !(r === 4 && n.st[0] !== h)) continue;
+        if (ok(x)) out.add(x);
+      }
+    }
+  }
+  return [...out];
+}
+
+function legal(p) {
+  const o = [];
+  for (const [k, pc] of B) {
+    if (pc.owner === p) {
+      for (const t of gen(k, pc)) o.push({f: k, t});
+    }
+  }
+  return o;
+}
+
+function apply(m) {
+  const pc = B.get(m.f), cap = B.get(m.t);
+  B.delete(m.f);
+  B.set(m.t, pc);
+  let rm = null;
+  if (cap && cap.t === 'K') {
+    rm = cap.owner;
+    alive[rm] = 0;
+    for (const q of B.values()) {
+      if (q.owner === rm) q.owner = pc.owner;
+    }
+  }
+  return rm;
+}
+
+function pp(s, f, r) {
+  let t = (f - 4) / 4 * MIR[s];
+  const u = r / 4 * G, bx = 0.5 * t, by = 0.866, fx = 0.75 * t, fy = 0.433 * Math.abs(t);
+  const x = bx + (fx - bx) * u, y = by + (fy - by) * u;
+  const rot = getRot(s);
+  const c = Math.cos(rot), n = Math.sin(rot);
+  return [RAD * (x * c - y * n), RAD * (x * n + y * c)];
+}
+
+const pos = k => pp(...k.split(',').map(Number));
+
+function boardSVG() {
+  let g = '';
+  const hx = [0, 1, 2, 3, 4, 5].map(i => [RAD * Math.cos(i * Math.PI / 3), RAD * Math.sin(i * Math.PI / 3)].join()).join(' ');
+  g += `<polygon points="${hx}" fill="#e9d3a0" stroke="#5b4a2e" stroke-width="4"/>`;
+  const ln = (pts, c, w) => `<polyline points="${pts.map(p => p.join()).join(' ')}" fill="none" stroke="${c}" stroke-width="${w}"/>`;
+
+  for (let s = 0; s < 3; s++) {
+    const ring = [];
+    for (let f = 0; f <= 8; f++) ring.push(pp(s, f, 0));
+    for (let f = 8; f >= 0; f--) ring.push(pp(s, f, 4));
+    g += `<polygon points="${ring.map(p => p.join()).join(' ')}" fill="${COL[s]}" fill-opacity=".12" stroke="#8a7650" stroke-width="1.5"/>`;
+
+    for (let f = 0; f <= 8; f++) g += ln([0, 1, 2, 3, 4].map(r => pp(s, f, r)), '#8a7650', 1.3);
+    for (let r = 0; r <= 4; r++) g += ln([0, 1, 2, 3, 4, 5, 6, 7, 8].map(f => pp(s, f, r)), '#8a7650', 1.3);
+    for (const [[a, b], [c, d]] of [[[3, 0], [5, 2]], [[5, 0], [3, 2]]]) {
+      g += ln([pp(s, a, b), pp(s, c, d)], COL[s], 1.8);
+    }
+    for (let f = 0; f <= 8; f++) {
+      for (const [s2, f2] of X(s, f)) {
+        if (s < s2 || (s === s2)) g += ln([pp(s, f, 4), pp(s2, f2, 4)], '#8a7650', 1.3);
+      }
+    }
+    const t = pp(s, 4, -1.3);
+    g += `<text x="${t[0]}" y="${t[1] + 5}" text-anchor="middle" font-size="16" font-weight="700" fill="${COL[s]}">${NM[s]}</text>`;
+  }
+  return g;
+}
+
+function getBoardBG() {
+  if (!bgCache[viewSide]) {
+    bgCache[viewSide] = boardSVG();
+  }
+  return bgCache[viewSide];
+}
+
+function render() {
+  const sv = document.getElementById('sv');
+  let g = `<rect x="-400" y="-400" width="800" height="800" fill="#f3e6c4" rx="14"/>` + getBoardBG();
+
+  for (const k of last) {
+    const [x, y] = pos(k);
+    g += `<circle cx="${x}" cy="${y}" r="22" fill="none" stroke="#f59e0b" stroke-width="3"/>`;
+  }
+
+  for (const [k, pc] of B) {
+    const [x, y] = pos(k), c = COL[pc.owner], on = sel === k;
+    g += `<g data-k="${k}" style="cursor:pointer">
+      <circle cx="${x}" cy="${y}" r="19" fill="#fffaf0" stroke="${c}" stroke-width="${on ? 5 : 3}"/>
+      <text x="${x}" y="${y + 7}" text-anchor="middle" font-size="21" font-weight="700" fill="${c}" style="pointer-events:none">
+        ${pc.t === 'F' ? SP[pc.home] : CH[pc.t]}
+      </text>
+    </g>`;
+  }
+
+  for (const m of moves) {
+    const [x, y] = pos(m), cap = B.has(m);
+    g += `<g data-k="${m}" style="cursor:pointer">
+      <circle cx="${x}" cy="${y}" r="${cap ? 22 : 8}" fill="${cap ? 'none' : '#f59e0b'}" fill-opacity=".85" stroke="#f59e0b" stroke-width="${cap ? 4 : 0}"/>
+      <circle cx="${x}" cy="${y}" r="20" fill="transparent"/>
+    </g>`;
+  }
+
+  sv.innerHTML = g;
+
+  // Cập nhật tag lượt ở tiêu đề bàn cờ
+  const turnBadge = document.getElementById('tag-current-turn');
+  if (turnBadge) {
+    turnBadge.textContent = `Lượt: ${NM[cur]}`;
+    turnBadge.style.background = COL[cur];
+    turnBadge.style.borderColor = COL[cur];
+  }
+
+  // Cập nhật tag hiển thị phe đang ở góc nhìn 6h
+  const viewBadge = document.getElementById('tag-view-angle');
+  if (viewBadge) {
+    viewBadge.innerHTML = `Góc 6h: <strong>${NM[viewSide]}</strong> 🔄`;
+    viewBadge.style.color = COL[viewSide];
+    viewBadge.style.borderColor = COL[viewSide];
+  }
+
+  // Cập nhật danh sách thẻ bài quân số 3 phe chuẩn giao diện cờ thế (ở cột 1, phía trên thiết lập)
+  document.getElementById('pl').innerHTML = [0, 1, 2].map(i => {
+    const isCur = i === cur && !over;
+    const isAlive = alive[i];
+    const isHuman = humans.includes(i);
+    const count = [...B.values()].filter(p => p.owner === i).length;
+    return `
+      <div class="tamquoc-player-card ${isAlive ? '' : 'dead'}" style="border-left-color:${COL[i]};${isCur ? 'box-shadow: 0 0 10px ' + COL[i] + '55; border-color: ' + COL[i] : ''}">
+        <div class="pl-header">
+          <span class="pl-faction" style="color:${COL[i]}">● ${NM[i]}</span>
+          <span class="pl-type">${isHuman ? 'Đại hiệp (Người)' : 'Kỳ viện AI (Máy)'}</span>
+        </div>
+        <div class="pl-body">
+          <span>Quân số: <strong style="color:#f1c40f">${count}</strong></span>
+          <span class="pl-badge ${isAlive ? (isCur ? 'active-turn' : (i === viewSide ? 'Đang góc 6h' : 'Chờ lượt')) : 'Đã tử trận'}">
+            ${isAlive ? (isCur ? 'Đang hạ thủ' : (i === viewSide ? 'Đang góc 6h' : 'Chờ lượt')) : 'Đã tử trận'}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Cập nhật trạng thái và thông báo diễn biến đặc biệt lên header
+function status(m) {
+  const cleanText = m.replace(/&#8212;?/g, ' - ').replace(/&mdash;/g, ' - ');
+  const el = document.getElementById('st');
+  if (el) el.textContent = cleanText;
+
+  const notice = document.getElementById('st-notice');
+  if (notice) {
+    if (cleanText.includes('trảm Tướng') || cleanText.includes('thắng ván') || cleanText.includes('bí lối')) {
+      notice.textContent = cleanText;
+      notice.style.display = 'block';
+    } else {
+      notice.textContent = '';
+      notice.style.display = 'none';
+    }
+  }
+}
+
+function next(first) {
+  if (over) return;
+  if (!first) {
+    do {
+      cur = (cur + 1) % 3;
+    } while (!alive[cur]);
+  }
+
+  if (alive.reduce((a, b) => a + b) === 1) {
+    over = true;
+    render();
+    status(`🏆 ${NM[alive.indexOf(1)]} định đoạt giang sơn, toàn thắng ván cờ!`);
+    return;
+  }
+
+  if (!legal(cur).length) {
+    status(`${NM[cur]} cùng đường bí lối, mất quyền hạ thủ`);
+    return setTimeout(() => next(), 600);
+  }
+
+  // Tự động xoay bàn cờ theo góc nhìn người chơi:
+  const mode = document.getElementById('mode').value;
+  if (mode === 'ai') {
+    // 1 người đấu 2 máy: luôn giữ phe của người chơi ở góc 6h
+    viewSide = humans[0];
+  } else if (mode === '2p') {
+    // 2 người đấu 1 máy: đến lượt người chơi nào thì xoay bàn cờ theo hướng người chơi lượt đó
+    if (humans.includes(cur)) {
+      viewSide = cur;
+    }
+  } else {
+    // 3 người chơi chung máy: đến lượt ai thì xoay theo hướng người chơi lượt đó
+    viewSide = cur;
+  }
+
+  render();
+  status(`Lượt của ${NM[cur]}${humans.includes(cur) ? ' - chọn quân của bạn' : ' đang suy nghĩ ứng biến…'}`);
+
+  if (!humans.includes(cur)) {
+    setTimeout(ai, 500);
+  }
+}
+
+function doMove(m) {
+  const rm = apply(m);
+  last = [m.f, m.t];
+  sel = null;
+  moves = [];
+  render();
+  if (rm !== null) {
+    status(`⚡ ${NM[cur]} trảm Tướng địch, thu phục toàn bộ quân ${NM[rm]}!`);
+  }
+  setTimeout(() => next(), rm !== null ? 900 : 50);
+}
+
+function ai() {
+  const me = cur, ms = legal(me);
+  let best = null, bs = -1e9;
+  for (const m of ms) {
+    const pc = B.get(m.f), cap = B.get(m.t), sv = new Map(B), al = [...alive];
+    let sc = Math.random() * 0.6;
+    if (cap) sc += VAL[cap.t] * (cap.owner === me ? 0 : 1) * (cap.t === 'K' ? 2 : 1);
+    apply(m);
+
+    const att = new Set(), mine = [];
+    for (const [k, p] of B) {
+      if (p.owner === me) mine.push(k);
+    }
+    for (const [k, p] of B) {
+      if (alive[p.owner] && p.owner !== me) {
+        for (const x of gen(k, p)) {
+          if (B.has(x) && B.get(x).owner === me) att.add(x);
+        }
+      }
+    }
+    if (att.has(m.t)) sc -= VAL[pc.t] * 0.9;
+    for (const k of mine) {
+      if (B.get(k).t === 'K' && att.has(k)) sc -= 900;
+    }
+    if (pc.t === 'P' && !cap) sc += 0.3;
+
+    B = sv;
+    alive = al;
+    if (sc > bs) {
+      bs = sc;
+      best = m;
+    }
+  }
+  doMove(best);
+}
+
+document.getElementById('sv').addEventListener('click', e => {
+  const g = e.target.closest('[data-k]');
+  if (!g || over || !humans.includes(cur)) return;
+  const k = g.dataset.k;
+  if (sel && moves.includes(k)) {
+    doMove({f: sel, t: k});
+    return;
+  }
+  const pc = B.get(k);
+  if (pc && pc.owner === cur) {
+    sel = k;
+    moves = gen(k, pc);
+  } else {
+    sel = null;
+    moves = [];
+  }
+  render();
+});
+
+document.getElementById('nw').onclick = init;
+document.getElementById('mode').onchange = () => {
+  updateSideOptions();
+  init();
+};
+['side', 'first'].forEach(i => document.getElementById(i).onchange = init);
+document.getElementById('sp').onchange = () => {
+  sel = null;
+  moves = [];
+  render();
+  next(true);
+};
+
+// Khởi tạo tùy chọn phe và bắt đầu trận
+updateSideOptions();
+init();
+
+function cycleViewSide() {
+  viewSide = (viewSide + 1) % 3;
+  render();
+
+  // Thêm hiệu ứng chuyển động mượt mà
+  const sv = document.getElementById('sv');
+  sv.style.transition = 'transform 0.5s ease-in-out';
+  sv.style.transform = `rotate(${viewSide * 120}deg)`;
+}
+
+
+</script>
+</body>
+</html>

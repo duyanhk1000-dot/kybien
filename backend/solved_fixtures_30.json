@@ -1,0 +1,333 @@
+[
+  {
+    "index": 1,
+    "fen": "5k3/5n3/N8/9/9/9/9/9/9/5K3",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "a7c8",
+    "replies": null
+  },
+  {
+    "index": 2,
+    "fen": "3ak4/4a4/4c4/7C1/9/9/9/9/9/5K3",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "h6e6",
+    "replies": null
+  },
+  {
+    "index": 3,
+    "fen": "3akab2/9/4c1N1n/9/9/9/5R3/1r2BA3/4Apr2/4K1B2",
+    "status": "VERIFIED",
+    "depth": 1,
+    "move1": "f3f9",
+    "replies": null
+  },
+  {
+    "index": 4,
+    "fen": "CN1ak4/4a4/4b4/9/9/9/9/4B4/3rA1r2/4KAB1c",
+    "status": "VERIFIED",
+    "depth": 1,
+    "move1": "b9d8",
+    "replies": null
+  },
+  {
+    "index": 5,
+    "fen": "3k5/9/9/2N6/2N6/9/9/9/3p1r3/4K4",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "c6b8",
+    "replies": [
+      {
+        "reply": "d9d8",
+        "counter": "c5b7"
+      }
+    ]
+  },
+  {
+    "index": 6,
+    "fen": "4k4/3RaR3/6n2/9/9/9/9/5p3/4pr3/3K5",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "f8e8",
+    "replies": [
+      {
+        "reply": "e9f9",
+        "counter": "d8d9"
+      },
+      {
+        "reply": "g7e8",
+        "counter": "d8d9"
+      }
+    ]
+  },
+  {
+    "index": 7,
+    "fen": "r3kab2/4a4/9/4p4/9/9/4C4/4C4/4pr3/3K5",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "e2e6",
+    "replies": [
+      {
+        "reply": "g9e7",
+        "counter": "e3e7"
+      }
+    ]
+  },
+  {
+    "index": 8,
+    "fen": "5kb2/4a4/4ba2c/9/9/9/4C4/2n4C1/3r1p3/4K4",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "h2h9",
+    "replies": [
+      {
+        "reply": "f9f8",
+        "counter": "e3f3"
+      }
+    ]
+  },
+  {
+    "index": 9,
+    "fen": "5k3/4P1P2/5n2b/9/9/5c3/9/9/3r1p3/4K4",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "g8f8",
+    "replies": [
+      {
+        "reply": "f4f8",
+        "counter": "e8e9"
+      }
+    ]
+  },
+  {
+    "index": 10,
+    "fen": "3ck4/4a1R2/9/9/9/7R1/9/9/3r1p3/4K4",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "g8e8",
+    "replies": [
+      {
+        "reply": "e9f9",
+        "counter": "h4f4"
+      }
+    ]
+  },
+  {
+    "index": 11,
+    "fen": "5kC2/4an3/3a1N3/9/9/9/9/5C3/3r1p3/4K4",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "f7h8",
+    "replies": [
+      {
+        "reply": "f9e9",
+        "counter": "h8f9"
+      }
+    ]
+  },
+  {
+    "index": 12,
+    "fen": "3a2R2/4ak3/5rN2/7n1/9/9/9/2n6/5r3/4K4",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "g9f9",
+    "replies": [
+      {
+        "reply": "e8f9",
+        "counter": "g7h9"
+      }
+    ]
+  },
+  {
+    "index": 13,
+    "fen": "C3k1b2/2R1aR3/4b1n2/9/9/9/r8/6n2/2r2p3/4K3c",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "f8e8",
+    "replies": [
+      {
+        "reply": "e9d9",
+        "counter": "c8c9"
+      },
+      {
+        "reply": "e9f9",
+        "counter": "c8c9"
+      },
+      {
+        "reply": "g7e8",
+        "counter": "c8c9"
+      }
+    ]
+  },
+  {
+    "index": 14,
+    "fen": "3k1C3/9/5N3/9/9/4n4/9/4C4/3rAp3/4KARrc",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "f7e9",
+    "replies": [
+      {
+        "reply": "d9d8",
+        "counter": "g0g8"
+      }
+    ]
+  },
+  {
+    "index": 15,
+    "fen": "3a2R2/4ak3/5cN2/9/9/9/9/2n6/5r3/4K4",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "g9g8",
+    "replies": [
+      {
+        "reply": "f8f9",
+        "counter": "g8e8"
+      }
+    ]
+  },
+  {
+    "index": 16,
+    "fen": "3k1n3/2R1c4/3abnN2/9/9/4C4/2R6/9/3pAp3/4KA1rc",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "c8d8",
+    "replies": [
+      {
+        "reply": "d9e9",
+        "counter": "c3c9"
+      },
+      {
+        "reply": "d9d8",
+        "counter": "e4d4"
+      },
+      {
+        "reply": "f9d8",
+        "counter": "c3c9"
+      }
+    ]
+  },
+  {
+    "index": 17,
+    "fen": "3k1c3/2R1a4/3a5/9/9/4C4/9/9/3pAp3/4KA1rc",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "c8d8",
+    "replies": [
+      {
+        "reply": "d9d8",
+        "counter": "e4d4"
+      }
+    ]
+  },
+  {
+    "index": 18,
+    "fen": "2ba1ab2/1R7/4k1n2/6P2/5r3/1N2C4/4p4/6n2/3p5/1r1AK1B2",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "b4c6",
+    "replies": [
+      {
+        "reply": "e7d7",
+        "counter": "b8d8"
+      },
+      {
+        "reply": "e7f7",
+        "counter": "g6g7"
+      }
+    ]
+  },
+  {
+    "index": 19,
+    "fen": "2bakab2/4n4/4R4/9/9/4C4/5R3/6n2/3p5/1r1AK1B2",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "f3f9",
+    "replies": [
+      {
+        "reply": "e9f9",
+        "counter": "e7f7"
+      }
+    ]
+  },
+  {
+    "index": 20,
+    "fen": "3ak4/3PaP1N1/9/4n4/9/9/9/6n2/3p5/1r1AK1B2",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "f8f9",
+    "replies": [
+      {
+        "reply": "e8f9",
+        "counter": "h8f7"
+      }
+    ]
+  },
+  {
+    "index": 21,
+    "fen": "3kn4/2P1a3c/3Pba3/9/9/9/9/4p1n2/4Ar3/4K4",
+    "status": "VERIFIED",
+    "depth": 3,
+    "move1": "d7d8",
+    "replies": [
+      {
+        "reply": "i8d8",
+        "counter": "c8c9"
+      }
+    ]
+  },
+  {
+    "index": 22,
+    "fen": "5k3/4a4/5a2r/9/r3N4/4R2R1/9/9/3p1p3/4K4",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  },
+  {
+    "index": 23,
+    "fen": "2b1ka3/9/n4a3/9/4C4/cCR6/9/9/1r2p4/3K5",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  },
+  {
+    "index": 24,
+    "fen": "4k4/4aP3/4b4/9/5Nb2/1R7/9/9/4Ap1r1/3AK3c",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  },
+  {
+    "index": 25,
+    "fen": "2C1ka3/4a4/9/1N2r4/4C4/9/9/9/4p1p2/5K3",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  },
+  {
+    "index": 26,
+    "fen": "3a5/5k3/5a3/9/2N6/9/9/8C/3r1p3/4K4",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  },
+  {
+    "index": 27,
+    "fen": "9/9/3k5/4P4/9/9/1r7/8C/5p3/4K4",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  },
+  {
+    "index": 28,
+    "fen": "2baka3/1R7/4b4/4R4/4N4/9/9/3p5/2r1p4/3K5",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  },
+  {
+    "index": 29,
+    "fen": "4ka3/9/5a3/9/9/6CRC/9/9/1r2p4/3K5",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  },
+  {
+    "index": 30,
+    "fen": "3a5/1N2a4/5k3/4R3N/9/9/9/9/3p1rn2/4K4",
+    "status": "BLOCKED",
+    "reason": "Không có lời giải sát cục cưỡng bức đã xác minh trong giới hạn 5 ply"
+  }
+]

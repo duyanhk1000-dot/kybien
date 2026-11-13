@@ -1,0 +1,23 @@
+BẠN LÀ TECH LEAD & AUDITOR KIỂM ĐỊNH ĐỘC LẬP (CLAUDE CODE).
+HÃY ĐÁNH GIÁ VÀ NGHIỆM THU CUỐI CÙNG CHO BƯỚC M5.5 & TOÀN BỘ MILESTONE M5 (TIÊN LỘ WUXIA UI/UX TRANSFORMATION & CLASSICAL TYPOGRAPHY).
+
+Dưới đây là báo cáo tổng kết M5.5: docs/M5_5_FINAL_AUDIT_REPORT.md cùng các báo cáo thành phần:
+- docs/M5_1_TYPOGRAPHY_REPORT.md (PASS)
+- docs/M5_2_CONTAINER_LAYOUT_REPORT.md (PASS)
+- docs/M5_3_COMPONENTS_OVERHAUL_REPORT.md (PASS)
+- docs/M5_4_INTERACTION_UX_POLISH_REPORT.md (PASS)
+
+Toàn bộ các yêu cầu của người dùng:
+1. Chuyển đổi giao diện và UI/UX Tiên Lộ sang chuẩn Wuxia Logs (5 Core Tabs: Động Phủ, Nhiệm Vụ, Sinh Hoạt, Nhân Vật, Túi Đồ + Ngăn kéo Giang Hồ Lục cho các tính năng multiplayer).
+2. Sử dụng font chữ cổ điển mang tính kiếm hiệp: 'Cinzel', 'Noto Serif TC', và 'Be Vietnam Pro' đảm bảo 100% tiếng Việt có dấu sắc nét không lỗi font.
+3. Tách file CSS chuyên biệt frontend/interaction-ux.css.
+4. Tối ưu tactile feedback, touch-safe hover trên di động, khả năng tiếp cận bàn phím toàn diện.
+5. Kiểm thử cú pháp JS và kiểm thử hồi quy Frontend đều đạt 100% PASS (10/10 test cases), bảo toàn 100% dữ liệu và logic backend.
+
+YÊU CẦU ĐỐI VỚI BẠN:
+1. Đọc và thẩm định docs/M5_5_FINAL_AUDIT_REPORT.md.
+2. Kiểm tra tính nhất quán giữa các bước M5.1, M5.2, M5.3, M5.4, M5.5.
+3. Đưa ra phán quyết cuối cùng:
+   - Kết luận: [PASS / FAIL] cho Milestone M5.
+   - Nhận xét tổng kết về sự lột xác của giao diện Tiên Lộ sau khi áp dụng chuẩn Wuxia Logs & Thư pháp Kiếm hiệp.
+   - Xác nhận hoàn tất Milestone M5.

@@ -1,0 +1,317 @@
+{
+  "zones": [
+    {
+      "id": "zone_thanh_ha_thon",
+      "name": "Thanh Hà Thôn",
+      "type": "TOWN",
+      "description": "Ngôi làng phàm trần thanh bình ven sông Thanh Hà, dưới chân dãy núi Tiên Môn. Nơi giao thoa giữa phàm tục và đạo môn, khói lam chiều uốn lượn, dân cư hòa thuận.",
+      "min_realm": "PHAM_NHAN",
+      "fatigue_cost_roam": 3,
+      "travel_fatigue_base": 5,
+      "connected_zones": ["zone_u_minh_truc_lam"],
+      "banner_image": "/assets/xianxia/banners/banner_thanh_ha_thon.webp",
+      "places": [
+        {
+          "id": "place_dong_phu_tam_cu",
+          "zone_id": "zone_thanh_ha_thon",
+          "name": "Động Phủ Tạm Cư",
+          "kind": "CULTIVATION_CAVE",
+          "description": "Căn nhà tranh mộc mạc nơi rìa thôn với trận pháp ngưng tụ linh khí sơ cấp. Nơi tu sĩ an tâm bế quan tu luyện, tích lũy tu vi ngày đêm.",
+          "services": [
+            {
+              "key": "meditate",
+              "name": "Ngồi Thiền Tụ Khí",
+              "description": "Tĩnh tâm điều tức, chuyển hóa linh khí đất trời thành tu vi bản thân."
+            },
+            {
+              "key": "offline_cultivate",
+              "name": "Thiết Lập Bế Quan (Idle)",
+              "description": "Thiết lập trạng thái tu luyện offline, tối đa 8 tiếng tích lũy tu vi."
+            },
+            {
+              "key": "rest",
+              "name": "Nghỉ Ngơi Hồi Phục",
+              "description": "Nằm nghỉ hồi phục Thể Lực (Fatigue) và Sinh Lực (Health)."
+            }
+          ]
+        },
+        {
+          "id": "place_thao_duoc_duong",
+          "zone_id": "zone_thanh_ha_thon",
+          "name": "Thảo Dược Đường (Trần Lão)",
+          "kind": "APOTHECARY",
+          "description": "Tiệm thuốc của Lão Dược Sư Trần lão đầu. Mùi thơm ngát của các loại thảo mộc phàm trần và tiên thảo sơ cấp lan tỏa khắp góc thôn.",
+          "services": [
+            {
+              "key": "buy_pills",
+              "name": "Mua Đan Dược",
+              "description": "Mua các loại đan dược trị thương, bổ khí cơ bản (Kim Sang Dược, Hồi Khí Hoàn)."
+            },
+            {
+              "key": "sell_herbs",
+              "name": "Bán Linh Thảo",
+              "description": "Bán dược liệu thu thập được từ rừng để đổi lấy Ngân Lượng hoặc Linh Thạch vụn."
+            },
+            {
+              "key": "learn_alchemy",
+              "name": "Thỉnh Giáo Đan Đạo",
+              "description": "Học hỏi phương pháp bào chế đan dược sơ cấp."
+            }
+          ]
+        },
+        {
+          "id": "place_thiet_te_phuong",
+          "zone_id": "zone_thanh_ha_thon",
+          "name": "Thiết Tế Phường (Lò Rèn Bác Sắt)",
+          "kind": "FORGE",
+          "description": "Lò rèn đỏ rực lửa than bên bờ suối. Tiếng búa đập sắt vang vọng nhịp nhàng, nơi rèn đúc và tôi luyện binh khí tiên hiệp sơ giai.",
+          "services": [
+            {
+              "key": "repair_gear",
+              "name": "Tu Sửa Binh Khí",
+              "description": "Bảo dưỡng độ bền của giáp trụ và vũ khí sau những chuyến thám hiểm."
+            },
+            {
+              "key": "forge_weapon",
+              "name": "Rèn Đúc Pháp Khí",
+              "description": "Dùng quặng sắt và tinh thạch rèn đúc Thanh Phong Kiếm và đạo bào."
+            },
+            {
+              "key": "temper",
+              "name": "Tôi Luyện Cường Hóa",
+              "description": "Nâng cấp phẩm cấp trang bị gia tăng uy lực sát thương."
+            }
+          ]
+        },
+        {
+          "id": "place_nhiem_vu_duong",
+          "zone_id": "zone_thanh_ha_thon",
+          "name": "Nhiệm Vụ Đường (Bảng Thông Cáo Thôn)",
+          "kind": "MISSION_BOARD",
+          "description": "Bảng gỗ treo đầy các cáo thị của Trưởng thôn và thợ săn: treo thưởng diệt trừ dã thú quấy nhiễu, thu thập linh thảo và tìm kiếm bảo vật.",
+          "services": [
+            {
+              "key": "view_bounties",
+              "name": "Xem Cáo Thị",
+              "description": "Xem danh sách các ủy thác giang hồ và nhiệm vụ tiên gia đang mở."
+            },
+            {
+              "key": "accept_quest",
+              "name": "Tiếp Nhận Nhiệm Vụ",
+              "description": "Nhận ủy thác tiêu diệt quái thú hoặc thu thập tài nguyên."
+            },
+            {
+              "key": "claim_bounty",
+              "name": "Giao Trả Nhận Thưởng",
+              "description": "Báo cáo tiến độ và nhận EXP, Tu Vi, Linh Thạch từ thôn làng."
+            }
+          ]
+        },
+        {
+          "id": "place_kho_phuong",
+          "zone_id": "zone_thanh_ha_thon",
+          "name": "Kho Phường Thanh Hà",
+          "kind": "STORAGE",
+          "description": "Nhà kho kiên cố được phong tỏa bằng bùa chú hộ vệ. Tu sĩ có thể an tâm cất giữ những linh tài quý giá chưa dùng đến.",
+          "services": [
+            {
+              "key": "stash_items",
+              "name": "Gửi Đồ Vào Kho",
+              "description": "Chuyển vật phẩm từ túi đồ cá nhân vào rương an toàn."
+            },
+            {
+              "key": "retrieve_items",
+              "name": "Rút Đồ Ra Túi",
+              "description": "Lấy trang bị và dược liệu cất giữ trong kho ra ngoài."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zone_u_minh_truc_lam",
+      "name": "U Minh Trúc Lâm",
+      "type": "WILDERNESS",
+      "description": "Rừng trúc xanh thẫm quanh năm sương lam che phủ. Ánh nắng le lói qua từng phiến lá trúc, linh khí đất trời dao động loãng, là nơi trú ngụ của Yêu Lang và dã thú.",
+      "min_realm": "LUYEN_KHI_1",
+      "fatigue_cost_roam": 5,
+      "travel_fatigue_base": 10,
+      "connected_zones": ["zone_thanh_ha_thon", "zone_hac_phong_nhai"],
+      "banner_image": "/assets/xianxia/banners/banner_u_minh_truc_lam.webp",
+      "places": [
+        {
+          "id": "place_linh_tuyen_thuy_thach",
+          "zone_id": "zone_u_minh_truc_lam",
+          "name": "Linh Tuyền Thủy Thạch",
+          "kind": "REST_SPRING",
+          "description": "Dòng suối trong vắt phát quang màu ngọc bích chảy qua rặng trúc cổ thụ. Uống một ngụm nước suối giúp rửa sạch mệt mỏi trần thế, đả thông kinh mạch.",
+          "services": [
+            {
+              "key": "drink_spring_water",
+              "name": "Uống Nước Linh Tuyền",
+              "description": "Hồi phục 30 điểm Thể Lực (Fatigue) và giảm nhẹ mệt mỏi hành trình."
+            },
+            {
+              "key": "cleanse_meridians",
+              "name": "Thanh Lọc Kinh Mạch",
+              "description": "Ngồi tĩnh tọa bên suối để tẩy uế cơ thể, gia tăng giới hạn Thần Thức."
+            }
+          ]
+        },
+        {
+          "id": "place_mieu_hoang_phe",
+          "zone_id": "zone_u_minh_truc_lam",
+          "name": "Miếu Thần Hoang Phế",
+          "kind": "RUINS",
+          "description": "Tàn tích ngôi miếu cổ bị rêu phong phủ kín giữa rừng trúc sâu. Tượng thần đổ nát nhưng vẫn vương lại chút tàn dư linh lực của bậc tiền nhân.",
+          "services": [
+            {
+              "key": "investigate",
+              "name": "Thám Thính Tàn Tích",
+              "description": "Lần mò tìm kiếm các khe đá, tìm kiếm bảo rương cổ hoặc tàn quyển bí kíp."
+            },
+            {
+              "key": "pray",
+              "name": "Thắp Nén Tâm Hương",
+              "description": "Cầu nguyện trước tượng thần để nhận phước lành may mắn hoặc tăng điểm Nghiệp Lực."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zone_hac_phong_nhai",
+      "name": "Hắc Phong Nhai",
+      "type": "DANGER_ZONE",
+      "description": "Vách đá dựng đứng đen ngòm hiểm trở, gió đen gào thét quanh năm cắt da cắt thịt. Nơi đây linh khí cực kỳ hỗn loạn, là sào huyệt của U Minh Lang Vương và di tích cổ động.",
+      "min_realm": "LUYEN_KHI_3",
+      "fatigue_cost_roam": 8,
+      "travel_fatigue_base": 15,
+      "connected_zones": ["zone_u_minh_truc_lam", "zone_van_mong_dam"],
+      "banner_image": "/assets/xianxia/banners/banner_hac_phong_nhai.webp",
+      "places": [
+        {
+          "id": "place_co_tu_toa_hoa_dong",
+          "zone_id": "zone_hac_phong_nhai",
+          "name": "Cổ Tu Tọa Hóa Động",
+          "kind": "MYSTIC_CAVE",
+          "description": "Động đá thần bí ẩn sau làn sương đen cuộn xoáy. Tương truyền một vị đại năng Trúc Cơ viên tịch để lại cơ duyên đột phá ngàn năm.",
+          "services": [
+            {
+              "key": "challenge_boss",
+              "name": "Khiêu Chiến U Minh Lang Vương",
+              "description": "Đột nhập hang ổ trảm sát yêu thú đầu đàn bảo vệ cổ động."
+            },
+            {
+              "key": "breakthrough_realm",
+              "name": "Khai Mở Cơ Duyên Đột Phá",
+              "description": "Tìm kiếm Trúc Cơ Đan và nghênh đón lôi kiếp đột phá cảnh giới mới."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zone_van_mong_dam",
+      "name": "Vân Mộng Đầm Lầy",
+      "type": "WILDERNESS",
+      "description": "Vùng đầm lầy mù mịt ngút ngàn, khí độc lam chướng lượn lờ cùng vô số dược thảo quý hiếm và dị thú độc trùng ngàn năm.",
+      "min_realm": "LUYEN_KHI_5",
+      "fatigue_cost_roam": 10,
+      "travel_fatigue_base": 18,
+      "connected_zones": ["zone_hac_phong_nhai", "zone_thien_kiem_son"],
+      "banner_image": "/assets/xianxia/banners/banner_van_mong_dam.webp",
+      "places": [
+        {
+          "id": "place_duoc_vuong_coc",
+          "zone_id": "zone_van_mong_dam",
+          "name": "Dược Vương Cốc",
+          "kind": "APOTHECARY",
+          "description": "Thung lũng u nhã ẩn mình giữa đầm lầy, tụ tập linh khí dịu mát. Nơi Đan Đạo Tông Sư bế quan luyện đan và trao đổi kỳ trân dị thảo.",
+          "services": [
+            {
+              "key": "trade_rare_herbs",
+              "name": "Trao Đổi Kỳ Thảo",
+              "description": "Thu mua và trao đổi các loại linh thảo cao cấp như U Lam Thảo, Địa Tâm Hỏa Chi."
+            },
+            {
+              "key": "alchemy_furnace",
+              "name": "Dược Vương Đỉnh",
+              "description": "Mượn địa hỏa luyện đan, gia tăng xác suất luyện xuất Trúc Cơ Đan cực phẩm."
+            }
+          ]
+        },
+        {
+          "id": "place_u_minh_dam",
+          "zone_id": "zone_van_mong_dam",
+          "name": "Đầm U Minh",
+          "kind": "MYSTIC_CAVE",
+          "description": "Vực nước sâu đen ngòm không đáy, nơi độc xà và chướng khí ngưng tụ. Rất nhiều tu sĩ Luyện Khí hậu kỳ đến đây rèn luyện thần thức và tìm kiếm hàn ngọc.",
+          "services": [
+            {
+              "key": "hunt_swamp_beast",
+              "name": "Săn Bắt Độc Mãng",
+              "description": "Tiêu diệt Cửu U Độc Mãng để đoạt lấy Độc Đan và Lân Giáp."
+            },
+            {
+              "key": "dredge_cold_jade",
+              "name": "Mò Hàn Ngọc Đáy Đầm",
+              "description": "Lặn xuống đáy đầm thu thập Huyền Băng Hàn Ngọc hỗ trợ áp chế tâm ma khi đột phá."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zone_thien_kiem_son",
+      "name": "Thiên Kiếm Sơn",
+      "type": "SECT_EXTERIOR",
+      "description": "Dãy núi kiếm hình ngút trời chọc thủng tầng mây, kiếm ý sắc bén vương vấn ngàn trượng. Nơi phân tranh giữa Kiếm Tông chính đạo và Cổ Ma phong ấn.",
+      "min_realm": "TRUC_CO_SO_KY",
+      "fatigue_cost_roam": 12,
+      "travel_fatigue_base": 25,
+      "connected_zones": ["zone_van_mong_dam"],
+      "banner_image": "/assets/xianxia/banners/banner_thien_kiem_son.webp",
+      "places": [
+        {
+          "id": "place_kiem_tong_dien",
+          "zone_id": "zone_thien_kiem_son",
+          "name": "Kiếm Tông Đại Điện",
+          "kind": "MISSION_BOARD",
+          "description": "Đại điện hùng vĩ của Thiên Kiếm Tông tọa lạc trên đỉnh Thiên Kiếm Phong. Nơi hội tụ các Trúc Cơ Chân Tu tiếp nhận chấp pháp lệnh và thỉnh giáo kiếm đạo.",
+          "services": [
+            {
+              "key": "sword_sect_trials",
+              "name": "Khảo Nghiệm Kiếm Khí",
+              "description": "Thử thách kiếm ý tẩy luyện đạo tâm, gia tăng uy lực phi kiếm."
+            },
+            {
+              "key": "sect_bounties",
+              "name": "Chấp Pháp Bảng",
+              "description": "Nhận các nhiệm vụ trảm ma hộ đạo cấp Trúc Cơ nhận cống hiến môn phái."
+            }
+          ]
+        },
+        {
+          "id": "place_co_ma_dong",
+          "zone_id": "zone_thien_kiem_son",
+          "name": "Cổ Ma Động Phủ",
+          "kind": "MYSTIC_CAVE",
+          "description": "Hang động cổ xưa dưới lòng kiếm sơn, nơi phong ấn tàn hồn Cổ Ma ngàn năm. Ma khí bốc lên ngùn ngụt, thử thách sinh tử tột cùng cho tu sĩ Trúc Cơ Đỉnh Phong.",
+          "services": [
+            {
+              "key": "challenge_ancient_demon",
+              "name": "Thanh Tẩy Ma Khí",
+              "description": "Trấn áp tàn hồn ma tu, tôi luyện Đạo Cơ Vô Khuyết nghênh đón Kim Đan đại đạo."
+            },
+            {
+              "key": "seek_ancient_relics",
+              "name": "Khai Quật Cổ Trận",
+              "description": "Tìm kiếm cổ bảo thượng cổ và pháp bảo tàn phiến chôn vùi trong ma quật."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

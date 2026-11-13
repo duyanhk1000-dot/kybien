@@ -1,0 +1,277 @@
+/* ====================================================
+   TIÊN LỘ: INTERACTION & UX POLISH STYLESHEET (M5.4)
+   Wuxia Logs Tactile Feel, Micro-interactions & Mobile Polish
+   ==================================================== */
+
+/* 1. TACTILE BUTTON INTERACTIONS */
+.btn-plaque {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+.btn-plaque:active {
+  transform: scale(0.96) translateY(1px) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+  filter: brightness(0.92);
+}
+.btn-plaque:focus-visible {
+  outline: 2px solid var(--gold-400);
+  outline-offset: 2px;
+}
+
+/* Touch-safe hover (only active on devices that actually support hover) */
+@media (hover: hover) {
+  .btn-plaque:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+  }
+  .btn-plaque.crimson:hover {
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+  }
+  .btn-plaque.jade:hover {
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+  }
+}
+
+/* 2. INVENTORY SLOTS POLISH & ACCESSIBILITY */
+.inv-slot {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+.inv-slot:focus-visible {
+  outline: 2px solid var(--gold-400);
+  outline-offset: 2px;
+  border-color: var(--gold-400);
+}
+.inv-slot.empty {
+  opacity: 0.35;
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  cursor: default;
+}
+.inv-slot.empty:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* 3. WUXIA TOAST FEEDBACK NOTIFICATIONS */
+.notification-toast {
+  position: fixed;
+  top: 76px;
+  right: 20px;
+  z-index: 10001;
+  min-width: 260px;
+  max-width: 380px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.45;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: auto;
+}
+.notification-toast.toast-success {
+  background: linear-gradient(145deg, rgba(16, 40, 28, 0.95), rgba(8, 20, 14, 0.98));
+  border: 1px solid var(--jade-400);
+  color: #a7f3d0;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75), 0 0 15px var(--jade-glow);
+}
+.notification-toast.toast-error {
+  background: linear-gradient(145deg, rgba(50, 16, 20, 0.95), rgba(25, 8, 10, 0.98));
+  border: 1px solid var(--crimson-400);
+  color: #fecaca;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75), 0 0 15px var(--crimson-glow);
+}
+.notification-toast.toast-info {
+  background: linear-gradient(145deg, rgba(20, 30, 48, 0.95), rgba(10, 16, 26, 0.98));
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #bae6fd;
+}
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 4. HIGHLIGHT GLOW DECAY & SINGLE ITERATION */
+.highlight-glow {
+  animation: wuxiaHighlightGlow 1.8s cubic-bezier(0.25, 1, 0.5, 1) 1 forwards !important;
+}
+
+/* 5. SMOOTH SCROLL & FAST TOUCH TAP */
+html {
+  scroll-behavior: smooth;
+}
+button, a, .nav-btn, .bnav-item, .inv-slot {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ====================================================
+   6. WUXIA QUEST SYSTEM UI (M1.3)
+   Sub-tab bar, Quest Cards, Objective Progress & Badges
+   ==================================================== */
+.wuxia-subtab-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.wuxia-subtab-btn {
+  background: rgba(16, 20, 26, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--color-text-muted);
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.wuxia-subtab-btn:hover {
+  border-color: var(--gold-400);
+  color: #fff;
+  background: rgba(245, 158, 11, 0.08);
+}
+.wuxia-subtab-btn.active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(180, 83, 9, 0.15));
+  border-color: var(--gold-400);
+  color: #fef08a;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+}
+
+/* Quest Card Specifics */
+.quest-panel-card {
+  background: linear-gradient(145deg, rgba(16, 20, 28, 0.95), rgba(10, 14, 20, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  position: relative;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+.quest-panel-card.main-story {
+  border-left: 3px solid #ef4444;
+}
+.quest-panel-card.side-quest {
+  border-left: 3px solid #10b981;
+}
+.quest-panel-card.agency-mission {
+  border-left: 3px solid #f59e0b;
+}
+.quest-panel-card.ready-turnin {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.25);
+}
+.quest-panel-card.in-progress {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+.quest-panel-card.completed {
+  opacity: 0.6;
+}
+
+/* Badges */
+.wuxia-badge-main {
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.wuxia-badge-side {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #6ee7b7;
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.wuxia-badge-status {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.wuxia-badge-status.available {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fef08a;
+}
+.wuxia-badge-status.in-progress {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #7dd3fc;
+}
+.wuxia-badge-status.ready {
+  background: rgba(16, 185, 129, 0.25);
+  border: 1px solid #10b981;
+  color: #34d399;
+  animation: pulseReady 1.6s infinite ease-in-out;
+}
+.wuxia-badge-status.completed {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+}
+.wuxia-badge-status.locked {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
+}
+
+@keyframes pulseReady {
+  0%, 100% { box-shadow: 0 0 6px rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 0 14px rgba(16, 185, 129, 0.7); }
+}
+
+/* Objective Progress Bar */
+.quest-obj-row {
+  margin: 6px 0;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.quest-obj-progress-track {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.quest-obj-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.35s ease;
+}
+.quest-obj-progress-fill.done {
+  background: linear-gradient(90deg, #059669, #34d399);
+}
+.quest-obj-progress-fill.pending {
+  background: linear-gradient(90deg, #d97706, #38bdf8);
+}

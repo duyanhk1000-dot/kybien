@@ -1,0 +1,532 @@
+{
+  "1": {
+    "index": 1,
+    "depth": 3,
+    "move": "a7c8",
+    "isMate": false,
+    "replies": []
+  },
+  "2": {
+    "index": 2,
+    "depth": 3,
+    "move": "h6e6",
+    "isMate": false,
+    "replies": []
+  },
+  "3": {
+    "index": 3,
+    "depth": 1,
+    "move": "f3f9",
+    "isMate": true,
+    "replies": []
+  },
+  "4": {
+    "index": 4,
+    "depth": 1,
+    "move": "b9d8",
+    "isMate": true,
+    "replies": []
+  },
+  "5": {
+    "index": 5,
+    "depth": 3,
+    "move": "c6b8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "d9d8",
+        "counter": "c5b7"
+      }
+    ]
+  },
+  "6": {
+    "index": 6,
+    "depth": 3,
+    "move": "f8e8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e9f9",
+        "counter": "d8d9"
+      },
+      {
+        "reply": "g7e8",
+        "counter": "d8d9"
+      }
+    ]
+  },
+  "7": {
+    "index": 7,
+    "depth": 3,
+    "move": "e2e6",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "g9e7",
+        "counter": "e3e7"
+      }
+    ]
+  },
+  "8": {
+    "index": 8,
+    "depth": 3,
+    "move": "h2h9",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "f9f8",
+        "counter": "e3f3"
+      }
+    ]
+  },
+  "9": {
+    "index": 9,
+    "depth": 3,
+    "move": "g8f8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "f4f8",
+        "counter": "e8e9"
+      }
+    ]
+  },
+  "10": {
+    "index": 10,
+    "depth": 3,
+    "move": "g8e8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e9f9",
+        "counter": "h4f4"
+      }
+    ]
+  },
+  "11": {
+    "index": 11,
+    "depth": 3,
+    "move": "f7h8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "f9e9",
+        "counter": "h8f9"
+      }
+    ]
+  },
+  "12": {
+    "index": 12,
+    "depth": 3,
+    "move": "g9f9",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e8f9",
+        "counter": "g7h9"
+      }
+    ]
+  },
+  "13": {
+    "index": 13,
+    "depth": 3,
+    "move": "f8e8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e9d9",
+        "counter": "c8c9"
+      },
+      {
+        "reply": "e9f9",
+        "counter": "c8c9"
+      },
+      {
+        "reply": "g7e8",
+        "counter": "c8c9"
+      }
+    ]
+  },
+  "14": {
+    "index": 14,
+    "depth": 3,
+    "move": "f7e9",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "d9d8",
+        "counter": "g0g8"
+      }
+    ]
+  },
+  "15": {
+    "index": 15,
+    "depth": 3,
+    "move": "g9g8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "f8f9",
+        "counter": "g8e8"
+      }
+    ]
+  },
+  "16": {
+    "index": 16,
+    "depth": 3,
+    "move": "c8d8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "d9e9",
+        "counter": "c3c9"
+      },
+      {
+        "reply": "d9d8",
+        "counter": "e4d4"
+      },
+      {
+        "reply": "f9d8",
+        "counter": "c3c9"
+      }
+    ]
+  },
+  "17": {
+    "index": 17,
+    "depth": 3,
+    "move": "c8d8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "d9d8",
+        "counter": "e4d4"
+      }
+    ]
+  },
+  "18": {
+    "index": 18,
+    "depth": 3,
+    "move": "b4c6",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e7d7",
+        "counter": "b8d8"
+      },
+      {
+        "reply": "e7f7",
+        "counter": "g6g7"
+      }
+    ]
+  },
+  "19": {
+    "index": 19,
+    "depth": 3,
+    "move": "f3f9",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e9f9",
+        "counter": "e7f7"
+      }
+    ]
+  },
+  "20": {
+    "index": 20,
+    "depth": 3,
+    "move": "f8f9",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e8f9",
+        "counter": "h8f7"
+      }
+    ]
+  },
+  "21": {
+    "index": 21,
+    "depth": 3,
+    "move": "d7d8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "i8d8",
+        "counter": "c8c9"
+      }
+    ]
+  },
+  "22": {
+    "index": 22,
+    "depth": 7,
+    "move": "h4h9",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "f9f8",
+        "counter": "e5d7",
+        "sub": [
+          {
+            "reply": "e8d7",
+            "counter": "h9h8",
+            "sub": [
+              {
+                "reply": "f8f9",
+                "counter": "e4e9"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "23": {
+    "index": 23,
+    "depth": 7,
+    "move": "c4c9",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e9e8",
+        "counter": "c9e9",
+        "sub": [
+          {
+            "reply": "e8e9",
+            "counter": "b4e4"
+          },
+          {
+            "reply": "e8f8",
+            "counter": "e5f5",
+            "sub": [
+              {
+                "reply": "f7e8",
+                "counter": "b4f4"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "24": {
+    "index": 24,
+    "depth": 7,
+    "move": "f8e8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e9d9",
+        "counter": "b4b9",
+        "sub": [
+          {
+            "reply": "e7c9",
+            "counter": "b9c9"
+          }
+        ]
+      },
+      {
+        "reply": "e9f9",
+        "counter": "f5g7"
+      },
+      {
+        "reply": "e9e8",
+        "counter": "f5g7",
+        "sub": [
+          {
+            "reply": "e8e9",
+            "counter": "b4b9",
+            "sub": [
+              {
+                "reply": "e7c9",
+                "counter": "b9c9"
+              }
+            ]
+          },
+          {
+            "reply": "e8d8",
+            "counter": "b4d4"
+          },
+          {
+            "reply": "e8f8",
+            "counter": "b4f4"
+          }
+        ]
+      }
+    ]
+  },
+  "25": {
+    "index": 25,
+    "depth": 7,
+    "move": "b6d7",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e9d9",
+        "counter": "e5d5",
+        "sub": [
+          {
+            "reply": "e6d6",
+            "counter": "d7b8",
+            "sub": [
+              {
+                "reply": "d9e9",
+                "counter": "b8d9"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "26": {
+    "index": 26,
+    "depth": 7,
+    "move": "c5e6",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "f8f9",
+        "counter": "e6g7",
+        "sub": [
+          {
+            "reply": "f9f8",
+            "counter": "g7h9",
+            "sub": [
+              {
+                "reply": "f8f9",
+                "counter": "i2i9"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "reply": "f8e8",
+        "counter": "i2e2"
+      }
+    ]
+  },
+  "27": {
+    "index": 27,
+    "depth": 7,
+    "move": "e6d6",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "d7d8",
+        "counter": "i2d2",
+        "sub": [
+          {
+            "reply": "b3d3",
+            "counter": "d6d7",
+            "sub": [
+              {
+                "reply": "d8d9",
+                "counter": "d7d8"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "28": {
+    "index": 28,
+    "depth": 7,
+    "move": "e6e7",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "c9e7",
+        "counter": "e5d7"
+      },
+      {
+        "reply": "d9e8",
+        "counter": "e5f7",
+        "sub": [
+          {
+            "reply": "e9d9",
+            "counter": "e7d7",
+            "sub": [
+              {
+                "reply": "e8d7",
+                "counter": "b8d8"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "reply": "f9e8",
+        "counter": "e5d7",
+        "sub": [
+          {
+            "reply": "e9f9",
+            "counter": "e7f7",
+            "sub": [
+              {
+                "reply": "e8f7",
+                "counter": "b8f8"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "29": {
+    "index": 29,
+    "depth": 7,
+    "move": "g4g9",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "e9e8",
+        "counter": "h4h8",
+        "sub": [
+          {
+            "reply": "e8e7",
+            "counter": "g9g7",
+            "sub": [
+              {
+                "reply": "f7e8",
+                "counter": "i4i7"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "reply": "f9e8",
+        "counter": "i4i9"
+      }
+    ]
+  },
+  "30": {
+    "index": 30,
+    "depth": 7,
+    "move": "i6h8",
+    "isMate": false,
+    "replies": [
+      {
+        "reply": "f7f8",
+        "counter": "b8d9",
+        "sub": [
+          {
+            "reply": "e8d9",
+            "counter": "h8g6",
+            "sub": [
+              {
+                "reply": "f8f9",
+                "counter": "e6e9"
+              },
+              {
+                "reply": "f8f7",
+                "counter": "e6e7"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,272 @@
+[
+  {
+    "index": 1,
+    "fen": "5k3/5n3/N8/9/9/9/9/9/9/5K3",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 6,
+    "status": "NEED_SOLUTION",
+    "details": "Có 6 nước đi thường, không có nước chiếu trực tiếp."
+  },
+  {
+    "index": 2,
+    "fen": "3ak4/4a4/4c4/7C1/9/9/9/9/9/5K3",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 19,
+    "status": "NEED_SOLUTION",
+    "details": "Có 19 nước đi thường, không có nước chiếu trực tiếp."
+  },
+  {
+    "index": 3,
+    "fen": "3akab2/9/4c1N1n/9/9/9/5R3/1r2BA3/4Apr2/4K1B2",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 24,
+    "status": "VERIFIED",
+    "details": "Sát cục 1 nước đã xác minh: [f3f9]"
+  },
+  {
+    "index": 4,
+    "fen": "CN1ak4/4a4/4b4/9/9/9/9/4B4/3rA1r2/4KAB1c",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 18,
+    "status": "VERIFIED",
+    "details": "Sát cục 1 nước đã xác minh: [b9d8]"
+  },
+  {
+    "index": 5,
+    "fen": "3k5/9/9/2N6/2N6/9/9/9/3p1r3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 12,
+    "status": "NEED_SOLUTION",
+    "details": "Có 2 nước chiếu tướng: [c6b8, c6e7]"
+  },
+  {
+    "index": 6,
+    "fen": "4k4/3RaR3/6n2/9/9/9/9/5p3/4pr3/3K5",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 23,
+    "status": "NEED_SOLUTION",
+    "details": "Có 4 nước chiếu tướng: [d8d9, d8e8, f8f9, f8e8]"
+  },
+  {
+    "index": 7,
+    "fen": "r3kab2/4a4/9/4p4/9/9/4C4/4C4/4pr3/3K5",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 21,
+    "status": "NEED_SOLUTION",
+    "details": "Có 1 nước chiếu tướng: [e2e6]"
+  },
+  {
+    "index": 8,
+    "fen": "5kb2/4a4/4ba2c/9/9/9/4C4/2n4C1/3r1p3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 28,
+    "status": "NEED_SOLUTION",
+    "details": "Có 3 nước chiếu tướng: [e3f3, h2h9, h2f2]"
+  },
+  {
+    "index": 9,
+    "fen": "5k3/4P1P2/5n2b/9/9/5c3/9/9/3r1p3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 6,
+    "status": "NEED_SOLUTION",
+    "details": "Có 4 nước chiếu tướng: [e8e9, e8f8, g8g9, g8f8]"
+  },
+  {
+    "index": 10,
+    "fen": "3ck4/4a1R2/9/9/9/7R1/9/9/3r1p3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 30,
+    "status": "NEED_SOLUTION",
+    "details": "Có 3 nước chiếu tướng: [g8g9, g8e8, h4h9]"
+  },
+  {
+    "index": 11,
+    "fen": "5kC2/4an3/3a1N3/9/9/9/9/5C3/3r1p3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 30,
+    "status": "NEED_SOLUTION",
+    "details": "Có 6 nước chiếu tướng: [f7d8, f7h8, f7d6, f7h6, f7e5, f7g5]"
+  },
+  {
+    "index": 12,
+    "fen": "3a2R2/4ak3/5rN2/7n1/9/9/9/2n6/5r3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 12,
+    "status": "NEED_SOLUTION",
+    "details": "Có 2 nước chiếu tướng: [g9f9, g9g8]"
+  },
+  {
+    "index": 13,
+    "fen": "C3k1b2/2R1aR3/4b1n2/9/9/9/r8/6n2/2r2p3/4K3c",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 34,
+    "status": "NEED_SOLUTION",
+    "details": "Có 4 nước chiếu tướng: [c8c9, c8e8, f8f9, f8e8]"
+  },
+  {
+    "index": 14,
+    "fen": "3k1C3/9/5N3/9/9/4n4/9/4C4/3rAp3/4KARrc",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 36,
+    "status": "NEED_SOLUTION",
+    "details": "Có 1 nước chiếu tướng: [f7e9]"
+  },
+  {
+    "index": 15,
+    "fen": "3a2R2/4ak3/5cN2/9/9/9/9/2n6/5r3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 12,
+    "status": "NEED_SOLUTION",
+    "details": "Có 2 nước chiếu tướng: [g9f9, g9g8]"
+  },
+  {
+    "index": 16,
+    "fen": "3k1n3/2R1c4/3abnN2/9/9/4C4/2R6/9/3pAp3/4KA1rc",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 46,
+    "status": "NEED_SOLUTION",
+    "details": "Có 3 nước chiếu tướng: [c8c9, c8d8, e4d4]"
+  },
+  {
+    "index": 17,
+    "fen": "3k1c3/2R1a4/3a5/9/9/4C4/9/9/3pAp3/4KA1rc",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 29,
+    "status": "NEED_SOLUTION",
+    "details": "Có 3 nước chiếu tướng: [c8c9, c8d8, e4d4]"
+  },
+  {
+    "index": 18,
+    "fen": "2ba1ab2/1R7/4k1n2/6P2/5r3/1N2C4/4p4/6n2/3p5/1r1AK1B2",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 31,
+    "status": "NEED_SOLUTION",
+    "details": "Có 4 nước chiếu tướng: [b8e8, b8b7, b4c6, b4d5]"
+  },
+  {
+    "index": 19,
+    "fen": "2bakab2/4n4/4R4/9/9/4C4/5R3/6n2/3p5/1r1AK1B2",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 44,
+    "status": "NEED_SOLUTION",
+    "details": "Có 10 nước chiếu tướng: [e7e8, e7a7, e7b7, e7c7, e7d7, e7f7, e7g7, e7h7, e7i7, f3f9]"
+  },
+  {
+    "index": 20,
+    "fen": "3ak4/3PaP1N1/9/4n4/9/9/9/6n2/3p5/1r1AK1B2",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 12,
+    "status": "NEED_SOLUTION",
+    "details": "Có 4 nước chiếu tướng: [d8d9, d8e8, f8f9, f8e8]"
+  },
+  {
+    "index": 21,
+    "fen": "3kn4/2P1a3c/3Pba3/9/9/9/9/4p1n2/4Ar3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 11,
+    "status": "NEED_SOLUTION",
+    "details": "Có 3 nước chiếu tướng: [c8c9, c8d8, d7d8]"
+  },
+  {
+    "index": 22,
+    "fen": "5k3/4a4/5a2r/9/r3N4/4R2R1/9/9/3p1p3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 27,
+    "status": "NEED_SOLUTION",
+    "details": "Có 1 nước chiếu tướng: [h4h9]"
+  },
+  {
+    "index": 23,
+    "fen": "2b1ka3/9/n4a3/9/4C4/cCR6/9/9/1r2p4/3K5",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 36,
+    "status": "NEED_SOLUTION",
+    "details": "Có 2 nước chiếu tướng: [b4b9, c4c9]"
+  },
+  {
+    "index": 24,
+    "fen": "4k4/4aP3/4b4/9/5Nb2/1R7/9/9/4Ap1r1/3AK3c",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 28,
+    "status": "NEED_SOLUTION",
+    "details": "Có 3 nước chiếu tướng: [f8f9, f8e8, b4b9]"
+  },
+  {
+    "index": 25,
+    "fen": "2C1ka3/4a4/9/1N2r4/4C4/9/9/9/4p1p2/5K3",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 31,
+    "status": "NEED_SOLUTION",
+    "details": "Có 2 nước chiếu tướng: [b6c8, b6d7]"
+  },
+  {
+    "index": 26,
+    "fen": "3a5/5k3/5a3/9/2N6/9/9/8C/3r1p3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 25,
+    "status": "NEED_SOLUTION",
+    "details": "Có 3 nước chiếu tướng: [c5d7, c5e6, i2f2]"
+  },
+  {
+    "index": 27,
+    "fen": "9/9/3k5/4P4/9/9/1r7/8C/5p3/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 20,
+    "status": "NEED_SOLUTION",
+    "details": "Có 2 nước chiếu tướng: [e6e7, e6d6]"
+  },
+  {
+    "index": 28,
+    "fen": "2baka3/1R7/4b4/4R4/4N4/9/9/3p5/2r1p4/3K5",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 32,
+    "status": "NEED_SOLUTION",
+    "details": "Có 2 nước chiếu tướng: [b8e8, e6e7]"
+  },
+  {
+    "index": 29,
+    "fen": "4ka3/9/5a3/9/9/6CRC/9/9/1r2p4/3K5",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 33,
+    "status": "NEED_SOLUTION",
+    "details": "Có 2 nước chiếu tướng: [g4g9, i4i9]"
+  },
+  {
+    "index": 30,
+    "fen": "3a5/1N2a4/5k3/4R3N/9/9/9/9/3p1rn2/4K4",
+    "initialRedInCheck": false,
+    "initialBlackInCheck": false,
+    "redLegalMovesCount": 22,
+    "status": "NEED_SOLUTION",
+    "details": "Có 4 nước chiếu tướng: [e6e7, e6f6, i6h8, i6g5]"
+  }
+]

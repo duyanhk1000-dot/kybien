@@ -1,0 +1,137 @@
+{
+  "npcs": [
+    {
+      "id": "npc_ly_chinh",
+      "name": "Lý Thừa Phong",
+      "title": "Trưởng Thôn Lý Chính",
+      "zone_id": "zone_thanh_ha_thon",
+      "place_id": "place_nhiem_vu_duong",
+      "role": "VILLAGE_HEAD",
+      "description": "Một vị lão giả ngoài lục tuần phong thái quắc thước, từng là ngoại môn đệ tử của tiên tông trở về phàm trần chủ trì đại sự cho thôn làng.",
+      "avatar_image": "/assets/xianxia/avatars/npc_ly_chinh.webp",
+      "dialogues": {
+        "greeting": "Đạo hữu phương nào tới Thanh Hà Thôn? Gần đây linh khí nơi rừng trúc có biến dị, hãy cẩn trọng dã thú.",
+        "idle": [
+          "Thôn chúng ta tuy nhỏ nhưng phong thủy thái hòa, lưng tựa núi tiên, mặt hướng sông rộng.",
+          "Nếu rảnh rỗi, hãy qua Bảng Nhiệm Vụ xem xét, có nhiều việc thợ săn trong thôn đang cần trợ lực."
+        ],
+        "quest_hint": "Ngươi đã chuẩn bị tiến vào Rừng Trúc U Minh chưa? Nhớ ghé tiệm thuốc của Trần lão đầu mua ít Kim Sang Dược phòng thân."
+      },
+      "related_services": ["view_bounties", "accept_quest", "claim_bounty"]
+    },
+    {
+      "id": "npc_tran_duoc_su",
+      "name": "Trần Thanh Mộc",
+      "title": "Lão Dược Sư",
+      "zone_id": "zone_thanh_ha_thon",
+      "place_id": "place_thao_duoc_duong",
+      "role": "APOTHECARY",
+      "description": "Lão dược sư tóc bạc phơ quanh năm bên ấm thuốc bốc khói nghi ngút. Đôi mắt tinh tường nhìn thấu dược tính trăm loài thảo mộc.",
+      "avatar_image": "/assets/xianxia/avatars/npc_tran_duoc_su.webp",
+      "dialogues": {
+        "greeting": "Mùi thảo mộc này thơm chứ? Muốn mua đan hoàn trị thương hay có linh thảo vừa hái muốn bán?",
+        "idle": [
+          "Linh Trúc Diệp trong rừng sâu hấp thu sương sớm nghìn năm, nếu biết phối chế sẽ luyện ra Trúc Khí Hoàn thượng hạng.",
+          "Tu sĩ ra ngoài hành tẩu, mạng sống là trên hết, đừng tiếc vài lượng bạc mua thuốc phòng thân."
+        ],
+        "quest_hint": "Nếu ngươi tìm thấy [Linh Chi Ngàn Năm] hoặc [Linh Trúc Diệp], lão phu nguyện trả giá cao để thu mua."
+      },
+      "related_services": ["buy_pills", "sell_herbs", "learn_alchemy"]
+    },
+    {
+      "id": "npc_truong_thiet",
+      "name": "Trương Cương",
+      "title": "Thiết Tế Đại Sư (Bác Thợ Sắt)",
+      "zone_id": "zone_thanh_ha_thon",
+      "place_id": "place_thiet_te_phuong",
+      "role": "BLACKSMITH",
+      "description": "Người đàn ông trung niên vạm vỡ, hai cánh tay cuồn cuộn cơ bắp đen bóng dưới ánh than hồng. Nổi danh với kỹ thuật tôi sắt bách luyện.",
+      "avatar_image": "/assets/xianxia/avatars/npc_truong_thiet.webp",
+      "dialogues": {
+        "greeting": "Kiếm mẻ hay giáp rách? Cứ để đấy cho ta, bảo đảm nhát búa đập xuống sắc bén như mới!",
+        "idle": [
+          "Quặng sắt phàm trần nếu được tôi bằng nước suối Linh Tuyền sẽ hóa thành huyền thiết cứng rắn vô song.",
+          "Thanh Phong Kiếm của ngươi cần được tôi luyện thêm một lần nữa mới phát huy hết linh tính."
+        ],
+        "quest_hint": "Kiếm đủ 5 khối [Thiết Khoáng Thạch] mang về đây, ta sẽ rèn cho ngươi một món bảo khí vừa ý."
+      },
+      "related_services": ["repair_gear", "forge_weapon", "temper"]
+    },
+    {
+      "id": "npc_hac_y_lu_nhan",
+      "name": "Mạc Vô Nhai",
+      "title": "Hắc Y Lữ Nhân (Hiệp Khách Bí Ẩn)",
+      "zone_id": "zone_u_minh_truc_lam",
+      "place_id": "place_mieu_hoang_phe",
+      "role": "WANDERER",
+      "description": "Một hiệp khách khoác áo choàng đen rách rưới ôm kiếm tựa lưng vào cột miếu đổ nát. Ánh mắt lạnh lùng như băng sương nhưng nội lực thâm hậu khó dò.",
+      "avatar_image": "/assets/xianxia/avatars/npc_hac_y_lu_nhan.webp",
+      "dialogues": {
+        "greeting": "Rừng sâu lắm chông gai, kẻ yếu vào đây chỉ làm mồi cho sài lang yêu thú.",
+        "idle": [
+          "U Minh Lang Vương trên Hắc Phong Nhai sắp độ kiếp hóa yêu đan. Không ít tu sĩ đã bỏ mạng dưới vuốt của nó.",
+          "Muốn sống sót trong giang hồ, thân pháp phải nhanh hơn kiếm của kẻ thù."
+        ],
+        "quest_hint": "Ngươi có gan tiến vào Hắc Phong Nhai không? Nếu còn chưa đạt Luyện Khí Tầng 3 thì chớ dại dột nộp mạng."
+      },
+      "related_services": ["investigate", "pray"]
+    },
+    {
+      "id": "npc_tieu_dao_tu",
+      "name": "Tiêu Dao Lão Nhân",
+      "title": "Linh Tuyền Ẩn Sĩ",
+      "zone_id": "zone_u_minh_truc_lam",
+      "place_id": "place_linh_tuyen_thuy_thach",
+      "role": "HERMIT",
+      "description": "Lão nhân râu tóc bạc phơ ngồi xếp bằng trên tảng đá phẳng bên dòng suối trong vắt, tay cầm cần câu trúc không lưỡi.",
+      "avatar_image": "/assets/xianxia/avatars/npc_tieu_dao_tu.webp",
+      "dialogues": {
+        "greeting": "Nước suối rửa bụi trần, tâm tịnh thì đạo tự sinh. Mời đạo hữu cùng uống ngụm trà suối.",
+        "idle": [
+          "Tu tiên không phải chỉ chém chém giết giết, thuận theo tự nhiên mới là đại đạo chí giản.",
+          "Mỗi lần bế quan tẩy kinh phạt tủy, thần thức sẽ thanh tỉnh thêm một phần."
+        ],
+        "quest_hint": "Khi mệt mỏi kiệt sức, hãy nhớ lấy nước suối linh tuyền này gột rửa kinh mạch."
+      },
+      "related_services": ["drink_spring_water", "cleanse_meridians"]
+    },
+    {
+      "id": "npc_duoc_vuong",
+      "name": "Dược Vương Chân Nhân",
+      "title": "Vân Mộng Đan Tôn",
+      "zone_id": "zone_van_mong_dam",
+      "place_id": "place_duoc_vuong_coc",
+      "role": "APOTHECARY",
+      "description": "Một vị đan đạo đại sư ẩn cư giữa lòng Vân Mộng Đầm Lầy, quanh thân luôn phảng phất hương thơm của vạn năm linh chi và dị thảo thiên địa.",
+      "avatar_image": "/assets/xianxia/avatars/npc_duoc_vuong.webp",
+      "dialogues": {
+        "greeting": "Vân Mộng Đầm Lầy độc khí trùng thiên, đạo hữu vượt qua được chướng khí đến đây ắt có duyên với đan đạo.",
+        "idle": [
+          "Huyền Âm Thảo sinh ra từ hàn sát đầm lầy, kết hợp với Huyết Chi ngàn năm mới luyện thành Cực Phẩm Trúc Cơ Đan.",
+          "Đạo cơ vững chắc như núi thì ngưng kết Kim Đan mới không sợ thiên kiếp thần lôi giáng xuống."
+        ],
+        "quest_hint": "Nếu đạo hữu mang về [Ngàn Năm Huyết Chi], bổn tọa có thể khai lò chỉ điểm luyện đan thuật."
+      },
+      "related_services": ["buy_rare_pills", "alchemy_cauldron", "trade_herbs"]
+    },
+    {
+      "id": "npc_kiem_tong_truong_lao",
+      "name": "Phong Vô Cực",
+      "title": "Thiên Kiếm Chấp Pháp Trưởng Lão",
+      "zone_id": "zone_thien_kiem_son",
+      "place_id": "place_kiem_tong_dien",
+      "role": "SECT_ELDER",
+      "description": "Chấp pháp trưởng lão uy nghiêm vô thượng của Thiên Kiếm Tông. Khí tức kiếm ý tỏa ra sắc bén xé rách hư không, thân khoác huyền kiếm đạo bào.",
+      "avatar_image": "/assets/xianxia/avatars/npc_kiem_tong_truong_lao.webp",
+      "dialogues": {
+        "greeting": "Thiên Kiếm Tông uy danh chấn nhiếp bát hoang. Kẻ nào tâm chí bất định, kiếm ý bất thuần đừng hòng bước qua môn đăng.",
+        "idle": [
+          "Bản Mệnh Kiếm Thai cần được tôi luyện bằng kiếm ý thuần khiết và thiên lôi rèn giũa.",
+          "Cổ Ma Động bên sườn núi vẫn còn tàn dư ma sát ngàn năm, đệ tử Trúc Cơ cần hết sức cẩn trọng khi lịch lãm."
+        ],
+        "quest_hint": "Trảm sát Cổ Kiếm Khôi và thanh tẩy Cổ Ma Động Phủ, ngươi mới xứng đáng xưng danh Thiên Kiếm Đệ Tử."
+      },
+      "related_services": ["sword_sparring", "sect_trial", "claim_sect_badge"]
+    }
+  ]
+}

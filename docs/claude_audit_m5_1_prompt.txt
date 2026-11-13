@@ -1,0 +1,24 @@
+BẠN LÀ TECH LEAD & AUDITOR KIỂM ĐỊNH ĐỘC LẬP (CLAUDE CODE).
+HÃY ĐÁNH GIÁ VÀ NGHIỆM THU ĐỘC LẬP BƯỚC M5.1: FOUNDATION & TYPOGRAPHY.
+
+Dưới đây là báo cáo M5.1: docs/M5_1_TYPOGRAPHY_REPORT.md và các thay đổi trong frontend/tien-lo.html:
+1. Đã tích hợp Google Fonts: 'Cinzel' (600, 700, 900), 'Noto Serif TC' (400, 600, 700, 900), và 'Be Vietnam Pro' (300, 400, 500, 600, 700). Đảm bảo 100% hiển thị tiếng Việt có dấu sắc nét, không bị lỗi font (no tofu).
+2. Đã thiết lập đầy đủ 5 sắc độ Wuxia chuẩn mực:
+   - Trắng ngà cổ phong (Parchment Ivory: --parchment-100, 200, 300).
+   - Đen mực tàu (Ink-wash Charcoal: --bg-canvas #07090b, --bg-surface).
+   - Đỏ chu sa (Cinnabar Crimson: --crimson-700, 600, 500, 400, glow).
+   - Vàng hoàng kim / Đồng thau (Antique Gold & Bronze: --gold-600, 500, 400, glow).
+   - Lục bảo thiên thanh (Celestial Jade: --jade-600, 500, 400, glow).
+3. Đã bổ sung Wuxia Typography Utility Classes: .font-wuxia-title, .font-wuxia-serif, .text-parchment, .text-wuxia-gold, .text-wuxia-jade, .text-wuxia-crimson.
+4. Đã áp dụng quy tắc tiêu đề toàn cục: h1, h2, h3, h4, h5, h6 { font-family: var(--font-title); letter-spacing: 0.04em; }.
+5. Kiểm thử cú pháp JS và kiểm thử hồi quy Frontend xianxiaM4WorldBossFrontend.test.ts đạt 10/10 PASS (100%), không phá vỡ bất kỳ element hay logic nào có sẵn.
+
+YÊU CẦU ĐỐI VỚI BẠN:
+1. Đọc và thẩm định docs/M5_1_TYPOGRAPHY_REPORT.md và các thay đổi trong frontend/tien-lo.html.
+2. Kiểm tra xem 4 tiêu chí nghiệm thu của M5.1 đã đạt chưa:
+   - Typography cổ điển & hỗ trợ tiếng Việt: [ĐẠT / CHƯA ĐẠT]
+   - Bảng màu Wuxia 5 sắc độ: [ĐẠT / CHƯA ĐẠT]
+   - Tính nhất quán & không vỡ layout: [ĐẠT / CHƯA ĐẠT]
+   - Kết quả kiểm thử: [ĐẠT / CHƯA ĐẠT]
+3. Đưa ra phán quyết: [PASS / FAIL] cho Bước M5.1.
+4. Cấp phép và đưa ra chỉ dẫn cụ thể cho Bước M5.2: Container & Layout.

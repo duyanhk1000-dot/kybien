@@ -1,0 +1,26 @@
+BẠN LÀ TECH LEAD & AUDITOR KIỂM ĐỊNH ĐỘC LẬP (CLAUDE CODE).
+HÃY ĐÁNH GIÁ VÀ NGHIỆM THU ĐỘC LẬP BƯỚC M5.2: CONTAINER & LAYOUT.
+
+Dưới đây là báo cáo M5.2: docs/M5_2_CONTAINER_LAYOUT_REPORT.md và các thay đổi trong frontend/tien-lo.html cùng frontend/tienlo-engine.js:
+1. Đã xây dựng Thanh Điều Hướng Đáy 5 Tab cố định (.wuxia-bottom-nav):
+   - Động Phủ (action), Nhiệm Vụ (quest), Sinh Hoạt (life), Nhân Vật (character), Túi Đồ (inventory) + Giang Hồ (menu).
+   - Thiết kế chuẩn Wuxia Logs: Nền mờ kính 18px blur, viền hoàng kim, nút cảm ứng >= 48px, huy hiệu cảnh báo đỏ .bnav-badge.
+2. Đã tạo Ngăn Kéo Giang Hồ Lục (#wuxia-quick-menu-modal) với lưới 2 cột gồm 8 phân hệ (Toàn Dân Trảm Ma, Tổ Đội Bí Cảnh, Tông Môn, Đấu Trường, Bảng Xếp Hạng, Chiến Báo, Trùng Sinh, Sảnh Kỳ Biến), giải phóng hoàn toàn thanh header khỏi tình trạng "Dashboard Bloat".
+3. Đã bổ sung nút mở nhanh trên Header: #btn-toggle-quick-menu ("☰ Giang Hồ Lục").
+4. Đã tối ưu Container & Layout đa thiết bị:
+   - Desktop (> 900px): Lưới 2 cột .wuxia-world-container (1fr 340px) tinh tế.
+   - Mobile (<= 900px): 1 cột dọc thông suốt, tự động bổ sung padding-bottom an toàn calc(76px + env(safe-area-inset-bottom, 0px)) chống che khuất.
+   - Thêm backdrop-filter: blur(14px) và viền ngọc/hoàng kim cho các thẻ chính.
+5. Đã đồng bộ trạng thái Tab trong tienlo-engine.js: Hàm setTab() tự động cập nhật active class cho cả .tab-btn, .nav-btn và .bnav-item[data-bnav].
+6. Kiểm thử cú pháp JS và kiểm thử hồi quy Frontend xianxiaM4WorldBossFrontend.test.ts đạt 10/10 PASS (100%), không phá vỡ bất kỳ element hay logic nào có sẵn.
+
+YÊU CẦU ĐỐI VỚI BẠN:
+1. Đọc và thẩm định docs/M5_2_CONTAINER_LAYOUT_REPORT.md và các thay đổi trong frontend/tien-lo.html và frontend/tienlo-engine.js.
+2. Kiểm tra xem các tiêu chí của M5.2 đã đạt chưa:
+   - Hệ thống Container & Layout (2-column desktop, 1-column mobile): [ĐẠT / CHƯA ĐẠT]
+   - Fixed Bottom Navigation Bar (5 tabs chuẩn Wuxia Logs): [ĐẠT / CHƯA ĐẠT]
+   - Ngăn kéo Giang Hồ Lục (Quick Menu Drawer 8 modules): [ĐẠT / CHƯA ĐẠT]
+   - Đồng bộ trạng thái Tab & An toàn safe-area: [ĐẠT / CHƯA ĐẠT]
+   - Kết quả kiểm thử hồi quy: [ĐẠT / CHƯA ĐẠT]
+3. Đưa ra phán quyết: [PASS / FAIL] cho Bước M5.2.
+4. Cấp phép và đưa ra chỉ dẫn cụ thể cho Bước M5.3: Components Overhaul.

@@ -1,0 +1,4407 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Tiên Lộ: Vạn Giới Tranh Phong - RPG Tu Tiên Bí Cảnh</title>
+  <meta name="description" content="Thế giới tu tiên thuần túy: Tu luyện từ Phàm nhân lên Trúc Cơ, thám hiểm sơn xuyên, giải quyết kỳ ngộ nhân quả, khai khoáng hái thuốc và ngưng đan đúc kiếm."/>
+
+  <!-- Google Fonts: Be Vietnam Pro, Noto Serif TC & Cinzel (Wuxia Classical Swordsman Typography) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cinzel:wght@600;700;900&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="interaction-ux.css?v=1.0.0"/>
+
+  <style>
+    /* ====================================================
+       1. CORE DESIGN SYSTEM & TOKENS (WUXIA LOGS AESTHETIC)
+       Theme: Ink-Wash Charcoal, Antique Gold, Celestial Jade & Cinnabar Crimson
+       ==================================================== */
+    :root {
+      /* Base Canvases (Đen mực tàu & Trầm mặc) */
+      --bg-canvas: #07090b;
+      --bg-surface: rgba(16, 20, 26, 0.82);
+      --bg-surface-elevated: rgba(24, 29, 39, 0.92);
+      --bg-subtle: rgba(255, 255, 255, 0.035);
+      
+      /* Đường viền cổ phong (Borders) */
+      --border-subtle: rgba(255, 255, 255, 0.09);
+      --border-medium: rgba(255, 255, 255, 0.16);
+      --border-highlight: rgba(16, 185, 129, 0.45);
+      --border-gold: rgba(245, 158, 11, 0.35);
+      --border-crimson: rgba(220, 38, 38, 0.35);
+
+      /* Màu chữ & Thư pháp (Parchment & Text) */
+      --color-text-main: #f4ede2;
+      --color-text-muted: #a3b0c2;
+      --color-text-dim: #6b7a90;
+      --parchment-100: #faf6ee;
+      --parchment-200: #f4ede2;
+      --parchment-300: #e2d7c5;
+
+      /* Màu nhấn Tiên Hiệp & Kiếm Hiệp (Wuxia / Xianxia Accents) */
+      --jade-600: #059669;
+      --jade-500: #10b981;
+      --jade-400: #34d399;
+      --jade-glow: rgba(16, 185, 129, 0.28);
+
+      --amber-600: #d97706;
+      --amber-500: #f59e0b;
+      --amber-400: #fbbf24;
+      --amber-glow: rgba(245, 158, 11, 0.28);
+      --gold-600: #d97706;
+      --gold-500: #f59e0b;
+      --gold-400: #fbbf24;
+      --gold-glow: rgba(245, 158, 11, 0.28);
+
+      --crimson-700: #991b1b;
+      --crimson-600: #dc2626;
+      --crimson-500: #ef4444;
+      --crimson-400: #f87171;
+      --crimson-glow: rgba(220, 38, 38, 0.28);
+
+      /* Typography: Kiếm hiệp cổ điển & Tiếng Việt chuẩn */
+      --font-body: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-serif: 'Noto Serif TC', 'Cinzel', serif;
+      --font-title: 'Noto Serif TC', 'Cinzel', serif;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+    }
+
+    /* Wuxia Typography Utility Classes */
+    .font-wuxia-title {
+      font-family: var(--font-title);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .font-wuxia-serif {
+      font-family: var(--font-serif);
+    }
+    .text-parchment {
+      color: var(--parchment-200);
+    }
+    .text-wuxia-gold {
+      color: var(--gold-400);
+      text-shadow: 0 0 10px var(--gold-glow);
+    }
+    .text-wuxia-jade {
+      color: var(--jade-400);
+      text-shadow: 0 0 10px var(--jade-glow);
+    }
+    .text-wuxia-crimson {
+      color: var(--crimson-400);
+      text-shadow: 0 0 10px var(--crimson-glow);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-canvas);
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(16, 185, 129, 0.07), transparent),
+        radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.04), transparent 40%),
+        radial-gradient(circle at 0% 50%, rgba(2, 132, 199, 0.04), transparent 40%);
+      color: var(--color-text-main);
+      line-height: 1.55;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-title);
+      letter-spacing: 0.04em;
+    }
+
+    a { color: var(--amber-400); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: #fef08a; }
+
+    /* Custom Minimal Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.35); }
+
+    /* ====================================================
+       2. WUXIA NAVIGATION BAR & EMBLEM HEADER
+       ==================================================== */
+    .wuxia-top-header {
+      background: rgba(11, 13, 17, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 8px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .top-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon-seal {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(245, 158, 11, 0.25));
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 0 12px var(--amber-glow);
+    }
+
+    .brand-text-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title-serif {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      background: linear-gradient(90deg, #fef08a, #fbbf24 40%, #34d399 90%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .brand-subline {
+      font-size: 0.68rem;
+      color: var(--color-text-dim);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-wuxia-link {
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      transition: all 0.2s;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-wuxia-link:hover {
+      color: #fff;
+      border-color: var(--border-medium);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-reincarnate {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-reincarnate:hover {
+      background: rgba(239, 68, 68, 0.28);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+    }
+
+    /* CENTERED ICON-NAV BAR (WUXIA LOGS COMPONENT) */
+    .wuxia-icon-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      max-width: 800px;
+      margin: 0 auto;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      min-width: 68px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      user-select: none;
+    }
+    .nav-btn:active {
+      transform: scale(0.93);
+    }
+    .nav-btn:hover {
+      background: var(--bg-subtle);
+      color: var(--color-text-main);
+    }
+    .nav-btn.active {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.15);
+    }
+    .nav-btn .nav-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+      margin-bottom: 3px;
+      transition: transform 0.25s;
+    }
+    .nav-btn.active .nav-icon {
+      transform: scale(1.12);
+    }
+    .nav-btn .nav-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+    .nav-btn .notify-badge {
+      position: absolute;
+      top: 3px;
+      right: 12px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      width: 15px;
+      height: 15px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
+      animation: pulseBtn 1.5s infinite;
+    }
+
+    /* ====================================================
+       3. CHARACTER STATUS BANNER (FLOATING TITLE + DUAL VITALS)
+       ==================================================== */
+    .status-banner-wrap {
+      max-width: 1360px;
+      width: 100%;
+      margin: 14px auto 0 auto;
+      padding: 0 16px;
+    }
+
+    .character-status-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 20px;
+      position: relative;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+      display: grid;
+      grid-template-columns: 240px 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+
+    /* Floating Title Tag on Top-Left */
+    .floating-title-pill {
+      position: absolute;
+      top: -10px;
+      left: 18px;
+      background: linear-gradient(90deg, #1e293b, #0f172a);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fde047;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .char-profile {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 2px;
+    }
+
+    .char-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .char-name {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: 0.5px;
+    }
+
+    .char-realm-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--jade-400);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.18);
+    }
+
+    /* Dual Vitals Bars */
+    .vitals-meter-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .meter-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meter-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+
+    .meter-track {
+      height: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .meter-fill.hp {
+      background: linear-gradient(90deg, #991b1b, #ef4444);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+    }
+
+    .meter-fill.fatigue {
+      background: linear-gradient(90deg, #b45309, #f59e0b);
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.35);
+    }
+
+    .meter-fill.cultivation {
+      background: linear-gradient(90deg, #047857, #10b981 60%, #34d399);
+      box-shadow: 0 0 8px var(--jade-glow);
+    }
+
+    /* Attributes Strip */
+    .attributes-strip {
+      display: flex;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+    }
+
+    .attr-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 48px;
+    }
+    .attr-cell-title {
+      font-size: 0.65rem;
+      color: var(--color-text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .attr-cell-value {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      font-family: monospace;
+    }
+    .attr-cell-value.gold {
+      color: var(--amber-400);
+    }
+    .attr-cell-value.karma {
+      color: var(--jade-400);
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+    }
+
+    /* ====================================================
+       4. ACTIVE QUEST & JOURNEY TRACKER HUD (WUXIA LOGS)
+       ==================================================== */
+    .journey-hud-wrap {
+      max-width: 1360px;
+      width: 100%;
+      margin: 10px auto 0 auto;
+      padding: 0 16px;
+    }
+
+    .quest-tracker-bar {
+      background: rgba(18, 21, 28, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .tracker-main-col {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tracker-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--amber-400);
+    }
+
+    .tracker-quest-details {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .tracker-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    #tracker-quest-title {
+      font-family: var(--font-serif);
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #tracker-quest-progress {
+      font-size: 0.75rem;
+      color: var(--jade-400);
+      font-weight: 500;
+    }
+
+    /* WUXIA LOGS JOURNEY PATH COMPONENT */
+    .journey-path {
+      flex: 1;
+      align-items: center;
+      gap: 4px;
+      min-width: 140px;
+      max-width: 320px;
+      height: 1rem;
+      display: flex;
+      position: relative;
+    }
+    .journey-path:before {
+      content: "";
+      pointer-events: none;
+      background-image: linear-gradient(90deg, #525252 0 8px, transparent 8px);
+      background-size: 16px 2px;
+      height: 2px;
+      position: absolute;
+      top: calc(50% - 1px);
+      left: 6px;
+      right: 6px;
+    }
+    .journey-dot {
+      border-radius: 50%;
+      flex-shrink: 0;
+      width: 5px;
+      height: 5px;
+    }
+    .journey-dot-origin {
+      background: var(--jade-400);
+      opacity: 0.75;
+    }
+    .journey-dot-current {
+      background: #fcd34d;
+      width: 7px;
+      height: 7px;
+      position: relative;
+      box-shadow: 0 0 0 3px #181c24, 0 0 8px rgba(251, 191, 36, 0.6);
+      animation: breath-dot 2.5s infinite;
+    }
+    .journey-dot-horizon {
+      border: 1px solid #737373;
+    }
+    .journey-line {
+      flex-basis: 0;
+      min-width: 0;
+    }
+    .journey-line-completed {
+      border-top: 2px solid #257558;
+      position: relative;
+    }
+    .journey-line-ahead {
+      height: 2px;
+    }
+
+    @keyframes breath-dot {
+      0%, 100% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 0 4px #181c24, 0 0 10px rgba(251, 191, 36, 0.9); }
+    }
+
+    .btn-tracker-open {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-medium);
+      color: var(--color-text-main);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-tracker-open:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+    .btn-tracker-open:active {
+      transform: scale(0.96);
+    }
+
+    /* ====================================================
+       5. MAIN INTERACTIVE LAYOUT (ADAPTIVE TWO-COLUMN)
+       ==================================================== */
+    .wuxia-world-container {
+      max-width: 1360px;
+      width: 100%;
+      margin: 14px auto 24px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 18px;
+      flex: 1;
+    }
+
+    /* MAIN ACTIVE CHAMBER (LEFT COLUMN) */
+    .main-chamber-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    /* Sub-nav Tab Buttons */
+    .tab-nav {
+      display: flex;
+      gap: 6px;
+      background: rgba(14, 16, 22, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--color-text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      text-align: center;
+      user-select: none;
+    }
+    .tab-btn:hover {
+      color: #fff;
+      background: var(--bg-subtle);
+    }
+    .tab-btn:active {
+      transform: scale(0.96);
+    }
+    .tab-btn.active {
+      background: rgba(16, 185, 129, 0.16);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #a7f3d0;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.15);
+    }
+
+    .tab-content {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(12px);
+      padding: 20px;
+      min-height: 480px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    /* EXPLORATION HERO BANNER */
+    .explore-hero {
+      background: linear-gradient(135deg, rgba(20, 24, 34, 0.85), rgba(12, 14, 20, 0.9));
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .explore-hero:before {
+      content: "";
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 140px; height: 140px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .hero-header h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: 0.5px;
+    }
+    .location-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--jade-400);
+      padding: 3px 10px;
+      border-radius: 9999px;
+    }
+    .hero-desc {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .explore-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* Wuxia Buttons */
+    .btn-primary-glow {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border: 1px solid rgba(52, 211, 153, 0.5);
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 16px var(--jade-glow);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      letter-spacing: 0.5px;
+    }
+    .btn-primary-glow:hover {
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.6);
+      transform: translateY(-2px);
+    }
+    .btn-primary-glow:active {
+      transform: scale(0.96);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 35, 48, 0.7);
+      border: 1px solid var(--border-medium);
+      color: #e2e8f0;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-secondary:hover {
+      background: rgba(45, 52, 70, 0.9);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+    .btn-secondary:active {
+      transform: scale(0.96);
+    }
+
+    /* NPC Grid */
+    .section-box h4 {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--amber-400);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .npc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .npc-card {
+      background: rgba(15, 18, 25, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .npc-card:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+    .npc-card:active {
+      transform: scale(0.97);
+    }
+    .npc-avatar {
+      font-size: 2rem;
+      width: 44px;
+      height: 44px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .npc-info {
+      min-width: 0;
+      flex: 1;
+    }
+    .npc-name {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #f8fafc;
+    }
+    .npc-title {
+      font-size: 0.72rem;
+      color: var(--amber-400);
+      margin-left: 4px;
+    }
+    .npc-desc {
+      font-size: 0.74rem;
+      color: var(--color-text-dim);
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    /* ====================================================
+       6. QUEST BOARD UI (CHÍNH TUYẾN & CÀY CUỐC)
+       ==================================================== */
+    .quest-category-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 18px 0 10px 0;
+      padding-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quest-category-title.main {
+      color: var(--amber-400);
+      border-bottom: 2px solid rgba(245, 158, 11, 0.35);
+    }
+    .quest-category-title.side {
+      color: var(--jade-400);
+      border-bottom: 2px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .quest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .quest-card {
+      background: rgba(14, 17, 24, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .quest-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+    .quest-card.main-story {
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      background: linear-gradient(145deg, rgba(26, 22, 14, 0.6), rgba(15, 18, 25, 0.9));
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.1);
+    }
+    .quest-card.completed {
+      opacity: 0.55;
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .quest-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .quest-title-text {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.96rem;
+      color: #f8fafc;
+      line-height: 1.35;
+    }
+    .quest-card.main-story .quest-title-text {
+      color: #fef08a;
+    }
+    .quest-giver {
+      font-size: 0.72rem;
+      color: var(--color-text-dim);
+      margin-top: 2px;
+    }
+    .quest-status-badge {
+      font-size: 0.66rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .quest-status-badge.LOCKED { background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid #475569; }
+    .quest-status-badge.AVAILABLE { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .quest-status-badge.IN_PROGRESS { background: rgba(245, 158, 11, 0.15); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .quest-status-badge.READY_TO_TURN_IN { background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+    .quest-status-badge.COMPLETED { background: rgba(16, 185, 129, 0.1); color: #34d399; }
+
+    .quest-desc {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .quest-objective-box {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-left: 3px solid var(--jade-400);
+    }
+    .quest-card.main-story .quest-objective-box {
+      border-left-color: var(--amber-400);
+    }
+    .quest-objective-desc {
+      font-size: 0.76rem;
+      color: #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+    }
+    .quest-progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+    .quest-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #059669, #34d399);
+      border-radius: 9999px;
+      transition: width 0.3s;
+    }
+
+    .quest-rewards-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .reward-pill {
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+    }
+    .reward-pill.exp { color: #93c5fd; border-color: rgba(59, 130, 246, 0.4); }
+    .reward-pill.cult { color: #a7f3d0; border-color: rgba(16, 185, 129, 0.4); }
+    .reward-pill.silver { color: #fde047; border-color: rgba(245, 158, 11, 0.4); }
+    .reward-pill.item { color: #6ee7b7; border-color: rgba(16, 185, 129, 0.4); }
+    .reward-pill.title { color: #fda4af; border-color: rgba(244, 63, 94, 0.4); }
+
+    .btn-quest-action {
+      background: rgba(20, 25, 36, 0.85);
+      border: 1px solid var(--border-medium);
+      color: #f1f5f9;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: center;
+      width: 100%;
+      user-select: none;
+    }
+    .btn-quest-action:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #6ee7b7;
+      transform: translateY(-1px);
+    }
+    .btn-quest-action:active {
+      transform: scale(0.97);
+    }
+    .btn-quest-action.turn-in {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border-color: #34d399;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.5);
+      animation: pulseBtn 1.6s infinite;
+    }
+    @keyframes pulseBtn {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    .btn-quest-action.locked {
+      background: rgba(20, 22, 28, 0.5);
+      color: #64748b;
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* ====================================================
+       7. CRAFTING, GATHERING & BESTIARY VIEWS
+       ==================================================== */
+    .recipe-grid, .gathering-grid, .monster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .recipe-card, .node-card, .monster-card {
+      background: rgba(14, 17, 24, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .discipline-badge {
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+    }
+    .discipline-badge.ALCHEMY { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .discipline-badge.BLACKSMITHING { background: rgba(245, 158, 11, 0.15); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .mats-list { font-size: 0.78rem; color: var(--color-text-dim); }
+    .mat-item.ok { color: var(--jade-400); font-weight: 600; }
+    .mat-item.missing { color: var(--crimson-400); }
+    .btn-craft, .btn-gather, .btn-hunt {
+      background: rgba(24, 30, 42, 0.85);
+      border: 1px solid var(--border-medium);
+      color: #f1f5f9;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-craft:hover, .btn-gather:hover, .btn-hunt:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #6ee7b7;
+    }
+    .btn-craft:active, .btn-gather:active, .btn-hunt:active {
+      transform: scale(0.97);
+    }
+    .btn-craft.disabled, .btn-travel.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      background: rgba(20, 22, 28, 0.5);
+      border-color: transparent;
+    }
+
+    /* Monster Tier Tags */
+    .mon-tier {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+    }
+    .monster-card.TIER_3_BOSS { border-color: rgba(239, 68, 68, 0.5); box-shadow: 0 0 14px rgba(239, 68, 68, 0.15); }
+    .monster-card.TIER_3_BOSS .mon-tier { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .monster-card.TIER_2_ELITE { border-color: rgba(245, 158, 11, 0.4); }
+    .monster-card.TIER_2_ELITE .mon-tier { background: rgba(245, 158, 11, 0.2); color: #fde047; }
+    .monster-card .mon-tier { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; }
+
+    /* ====================================================
+       8. SIDEBAR: ZONE & PLACES, INVENTORY, CHRONICLE
+       ==================================================== */
+    .sidebar-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .side-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(12px);
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .side-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f8fafc;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .zone-desc {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      line-height: 1.45;
+    }
+
+    .place-card {
+      background: rgba(10, 12, 17, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .place-card:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.06);
+      transform: translateX(3px);
+    }
+    .place-card.active {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: rgba(16, 185, 129, 0.12);
+    }
+    .place-name {
+      font-weight: 700;
+      color: #f8fafc;
+      font-size: 0.86rem;
+    }
+    .place-desc {
+      font-size: 0.74rem;
+      color: var(--color-text-dim);
+      margin-top: 2px;
+    }
+    .service-tag {
+      display: inline-block;
+      font-size: 0.66rem;
+      background: rgba(16, 185, 129, 0.12);
+      color: #6ee7b7;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-top: 5px;
+      margin-right: 4px;
+    }
+
+    .travel-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .btn-travel {
+      background: rgba(16, 20, 28, 0.7);
+      border: 1px solid var(--border-subtle);
+      color: #94a3b8;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.78rem;
+      transition: all 0.2s;
+    }
+    .btn-travel:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #fde047;
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    /* INVENTORY SLOTS WITH RARITY GLOWS */
+    .inv-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .inv-slot {
+      background: rgba(12, 14, 20, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .inv-slot:hover {
+      transform: scale(1.05);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .inv-slot:active {
+      transform: scale(0.96);
+    }
+    .inv-icon { font-size: 1.4rem; line-height: 1; }
+    .inv-name {
+      font-size: 0.68rem;
+      text-align: center;
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      padding: 0 2px;
+    }
+    .inv-qty {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--amber-400);
+      font-family: monospace;
+    }
+    .rarity-COMMON { border-color: rgba(255, 255, 255, 0.1); }
+    .rarity-UNCOMMON { border-color: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.25); }
+    .rarity-RARE { border-color: #8b5cf6; box-shadow: 0 0 10px rgba(139, 92, 246, 0.35); }
+    .rarity-LEGENDARY { border-color: #f59e0b; box-shadow: 0 0 14px rgba(245, 158, 11, 0.5); }
+
+    /* CHRONICLE LOGS */
+    .chronicle-box {
+      background: rgba(9, 11, 15, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      height: 180px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .log-entry {
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+    .log-time { color: var(--color-text-dim); font-size: 0.7rem; font-family: monospace; }
+    .log-info { color: #cbd5e1; }
+    .log-success { color: var(--jade-400); }
+    .log-warning { color: var(--amber-400); }
+    .log-error { color: var(--crimson-400); }
+
+    /* ====================================================
+       9. PROGRESSIVE NARRATIVE STREAM MODAL (WUXIA LOGS)
+       ==================================================== */
+    .event-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .event-modal-backdrop.open {
+      display: flex;
+    }
+
+    .event-modal-box {
+      background: linear-gradient(145deg, #161922, #0d0f14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.8), 0 0 15px rgba(16, 185, 129, 0.15);
+      border-radius: var(--radius-xl);
+      max-width: 620px;
+      width: 100%;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 10px;
+    }
+    .event-title {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fef08a;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-skip-stream {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-medium);
+      color: #cbd5e1;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-skip-stream:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #6ee7b7;
+    }
+    .btn-skip-stream:active {
+      transform: scale(0.95);
+    }
+
+    .narrative-stream-container {
+      min-height: 90px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    @keyframes fadeSlideUp {
+      0% { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .narrative-line {
+      font-size: 0.94rem;
+      color: #e2e8f0;
+      line-height: 1.65;
+      animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      border-left: 2px solid transparent;
+      padding-left: 8px;
+    }
+
+    /* 3-DOTS BREATHING PULSE (ANIMATE-DOT-PULSE) */
+    @keyframes dot-pulse {
+      0%, 100% { opacity: 0.25; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 8px rgba(52, 211, 153, 0.8); }
+    }
+    .typing-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 4px;
+    }
+    .dot-pulse {
+      width: 7px;
+      height: 7px;
+      background: #34d399; /* Emerald Green */
+      border-radius: 50%;
+      animation: dot-pulse 1.3s ease-in-out infinite;
+    }
+    .dot-pulse:nth-child(2) { animation-delay: 0.22s; }
+    .dot-pulse:nth-child(3) { animation-delay: 0.44s; }
+
+    /* DEFERRED CHOICES CONTAINER */
+    .event-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-top: 6px;
+    }
+    .choices-deferred {
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .choices-deferred.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .event-choice-card {
+      background: rgba(20, 24, 34, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--jade-400);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .event-choice-card:hover {
+      border-color: rgba(16, 185, 129, 0.6);
+      background: rgba(16, 185, 129, 0.1);
+      transform: translateX(4px);
+    }
+    .event-choice-card:active {
+      transform: scale(0.98);
+    }
+    .event-choice-card.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-left-color: #64748b;
+    }
+    .choice-title { font-weight: 700; color: #f8fafc; font-size: 0.92rem; }
+    .choice-desc { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 2px; }
+    .choice-unmet { font-size: 0.74rem; color: var(--crimson-400); margin-top: 4px; font-weight: 600; }
+
+    /* TOAST NOTIFICATIONS */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(20, 24, 34, 0.95);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 2000;
+      border-left: 4px solid var(--jade-400);
+      backdrop-filter: blur(10px);
+    }
+    .toast-msg.show { opacity: 1; transform: translateY(0); }
+    .toast-success { border-left-color: var(--jade-400); }
+    .toast-warning { border-left-color: var(--amber-400); }
+    /* ====================================================
+       AGENCY TIÊU CỤC EXPLORATION SYSTEM STYLES (WUXIA LOGS)
+       ==================================================== */
+    .agency-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .agency-banner-card {
+      background: linear-gradient(135deg, rgba(20, 26, 36, 0.9), rgba(12, 16, 24, 0.95));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .agency-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .agency-rank-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: var(--amber-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .agency-stats-pill-group {
+      display: flex;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+    }
+    .agency-stat-pill {
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .agency-stat-pill b {
+      color: #f8fafc;
+      font-family: monospace;
+    }
+    .btn-agency-promote {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border: 1px solid rgba(52, 211, 153, 0.6);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-agency-promote:hover {
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.7);
+      transform: translateY(-1px);
+    }
+    .btn-agency-promote.disabled {
+      background: rgba(30, 35, 45, 0.5);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #64748b;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* MISSION OFFERS ACCORDION */
+    .agency-offers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .agency-offer-card {
+      background: rgba(15, 18, 25, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.25s;
+    }
+    .agency-offer-card:hover {
+      border-color: rgba(16, 185, 129, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+    .kind-pill {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kind-pill.ESCORT { background: rgba(245, 158, 11, 0.2); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.45); }
+    .kind-pill.COURIER { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.45); }
+    .kind-pill.HUNT { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.45); }
+    .kind-pill.GATHERING { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.45); }
+    .kind-pill.EVENT { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.45); }
+
+    /* SUPPLY HALL GRID */
+    .supply-hall-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .supply-card {
+      background: rgba(14, 18, 25, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .supply-card.locked {
+      opacity: 0.5;
+    }
+    .btn-exchange {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-exchange:hover {
+      background: rgba(16, 185, 129, 0.35);
+      color: #fff;
+    }
+    .btn-exchange.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: transparent;
+      background: rgba(30, 35, 45, 0.4);
+    }
+
+    /* AGENCY MISSION DRAWER MODAL */
+    .agency-drawer-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1100;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .agency-drawer-backdrop.open { display: flex; }
+    .agency-drawer-box {
+      background: linear-gradient(145deg, #161a24, #0e1117);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: var(--radius-lg);
+      max-width: 580px;
+      width: 100%;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ====================================================
+       WORLD MAP (BẢN ĐỒ BÁT HOANG) STYLES
+       ==================================================== */
+    .world-map-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .world-map-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+      margin-top: 8px;
+    }
+    .map-region-card {
+      background: linear-gradient(145deg, rgba(22, 27, 38, 0.95), rgba(12, 16, 23, 0.98));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .map-region-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-2px);
+    }
+    .map-region-card.active-zone {
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.08), rgba(12, 22, 20, 0.95));
+    }
+    .map-region-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .map-region-title {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .map-current-pill {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #34d399;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      animation: pulseGlow 2s infinite;
+    }
+    .map-info-section {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.8rem;
+    }
+    .map-info-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #cbd5e1;
+    }
+    .map-info-row b {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .btn-travel-map {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+      transition: all 0.2s;
+      width: 100%;
+      text-align: center;
+    }
+    .btn-travel-map:hover {
+      box-shadow: 0 0 22px rgba(14, 165, 233, 0.7);
+      transform: translateY(-1px);
+    }
+    .btn-travel-map.disabled {
+      background: rgba(30, 35, 45, 0.5);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #64748b;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* TRAVELING ANIMATION MODAL */
+    .travel-journey-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(10px);
+      z-index: 1200;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .travel-journey-modal.open { display: flex; }
+    .travel-journey-box {
+      background: linear-gradient(145deg, #151b26, #0d1117);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      border-radius: var(--radius-lg);
+      max-width: 480px;
+      width: 100%;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      animation: modalFadeIn 0.3s ease;
+    }
+    .travel-journey-progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .travel-journey-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6);
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    }
+
+    /* SMART ACTION GUIDE BOX */
+    .smart-guide-container {
+      max-width: 1360px;
+      width: 100%;
+      margin: 10px auto 0 auto;
+      padding: 0 16px;
+    }
+    .smart-guide-box {
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(245, 158, 11, 0.08) 50%, rgba(14, 165, 233, 0.08));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: var(--radius-md);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4), inset 0 0 16px rgba(16, 185, 129, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .smart-guide-box::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--amber-400), var(--jade-400));
+    }
+    .smart-guide-icon {
+      font-size: 1.6rem;
+      animation: pulseGlow 2s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+    .smart-guide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .smart-guide-tag {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--amber-400);
+      text-transform: uppercase;
+    }
+    .smart-guide-text {
+      font-size: 0.86rem;
+      color: #f1f5f9;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+    .smart-guide-action-btn {
+      background: linear-gradient(135deg, var(--jade-500), #059669);
+      border: 1px solid rgba(16, 185, 129, 0.6);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+    .smart-guide-action-btn:hover {
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+      transform: translateY(-1px);
+    }
+
+    /* BATTLE VIEW MODAL (TURN-BASED COMBAT) */
+    .battle-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(5, 7, 10, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 1500;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .battle-modal-backdrop.open { display: flex; }
+    .battle-modal-box {
+      background: linear-gradient(170deg, #161c28, #0a0d14);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: var(--radius-lg);
+      max-width: 680px;
+      width: 100%;
+      max-height: 94vh;
+      overflow-y: auto;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 0 40px rgba(239, 68, 68, 0.25), 0 20px 60px rgba(0, 0, 0, 0.85);
+      animation: modalFadeIn 0.25s ease;
+      position: relative;
+    }
+    .battle-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
+    .battle-turn-badge {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    /* Combatants Duel Arena */
+    .battle-arena-row {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+    .combatant-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .combatant-card.monster-side {
+      border-color: rgba(239, 68, 68, 0.35);
+      background: rgba(239, 68, 68, 0.05);
+    }
+    .combatant-card.player-side {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: rgba(16, 185, 129, 0.05);
+    }
+    .combatant-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .combatant-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      border: 1px solid var(--border-medium);
+      background: #111;
+    }
+    .combatant-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .combatant-name {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+    .combatant-realm {
+      font-size: 0.7rem;
+      color: var(--amber-400);
+    }
+    .vs-emblem {
+      text-align: center;
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.3rem;
+      color: #ef4444;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+    }
+
+    /* Monster Intent Warning Box */
+    .monster-intent-banner {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px dashed rgba(245, 158, 11, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.8rem;
+    }
+    .intent-heavy {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: rgba(239, 68, 68, 0.6);
+      color: #fca5a5;
+    }
+    .intent-charge {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #7dd3fc;
+    }
+
+    /* Player Combat Action Grid (4 choices) */
+    .battle-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .btn-battle-act {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .btn-battle-act:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    }
+    .btn-battle-strike {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: linear-gradient(145deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+    }
+    .btn-battle-strike:hover { border-color: #ef4444; box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
+    .btn-battle-skill {
+      border-color: rgba(168, 85, 247, 0.5);
+      background: linear-gradient(145deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.05));
+    }
+    .btn-battle-skill:hover { border-color: #c084fc; box-shadow: 0 0 16px rgba(168, 85, 247, 0.4); }
+    .btn-battle-guard {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+    }
+    .btn-battle-guard:hover { border-color: #34d399; box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); }
+    .btn-battle-flee {
+      border-color: rgba(148, 163, 184, 0.4);
+      background: rgba(148, 163, 184, 0.08);
+    }
+    .btn-battle-flee:hover { border-color: #cbd5e1; }
+
+    .act-title { font-weight: 700; font-size: 0.88rem; color: #fff; }
+    .act-desc { font-size: 0.72rem; color: var(--color-text-muted); }
+    .act-cost { font-size: 0.68rem; color: var(--amber-400); font-weight: 600; }
+
+    .battle-log-stream {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      height: 120px;
+      overflow-y: auto;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: #cbd5e1;
+    }
+
+    /* CHARACTER CREATION MODAL */
+    .char-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(5, 7, 10, 0.95);
+      backdrop-filter: blur(14px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .char-modal-backdrop.open { display: flex; }
+    .char-modal-box {
+      background: linear-gradient(160deg, #181e2b, #0d1017);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: var(--radius-lg);
+      max-width: 640px;
+      width: 100%;
+      max-height: 94vh;
+      overflow-y: auto;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 0 50px rgba(245, 158, 11, 0.2);
+    }
+
+    /* BREAKTHROUGH & SHOP MODALS */
+    .generic-wuxia-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(5, 7, 10, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 1400;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .generic-wuxia-modal-backdrop.open { display: flex; }
+    .generic-wuxia-modal-box {
+      background: linear-gradient(160deg, #18202d, #0d1118);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: var(--radius-lg);
+      max-width: 580px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.2);
+    }
+
+    /* 3 EQUIPMENT SLOTS */
+    .equip-slots-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .equip-slot-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .equip-slot-box.equipped {
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      background: rgba(245, 158, 11, 0.05);
+    }
+    .equip-slot-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+      font-size: 1.4rem;
+    }
+    .equip-slot-title { font-size: 0.72rem; color: var(--color-text-dim); text-transform: uppercase; font-weight: 700; }
+    .equip-slot-name { font-size: 0.8rem; font-weight: 700; color: #fff; font-family: var(--font-serif); }
+
+    /* STAT POINTS DISTRIBUTION */
+    .stat-dist-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-stat-plus {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #6ee7b7;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-stat-plus:hover {
+      background: #10b981;
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 1024px) {
+      .wuxia-world-container { grid-template-columns: 1fr; }
+      .character-status-card { grid-template-columns: 1fr; }
+      .vitals-meter-group { grid-template-columns: 1fr; }
+      .attributes-strip { flex-wrap: wrap; justify-content: space-around; }
+      .battle-actions-grid { grid-template-columns: 1fr; }
+    }
+    /* ====================================================
+       14. WUXIA REALTIME CHAT DOCK (M4.3.1 TRUYỀN ÂM CÁC)
+       ==================================================== */
+    .chat-dock-launcher {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 850;
+      background: linear-gradient(135deg, rgba(26, 30, 40, 0.95), rgba(15, 18, 24, 0.98));
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 30px;
+      padding: 8px 16px;
+      color: #f1f5f9;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(245, 158, 11, 0.15);
+      transition: all 0.25s ease;
+      backdrop-filter: blur(10px);
+    }
+    .chat-dock-launcher:hover {
+      border-color: #fbbf24;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(245, 158, 11, 0.3);
+    }
+    .chat-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-online { background-color: #10b981; box-shadow: 0 0 6px #10b981; }
+    .status-connecting { background-color: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+    .status-offline { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
+
+    .chat-window {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 380px;
+      max-width: calc(100vw - 30px);
+      height: 440px;
+      max-height: calc(100vh - 100px);
+      background: rgba(13, 16, 23, 0.96);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(245, 158, 11, 0.15);
+      backdrop-filter: blur(16px);
+      z-index: 900;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: chatSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes chatSlideIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .chat-header {
+      padding: 10px 14px;
+      background: rgba(22, 27, 34, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-header-title {
+      font-weight: 700;
+      color: #fbbf24;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chat-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .chat-tab-btn {
+      flex: 1;
+      padding: 8px 10px;
+      background: transparent;
+      border: none;
+      color: var(--color-text-dim);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+    .chat-tab-btn.active {
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.08);
+      border-bottom-color: #34d399;
+    }
+    .chat-messages-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.8rem;
+      position: relative;
+    }
+    .chat-msg-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.02);
+      transition: background 0.15s;
+    }
+    .chat-msg-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .chat-msg-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+    }
+    .chat-msg-realm {
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.68rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .chat-msg-sender {
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .chat-msg-time {
+      color: #64748b;
+      margin-left: auto;
+    }
+    .chat-msg-content {
+      color: #cbd5e1;
+      word-break: break-word;
+      line-height: 1.4;
+      padding-left: 2px;
+    }
+    .chat-floating-badge {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0284c7;
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      display: none;
+      z-index: 10;
+    }
+    .chat-input-bar {
+      padding: 8px 10px;
+      background: rgba(18, 21, 28, 0.9);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .chat-input-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .chat-text-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      color: #f1f5f9;
+      font-size: 0.8rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-text-input:focus {
+      border-color: #fbbf24;
+    }
+    .chat-send-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .chat-send-btn:hover:not(:disabled) {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+    .chat-send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .chat-input-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: #64748b;
+      padding: 0 2px;
+    }
+    .chat-notice {
+      color: #f87171;
+    }
+    @media (max-width: 640px) {
+      .chat-window {
+        width: calc(100vw - 20px);
+        right: 10px;
+        bottom: 10px;
+        height: 380px;
+      }
+      .chat-dock-launcher {
+        right: 10px;
+        bottom: 10px;
+        padding: 6px 12px;
+        font-size: 0.78rem;
+      }
+    }
+
+    /* ====================================================
+       15. WORLD BOSS: TOÀN DÂN TRẢM MA (M4.4B)
+       ==================================================== */
+    .wb-modal-box {
+      background: linear-gradient(160deg, #181c26 0%, #0d1017 100%);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      border-radius: var(--radius-lg);
+      max-width: 960px;
+      width: 100%;
+      max-height: 94vh;
+      overflow-y: auto;
+      padding: 22px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(239, 68, 68, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .wb-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .wb-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .wb-dragon-emblem {
+      font-size: 2rem;
+      animation: dragonPulse 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes dragonPulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 4px #ef4444); }
+      100% { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0 0 14px #f59e0b); }
+    }
+    .wb-status-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-active {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.6);
+      color: #fca5a5;
+      animation: pulseActive 1.8s infinite;
+    }
+    @keyframes pulseActive {
+      0%, 100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.4); }
+      50% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
+    }
+    .status-defeated {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.6);
+      color: #6ee7b7;
+    }
+    .status-expired {
+      background: rgba(100, 116, 139, 0.2);
+      border: 1px solid rgba(100, 116, 139, 0.5);
+      color: #cbd5e1;
+    }
+
+    /* Giant Boss Arena & HP Gauge */
+    .wb-arena-card {
+      background: radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.15), rgba(15, 18, 25, 0.9) 70%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .wb-avatar-wrap {
+      position: relative;
+      margin: 10px 0 15px 0;
+    }
+    .wb-avatar-icon {
+      font-size: 5rem;
+      transition: transform 0.1s;
+      filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.5));
+    }
+    .wb-shaking {
+      animation: wbShake 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+    @keyframes wbShake {
+      10%, 90% { transform: translate3d(-3px, 0, 0) scale(1.05); }
+      20%, 80% { transform: translate3d(4px, 0, 0) scale(0.98); }
+      30%, 50%, 70% { transform: translate3d(-5px, 0, 0) scale(1.08); }
+      40%, 60% { transform: translate3d(5px, 0, 0) scale(1.02); }
+    }
+    .wb-floating-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      pointer-events: none;
+      width: 0;
+      height: 0;
+    }
+    .wb-float-damage {
+      position: absolute;
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #fca5a5;
+      text-shadow: 0 0 10px #ef4444, 0 2px 4px #000;
+      white-space: nowrap;
+      animation: wbFloatUp 0.9s ease-out forwards;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .wb-float-damage.crit {
+      font-size: 1.9rem;
+      color: #fef08a;
+      text-shadow: 0 0 15px #f59e0b, 0 0 25px #ef4444, 0 2px 4px #000;
+    }
+    @keyframes wbFloatUp {
+      0% { opacity: 1; transform: translate(0, 0) scale(0.8); }
+      30% { transform: translate(0, -30px) scale(1.2); }
+      100% { opacity: 0; transform: translate(0, -70px) scale(1); }
+    }
+
+    /* Giant HP Track */
+    .wb-hp-gauge-block {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .wb-hp-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .wb-hp-track {
+      width: 100%;
+      height: 22px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+    .wb-hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #b91c1c 0%, #ef4444 50%, #f59e0b 100%);
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.8);
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Controls Bar */
+    .wb-controls-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-wb-attack {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #fff;
+      border: 1px solid #f87171;
+      border-radius: var(--radius-md);
+      padding: 12px 32px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      font-family: var(--font-serif);
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(220, 38, 38, 0.5), 0 0 10px rgba(248, 113, 113, 0.3);
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .btn-wb-attack:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.7);
+      filter: brightness(1.1);
+    }
+    .btn-wb-attack:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+    .btn-wb-attack.cooling-down {
+      opacity: 0.6;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+      transform: none;
+    }
+    .btn-wb-auto {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+      border-radius: var(--radius-md);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-wb-auto:hover {
+      background: rgba(245, 158, 11, 0.25);
+      color: #fef08a;
+    }
+
+    /* Defeat Victory Banner */
+    .wb-defeat-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(245, 158, 11, 0.25));
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .wb-killer-pill {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fde047;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .btn-wb-claim {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: 1px solid #34d399;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 800;
+      font-family: var(--font-serif);
+      padding: 10px 28px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-wb-claim:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+    }
+
+    /* Split Section: Leaderboard + Combat Log */
+    .wb-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    .wb-panel-card {
+      background: rgba(14, 18, 26, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 260px;
+    }
+    .wb-panel-title {
+      font-family: var(--font-serif);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+    }
+
+    /* Leaderboard Table */
+    .wb-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    .wb-table th {
+      color: var(--color-text-dim);
+      font-weight: 600;
+      padding: 6px 4px;
+      border-bottom: 1px solid var(--border-subtle);
+      text-align: left;
+    }
+    .wb-table td {
+      padding: 7px 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .wb-my-row {
+      background: rgba(16, 185, 129, 0.12);
+      border-left: 3px solid #34d399;
+    }
+    .wb-player-realm-tag {
+      font-size: 0.65rem;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      margin-right: 4px;
+    }
+
+    /* Combat Feed */
+    .wb-combat-feed {
+      flex: 1;
+      max-height: 240px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 4px;
+    }
+    .wb-log-row {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+    }
+    .wb-log-time { color: #64748b; font-size: 0.68rem; }
+    .wb-log-player { color: #f1f5f9; font-weight: 700; }
+    .wb-log-dmg { color: #fde047; }
+    .wb-crit-tag {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.18);
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    /* Personal Contribution Strip */
+    .wb-my-strip {
+      background: rgba(22, 27, 38, 0.95);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.82rem;
+    }
+
+    /* Reward Items */
+    .wb-reward-item-tag {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin: 2px 4px;
+    }
+    .wb-claim-success-card {
+      background: rgba(14, 18, 25, 0.9);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+    .wb-reward-box {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+    }
+
+    /* ====================================================
+       16. COMPREHENSIVE MOBILE RESPONSIVE STYLES (M4.4B)
+       ==================================================== */
+    @media (max-width: 768px) {
+      .wb-split-grid {
+        grid-template-columns: 1fr;
+      }
+      .wb-modal-box {
+        padding: 14px;
+        max-height: 96vh;
+      }
+      .btn-wb-attack {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 1.1rem;
+        min-height: 48px;
+      }
+      .btn-wb-auto {
+        width: 100%;
+        text-align: center;
+        min-height: 44px;
+      }
+      .wb-my-strip {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .top-header-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .nav-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+      }
+      .btn-wuxia-link, .btn-reincarnate {
+        min-height: 38px;
+        font-size: 0.72rem;
+        padding: 6px 10px;
+      }
+      .wuxia-icon-nav {
+        width: 100%;
+        justify-content: space-around;
+        gap: 2px;
+      }
+      .nav-btn {
+        min-width: 58px;
+        padding: 6px 8px;
+        min-height: 44px;
+      }
+      .character-status-card {
+        padding: 12px;
+      }
+      .attributes-strip {
+        gap: 6px;
+      }
+      .attr-cell {
+        min-width: 55px;
+        padding: 4px 6px;
+      }
+      .chat-window {
+        width: calc(100vw - 20px);
+        right: 10px;
+        bottom: 10px;
+        height: 360px;
+      }
+      .chat-dock-launcher {
+        right: 10px;
+        bottom: 10px;
+        padding: 6px 12px;
+        font-size: 0.78rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand-title-serif {
+        font-size: 1.05rem;
+      }
+      .wb-avatar-icon {
+        font-size: 3.8rem;
+      }
+      .wb-hp-track {
+        height: 18px;
+      }
+      .wb-panel-card {
+        padding: 10px;
+        min-height: 200px;
+      }
+      .wb-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .vitals-meter-group {
+        gap: 6px;
+      }
+    }
+
+    /* ====================================================
+       17. WUXIA FIXED BOTTOM NAVIGATION & QUICK MENU DRAWER (M5.2)
+       ==================================================== */
+    .wuxia-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      height: 62px;
+      background: rgba(9, 12, 18, 0.96);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-top: 1px solid var(--border-gold);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 6px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.65);
+    }
+    .wuxia-bottom-nav .bnav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 6px 0;
+      color: var(--color-text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      min-height: 48px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wuxia-bottom-nav .bnav-item:active {
+      transform: scale(0.92);
+    }
+    .wuxia-bottom-nav .bnav-item.active {
+      color: var(--gold-400);
+    }
+    .wuxia-bottom-nav .bnav-item .bnav-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+      transition: transform 0.2s;
+    }
+    .wuxia-bottom-nav .bnav-item.active .bnav-icon {
+      transform: translateY(-2px) scale(1.18);
+      filter: drop-shadow(0 0 6px var(--gold-glow));
+    }
+    .wuxia-bottom-nav .bnav-item .bnav-label {
+      font-family: var(--font-title);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .wuxia-bottom-nav .bnav-item .bnav-badge {
+      position: absolute;
+      top: 4px;
+      right: calc(50% - 18px);
+      background: var(--crimson-600);
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 800;
+      width: 14px;
+      height: 14px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 6px rgba(220, 38, 38, 0.8);
+      animation: pulseBtn 1.5s infinite;
+    }
+
+    /* Container Spacing for Fixed Bottom Nav */
+    @media (max-width: 900px) {
+      body {
+        padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+      }
+      .wuxia-world-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+
+    /* Quick Menu Drawer Modal */
+    .quick-menu-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .quick-menu-modal-backdrop.active {
+      display: flex;
+    }
+    .quick-menu-modal-box {
+      background: linear-gradient(145deg, rgba(20, 25, 34, 0.97), rgba(11, 14, 20, 0.98));
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px var(--gold-glow);
+      max-width: 480px;
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .quick-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 10px;
+    }
+    .btn-close-quick-menu {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--color-text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .btn-close-quick-menu:hover {
+      color: #fff;
+      border-color: var(--crimson-400);
+      background: rgba(220, 38, 38, 0.2);
+    }
+    .quick-menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .quick-menu-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px 10px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      color: var(--color-text-main);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      min-height: 72px;
+    }
+    .quick-menu-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--gold-400);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+    .quick-menu-item .qm-icon {
+      font-size: 1.4rem;
+      margin-bottom: 3px;
+    }
+    .quick-menu-item .qm-name {
+      font-family: var(--font-title);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .quick-menu-item .qm-sub {
+      font-size: 0.65rem;
+      color: var(--color-text-dim);
+    }
+    .quick-menu-item.qm-boss {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+    .quick-menu-item.qm-boss:hover {
+      border-color: var(--crimson-400);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.25);
+    }
+    .quick-menu-item.qm-dungeon {
+      background: rgba(14, 165, 233, 0.08);
+      border-color: rgba(14, 165, 233, 0.35);
+    }
+
+    /* ====================================================
+       18. ATOMIZED WUXIA UI COMPONENTS (M5.3)
+       ==================================================== */
+    /* Wuxia Plaque Button (Huy hiệu đá kiếm hiệp) */
+    .btn-plaque {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(145deg, rgba(30, 36, 48, 0.9), rgba(16, 20, 28, 0.95));
+      border: 1px solid var(--border-gold);
+      color: var(--gold-400);
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      text-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+      user-select: none;
+    }
+    .btn-plaque:hover {
+      background: linear-gradient(145deg, rgba(45, 54, 72, 0.95), rgba(24, 30, 42, 0.98));
+      border-color: #fde047;
+      color: #fef08a;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+      transform: translateY(-1px);
+    }
+    .btn-plaque:active {
+      transform: scale(0.96);
+    }
+    .btn-plaque.crimson {
+      border-color: var(--border-crimson);
+      color: var(--crimson-400);
+      background: linear-gradient(145deg, rgba(60, 20, 24, 0.9), rgba(30, 10, 14, 0.95));
+      text-shadow: 0 0 8px var(--crimson-glow);
+    }
+    .btn-plaque.crimson:hover {
+      border-color: #f87171;
+      color: #fecaca;
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+    }
+    .btn-plaque.jade {
+      border-color: var(--border-highlight);
+      color: var(--jade-400);
+      background: linear-gradient(145deg, rgba(16, 40, 30, 0.9), rgba(8, 22, 16, 0.95));
+      text-shadow: 0 0 8px var(--jade-glow);
+    }
+    .btn-plaque.jade:hover {
+      border-color: #34d399;
+      color: #a7f3d0;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Wuxia Panel Card */
+    .wuxia-panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .wuxia-panel-card:hover {
+      border-color: var(--border-gold);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 12px var(--gold-glow);
+    }
+
+    /* Wuxia Status Badges */
+    .wuxia-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .wuxia-badge.gold {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: var(--gold-400);
+    }
+    .wuxia-badge.jade {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: var(--jade-400);
+    }
+    .wuxia-badge.crimson {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: var(--crimson-400);
+    }
+    .wuxia-badge.sky {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #38bdf8;
+    }
+
+    /* Highlight Glow Animation */
+    .highlight-glow {
+      animation: wuxiaHighlightGlow 1.8s ease-out;
+    }
+    @keyframes wuxiaHighlightGlow {
+      0% {
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.8), 0 0 25px rgba(245, 158, 11, 0.6);
+        transform: scale(1.02);
+      }
+      50% {
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.5), 0 0 35px rgba(245, 158, 11, 0.4);
+      }
+      100% {
+        box-shadow: none;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====================================================
+       1. WUXIA TOP NAVBAR & BRAND EMBLEM
+       ==================================================== -->
+  <header class="wuxia-top-header">
+    <div class="top-header-row">
+      <div class="brand-container">
+        <div class="brand-icon-seal">⚔️</div>
+        <div class="brand-text-block">
+          <div class="brand-title-serif">TIÊN LỘ: VẠN GIỚI TRANH PHONG</div>
+          <div class="brand-subline">Biên Niên Sử Tu Tiên Giang Hồ</div>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn-wuxia-link btn-menu-drawer" id="btn-toggle-quick-menu" onclick="window.toggleQuickMenu()" style="background: rgba(245, 158, 11, 0.22); border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: 700; box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);">☰ Giang Hồ Lục</button>
+        <button class="btn-wuxia-link" id="btn-open-worldboss" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; font-weight: 700; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);" onclick="(window.worldboss?.openModal || window.engine?.openWorldBossModal || (() => alert('Đang khởi tạo thần thức Trảm Ma, xin thử lại sau giây lát!')))()">🐉 Toàn Dân Trảm Ma</button>
+        <button class="btn-wuxia-link" style="background: rgba(14, 165, 233, 0.18); border-color: rgba(14, 165, 233, 0.45); color: #38bdf8; font-weight: 600;" onclick="window.engine.openPartyModal()">👥 Tổ Đội / Bí Cảnh</button>
+        <button class="btn-wuxia-link" style="background: rgba(16, 185, 129, 0.18); border-color: rgba(16, 185, 129, 0.45); color: #6ee7b7; font-weight: 600;" onclick="window.engine.openGuildModal()">🏯 Tông Môn</button>
+        <button class="btn-wuxia-link" style="background: rgba(168, 85, 247, 0.18); border-color: rgba(168, 85, 247, 0.45); color: #c084fc; font-weight: 600;" onclick="window.engine.openPvpModal()">⚔️ Đấu Trường</button>
+        <button class="btn-wuxia-link" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #fbbf24;" onclick="window.engine.openLeaderboardModal()">🏆 Xếp Hạng</button>
+        <button class="btn-wuxia-link" style="background: rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.4); color: #fda4af;" onclick="window.engine.openBattleHistoryModal()">📜 Chiến Báo</button>
+        <button class="btn-reincarnate" onclick="window.engine.resetPlayer()">🔄 Trùng Sinh</button>
+      </div>
+    </div>
+
+    <!-- Centered NavButton Strip (4 Core Streamlined Tabs) -->
+    <nav class="wuxia-icon-nav">
+      <button class="nav-btn active" data-tab="action" onclick="window.engine.setTab('action')">
+        <span class="nav-icon">🧭</span>
+        <span class="nav-label">Hành Động</span>
+      </button>
+      <button class="nav-btn" data-tab="quest" data-legacy-tab="quests" data-tab="quests" onclick="window.engine.setTab('quest')">
+        <span class="nav-icon">📜</span>
+        <span class="nav-label">Nhiệm Vụ</span>
+        <span class="notify-badge" id="nav-quest-badge" style="display: none;">!</span>
+      </button>
+      <button class="nav-btn" data-tab="life" onclick="window.engine.setTab('life')">
+        <span class="nav-icon">🌿</span>
+        <span class="nav-label">Sinh Hoạt</span>
+      </button>
+      <button class="nav-btn" data-tab="character" onclick="window.engine.setTab('character')">
+        <span class="nav-icon">🧙</span>
+        <span class="nav-label">Nhân Vật</span>
+        <span class="notify-badge" id="nav-character-badge" style="display: none;">!</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ====================================================
+       2. CHARACTER STATUS BANNER & SMART ACTION GUIDE
+       ==================================================== -->
+  <div class="status-banner-wrap">
+    <section class="character-status-card">
+      <!-- Floating title badge -->
+      <div class="floating-title-pill" id="stat-player-title">Tán Tu Sơ Nhập Đạo</div>
+
+      <!-- Identity -->
+      <div class="char-profile">
+        <div class="char-name-row">
+          <h2 class="char-name" id="stat-player-name">Vô Danh Tu Sĩ</h2>
+          <span class="char-realm-badge" id="stat-player-realm">PHÀM NHÂN</span>
+          <span class="char-realm-badge" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" id="stat-player-level">Cấp 1</span>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--color-text-dim);">Đạo nghiệp sơ khai • Thiên địa vấn tâm</div>
+      </div>
+
+      <!-- Vitals Bars -->
+      <div class="vitals-meter-group">
+        <!-- Khí Huyết (HP) -->
+        <div class="meter-block">
+          <div class="meter-label-row">
+            <span>Khí Huyết (HP)</span>
+            <span id="stat-hp-text">100 / 100</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill hp" id="stat-hp-bar" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Thể Lực -->
+        <div class="meter-block">
+          <div class="meter-label-row">
+            <span>Thể Lực</span>
+            <span id="stat-fatigue-text">100 / 100</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill fatigue" id="stat-fatigue-bar" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Kinh Nghiệm Thể Phách (EXP) -->
+        <div class="meter-block">
+          <div class="meter-label-row">
+            <span style="color: #7dd3fc;">Kinh Nghiệm (EXP)</span>
+            <span id="stat-exp-text">0 / 100 (0%)</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill" id="stat-exp-bar" style="width: 0%; background: linear-gradient(90deg, #0284c7, #38bdf8); box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);"></div>
+          </div>
+        </div>
+
+        <!-- Tu Vi -->
+        <div class="meter-block">
+          <div class="meter-label-row">
+            <span>Tu Vi Đột Phá</span>
+            <span id="stat-cult-text">0 / 100 (0%)</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill cultivation" id="stat-cult-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attributes Strip -->
+      <div class="attributes-strip">
+        <div class="attr-cell">
+          <span class="attr-cell-title">Căn Cốt</span>
+          <span class="attr-cell-value" id="stat-physique">12</span>
+        </div>
+        <div class="attr-cell">
+          <span class="attr-cell-title">Ngộ Tính</span>
+          <span class="attr-cell-value" id="stat-comprehension">14</span>
+        </div>
+        <div class="attr-cell">
+          <span class="attr-cell-title">Khí Vận</span>
+          <span class="attr-cell-value" id="stat-luck">12</span>
+        </div>
+        <div class="attr-cell">
+          <span class="attr-cell-title">Bạc</span>
+          <span class="attr-cell-value gold" id="stat-silver">100</span>
+        </div>
+        <div class="attr-cell">
+          <span class="attr-cell-title">Đạo Tâm</span>
+          <span class="attr-cell-value karma" id="stat-karma">Trung Lập (0)</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- THIÊN CƠ CHỈ DẪN (SMART ACTION GUIDE BOX) -->
+  <div class="smart-guide-container">
+    <div class="smart-guide-box">
+      <div class="smart-guide-icon">🔮</div>
+      <div class="smart-guide-content">
+        <div class="smart-guide-tag">THIÊN CƠ CHỈ DẪN • VIỆC NÊN LÀM</div>
+        <div class="smart-guide-text" id="smart-guide-text">Đang chiêm nghiệm thiên cơ càn khôn...</div>
+      </div>
+      <button class="smart-guide-action-btn" id="smart-guide-btn" onclick="window.engine.handleSmartGuideClick()">Hành Động ➔</button>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       3. ACTIVE QUEST & JOURNEY TRACKER HUD
+       ==================================================== -->
+  <div class="journey-hud-wrap">
+    <div class="quest-tracker-bar" id="quest-tracker-hud">
+      <div class="tracker-main-col">
+        <span class="tracker-badge" id="tracker-quest-badge">CHÍNH TUYẾN</span>
+        <div class="tracker-quest-details">
+          <div class="tracker-title-row">
+            <span id="tracker-quest-title">Đang nạp dữ liệu nhiệm vụ...</span>
+          </div>
+          <span id="tracker-quest-progress">Tiến độ tu chân</span>
+        </div>
+        
+        <!-- Wuxia Journey Path (Dot & Line Component) -->
+        <div class="journey-path" role="progressbar" title="Tiến trình hoàn thành nhiệm vụ" id="journey-path-tracker">
+          <span class="journey-dot journey-dot-origin"></span>
+          <span class="journey-line journey-line-completed" id="journey-line-progress" style="flex-grow: 30;"></span>
+          <span class="journey-dot journey-dot-current"></span>
+          <span class="journey-line journey-line-ahead"></span>
+          <span class="journey-dot journey-dot-horizon"></span>
+        </div>
+      </div>
+
+      <button class="btn-tracker-open" onclick="window.engine.setTab('quest')">
+        Mở Bảng 📜
+      </button>
+    </div>
+
+    <!-- WUXIA LOGS AGENCY MISSION TRACKER HUD -->
+    <div class="quest-tracker-bar" id="agency-mission-tracker-hud" style="margin-top: 6px; display: none; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 22, 28, 0.85);">
+      <div class="tracker-main-col">
+        <span class="tracker-badge" id="tracker-agency-badge" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.5); color: #6ee7b7;">🛡️ ÁP TIÊU</span>
+        <div class="tracker-quest-details">
+          <div class="tracker-title-row">
+            <span id="tracker-agency-title" style="color: #6ee7b7; font-weight: 700; font-family: var(--font-serif); font-size: 0.88rem;">Chuyến tiêu thám hiểm</span>
+          </div>
+          <span id="tracker-agency-status" style="font-size: 0.75rem; color: #fde047;">Đang áp tải hàng hóa</span>
+        </div>
+      </div>
+      <button class="btn-tracker-open" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #a7f3d0;" onclick="window.engine.openAgencyDrawer()">
+        Tiêu Vụ 🛡️
+      </button>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       4. MAIN TWO-COLUMN WORLD INTERACTION
+       ==================================================== -->
+  <main class="wuxia-world-container">
+
+    <!-- CỘT CHÍNH: KHUNG HÀNH ĐỘNG & BẢNG NỘI DUNG -->
+    <section class="main-chamber-panel">
+      <!-- Sub-tab Bar (4 Core Streamlined Tabs) -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="action" onclick="window.engine.setTab('action')">🧭 Hành Động &amp; Thám Hiểm</button>
+        <button class="tab-btn" data-tab="quest" onclick="window.engine.setTab('quest')">📜 Nhiệm Vụ &amp; Tiêu Cục</button>
+        <button class="tab-btn" data-tab="life" onclick="window.engine.setTab('life')">🌿 Sinh Hoạt &amp; Tiệm Dược</button>
+        <button class="tab-btn" data-tab="character" onclick="window.engine.setTab('character')">🧙 Nhân Vật &amp; Đạo Nghiệp</button>
+      </div>
+
+      <!-- Main Dynamic Content Container -->
+      <div class="tab-content" id="main-tab-view">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- CỘT PHỤ (SIDEBAR): ĐỊA ĐIỂM, TÚI ĐỒ, NHẬT KÝ -->
+    <aside class="sidebar-panel">
+
+      <!-- PHÂN KHU & ĐỊA ĐIỂM -->
+      <div class="side-card">
+        <div class="side-card-title">
+          <span id="current-zone-name">Thanh Hà Thôn</span>
+          <span style="font-size: 0.7rem; color: var(--amber-400);" id="current-zone-roam-cost">-5 Thể Lực</span>
+        </div>
+        <div class="zone-desc" id="current-zone-desc">
+          Làng quê thanh bình nằm cạnh con sông nhỏ, nơi các tu sĩ sơ kỳ bắt đầu dấn thân vào con đường vấn đạo.
+        </div>
+
+        <div style="font-weight: 700; font-size: 0.8rem; color: var(--color-text-dim); margin-top: 4px;">Địa Điểm Trong Vùng:</div>
+        <div id="location-places-list" style="display: flex; flex-direction: column; gap: 6px;">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div id="zone-nav-container">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- TÚI TRỮ VẬT -->
+      <div class="side-card">
+        <div class="side-card-title">
+          <span>Túi Trữ Vật</span>
+          <span style="font-size: 0.72rem; color: var(--color-text-dim);">Tiên Gia Trân Tàng</span>
+        </div>
+        <div class="inv-grid" id="inventory-grid">
+          <!-- Slots rendered by JS -->
+        </div>
+        <div style="font-size: 0.7rem; color: var(--color-text-dim); text-align: center;">
+          💡 Nhấp vào Đan Dược để phục dụng tức thì
+        </div>
+      </div>
+
+      <!-- NHẬT KÝ TIÊN HIỆP -->
+      <div class="side-card">
+        <div class="side-card-title">
+          <span>📜 Nhật Ký Tu Tiên</span>
+        </div>
+        <div class="chronicle-box" id="chronicle-logs">
+          <!-- Logs rendered by JS -->
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- ====================================================
+       5. INTERACTIVE EVENT & DIALOGUE MODAL
+       (PROGRESSIVE NARRATIVE STREAMER)
+       ==================================================== -->
+  <div class="event-modal-backdrop" id="event-modal">
+    <div class="event-modal-box">
+      <div class="modal-top-bar">
+        <div class="event-title" id="modal-event-title">✨ [KỲ NGỘ] Đang tải...</div>
+        <button class="btn-skip-stream" id="btn-skip-stream" onclick="window.engine.skipStream()">Tua nhanh ⏭</button>
+      </div>
+
+      <!-- Progressive Narrative Stream Container -->
+      <div class="narrative-stream-container" id="modal-narrative-container">
+        <div id="modal-event-lines"></div>
+        <div class="typing-indicator" id="modal-typing-indicator" style="display: none;">
+          <span class="dot-pulse"></span>
+          <span class="dot-pulse"></span>
+          <span class="dot-pulse"></span>
+        </div>
+      </div>
+
+      <!-- Deferred Choices Container -->
+      <div class="event-choices choices-deferred" id="modal-event-choices">
+        <!-- Choices rendered by JS after narrative lines finish -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       6. AGENCY EXPEDITION DRAWER MODAL (WUXIA LOGS)
+       ==================================================== -->
+  <div class="agency-drawer-backdrop" id="agency-drawer-modal">
+    <div class="agency-drawer-box">
+      <div class="modal-top-bar">
+        <div class="event-title" id="drawer-mission-title">🛡️ Chi Tiết Chuyến Tiêu Thám Hiểm</div>
+        <button class="btn-skip-stream" onclick="window.engine.closeAgencyDrawer()">Đóng ✕</button>
+      </div>
+
+      <div id="drawer-mission-content" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       7. TRAVEL JOURNEY ANIMATION MODAL
+       ==================================================== -->
+  <div class="travel-journey-modal" id="travel-journey-modal">
+    <div class="travel-journey-box">
+      <div style="font-size: 2.2rem; animation: pulseGlow 1.5s infinite;" id="travel-modal-icon">🚚</div>
+      <div style="font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700; color: #f8fafc;" id="travel-modal-title">
+        Đang Khởi Hành Lên Đường...
+      </div>
+      <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5;" id="travel-modal-desc">
+        Đang dấn bước qua ngàn dặm sơn xuyên hiểm trở...
+      </div>
+      <div class="travel-journey-progress-track">
+        <div class="travel-journey-progress-fill" id="travel-modal-progress"></div>
+      </div>
+      <div style="font-size: 0.75rem; color: #94a3b8;" id="travel-modal-status">
+        Đang bảo vệ kiện hàng và đề phòng dã thú phục kích...
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       8. BATTLE VIEW MODAL (TURN-BASED COMBAT)
+       ==================================================== -->
+  <div class="battle-modal-backdrop" id="battle-modal">
+    <div class="battle-modal-box">
+      <div class="battle-top-bar">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.4rem;">⚔️</span>
+          <span style="font-family: var(--font-serif); font-weight: 700; font-size: 1.1rem; color: #fca5a5;" id="battle-title">
+            Trảm Yêu Trừ Ma - Quyết Chiến
+          </span>
+        </div>
+        <span class="battle-turn-badge" id="battle-turn-badge">Hiệp 1</span>
+      </div>
+
+      <!-- Duel Arena -->
+      <div class="battle-arena-row">
+        <!-- Player Card -->
+        <div class="combatant-card player-side">
+          <div class="combatant-header">
+            <img src="/assets/xianxia/avatars/npc_default.webp" class="combatant-avatar" id="battle-player-avatar" alt="Tu sĩ" onerror="this.onerror=null; this.src='/assets/xianxia/avatars/npc_tran_duoc_su.webp'"/>
+            <div class="combatant-info">
+              <span class="combatant-name" id="battle-player-name">Tu Sĩ</span>
+              <span class="combatant-realm" id="battle-player-realm">Luyện Khí Tầng 1</span>
+            </div>
+          </div>
+          <!-- Player HP -->
+          <div class="meter-block">
+            <div class="meter-label-row">
+              <span style="font-size: 0.72rem;">Khí Huyết</span>
+              <span style="font-size: 0.72rem;" id="battle-player-hp-text">100 / 100</span>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill hp" id="battle-player-hp-bar" style="width: 100%;"></div>
+            </div>
+          </div>
+          <!-- Player Qi (Chân khí) -->
+          <div class="meter-block">
+            <div class="meter-label-row">
+              <span style="font-size: 0.72rem; color: #a78bfa;">Chân Khí (Qi)</span>
+              <span style="font-size: 0.72rem; color: #c4b5fd;" id="battle-player-qi-text">25 / 50</span>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill" id="battle-player-qi-bar" style="width: 50%; background: linear-gradient(90deg, #7c3aed, #a855f7);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VS Emblem -->
+        <div class="vs-emblem">VS</div>
+
+        <!-- Monster Card -->
+        <div class="combatant-card monster-side">
+          <div class="combatant-header">
+            <img src="/assets/xianxia/monsters/tho_lang.webp" class="combatant-avatar" id="battle-mon-avatar" alt="Yêu thú" onerror="this.onerror=null; this.src='/assets/xianxia/monsters/tho_lang.webp'"/>
+            <div class="combatant-info">
+              <span class="combatant-name" id="battle-mon-name">Thổ Lang</span>
+              <span class="combatant-realm" id="battle-mon-tier">Dã Thú Nhất Giai</span>
+            </div>
+          </div>
+          <!-- Monster HP -->
+          <div class="meter-block">
+            <div class="meter-label-row">
+              <span style="font-size: 0.72rem;">Yêu Khí (HP)</span>
+              <span style="font-size: 0.72rem;" id="battle-mon-hp-text">80 / 80</span>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill hp" id="battle-mon-hp-bar" style="width: 100%; background: linear-gradient(90deg, #dc2626, #ef4444);"></div>
+            </div>
+          </div>
+          <div style="font-size: 0.7rem; color: #94a3b8; display: flex; justify-content: space-between;">
+            <span>Công: <b id="battle-mon-atk" style="color:#f87171">15</b></span>
+            <span>Thủ: <b id="battle-mon-def" style="color:#60a5fa">4</b></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monster Intent Prediction Warning -->
+      <div class="monster-intent-banner" id="battle-intent-box">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.2rem;" id="battle-intent-icon">⚠️</span>
+          <div>
+            <strong id="battle-intent-title">Ý Định Của Yêu Thú:</strong>
+            <span id="battle-intent-desc" style="margin-left: 6px;">Đang dò xét sơ hở của ngươi...</span>
+          </div>
+        </div>
+        <span class="location-badge" id="battle-intent-badge" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5;">Sát chiêu</span>
+      </div>
+
+      <!-- Auto-Combat Control Strip -->
+      <div class="battle-auto-control-strip" id="battle-auto-controls" style="display: flex; gap: 10px; align-items: center; justify-content: space-between; margin: 12px 0; background: rgba(15, 23, 42, 0.7); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 600;">⚡ Tốc Độ Trận Đấu:</span>
+          <button id="btn-speed-1x" class="tab-btn active" style="padding: 5px 12px; font-size: 0.75rem;" onclick="window.engine.setBattleSpeed(1)">▶ 1x</button>
+          <button id="btn-speed-2x" class="tab-btn" style="padding: 5px 12px; font-size: 0.75rem;" onclick="window.engine.setBattleSpeed(2)">⏩ 2x</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="btn-skip-battle" class="btn-primary-glow" style="padding: 7px 16px; font-size: 0.8rem; opacity: 0.45; cursor: not-allowed;" onclick="window.engine.skipBattlePlayback()" disabled>
+            ⏭ Đang Kịch Chiến Hiệp 1...
+          </button>
+        </div>
+      </div>
+      <div style="font-size: 0.72rem; color: #64748b; margin-bottom: 10px; text-align: center;">
+        ℹ️ Trận chiến diễn ra tự động hoàn toàn. Nút Bỏ Qua sẽ sáng lên ngay sau khi kết thúc Hiệp 1.
+      </div>
+
+      <!-- Battle Log Stream -->
+      <div class="battle-log-stream" id="battle-log-container">
+        <!-- Rendered by combat engine -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       9. CHARACTER CREATION MODAL
+       ==================================================== -->
+  <div class="char-modal-backdrop" id="character-creation-modal">
+    <div class="char-modal-box">
+      <div style="text-align: center; border-bottom: 1px solid rgba(245, 158, 11, 0.3); padding-bottom: 14px;">
+        <h2 style="font-family: var(--font-serif); font-size: 1.4rem; color: #fef08a;">
+          🌸 KHỞI NGUYÊN TIÊN LỘ - ĐỊNH DANH TIÊN THỂ
+        </h2>
+        <div style="font-size: 0.78rem; color: var(--color-text-dim); margin-top: 4px;">
+          Lựa chọn linh căn trời ban và xuất thân giang hồ để bước chân vào vạn dặm tiên đồ
+        </div>
+      </div>
+
+      <!-- Tên Đạo Hiệu -->
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: #e2e8f0;">Đạo Hiệu / Danh Xưng:</label>
+        <input type="text" id="create-char-name" value="Tiêu Dao Tán Tu" placeholder="Nhập tên đạo hiệu..." style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-medium); border-radius: var(--radius-sm); padding: 8px 12px; color: #fff; font-size: 0.9rem;"/>
+      </div>
+
+      <!-- Chọn Đạo Lộ Khởi Tâm (Tu Tiên vs Tu Ma) -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: #e2e8f0;">Đạo Lộ Khởi Tâm (Tu Tiên hay Tu Ma):</label>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;" id="create-daolo-group">
+          <div class="combatant-card active-choice" style="cursor: pointer; border-color: rgba(16, 185, 129, 0.85); background: rgba(16, 185, 129, 0.15);" onclick="window.engine.selectCreationDaoLo('TIEN_DAO', this)">
+            <strong style="color: #6ee7b7; font-size: 0.85rem;">🕊️ Tiên Đạo (Chính Đạo)</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Khởi đầu Nghiệp Lực +35. Trừ ma vệ đạo, đả tọa tụ khí nhanh, danh môn kính ngưỡng.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationDaoLo('MA_DAO', this)">
+            <strong style="color: #f87171; font-size: 0.85rem;">🩸 Ma Đạo (Ma Tu)</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Khởi đầu Nghiệp Lực -35. Sát thương bộc phát +15%, huyết sát cuồng bạo, nghịch thiên đoạt mệnh.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationDaoLo('TIEU_DAO', this)">
+            <strong style="color: #fde047; font-size: 0.85rem;">☯️ Tiêu Dao (Tán Tu)</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Khởi đầu Nghiệp Lực 0. Tùy tâm sở dục, ngộ tính +5, tự do qua lại hai giới Tiên Ma.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linh Căn -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: #e2e8f0;">Thiên Sinh Linh Căn:</label>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;" id="create-linhcan-group">
+          <div class="combatant-card active-choice" style="cursor: pointer; border-color: rgba(16, 185, 129, 0.7); background: rgba(16, 185, 129, 0.1);" onclick="window.engine.selectCreationLinhCan('THIEN_LINH_CAN', this)">
+            <strong style="color: #6ee7b7; font-size: 0.85rem;">🌟 Thiên Linh Căn (Thuần Dương)</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Tốc độ ngưng tụ tu vi +30%, Khí Vận +5. Tư chất nghìn năm có một.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationLinhCan('CUU_U_MA_CAN', this)">
+            <strong style="color: #f87171; font-size: 0.85rem;">🩸 Cửu U Ma Linh Căn (Ma Tu)</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Khí Huyết +45, Lực Đạo +12. Sát phạt nghịch thiên, uy chấn bát hoang.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationLinhCan('KIEM_COT', this)">
+            <strong style="color: #fb7185; font-size: 0.85rem;">🗡️ Tiên Thiên Kiếm Cốt</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Tấn công cơ bản +15, Căn Cốt +6. Sinh ra để ngự kiếm sát địch.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationLinhCan('DI_LINH_CAN', this)">
+            <strong style="color: #c084fc; font-size: 0.85rem;">⚡ Dị Linh Căn (Phong Lôi)</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Sát thương Thần Thông +30%, Khí Huyết tối đa +30. Pháp lực cuồng bạo.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationLinhCan('AM_DUONG_HON_THE', this)">
+            <strong style="color: #e879f9; font-size: 0.85rem;">☯️ Âm Dương Hỗn Thể (Song Tu)</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Ngộ Tính +10, Khí Vận +6, Thể lực +30. Dung hợp tinh hoa Tiên Ma lưỡng giới.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationLinhCan('NGU_HANH', this)">
+            <strong style="color: #fbbf24; font-size: 0.85rem;">💎 Ngũ Hành Tạp Linh Căn</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Căn Cốt +8, Ngộ Tính +6, Thể lực tối đa +25. Vững chãi như bàn thạch.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Xuất Thân -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: #e2e8f0;">Xuất Thân Giang Hồ:</label>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;" id="create-origin-group">
+          <div class="combatant-card active-choice" style="cursor: pointer; border-color: rgba(245, 158, 11, 0.7); background: rgba(245, 158, 11, 0.1);" onclick="window.engine.selectCreationOrigin('TAN_TU_GIA', this)">
+            <strong style="color: #fde047; font-size: 0.85rem;">🏰 Tán Tu Thế Gia</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Gia sản dồi dào: Bắt đầu với 250 Bạc + 3 Hồi Xuân Đan.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationOrigin('HUYET_MA_DI_TOC', this)">
+            <strong style="color: #ef4444; font-size: 0.85rem;">💀 Cổ Ma Di Tộc (Ma Tu)</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Khởi đầu với [Huyết Sát Ma Đao] + 3 Cửu U Ma Đan + 200 Bạc.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationOrigin('THAO_DUOC_DONG', this)">
+            <strong style="color: #34d399; font-size: 0.85rem;">🌿 Dược Đồng Hái Thuốc</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Tỉ lệ luyện đan thành công +20%, mang theo 6 Thảo Mộc Linh Chi.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationOrigin('THO_SAN_RUNG', this)">
+            <strong style="color: #38bdf8; font-size: 0.85rem;">🏹 Thợ Săn Rừng Sâu</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Sở hữu sẵn [Thanh Phong Kiếm] (Vũ khí) + Căn Cốt +5.</span>
+          </div>
+          <div class="combatant-card" style="cursor: pointer;" onclick="window.engine.selectCreationOrigin('CO_TICH_MON', this)">
+            <strong style="color: #a78bfa; font-size: 0.85rem;">📜 Thư Đồng Cố Nhân</strong>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Mang theo Cổ Tịch Tàn Quyển, Ngộ Tính +8, Khí Vận +4.</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary-glow" style="margin-top: 10px; padding: 12px; font-size: 1rem; width: 100%;" onclick="window.engine.confirmCharacterCreation()">
+        踏 入 仙 途 • BẮT ĐẦU VẤN ĐẠO
+      </button>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       10. BREAKTHROUGH MODAL (XUNG QUAN ĐỘT PHÁ)
+       ==================================================== -->
+  <div class="generic-wuxia-modal-backdrop" id="breakthrough-modal">
+    <div class="generic-wuxia-modal-box">
+      <div class="modal-top-bar">
+        <div class="event-title" style="color: #fef08a;">✨ XUNG QUAN ĐỘT PHÁ CẢNH GIỚI</div>
+        <button class="btn-skip-stream" onclick="window.engine.closeBreakthroughModal()">Đóng ✕</button>
+      </div>
+
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="font-size: 2rem;">⚡</div>
+        <div style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; color: #fff;" id="breakthrough-realm-title">
+          Từ [Phàm Nhân] Đột Phá Lên [Luyện Khí Tầng 1]
+        </div>
+        <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px;">
+          Đột phá cần ngưng tụ chân nguyên xung kích kinh mạch, thành công sẽ mở rộng linh hải và nhận điểm tiềm năng.
+        </div>
+      </div>
+
+      <!-- Tỉ lệ thành công -->
+      <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span>Tỉ Lệ Thành Công Thiên Định:</span>
+          <strong style="color: #34d399; font-size: 1.1rem;" id="breakthrough-chance-text">85%</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #94a3b8;">
+          <span>Phần Thưởng Khi Thành Công:</span>
+          <span style="color: #fde047; font-weight: 700;">+4 Điểm Tiềm Năng, Đầy Khí Huyết</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #f87171;">
+          <span>Rủi Ro Khi Thất Bại:</span>
+          <span>Trừ 30% Tu Vi, Mất 20% Khí Huyết (Nghịch Chuyển)</span>
+        </div>
+      </div>
+
+      <!-- Đan dược trợ lực -->
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: #e2e8f0;">Đan Dược Hộ Trì Trong Túi Đồ:</label>
+        <div id="breakthrough-pills-list" style="display: flex; flex-direction: column; gap: 6px;">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <button class="btn-primary-glow" id="btn-execute-breakthrough" style="padding: 12px; font-size: 0.95rem; width: 100%;" onclick="window.engine.executeBreakthrough()">
+        🌟 Vận Khí Xung Quan Đột Phá!
+      </button>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       11. SHOP MODAL (TIỆM DƯỢC THẢO & BÁCH HÓA)
+       ==================================================== -->
+  <div class="generic-wuxia-modal-backdrop" id="shop-modal">
+    <div class="generic-wuxia-modal-box" style="max-width: 650px;">
+      <div class="modal-top-bar">
+        <div class="event-title" style="color: #38bdf8;">🏪 Tiệm Bách Hóa &amp; Dược Thảo Giang Hồ</div>
+        <button class="btn-skip-stream" onclick="window.engine.closeShopModal()">Đóng ✕</button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 8px 14px; border-radius: var(--radius-sm);">
+        <span style="font-size: 0.8rem; color: #cbd5e1;">Bạc Hiện Có: <strong style="color: #fbbf24; font-size: 1rem;" id="shop-player-silver">100</strong> 🪙</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn-wuxia-link" id="shop-tab-buy" style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7;" onclick="window.engine.setShopTab('buy')">Mua Hàng</button>
+          <button class="btn-wuxia-link" id="shop-tab-sell" onclick="window.engine.setShopTab('sell')">Bán Vật Phẩm</button>
+        </div>
+      </div>
+
+      <!-- Shop Items List -->
+      <div id="shop-items-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 4px;">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       12. BATTLE HISTORY MODAL (LỊCH SỬ CHIẾN BÁO MÁY CHỦ)
+       ==================================================== -->
+  <div class="generic-wuxia-modal-backdrop" id="battle-history-modal" style="display: none;">
+    <div class="generic-wuxia-modal-box" style="max-width: 680px;">
+      <div class="modal-top-bar">
+        <div class="event-title" style="color: #fca5a5;">📜 Lịch Sử Chiến Báo Tiên Gia (Server Verified)</div>
+        <button class="btn-skip-stream" onclick="window.engine.closeBattleHistoryModal()">Đóng ✕</button>
+      </div>
+
+      <div style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 10px;">
+        Toàn bộ nhật ký các trận kịch chiến được máy chủ chứng thực và lưu trữ an toàn.
+      </div>
+
+      <div id="battle-history-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 4px;">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL BẢNG XẾP HẠNG THIÊN KIÊU (M4.1 LEADERBOARD) -->
+  <div class="generic-wuxia-modal-backdrop" id="leaderboard-modal" style="display: none;">
+    <div class="generic-wuxia-modal-box" style="max-width: 780px;">
+      <div class="modal-top-bar">
+        <div class="event-title" style="color: #fbbf24; display: flex; align-items: center; gap: 8px;">
+          <span>🏆</span>
+          <span>THIÊN KIÊU BẢNG (BẢNG XẾP HẠNG ĐẠO HẠNH VẠN GIỚI)</span>
+        </div>
+        <button class="btn-skip-stream" onclick="window.engine.closeLeaderboardModal()">Đóng ✕</button>
+      </div>
+
+      <!-- Banner phụ / Thứ hạng cá nhân -->
+      <div id="leaderboard-my-rank-banner" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: #94a3b8;">Đang xác định vị trí trong thiên hạ...</span>
+      </div>
+
+      <!-- Tiêu đề các cột -->
+      <div style="display: grid; grid-template-columns: 50px 1fr 140px 80px 120px; gap: 8px; font-size: 0.75rem; color: #94a3b8; font-weight: 700; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 10px;">
+        <span style="text-align: center;">HẠNG</span>
+        <span>TU SĨ</span>
+        <span style="text-align: center;">CẢNH GIỚI</span>
+        <span style="text-align: center;">CẤP ĐỘ</span>
+        <span style="text-align: right;">CHIẾN LỰC</span>
+      </div>
+
+      <!-- Container danh sách bảng xếp hạng -->
+      <div id="leaderboard-list-container" style="display: flex; flex-direction: column; gap: 6px; max-height: 440px; overflow-y: auto; padding-right: 4px; min-height: 200px;">
+        <div style="text-align: center; color: #64748b; padding: 40px;">Đang triệu hoán danh sách thiên kiêu từ càn khôn...</div>
+      </div>
+
+      <!-- Thanh điều khiển phân trang -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.8rem;">
+        <div style="color: #64748b;" id="leaderboard-total-info">Tổng số: 0 tu sĩ</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn-wuxia-link" id="leaderboard-prev-btn" style="padding: 4px 10px;" onclick="window.engine.changeLeaderboardPage(-1)">◀ Trang Trước</button>
+          <span style="color: #cbd5e1; font-weight: 700;" id="leaderboard-page-indicator">Trang 1 / 1</span>
+          <button class="btn-wuxia-link" id="leaderboard-next-btn" style="padding: 4px 10px;" onclick="window.engine.changeLeaderboardPage(1)">Trang Sau ▶</button>
+          <button class="btn-wuxia-link" style="padding: 4px 10px; background: rgba(245, 158, 11, 0.15); color: #fbbf24;" onclick="window.engine.refreshLeaderboard()">🔄 Làm Mới</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       13. MODAL ĐẤU TRƯỜNG THIÊN KIÊU (M4.2 ASYNCHRONOUS PVP)
+       ==================================================== -->
+  <div class="generic-wuxia-modal-backdrop" id="pvp-modal" style="display: none;">
+    <div class="generic-wuxia-modal-box" style="max-width: 820px;">
+      <div class="modal-top-bar">
+        <div class="event-title" style="color: #c084fc; display: flex; align-items: center; gap: 8px;">
+          <span>⚔️</span>
+          <span>ĐẤU TRƯỜNG THIÊN KIÊU (LÔI ĐÀI LUẬN ĐẠO)</span>
+        </div>
+        <button class="btn-skip-stream" onclick="window.engine.closePvpModal()">Đóng ✕</button>
+      </div>
+
+      <!-- Banner thông tin Danh Vọng của Người chơi -->
+      <div id="pvp-player-banner" style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.5rem;">🧙</span>
+          <div>
+            <div style="font-weight: 700; color: #e9d5ff;" id="pvp-banner-name">Tu Sĩ</div>
+            <div style="font-size: 0.75rem; color: #a855f7;" id="pvp-banner-stats">Danh Vọng: 100 • Thắng: 0 | Thua: 0 | Hòa: 0</div>
+          </div>
+        </div>
+        <div style="text-align: right; font-size: 0.78rem; color: #94a3b8;">
+          <div>Tiêu hao: <span style="color: #38bdf8; font-weight: 700;">10 Thể Lực</span> / trận</div>
+          <div style="color: #6ee7b7;">Thắng: +Danh Vọng & +50 Bạc</div>
+        </div>
+      </div>
+
+      <!-- Nav Tabs con: [Danh Sách Đối Thủ] | [Lịch Sử Đấu Trường] | [Thiên Kiêu Danh Vọng] -->
+      <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px; margin-bottom: 10px;">
+        <button class="btn-wuxia-link active" id="pvp-tab-opponents" style="background: rgba(168, 85, 247, 0.25); color: #e9d5ff;" onclick="window.engine.setPvpTab('opponents')">⚔️ Đối Thủ Lôi Đài</button>
+        <button class="btn-wuxia-link" id="pvp-tab-history" onclick="window.engine.setPvpTab('history')">📜 Lịch Sử Đấu Đài</button>
+        <button class="btn-wuxia-link" id="pvp-tab-leaderboard" onclick="window.engine.setPvpTab('leaderboard')">🏆 Bảng Danh Vọng</button>
+      </div>
+
+      <!-- Container chính cho từng Tab -->
+      <div id="pvp-content-container" style="min-height: 280px; max-height: 420px; overflow-y: auto; padding-right: 4px;">
+        <div style="text-align: center; color: #64748b; padding: 40px;">Đang triệu hoán danh sách đối thủ...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       13.5. MODAL TÔNG MÔN THIÊN HẠ (M4.3.2 GUILD / SECT SYSTEM)
+       ==================================================== -->
+  <div class="generic-wuxia-modal-backdrop" id="guild-modal" style="display: none;">
+    <div class="generic-wuxia-modal-box" style="max-width: 860px; max-height: 92vh;">
+      <div class="modal-top-bar">
+        <div class="event-title" style="color: #6ee7b7; display: flex; align-items: center; gap: 8px;">
+          <span>🏯</span>
+          <span>TÔNG MÔN THIÊN HẠ (MÔN PHÁI QUY TỤ)</span>
+        </div>
+        <button class="btn-skip-stream" onclick="window.engine.closeGuildModal()">Đóng ✕</button>
+      </div>
+
+      <!-- Vùng hiển thị nội dung Tông Môn động -->
+      <div id="guild-modal-body" style="display: flex; flex-direction: column; gap: 12px; min-height: 320px;">
+        <div style="text-align: center; color: #6ee7b7; padding: 40px;">Đang dò tìm khí tức tông môn trong thiên địa...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       13.6. MODAL TỔ ĐỘI & BÍ CẢNH ĐỒNG HÀNH (M4.3.3D CO-OP SYSTEM)
+       ==================================================== -->
+  <div class="generic-wuxia-modal-backdrop" id="party-modal" style="display: none;">
+    <div class="generic-wuxia-modal-box" style="max-width: 860px; max-height: 92vh;">
+      <div class="modal-top-bar">
+        <div class="event-title" style="color: #38bdf8; display: flex; align-items: center; gap: 8px;">
+          <span>👥</span>
+          <span>TỔ ĐỘI TU TIÊN & BÍ CẢNH ĐỒNG HÀNH</span>
+          <span class="chat-status-dot status-offline" id="dungeon-socket-status-dot" title="Trạng thái thần thức bí cảnh"></span>
+          <span style="font-size: 0.72rem; font-weight: normal; color: #94a3b8;" id="dungeon-socket-status-text">Đang kết nối</span>
+        </div>
+        <button class="btn-skip-stream" onclick="window.engine.closePartyModal()">Đóng ✕</button>
+      </div>
+
+      <!-- Tab điều hướng Tổ Đội / Bí Cảnh / Lời Mời -->
+      <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-bottom: 12px;">
+        <button class="btn-wuxia-link active" id="party-tab-my_party" onclick="window.engine.setPartyTab('my_party')">
+          👥 Tổ Đội Của Ta
+        </button>
+        <button class="btn-wuxia-link" id="party-tab-dungeons" onclick="window.engine.setPartyTab('dungeons')">
+          🏰 Danh Sách Bí Cảnh
+        </button>
+        <button class="btn-wuxia-link" id="party-tab-invites" onclick="window.engine.setPartyTab('invites')">
+          ✉️ Lời Mời <span id="party-invites-badge" style="display: none; background: #ef4444; color: #fff; border-radius: 999px; padding: 1px 6px; font-size: 0.68rem; font-weight: 700;">0</span>
+        </button>
+      </div>
+
+      <!-- Vùng hiển thị nội dung động -->
+      <div id="party-modal-body" style="display: flex; flex-direction: column; gap: 12px; min-height: 320px;">
+        <div style="text-align: center; color: #38bdf8; padding: 40px;">Đang tìm kiếm khí tức tổ đội trong thiên địa...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       13.8. MÀN HÌNH TOÀN DÂN TRẢM MA (M4.4B WORLD BOSS ARENA)
+       ==================================================== -->
+  <div class="generic-wuxia-modal-backdrop" id="worldboss-modal" style="display: none; z-index: 160;">
+    <div class="wb-modal-box">
+      <!-- Top Bar: Header & Actions -->
+      <div class="wb-header-bar">
+        <div class="wb-title-group">
+          <span class="wb-dragon-emblem">🐉</span>
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <h2 id="wb-boss-name" style="font-family: var(--font-serif); font-size: 1.25rem; color: #fef08a; letter-spacing: 0.5px;">XÍCH DIỄM MA LONG</h2>
+              <span class="wb-status-pill status-active" id="wb-status-pill">🔥 ĐANG KỊCH CHIẾN</span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--color-text-dim); display: flex; gap: 10px; align-items: center; margin-top: 2px;">
+              <span id="wb-boss-level">Cấp 50 • Hệ Hỏa</span>
+              <span>•</span>
+              <span id="wb-connection-status" style="display: inline-flex; align-items: center; gap: 4px;">
+                <span class="chat-status-dot status-offline" id="wb-connection-dot"></span>
+                <span id="wb-connection-text" style="font-size: 0.72rem; color: #94a3b8;">Đang kết nối thần thức...</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div id="wb-countdown" style="font-size: 0.85rem; color: #fbbf24; background: rgba(0, 0, 0, 0.4); padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            Còn: <strong>--:--</strong>
+          </div>
+          <button class="btn-skip-stream" onclick="window.worldboss.closeModal()">Đóng ✕</button>
+        </div>
+      </div>
+
+      <!-- Modal Body Wrapper -->
+      <div id="wb-modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Boss Arena Card -->
+        <div class="wb-arena-card">
+          <div class="wb-avatar-wrap">
+            <div class="wb-avatar-icon" id="wb-boss-avatar">🐲</div>
+            <div class="wb-floating-container" id="wb-floating-container"></div>
+          </div>
+
+          <!-- Giant HP Gauge -->
+          <div class="wb-hp-gauge-block">
+            <div class="wb-hp-meta-row">
+              <span style="color: #fca5a5;">KHÍ HUYẾT MA LONG</span>
+              <span style="color: #fde047;" id="wb-hp-text">10,000,000 / 10,000,000</span>
+              <span style="color: #f87171;" id="wb-hp-pct">100.0%</span>
+            </div>
+            <div class="wb-hp-track" id="wb-hp-track">
+              <div class="wb-hp-fill" id="wb-hp-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- Combat Controls -->
+          <div class="wb-controls-bar">
+            <button class="btn-wb-attack" id="wb-btn-attack" onclick="window.worldboss.attack()">
+              <span>⚔️</span>
+              <span>XUẤT CHIÊU</span>
+            </button>
+            <button class="btn-wb-auto" id="wb-btn-auto" onclick="window.worldboss.toggleAutoAttack()">
+              <span>⚡</span>
+              <span>Tự Động Xuất Chiêu</span>
+            </button>
+          </div>
+
+          <!-- Defeat Victory Banner (Hidden until defeated) -->
+          <div class="wb-defeat-banner" id="wb-defeat-section" style="display: none; width: 100%; max-width: 680px;">
+            <div style="font-size: 1.15rem; font-weight: 800; font-family: var(--font-serif); color: #fef08a;">
+              🎉 MA LONG ĐÃ BỊ TRẢM SÁT!
+            </div>
+            <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 4px;">
+              Vinh danh tu sĩ <strong style="color: #38bdf8;" id="wb-killer-name">Đại Năng</strong> đã giáng đòn kết liễu phong ma!
+            </div>
+            <button class="btn-wb-claim" id="wb-btn-claim" onclick="window.worldboss.claimReward()">
+              🎁 Nhận Thưởng Trảm Ma
+            </button>
+            <div id="wb-claim-result" style="display: none; margin-top: 10px;"></div>
+          </div>
+        </div>
+
+        <!-- Personal Contribution Strip -->
+        <div class="wb-my-strip">
+          <div>
+            <span>Sát thương của bạn:</span>
+            <strong style="color: #fde047; font-size: 1.05rem;" id="wb-my-damage">0</strong>
+          </div>
+          <div>
+            <span>Xếp hạng hiện tại:</span>
+            <strong style="color: #38bdf8;" id="wb-my-rank">Chưa xếp hạng</strong>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--color-text-dim);">
+            * Top 1-10 nhận thêm Đan Dược & Phục Ma Lệnh
+          </div>
+        </div>
+
+        <!-- Split View: Leaderboard + Combat Log -->
+        <div class="wb-split-grid">
+          <!-- Left: Realtime Leaderboard -->
+          <div class="wb-panel-card">
+            <div class="wb-panel-title">
+              <span>🏆</span>
+              <span>BẢNG XẾP HẠNG TOP 10 SÁT THƯƠNG</span>
+            </div>
+            <div style="flex: 1; overflow-y: auto; max-height: 240px;">
+              <table class="wb-table">
+                <thead>
+                  <tr>
+                    <th style="width: 38px; text-align: center;">Hạng</th>
+                    <th>Tu Sĩ</th>
+                    <th style="text-align: right;">Sát Thương</th>
+                    <th style="text-align: right; width: 50px;">Tỷ Lệ</th>
+                  </tr>
+                </thead>
+                <tbody id="wb-leaderboard-body">
+                  <tr>
+                    <td colspan="4" style="text-align: center; color: #64748b; padding: 20px;">
+                      Đang đồng bộ thần thức bảng phong ma...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right: Realtime Combat Feed -->
+          <div class="wb-panel-card">
+            <div class="wb-panel-title">
+              <span>📜</span>
+              <span>NHẬT KÝ CHIẾN TRƯỜNG THẾ GIỚI</span>
+            </div>
+            <div class="wb-combat-feed" id="wb-combat-feed">
+              <div style="text-align: center; color: #64748b; padding: 20px;">
+                Đang lắng nghe tiếng gầm của Ma Long...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       13.7. MÀN HÌNH CHIẾN ĐẤU BÍ CẢNH REALTIME (M4.3.3D CO-OP COMBAT)
+       ==================================================== -->
+  <div class="generic-wuxia-modal-backdrop" id="dungeon-combat-screen" style="display: none; z-index: 150;">
+    <div class="generic-wuxia-modal-box" style="max-width: 920px; max-height: 94vh; border-color: rgba(245, 158, 11, 0.45);">
+      <div class="modal-top-bar">
+        <div class="event-title" style="color: #fef08a; display: flex; align-items: center; gap: 8px;">
+          <span>⚔️</span>
+          <span>BÍ CẢNH CO-OP: U MINH CỔ ĐỘNG (SERVER-AUTHORITATIVE)</span>
+        </div>
+        <button class="btn-skip-stream" onclick="window.engine.closeDungeonCombat()">Thu Nhỏ ✕</button>
+      </div>
+
+      <!-- Vùng hiển thị toàn bộ chiến trường phó bản realtime -->
+      <div id="dungeon-combat-body" style="display: flex; flex-direction: column; gap: 12px; min-height: 380px;">
+        <div style="text-align: center; color: #fef08a; padding: 40px;">Đang tải trạng thái chiến trường phó bản...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       14. WUXIA REALTIME CHAT DOCK (M4.3.1 TRUYỀN ÂM CÁC)
+       ==================================================== -->
+  <!-- Nút mở Chat Widget dạng Floating Dock -->
+  <div class="chat-dock-launcher" id="chat-dock-launcher" onclick="window.engine.toggleChatWindow()">
+    <span class="chat-status-dot status-offline" id="chat-launcher-status-dot"></span>
+    <span>💬 Truyền Âm Các</span>
+    <span id="chat-unread-badge" style="display: none; background: #ef4444; color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.7rem; font-weight: 700;">0</span>
+  </div>
+
+  <!-- Cửa sổ Chat Realtime -->
+  <div class="chat-window" id="chat-window" style="display: none;">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="chat-header-title">
+        <span>💬 Truyền Âm Các</span>
+        <span class="chat-status-dot status-offline" id="chat-header-status-dot" title="Trạng thái thần thức"></span>
+        <span style="font-size: 0.72rem; font-weight: normal; color: #94a3b8;" id="chat-connection-text">Mất kết nối</span>
+      </div>
+      <div class="chat-header-actions">
+        <button class="btn-wuxia-link" style="padding: 2px 6px; font-size: 0.75rem;" onclick="window.engine.toggleChatWindow()">✕</button>
+      </div>
+    </div>
+
+    <!-- Chat Tabs: Kênh Thế Giới, Kênh Khu Vực & Kênh Tông Môn -->
+    <div class="chat-tabs">
+      <button class="chat-tab-btn active" id="chat-tab-world" onclick="window.engine.switchChatChannel('WORLD')">
+        <span>🌐 Thế Giới</span>
+      </button>
+      <button class="chat-tab-btn" id="chat-tab-zone" onclick="window.engine.switchChatChannel('ZONE')">
+        <span id="chat-zone-tab-label">📍 Khu Vực</span>
+      </button>
+      <button class="chat-tab-btn" id="chat-tab-guild" style="display: none;" onclick="window.engine.switchChatChannel('GUILD')">
+        <span id="chat-guild-tab-label">🏯 Tông Môn</span>
+      </button>
+    </div>
+
+    <!-- Danh sách tin nhắn -->
+    <div class="chat-messages-box" id="chat-messages-box">
+      <div style="text-align: center; color: #64748b; padding: 20px 0;">Đang kết nối thần thức với các cõi...</div>
+    </div>
+
+    <!-- Huy hiệu nổi "Có tin mới" khi người dùng cuộn lên trên -->
+    <div class="chat-floating-badge" id="chat-floating-badge" onclick="window.engine.scrollChatToBottom()">
+      Có truyền âm mới ↓
+    </div>
+
+    <!-- Thanh nhập và gửi tin nhắn -->
+    <div class="chat-input-bar">
+      <div class="chat-input-row">
+        <input
+          type="text"
+          class="chat-text-input"
+          id="chat-text-input"
+          maxlength="200"
+          placeholder="Nhập truyền âm (Enter để gửi)..."
+          autocomplete="off"
+          onkeydown="if(event.key === 'Enter') window.engine.sendChatMessage()"
+          oninput="window.engine.updateChatCharCounter()"
+        />
+        <button class="chat-send-btn" id="chat-send-btn" onclick="window.engine.sendChatMessage()">
+          Truyền Âm
+        </button>
+      </div>
+      <div class="chat-input-footer">
+        <span class="chat-notice" id="chat-error-notice"></span>
+        <span id="chat-char-counter">0/200</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       WUXIA FIXED BOTTOM NAVIGATION BAR (M5.2 WUXIA LOGS SPEC)
+       ==================================================== -->
+  <nav class="wuxia-bottom-nav" id="wuxia-bottom-nav">
+    <button class="bnav-item active" data-bnav="action" onclick="window.wuxiaNavTab('action')">
+      <span class="bnav-icon">🏠</span>
+      <span class="bnav-label">Động Phủ</span>
+    </button>
+    <button class="bnav-item" data-bnav="quest" onclick="window.wuxiaNavTab('quest')">
+      <span class="bnav-icon">📜</span>
+      <span class="bnav-label">Nhiệm Vụ</span>
+      <span class="bnav-badge" id="bnav-quest-badge" style="display: none;">!</span>
+    </button>
+    <button class="bnav-item" data-bnav="life" onclick="window.wuxiaNavTab('life')">
+      <span class="bnav-icon">🌿</span>
+      <span class="bnav-label">Sinh Hoạt</span>
+    </button>
+    <button class="bnav-item" data-bnav="character" onclick="window.wuxiaNavTab('character')">
+      <span class="bnav-icon">🧙</span>
+      <span class="bnav-label">Nhân Vật</span>
+      <span class="bnav-badge" id="bnav-character-badge" style="display: none;">!</span>
+    </button>
+    <button class="bnav-item" data-bnav="inventory" onclick="window.wuxiaScrollToInventory()">
+      <span class="bnav-icon">🎒</span>
+      <span class="bnav-label">Túi Đồ</span>
+    </button>
+    <button class="bnav-item" onclick="window.toggleQuickMenu()">
+      <span class="bnav-icon">☰</span>
+      <span class="bnav-label">Giang Hồ</span>
+    </button>
+  </nav>
+
+  <!-- QUICK MENU DRAWER MODAL -->
+  <div class="quick-menu-modal-backdrop" id="wuxia-quick-menu-modal" onclick="if(event.target === this) window.toggleQuickMenu()">
+    <div class="quick-menu-modal-box">
+      <div class="quick-menu-header">
+        <span class="font-wuxia-title" style="color: var(--gold-400); font-size: 1.15rem;">📜 Giang Hồ Kỳ Ngộ & Phân Hệ</span>
+        <button class="btn-close-quick-menu" onclick="window.toggleQuickMenu()">✕</button>
+      </div>
+      <div class="quick-menu-grid">
+        <button class="quick-menu-item qm-boss" onclick="window.toggleQuickMenu(); (window.worldboss?.openModal || window.engine?.openWorldBossModal || (() => alert('Đang tải Ma Long...')))()">
+          <span class="qm-icon">🐉</span>
+          <span class="qm-name">Toàn Dân Trảm Ma</span>
+          <span class="qm-sub">Xích Diễm Ma Long</span>
+        </button>
+        <button class="quick-menu-item qm-dungeon" onclick="window.toggleQuickMenu(); window.engine?.openPartyModal()">
+          <span class="qm-icon">👥</span>
+          <span class="qm-name">Tổ Đội & Bí Cảnh</span>
+          <span class="qm-sub">Co-op Realtime</span>
+        </button>
+        <button class="quick-menu-item" onclick="window.toggleQuickMenu(); window.engine?.openGuildModal()">
+          <span class="qm-icon">🏯</span>
+          <span class="qm-name">Tông Môn</span>
+          <span class="qm-sub">Bang Hội Tu Tiên</span>
+        </button>
+        <button class="quick-menu-item" onclick="window.toggleQuickMenu(); window.engine?.openPvpModal()">
+          <span class="qm-icon">⚔️</span>
+          <span class="qm-name">Đấu Trường</span>
+          <span class="qm-sub">Vạn Giới Luận Kiếm</span>
+        </button>
+        <button class="quick-menu-item" onclick="window.toggleQuickMenu(); window.engine?.openLeaderboardModal()">
+          <span class="qm-icon">🏆</span>
+          <span class="qm-name">Bảng Xếp Hạng</span>
+          <span class="qm-sub">Thiên Kiêu Bảng</span>
+        </button>
+        <button class="quick-menu-item" onclick="window.toggleQuickMenu(); window.engine?.openBattleHistoryModal()">
+          <span class="qm-icon">📜</span>
+          <span class="qm-name">Chiến Báo</span>
+          <span class="qm-sub">Ký Sự Sa Trường</span>
+        </button>
+        <button class="quick-menu-item" onclick="window.toggleQuickMenu(); window.engine?.resetPlayer()">
+          <span class="qm-icon">🔄</span>
+          <span class="qm-name">Trùng Sinh</span>
+          <span class="qm-sub">Luân Hồi Chuyển Thế</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.toggleQuickMenu = function() {
+      const modal = document.getElementById('wuxia-quick-menu-modal');
+      if (modal) modal.classList.toggle('active');
+    };
+    window.wuxiaNavTab = function(tab) {
+      if (window.engine && typeof window.engine.setTab === 'function') {
+        window.engine.setTab(tab);
+      }
+      document.querySelectorAll('#wuxia-bottom-nav .bnav-item[data-bnav]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-bnav') === tab);
+      });
+    };
+    window.wuxiaScrollToInventory = function() {
+      const inv = document.getElementById('inventory-grid');
+      if (inv) {
+        inv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        inv.classList.add('highlight-glow');
+        setTimeout(() => inv.classList.remove('highlight-glow'), 1800);
+      }
+    };
+  </script>
+
+  <!-- SOCKET.IO CLIENT SCRIPT -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    if (typeof io === 'undefined') {
+      document.write('<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"><\\/script>');
+    }
+  </script>
+
+  <!-- LOAD ENGINE SCRIPT -->
+  <script src="tienlo-engine.js?v=1.0.7"></script>
+  <script src="tienlo-coop.js?v=1.0.0"></script>
+  <script src="tienlo-worldboss.js?v=1.0.0"></script>
+</body>
+</html>

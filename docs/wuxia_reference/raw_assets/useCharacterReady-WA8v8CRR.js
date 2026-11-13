@@ -1,0 +1,1 @@
+import{An as e}from"./ui-vendor-DqHKsdNW.js";import{a as t,i as n}from"./vue-core-C3WcfRwN.js";import{S as r,v as i,y as a}from"./index-Di0RD3h2.js";function o(o){let s=t(),c=n();e(()=>[r.value,a.value,i.value],([e,t,n],[r,i,a]=[])=>{e||!n&&!t||t===i&&e===r||(t?o(t):c.path!==`/create`&&s.push(`/character`))},{immediate:!0})}export{o as t};

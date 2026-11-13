@@ -1,0 +1,12 @@
+BẠN LÀ TECH LEAD & AUDITOR KIỂM ĐỊNH ĐỘC LẬP (CLAUDE CODE).
+
+Người dùng đã duyệt việc chuyển đổi giao diện Tiên Lộ sang chuẩn Wuxia Logs:
+"ok. thực hiện theo workflow với claude để chuyển đổi giao diện và UI/UX tiên lộ như wuxia. dùng font chữ giống wuxia hoặc font chữ cổ điển mang tính kiếm hiệp"
+
+Theo quy trình phối hợp giữa Antigravity (Maker & Architect) và Claude Code (Tech Lead & Checker):
+- Antigravity đã soạn thảo Master Plan: docs/M5_WUXIA_UIUX_MASTER_PLAN.md.
+- Nhiệm vụ của Claude Code là:
+  1. Phân tích, đánh giá tính khả thi của Master Plan này.
+  2. Bẻ nhỏ và chuẩn hóa Master Plan thành các bước nhỏ, rõ ràng, tuần tự (Step M5.1, M5.2, M5.3, M5.4, M5.5).
+  3. Định nghĩa tiêu chí nghiệm thu (Acceptance Criteria) cụ thể cho từng bước để Antigravity tiến hành code và gửi báo cáo cho bạn nghiệm thu chéo từng bước.
+  4. Xác nhận bước đầu tiên (M5.1) để Antigravity bắt đầu thực hiện ngay lập tức!

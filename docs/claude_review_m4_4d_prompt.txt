@@ -1,0 +1,25 @@
+BẠN LÀ TECH LEAD & AUDITOR KIỂM ĐỊNH ĐỘC LẬP (CLAUDE CODE).
+HÃY ĐÁNH GIÁ VÀ NGHIỆM THU CUỐI CÙNG CHO BƯỚC M4.4D & TOÀN BỘ MILESTONE M4.4 (TOÀN DÂN TRẢM MA - WORLD BOSS).
+
+Dưới đây là báo cáo M4.4D cùng các tài liệu đã hoàn thành:
+1. docs/M4_4D_FINAL_HARDENING_REPORT.md
+2. docs/M4_4_WORLDBOSS_API_REFERENCE.md
+3. docs/M4_4C_GLOBAL_ACCEPTANCE_REPORT.md
+4. docs/M4_4B_FRONTEND_WORLD_BOSS_REPORT.md
+5. docs/M4_4A_WORLD_BOSS_BACKEND_REPORT.md
+
+Các nội dung kỹ thuật gia cố đã thực hiện:
+- Đã thêm Damage Sanity Ceiling: Math.min(100000, ...) trong xianxiaWorldBossService.ts.
+- Đã thêm Memory Leak Protection: cơ chế dọn dẹp inMemoryCooldowns khi vượt quá 2000 phần tử trong xianxiaWorldBossService.ts.
+- Đã thêm Route Alias: GET /leaderboard/:bossInstanceId bên cạnh /:bossInstanceId/leaderboard trong xianxiaWorldBossRoutes.ts.
+- Đã thêm Entropy Suffix cho claim key: wb_claim_${bossId}_${Date.now()}_${Math.random().toString(36).substring(2, 7)} trong frontend/tienlo-worldboss.js.
+- Đã biên dịch npm run build thành công 100% với exit code 0 (không có lỗi TypeScript nào).
+- Các bộ test M4.4A, M4.4B, M4.4C đều đạt 100% (Tổng cộng 33 test case mới, kiểm tra cả socket concurrency, rate-limit, anti-cheat, và data safety).
+
+YÊU CẦU ĐỐI VỚI BẠN:
+1. Đọc và thẩm định tài liệu docs/M4_4_WORLDBOSS_API_REFERENCE.md và docs/M4_4D_FINAL_HARDENING_REPORT.md.
+2. Kiểm tra xem các biện pháp gia cố sản xuất có đạt chuẩn an toàn, chống cheat, và chống nghẽn/rò rỉ tài nguyên hay không.
+3. Đưa ra kết luận cuối cùng cho M4.4:
+   - Kết luận: [PASS / FAIL]
+   - Đánh giá tổng thể tính năng Toàn Dân Trảm Ma (World Boss — Xích Diễm Ma Long).
+   - Xác nhận hoàn tất Milestone M4.4.

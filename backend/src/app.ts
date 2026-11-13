@@ -1,8 +1,24 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
 import { config } from './config/index.js';
 import authRoutes from './routes/authRoutes.js';
 import matchRoutes from './routes/matchRoutes.js';
+import xianxiaWorldRoutes from './routes/xianxia/xianxiaWorldRoutes.js';
+import xianxiaBestiaryRoutes from './routes/xianxia/xianxiaBestiaryRoutes.js';
+import { xianxiaEventsRouter } from './routes/xianxia/xianxiaEventsRoutes.js';
+import { xianxiaCraftingRouter } from './routes/xianxia/xianxiaCraftingRoutes.js';
+import { xianxiaQuestRouter } from './routes/xianxia/xianxiaQuestRoutes.js';
+import { xianxiaAgencyRouter } from './routes/xianxia/xianxiaAgencyRoutes.js';
+import xianxiaGameplayRoutes from './routes/xianxia/xianxiaGameplayRoutes.js';
+import xianxiaLeaderboardRoutes from './routes/xianxia/xianxiaLeaderboardRoutes.js';
+import xianxiaChatRoutes from './routes/xianxia/xianxiaChatRoutes.js';
+import xianxiaGuildRoutes from './routes/xianxia/xianxiaGuildRoutes.js';
+import xianxiaPartyRoutes from './routes/xianxia/xianxiaPartyRoutes.js';
+import xianxiaDungeonRoutes from './routes/xianxia/xianxiaDungeonRoutes.js';
+import xianxiaWorldBossRoutes from './routes/xianxia/xianxiaWorldBossRoutes.js';
+import { xianxiaChatService } from './services/xianxia/xianxiaChatService.js';
 import { onlineTracker } from './services/onlineTracker.js';
 import { prisma } from './utils/prisma.js';
 
@@ -29,6 +45,15 @@ app.use(
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
+const frontendPath = [
+  path.resolve(__dirname, '../../frontend'),
+  path.resolve(__dirname, '../frontend'),
+  path.resolve(process.cwd(), 'frontend'),
+  path.resolve(process.cwd(), '../frontend'),
+].find((p) => fs.existsSync(p)) || path.resolve(process.cwd(), 'frontend');
+
+app.use(express.static(frontendPath));
+
 // Cơ chế Supabase Database Keep-Alive (Chống ngủ đông 7 ngày)
 let lastDbKeepAliveTime = 0;
 const DB_KEEP_ALIVE_COOLDOWN_MS = 30 * 60 * 1000; // Cooldown 30 phút giữa các lần ping DB
@@ -52,7 +77,14 @@ export async function triggerDatabaseKeepAlive(): Promise<boolean> {
 // Tự động chạy định kỳ mỗi 6 tiếng (4 lần/ngày) để đảm bảo không bao giờ chạm ngưỡng 7 ngày
 setInterval(() => {
   triggerDatabaseKeepAlive().catch(() => {});
-}, 6 * 60 * 60 * 1000);
+}, 6 * 60 * 60 * 1000).unref();
+
+// Định kỳ mỗi 12 tiếng dọn dẹp các tin nhắn chat cũ hơn 7 ngày (M4.3.1 Chat Retention Policy)
+setInterval(() => {
+  xianxiaChatService.purgeOldMessages(7).catch((err) => {
+    console.warn('[Chat Data Purge] Cảnh báo lỗi dọn dẹp tin nhắn cũ:', err?.message || err);
+  });
+}, 12 * 60 * 60 * 1000).unref();
 
 // FR-06: Silent Wake-up Endpoint & UptimeRobot Ping Endpoint
 app.get('/ping', (req: Request, res: Response) => {
@@ -86,6 +118,19 @@ app.get('/api/stats/online', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/match', matchRoutes);
+app.use('/api/xianxia/world', xianxiaWorldRoutes);
+app.use('/api/xianxia/bestiary', xianxiaBestiaryRoutes);
+app.use('/api/xianxia/events', xianxiaEventsRouter);
+app.use('/api/xianxia/crafting', xianxiaCraftingRouter);
+app.use('/api/xianxia/quests', xianxiaQuestRouter);
+app.use('/api/xianxia/agency', xianxiaAgencyRouter);
+app.use('/api/xianxia/gameplay', xianxiaGameplayRoutes);
+app.use('/api/xianxia/leaderboard', xianxiaLeaderboardRoutes);
+app.use('/api/xianxia/chat', xianxiaChatRoutes);
+app.use('/api/xianxia/guilds', xianxiaGuildRoutes);
+app.use('/api/xianxia/party', xianxiaPartyRoutes);
+app.use('/api/xianxia/dungeons', xianxiaDungeonRoutes);
+app.use('/api/xianxia/world-boss', xianxiaWorldBossRoutes);
 
 // Global Error Handler
 app.use((err: any, req: Request, res: Response, next: any) => {

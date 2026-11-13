@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Cờ Huyền Sử 3D - Bàn Cờ Phối Cảnh & Tướng Huyền Sử</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+<!-- Three.js + OrbitControls + Tween -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+<style>
+:root {
+  --gold: #f4c348;
+  --gold-glow: rgba(244, 195, 72, 0.45);
+  --gold-dark: #b8860b;
+  --panel-bg: rgba(20, 16, 13, 0.88);
+  --panel-border: rgba(214, 163, 53, 0.35);
+  --accent-red: #c0392b;
+  --accent-blue: #2980b9;
+  --font-serif: 'Cinzel', 'Playfair Display', serif;
+  --font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  background: #0e0a07; font-family: var(--font-sans);
+  color: #f5ede0; user-select: none;
+}
+#canvas-container {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1; outline: none;
+}
+
+/* ==================== 2D HUD OVERLAY (TOP, SIDES, BOTTOM) ==================== */
+#hud-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 10; pointer-events: none;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.interactive { pointer-events: auto; }
+
+/* --- TOP HEADER --- */
+.top-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px;
+  background: linear-gradient(180deg, rgba(14,10,7,0.85) 0%, rgba(14,10,7,0) 100%);
+}
+.btn-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #ffd54f; color: #1f1408; font-weight: 800; font-size: 13px;
+  padding: 6px 14px; border-radius: 6px; border: 2px solid #fff;
+  cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: transform 0.15s, background 0.15s;
+}
+.btn-back:hover { transform: scale(1.05); background: #ffe082; }
+.unit-counter {
+  background: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
+  color: #fff; font-weight: 800; font-size: 15px; letter-spacing: 0.5px;
+  padding: 6px 20px; border-radius: 6px;
+  border: 1.5px solid #f39c12;
+  box-shadow: 0 4px 15px rgba(230,126,34,0.4), inset 0 1px 0 rgba(255,255,255,0.4);
+  font-family: var(--font-serif);
+}
+.btn-info {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #2c3e50; color: #ecf0f1; border: 1.5px solid #34495e;
+  font-weight: 900; font-size: 16px; cursor: pointer;
+  display: grid; place-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* --- SYNERGY BADGES (TWO SIDES) --- */
+.synergies-layer {
+  display: flex; justify-content: space-between;
+  padding: 0 14px; margin-top: -8px;
+}
+.synergy-group {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.synergy-badge-row {
+  display: flex; gap: 4px; align-items: center;
+}
+.syn-badge {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 44px; height: 48px; border-radius: 6px;
+  background: rgba(22, 17, 12, 0.82); border: 1px solid rgba(214, 163, 53, 0.4);
+  backdrop-filter: blur(4px); cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+.syn-badge:hover, .syn-badge.active {
+  transform: translateY(-2px); border-color: var(--gold);
+  background: rgba(45, 33, 20, 0.95);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+.syn-ico { font-size: 16px; line-height: 1; }
+.syn-val { font-size: 10px; font-weight: 800; color: #ffd54f; margin-top: 2px; }
+
+/* --- CONTROLS HINT --- */
+.controls-hint {
+  position: absolute; top: 78px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px; padding: 4px 14px; font-size: 11px; color: #d5c8b5;
+  pointer-events: none;
+}
+
+/* --- BOTTOM DECK / BENCH / CONTROLS --- */
+.bottom-deck {
+  background: linear-gradient(0deg, rgba(14,10,7,0.96) 65%, rgba(14,10,7,0) 100%);
+  padding: 10px 14px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+/* Category filter tabs */
+.filter-tabs {
+  display: flex; align-items: center; gap: 6px; overflow-x: auto;
+  scrollbar-width: none; padding-bottom: 2px;
+}
+.filter-tabs::-webkit-scrollbar { display: none; }
+.btn-pet {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(180deg, #c0392b 0%, #962d22 100%);
+  color: #fff; font-weight: 800; font-size: 12px; font-family: var(--font-serif);
+  padding: 6px 14px; border-radius: 4px; border: 1px solid #e74c3c;
+  cursor: pointer; flex-shrink: 0; box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+}
+.tab-pill {
+  width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0;
+  background: #231c15; border: 1px solid #4a3c2c; color: #e0d0ba;
+  display: grid; place-items: center; font-size: 14px; cursor: pointer;
+  transition: all 0.15s;
+}
+.tab-pill:hover, .tab-pill.active {
+  background: #3e2f1e; border-color: var(--gold); color: #fff;
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+.tab-pill.all-btn { width: auto; padding: 0 10px; font-size: 11px; font-weight: 700; }
+
+/* Bench / Hand cards & Action button */
+.deck-body {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.bench-cards {
+  display: flex; gap: 8px; overflow-x: auto; flex: 1;
+}
+.hero-card {
+  position: relative; width: 68px; height: 86px; border-radius: 8px;
+  background: linear-gradient(180deg, #2c2217 0%, #17110c 100%);
+  border: 1.5px solid #5a4632; cursor: pointer; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+.hero-card:hover {
+  transform: translateY(-4px); border-color: var(--gold);
+  box-shadow: 0 6px 16px rgba(244,195,72,0.3);
+}
+.hero-card.cost-1 { border-color: #8c8577; }
+.hero-card.cost-2 { border-color: #27ae60; }
+.hero-card.cost-3 { border-color: #2980b9; }
+.hero-card.cost-4 { border-color: #8e44ad; }
+.hero-card.cost-5 { border-color: #f39c12; }
+
+.hero-card .hc-stars {
+  position: absolute; top: 2px; left: 0; width: 100%;
+  text-align: center; color: #f1c40f; font-size: 9px; line-height: 1; z-index: 2;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.hero-card .hc-img {
+  width: 48px; height: 48px; margin-top: 10px; border-radius: 50%;
+  background: #110c08; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);
+}
+.hero-card .hc-name {
+  font-size: 10px; font-weight: 700; color: #f5ede0;
+  text-align: center; margin-top: 3px; line-height: 1.1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 90%;
+}
+.hero-card .hc-cost {
+  position: absolute; bottom: 2px; right: 4px;
+  font-size: 9px; font-weight: 800; color: #f1c40f;
+}
+
+/* Large Hexagonal Combat Button */
+.btn-combat {
+  position: relative; width: 90px; height: 80px; flex-shrink: 0;
+  background: linear-gradient(135deg, #f39c12 0%, #d35400 50%, #8e44ad 100%);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(211,84,0,0.5);
+  transition: transform 0.15s, filter 0.15s;
+  border: none; outline: none;
+}
+.btn-combat:hover {
+  transform: scale(1.08); filter: brightness(1.15);
+}
+.btn-combat:active { transform: scale(0.96); }
+.btn-combat .ico-swords { font-size: 24px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+.btn-combat .lbl-combat {
+  font-family: var(--font-serif); font-size: 10px; font-weight: 900;
+  color: #fff; text-shadow: 0 1px 3px #000; margin-top: 2px; letter-spacing: 0.5px;
+}
+
+/* Floating 3D Tooltip */
+#hero-tooltip {
+  position: absolute; display: none; z-index: 50;
+  background: var(--panel-bg); border: 1.5px solid var(--gold);
+  border-radius: 8px; padding: 10px 14px; min-width: 180px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 12px var(--gold-glow);
+  pointer-events: none; transform: translate(-50%, -120%);
+}
+#hero-tooltip .tt-nm { font-family: var(--font-serif); font-size: 14px; font-weight: 800; color: var(--gold); }
+#hero-tooltip .tt-desc { font-size: 11px; color: #cfc2ae; margin-top: 4px; line-height: 1.35; }
+#hero-tooltip .tt-stat { font-size: 11px; font-weight: 600; color: #2ecc71; margin-top: 4px; }
+
+/* Combat log notification */
+#combat-banner {
+  position: absolute; top: 120px; left: 50%; transform: translateX(-50%);
+  background: rgba(192, 57, 43, 0.9); border: 2px solid #e74c3c;
+  color: #fff; font-family: var(--font-serif); font-size: 20px; font-weight: 900;
+  padding: 8px 28px; border-radius: 30px; letter-spacing: 1.5px;
+  box-shadow: 0 8px 30px rgba(231,76,60,0.6);
+  display: none; z-index: 100;
+  animation: pulseBanner 1s infinite alternate;
+}
+@keyframes pulseBanner {
+  0% { transform: translateX(-50%) scale(1); }
+  100% { transform: translateX(-50%) scale(1.05); }
+}
+</style>
+</head>
+<body>
+
+<div id="canvas-container"></div>
+
+<!-- 2D HUD OVERLAY -->
+<div id="hud-overlay">
+  <!-- TOP BAR -->
+  <div class="top-header">
+    <div class="btn-back interactive" onclick="window.history.length > 1 ? window.history.back() : window.location.href='./co-huyen-su.html'">
+      <span>‹</span> BACK
+    </div>
+    <div class="unit-counter" id="unit-count-badge">Tướng ra trận: 5/6</div>
+    <div class="btn-info interactive" onclick="alert('CỜ HUYỀN SỬ 3D PROTOTYPE\n- Bấm giữ & kéo chuột để xoay camera 3D\n- Lăn chuột để phóng to / thu nhỏ\n- Nhấp vào tướng trên sân để chọn & xem hào quang\n- Nhấp ô trống để di chuyển tướng\n- Bấm nút CHIẾN ĐẤU để xem hoạt ảnh giao tranh 3D!')">
+      i
+    </div>
+  </div>
+
+  <!-- CONTROLS HINT -->
+  <div class="controls-hint">
+    🖱️ Kéo chuột xoay bàn cờ 3D | Cuộn chuột để phóng to/thu nhỏ | Nhấp chọn tướng
+  </div>
+
+  <!-- SYNERGY TRACKERS (2 FLANKS) -->
+  <div class="synergies-layer">
+    <!-- Left: Tộc -->
+    <div class="synergy-group interactive" id="left-synergies">
+      <div class="synergy-badge-row">
+        <div class="syn-badge active" title="Hồng Bàng (3/6)"><span class="syn-ico">🐉</span><span class="syn-val">3/6</span></div>
+        <div class="syn-badge" title="Đại Việt (2/6)"><span class="syn-ico">🦅</span><span class="syn-val">2/6</span></div>
+        <div class="syn-badge" title="Tây Sơn (1/4)"><span class="syn-ico">⚡</span><span class="syn-val">1/4</span></div>
+      </div>
+      <div class="synergy-badge-row">
+        <div class="syn-badge" title="Thục Phán (1/4)"><span class="syn-ico">🏹</span><span class="syn-val">1/4</span></div>
+        <div class="syn-badge" title="Ba Triệu (2/4)"><span class="syn-ico">🐘</span><span class="syn-val">2/4</span></div>
+        <div class="syn-badge" title="Tiền Lý (1/4)"><span class="syn-ico">🛡️</span><span class="syn-val">1/4</span></div>
+      </div>
+    </div>
+
+    <!-- Right: Hệ -->
+    <div class="synergy-group interactive" id="right-synergies">
+      <div class="synergy-badge-row">
+        <div class="syn-badge active" title="Cận Chiến (3/6)"><span class="syn-ico">⚔️</span><span class="syn-val">3/6</span></div>
+        <div class="syn-badge" title="Pháp Sư (2/4)"><span class="syn-ico">🔮</span><span class="syn-val">2/4</span></div>
+        <div class="syn-badge" title="Hộ Vệ (2/4)"><span class="syn-ico">🛡️</span><span class="syn-val">2/4</span></div>
+      </div>
+      <div class="synergy-badge-row">
+        <div class="syn-badge" title="Xạ Thủ (1/4)"><span class="syn-ico">🎯</span><span class="syn-val">1/4</span></div>
+        <div class="syn-badge" title="Thích Khách (1/4)"><span class="syn-ico">🗡️</span><span class="syn-val">1/4</span></div>
+        <div class="syn-badge" title="Triệu Hồi (1/2)"><span class="syn-ico">🌊</span><span class="syn-val">1/2</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMBAT BANNER -->
+  <div id="combat-banner">⚔️ GIAO TRANH BẮT ĐẦU ⚔️</div>
+
+  <!-- BOTTOM DECK -->
+  <div class="bottom-deck">
+    <!-- Filter Tabs -->
+    <div class="filter-tabs interactive">
+      <div class="btn-pet" onclick="triggerMascotRoar()">🐾 Thần Thú</div>
+      <div class="tab-pill all-btn active" onclick="filterClass('all')">Tất cả</div>
+      <div class="tab-pill" onclick="filterClass('melee')" title="Cận Chiến">⚔️</div>
+      <div class="tab-pill" onclick="filterClass('ranger')" title="Xạ Thủ">🏹</div>
+      <div class="tab-pill" onclick="filterClass('mage')" title="Pháp Sư">🔮</div>
+      <div class="tab-pill" onclick="filterClass('tank')" title="Hộ Vệ">🛡️</div>
+      <div class="tab-pill" onclick="filterClass('assassin')" title="Thích Khách">🗡️</div>
+    </div>
+
+    <!-- Bench & Combat Button -->
+    <div class="deck-body">
+      <div class="bench-cards interactive" id="bench-container">
+        <!-- Generated by JS -->
+      </div>
+      <button class="btn-combat interactive" id="btn-combat" onclick="toggleCombat()">
+        <span class="ico-swords">⚔️</span>
+        <span class="lbl-combat" id="lbl-combat-btn">CHIẾN ĐẤU</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING TOOLTIP -->
+<div id="hero-tooltip">
+  <div class="tt-nm" id="tt-name">Tướng</div>
+  <div class="tt-stat" id="tt-stats">HP: 1200 | ATK: 95</div>
+  <div class="tt-desc" id="tt-skill">Kỹ năng đặc biệt...</div>
+</div>
+
+<script>
+/* ==========================================================================
+   CỜ HUYỀN SỬ 3D ENGINE (THREE.JS + PERSPECTIVE ISOMETRIC CAMERA)
+   ========================================================================== */
+
+// --- DỮ LIỆU TƯỚNG MẪU (SỬ DỤNG SPRITESHEET ĐÃ CÓ TRONG REPO) ---
+const HERO_DB = {
+  'thanhgiong': {
+    name: 'Thánh Gióng', star: 2, cost: 5, cls: 'Cận Chiến', origin: 'Hồng Bàng',
+    sheet: './img/hero/thanh-giong-sheet-128.webp',
+    hp: 1400, maxHp: 1400, mana: 50, maxMana: 100, ad: 130,
+    skill: 'Thiên Hỏa Lôi Đình: Triệu hoán sấm sét giáng xuống diện rộng'
+  },
+  'thuytinh': {
+    name: 'Thủy Tinh', star: 2, cost: 4, cls: 'Pháp Sư', origin: 'Hồng Bàng',
+    sheet: './img/hero/thuy-tinh-sheet-128.webp',
+    hp: 950, maxHp: 950, mana: 30, maxMana: 90, ad: 85,
+    skill: 'Đại Hồng Thủy: Càn quét làn sóng nước đẩy lùi kẻ địch'
+  },
+  'tranhungdao': {
+    name: 'Trần Hưng Đạo', star: 3, cost: 5, cls: 'Cận Chiến', origin: 'Đại Việt',
+    sheet: './img/hero/tran-hung-dao-sheet-128.webp',
+    hp: 1650, maxHp: 1650, mana: 40, maxMana: 100, ad: 145,
+    skill: 'Bình Than Thệ Sư: Tăng 40% giáp và miễn nhiễm khống chế'
+  },
+  'tranquoctoan': {
+    name: 'Trần Quốc Toản', star: 2, cost: 3, cls: 'Cận Chiến', origin: 'Đại Việt',
+    sheet: './img/hero/tran-quoc-toan-sheet-128.webp',
+    hp: 1100, maxHp: 1100, mana: 20, maxMana: 80, ad: 110,
+    skill: 'Phá Cường Địch: Đâm kích liên hoàn xuyên giáp'
+  },
+  'auco': {
+    name: 'Âu Cơ', star: 2, cost: 3, cls: 'Hộ Vệ', origin: 'Hồng Bàng',
+    sheet: './img/hero/au-co-sheet-128.webp',
+    hp: 1200, maxHp: 1200, mana: 0, maxMana: 90, ad: 70,
+    skill: 'Trứng Tiên: Ban khiên hộ thể và hồi sinh đồng minh'
+  },
+  'phunghung': {
+    name: 'Phùng Hưng', star: 1, cost: 2, cls: 'Hộ Vệ', origin: 'Tiền Lý',
+    sheet: './img/hero/phung-hung-sheet-128.webp',
+    hp: 1300, maxHp: 1300, mana: 0, maxMana: 80, ad: 95,
+    skill: 'Bố Cái Đại Vương: Hống dũng mãnh gây choáng 1.5s'
+  },
+  'trungtrac': {
+    name: 'Trưng Trắc', star: 2, cost: 4, cls: 'Cận Chiến', origin: 'Ba Triệu',
+    sheet: './img/hero/trung-trac-sheet-128.webp',
+    hp: 1500, maxHp: 1500, mana: 60, maxMana: 110, ad: 120,
+    skill: 'Voi Chiến Mê Linh: Giẫm đạp diện rộng làm chậm 50%'
+  }
+};
+
+// Cấu hình Bàn Cờ 3D
+const BOARD_COLS = 8;
+const BOARD_ROWS = 8;
+const CELL_SIZE = 1.25;
+const BOARD_OFFSET_X = -(BOARD_COLS * CELL_SIZE) / 2 + CELL_SIZE / 2;
+const BOARD_OFFSET_Y = -(BOARD_ROWS * CELL_SIZE) / 2 + CELL_SIZE / 2;
+
+let scene, camera, renderer, controls;
+let boardTiles = [];
+let unitsOnBoard = [];
+let selectedUnit = null;
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+let isCombatActive = false;
+let combatInterval = null;
+
+// Khởi tạo Three.js
+function init3D() {
+  const container = document.getElementById('canvas-container');
+
+  // Scene
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1a140f);
+  scene.fog = new THREE.FogExp2(0x1a140f, 0.025);
+
+  // Camera: Đặt vị trí phối cảnh Isometric nghiêng ~48 độ nhìn vào tâm bàn cờ
+  const aspect = window.innerWidth / window.innerHeight;
+  camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+  camera.position.set(0, -9.8, 9.8);
+  camera.lookAt(0, 0.8, 0);
+
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+
+  // Controls
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.maxPolarAngle = Math.PI / 2 - 0.05; // Không cho camera chui xuống dưới mặt đất
+  controls.minDistance = 6;
+  controls.maxDistance = 22;
+  controls.target.set(0, 0.5, 0);
+
+  // Ánh sáng (Lighting)
+  setupLighting();
+
+  // Môi trường (Cảnh quan thác nước, vách đá, bệ đá thần thú)
+  setupEnvironment();
+
+  // Tạo bàn cờ 3D đá nổi khối
+  setupChessboard();
+
+  // Đặt các tướng khởi đầu lên sân cờ
+  spawnInitialHeroes();
+
+  // Render khay chọn tướng bên dưới
+  renderBenchCards();
+
+  // Lắng nghe sự kiện Resize & Click chuột Raycasting
+  window.addEventListener('resize', onWindowResize, false);
+  window.addEventListener('pointerdown', onPointerDown, false);
+  window.addEventListener('pointermove', onPointerMove, false);
+
+  animate();
+}
+
+// 1. Ánh sáng
+function setupLighting() {
+  const ambientLight = new THREE.AmbientLight(0xfff3db, 0.7);
+  scene.add(ambientLight);
+
+  const sunLight = new THREE.DirectionalLight(0xfffaed, 1.2);
+  sunLight.position.set(6, -10, 14);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.camera.near = 0.5;
+  sunLight.shadow.camera.far = 40;
+  sunLight.shadow.camera.left = -10;
+  sunLight.shadow.camera.right = 10;
+  sunLight.shadow.camera.top = 10;
+  sunLight.shadow.camera.bottom = -10;
+  sunLight.shadow.bias = -0.0005;
+  scene.add(sunLight);
+
+  const hemiLight = new THREE.HemisphereLight(0x87ceeb, 0x3d2714, 0.4);
+  scene.add(hemiLight);
+}
+
+// 2. Cảnh nền môi trường (Vách núi, Thác nước & Thần Thú)
+function setupEnvironment() {
+  // Sàn đất rộng xung quanh bàn cờ
+  const groundGeo = new THREE.PlaneGeometry(60, 60);
+  const groundMat = new THREE.MeshStandardMaterial({ color: 0x221a13, roughness: 0.9, metalness: 0.1 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.position.z = -0.15;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Hẻm núi đá hậu cảnh phía sau (Backdrop mountains)
+  const mountainGeo = new THREE.ConeGeometry(5, 10, 5);
+  const mountainMat = new THREE.MeshStandardMaterial({ color: 0x33281d, roughness: 0.95, flatShading: true });
+  for (let i = -3; i <= 3; i++) {
+    const m = new THREE.Mesh(mountainGeo, mountainMat);
+    m.position.set(i * 5.5, 9.5 + Math.random() * 2, 2 + Math.random() * 2);
+    m.rotation.y = Math.random() * Math.PI;
+    m.scale.set(1 + Math.random()*0.4, 0.8 + Math.random()*0.5, 1);
+    scene.add(m);
+  }
+
+  // Thác nước chảy giữa 2 ngọn núi
+  const waterfallGeo = new THREE.PlaneGeometry(4, 7);
+  const waterfallMat = new THREE.MeshBasicMaterial({ color: 0x74b9ff, transparent: true, opacity: 0.75 });
+  const waterfall = new THREE.Mesh(waterfallGeo, waterfallMat);
+  waterfall.position.set(0, 9.2, 2.5);
+  waterfall.rotation.x = Math.PI / 2.3;
+  scene.add(waterfall);
+
+  // 2 Bệ đá Thần Thú (Mascot Pedestals) ở 2 góc trên bàn cờ
+  const pedGeo = new THREE.CylinderGeometry(1.4, 1.6, 0.6, 16);
+  const pedMat = new THREE.MeshStandardMaterial({ color: 0x4a3b2c, roughness: 0.7 });
+
+  // Bệ trái
+  const pedLeft = new THREE.Mesh(pedGeo, pedMat);
+  pedLeft.position.set(-5.5, 4.5, 0.3);
+  pedLeft.rotation.x = Math.PI / 2;
+  pedLeft.castShadow = true; pedLeft.receiveShadow = true;
+  scene.add(pedLeft);
+  spawnMascotSprite(-5.5, 4.5, 'Dã Tượng', '🐘');
+
+  // Bệ phải
+  const pedRight = new THREE.Mesh(pedGeo, pedMat);
+  pedRight.position.set(5.5, 4.5, 0.3);
+  pedRight.rotation.x = Math.PI / 2;
+  pedRight.castShadow = true; pedRight.receiveShadow = true;
+  scene.add(pedRight);
+  spawnMascotSprite(5.5, 4.5, 'Kim Long', '🐉');
+}
+
+// Tạo Linh Thú đại diện đứng ở bệ đài sen
+function spawnMascotSprite(x, y, name, icon) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 128; canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  ctx.font = '68px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(icon, 64, 64);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+  const sprite = new THREE.Sprite(mat);
+  sprite.position.set(x, y, 1.8);
+  sprite.scale.set(2.2, 2.2, 1);
+  scene.add(sprite);
+
+  // Hiệu ứng nhún nhảy (Bobbing animation)
+  new TWEEN.Tween(sprite.position)
+    .to({ z: 2.1 }, 1200 + Math.random()*200)
+    .yoyo(true).repeat(Infinity)
+    .easing(TWEEN.Easing.Quadratic.InOut)
+    .start();
+}
+
+// 3. Dựng bàn cờ 3D bằng gạch đá nổi khối
+function setupChessboard() {
+  const tileGeo = new THREE.BoxGeometry(CELL_SIZE * 0.94, CELL_SIZE * 0.94, 0.12);
+  
+  // 2 màu gạch sa thạch cổ (Sandstone light & dark)
+  const matLight = new THREE.MeshStandardMaterial({ color: 0xdec094, roughness: 0.65, metalness: 0.08 });
+  const matDark = new THREE.MeshStandardMaterial({ color: 0xbe9f70, roughness: 0.75, metalness: 0.08 });
+
+  for (let r = 0; r < BOARD_ROWS; r++) {
+    for (let c = 0; c < BOARD_COLS; c++) {
+      const isEven = (r + c) % 2 === 0;
+      const tile = new THREE.Mesh(tileGeo, isEven ? matLight.clone() : matDark.clone());
+      const posX = BOARD_OFFSET_X + c * CELL_SIZE;
+      const posY = BOARD_OFFSET_Y + r * CELL_SIZE;
+      
+      tile.position.set(posX, posY, 0.06);
+      tile.receiveShadow = true;
+      tile.castShadow = true;
+      tile.userData = { col: c, row: r, isTile: true, defaultColor: isEven ? 0xdec094 : 0xbe9f70 };
+
+      scene.add(tile);
+      boardTiles.push(tile);
+    }
+  }
+
+  // Khung viền gỗ sẫm bọc quanh bàn cờ (Arena border)
+  const borderGeo = new THREE.BoxGeometry(BOARD_COLS * CELL_SIZE + 0.5, BOARD_ROWS * CELL_SIZE + 0.5, 0.1);
+  const borderMat = new THREE.MeshStandardMaterial({ color: 0x3d2714, roughness: 0.8 });
+  const border = new THREE.Mesh(borderGeo, borderMat);
+  border.position.set(0, 0, 0);
+  border.receiveShadow = true;
+  scene.add(border);
+}
+
+// 4. Tạo Tướng 2.5D Animated Billboard trên sàn 3D
+function createHero3D(heroKey, col, row, isFoe = false) {
+  const heroData = HERO_DB[heroKey];
+  if (!heroData) return null;
+
+  const group = new THREE.Group();
+  const posX = BOARD_OFFSET_X + col * CELL_SIZE;
+  const posY = BOARD_OFFSET_Y + row * CELL_SIZE;
+  group.position.set(posX, posY, 0);
+
+  // A. Đĩa hào quang dưới chân (Aura ring & shadow disc)
+  const auraGeo = new THREE.RingGeometry(0.2, 0.52, 32);
+  const auraMat = new THREE.MeshBasicMaterial({
+    color: isFoe ? 0xe74c3c : 0xf1c40f,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.45
+  });
+  const auraMesh = new THREE.Mesh(auraGeo, auraMat);
+  auraMesh.position.z = 0.13; // Nằm sát ngay trên mặt gạch
+  group.add(auraMesh);
+
+  // Hiệu ứng xoay tròn hào quang nhẹ
+  group.userData.auraMesh = auraMesh;
+
+  // B. Spritesheet Tướng (128x128px, 6 frames)
+  const textureLoader = new THREE.TextureLoader();
+  const texture = textureLoader.load(heroData.sheet);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1 / 6, 1); // Cắt 1/6 chiều ngang (frame 0: Idle)
+  texture.offset.set(0, 0);
+
+  // Dùng PlaneGeometry dựng đứng thay vì Sprite để kiểm soát góc nghiêng & đổ bóng chuẩn xác
+  const planeGeo = new THREE.PlaneGeometry(1.6, 1.6);
+  const planeMat = new THREE.MeshStandardMaterial({
+    map: texture,
+    transparent: true,
+    alphaTest: 0.15,
+    roughness: 0.4,
+    side: THREE.DoubleSide
+  });
+  const heroMesh = new THREE.Mesh(planeGeo, planeMat);
+  heroMesh.rotation.x = Math.PI / 2.3; // Nghiêng đón góc camera
+  heroMesh.position.set(0, 0.15, 0.85);
+  heroMesh.castShadow = true;
+  if (isFoe) heroMesh.scale.x = -1; // Quay mặt về phía người chơi
+  group.add(heroMesh);
+
+  // C. Thanh Máu & Số Sao 3D (Billboard UI)
+  const hpBarGroup = createFloatingHpBar(heroData, isFoe);
+  hpBarGroup.position.set(0, 0.2, 1.75);
+  group.add(hpBarGroup);
+
+  // Metadata lưu trữ
+  group.userData = {
+    heroKey,
+    col, row, isFoe,
+    data: { ...heroData },
+    heroMesh,
+    texture,
+    currentFrame: 0,
+    hpBar: hpBarGroup,
+    isUnit: true
+  };
+
+  scene.add(group);
+  unitsOnBoard.push(group);
+  return group;
+}
+
+// Tạo thanh máu và số sao lơ lửng trên đầu tướng
+function createFloatingHpBar(heroData, isFoe) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 72;
+  const ctx = canvas.getContext('2d');
+  drawHpBarCanvas(ctx, heroData.hp, heroData.maxHp, heroData.mana, heroData.maxMana, heroData.star, heroData.name, isFoe);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(1.5, 0.42, 1);
+  sprite.userData = { canvas, ctx, texture };
+  return sprite;
+}
+
+function drawHpBarCanvas(ctx, hp, maxHp, mana, maxMana, stars, name, isFoe) {
+  ctx.clearRect(0, 0, 256, 72);
+
+  // Số sao ★
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillStyle = '#f1c40f';
+  ctx.textAlign = 'center';
+  ctx.fillText('★'.repeat(stars), 128, 20);
+
+  // Khung viền thanh máu
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+  ctx.fillRect(28, 28, 200, 16);
+
+  // Lượng máu hiện tại
+  const hpPct = Math.max(0, Math.min(1, hp / maxHp));
+  ctx.fillStyle = isFoe ? '#e74c3c' : '#2ecc71';
+  ctx.fillRect(30, 30, 196 * hpPct, 12);
+
+  // Thanh Mana
+  if (maxMana > 0) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+    ctx.fillRect(28, 48, 200, 8);
+    const manaPct = Math.max(0, Math.min(1, mana / maxMana));
+    ctx.fillStyle = '#3498db';
+    ctx.fillRect(30, 50, 196 * manaPct, 4);
+  }
+}
+
+// Đặt các tướng khởi đầu lên sàn cờ
+function spawnInitialHeroes() {
+  // Phe Ta (Hàng 1 & 2 phía dưới)
+  createHero3D('thanhgiong', 3, 2, false);
+  createHero3D('tranhungdao', 4, 2, false);
+  createHero3D('tranquoctoan', 2, 1, false);
+  createHero3D('auco', 5, 1, false);
+  createHero3D('thuytinh', 3, 0, false);
+
+  // Phe Địch (Mô phỏng hàng 5 & 6 phía trên)
+  createHero3D('phunghung', 3, 5, true);
+  createHero3D('trungtrac', 4, 5, true);
+  createHero3D('thanhgiong', 2, 6, true);
+  createHero3D('thuytinh', 5, 6, true);
+}
+
+// 5. Tương tác Raycasting (Di chuột, Chọn tướng & Di chuyển)
+function onPointerDown(event) {
+  // Bỏ qua nếu chạm vào UI HUD
+  if (event.clientY > window.innerHeight - 150 || event.clientY < 70) return;
+
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  // 1. Kiểm tra bấm vào tướng
+  const intersects = raycaster.intersectObjects(scene.children, true);
+  for (const hit of intersects) {
+    let p = hit.object;
+    while (p && !p.userData.isUnit && p.parent) p = p.parent;
+    if (p && p.userData.isUnit) {
+      selectUnit(p);
+      return;
+    }
+  }
+
+  // 2. Nếu đã chọn tướng và bấm vào ô cờ trống -> Di chuyển tướng đến ô đó
+  if (selectedUnit) {
+    const tileHits = raycaster.intersectObjects(boardTiles);
+    if (tileHits.length > 0) {
+      const tile = tileHits[0].object;
+      moveUnitToTile(selectedUnit, tile.userData.col, tile.userData.row);
+      selectUnit(null);
+    }
+  }
+}
+
+function onPointerMove(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const tileHits = raycaster.intersectObjects(boardTiles);
+
+  // Khôi phục màu ô cờ trước đó
+  boardTiles.forEach(t => t.material.color.setHex(t.userData.defaultColor));
+
+  // Làm sáng ô cờ đang hover
+  if (tileHits.length > 0) {
+    const hoveredTile = tileHits[0].object;
+    hoveredTile.material.color.setHex(0xffeaad); // Vàng kim sáng
+  }
+}
+
+// Chọn hoặc bỏ chọn tướng
+function selectUnit(unitGroup) {
+  if (selectedUnit && selectedUnit.userData.auraMesh) {
+    selectedUnit.userData.auraMesh.scale.set(1, 1, 1);
+    selectedUnit.userData.auraMesh.material.opacity = 0.45;
+  }
+
+  selectedUnit = unitGroup;
+  const tooltip = document.getElementById('hero-tooltip');
+
+  if (selectedUnit) {
+    // Phóng to và làm sáng hào quang chân tướng
+    selectedUnit.userData.auraMesh.scale.set(1.2, 1.2, 1);
+    selectedUnit.userData.auraMesh.material.opacity = 0.95;
+
+    // Hiển thị Tooltip thông tin tướng
+    const data = selectedUnit.userData.data;
+    document.getElementById('tt-name').textContent = data.name + ' ' + '★'.repeat(data.star);
+    document.getElementById('tt-stats').textContent = `Máu: ${data.hp}/${data.maxHp} | Công: ${data.ad} | Tộc: ${data.origin} - ${data.cls}`;
+    document.getElementById('tt-skill').textContent = data.skill;
+    tooltip.style.display = 'block';
+
+    // Đặt tooltip ở giữa màn hình phía trên tướng
+    const screenPos = toScreenPosition(selectedUnit.position, camera);
+    tooltip.style.left = screenPos.x + 'px';
+    tooltip.style.top = (screenPos.y - 40) + 'px';
+  } else {
+    tooltip.style.display = 'none';
+  }
+}
+
+// Di chuyển tướng mượt mà đến ô cờ mới bằng Tween
+function moveUnitToTile(unit, targetCol, targetRow) {
+  const targetX = BOARD_OFFSET_X + targetCol * CELL_SIZE;
+  const targetY = BOARD_OFFSET_Y + targetRow * CELL_SIZE;
+
+  // Cập nhật tọa độ dữ liệu
+  unit.userData.col = targetCol;
+  unit.userData.row = targetRow;
+
+  // Chuyển sang frame đi bộ (Walk frame)
+  unit.userData.texture.offset.set(1 / 6, 0);
+
+  // Hiệu ứng nhảy / lướt
+  new TWEEN.Tween(unit.position)
+    .to({ x: targetX, y: targetY, z: 0.4 }, 300)
+    .easing(TWEEN.Easing.Quadratic.Out)
+    .chain(
+      new TWEEN.Tween(unit.position)
+        .to({ z: 0 }, 150)
+        .easing(TWEEN.Easing.Bounce.Out)
+        .onComplete(() => {
+          unit.userData.texture.offset.set(0, 0); // Về lại Idle
+        })
+    )
+    .start();
+}
+
+function toScreenPosition(pos, camera) {
+  const vector = new THREE.Vector3(pos.x, pos.y, pos.z);
+  vector.project(camera);
+  return {
+    x: (vector.x * 0.5 + 0.5) * window.innerWidth,
+    y: (-(vector.y * 0.5) + 0.5) * window.innerHeight
+  };
+}
+
+// 6. Giao tranh chiến đấu (Combat Simulation Demo)
+function toggleCombat() {
+  const btn = document.getElementById('btn-combat');
+  const lbl = document.getElementById('lbl-combat-btn');
+  const banner = document.getElementById('combat-banner');
+
+  if (!isCombatActive) {
+    isCombatActive = true;
+    lbl.textContent = 'DỪNG LẠI';
+    btn.style.background = 'linear-gradient(135deg, #c0392b, #8e44ad)';
+    banner.style.display = 'block';
+
+    // Bắt đầu vòng giao tranh
+    combatInterval = setInterval(simulateCombatRound, 800);
+  } else {
+    isCombatActive = false;
+    lbl.textContent = 'CHIẾN ĐẤU';
+    btn.style.background = 'linear-gradient(135deg, #f39c12 0%, #d35400 50%, #8e44ad 100%)';
+    banner.style.display = 'none';
+    clearInterval(combatInterval);
+  }
+}
+
+function simulateCombatRound() {
+  unitsOnBoard.forEach(unit => {
+    // Hoạt ảnh chém / xuất chiêu: đổi sang frame attack (frame 3 hoặc 4)
+    unit.userData.texture.offset.set(3 / 6, 0);
+
+    // Nhún người về phía trước
+    const origY = unit.position.y;
+    const step = unit.userData.isFoe ? -0.25 : 0.25;
+
+    new TWEEN.Tween(unit.position)
+      .to({ y: origY + step }, 150)
+      .yoyo(true).repeat(1)
+      .onComplete(() => {
+        unit.userData.texture.offset.set(0, 0); // Về lại Idle
+      })
+      .start();
+
+    // Nhảy số sát thương lơ lửng 3D
+    const dmg = Math.floor(unit.userData.data.ad * (0.8 + Math.random() * 0.4));
+    spawnDamageNumber(unit.position.x, unit.position.y + step, dmg, !unit.userData.isFoe);
+
+    // Trừ máu ngẫu nhiên của phe đối địch
+    unit.userData.data.hp = Math.max(100, unit.userData.data.hp - Math.floor(dmg * 0.5));
+    const hpSprite = unit.userData.hpBar;
+    drawHpBarCanvas(
+      hpSprite.userData.ctx,
+      unit.userData.data.hp, unit.userData.data.maxHp,
+      unit.userData.data.mana, unit.userData.data.maxMana,
+      unit.userData.data.star, unit.userData.data.name,
+      unit.userData.isFoe
+    );
+    hpSprite.userData.texture.needsUpdate = true;
+  });
+}
+
+// Số sát thương bay lơ lửng trong không gian 3D
+function spawnDamageNumber(x, y, amount, isCrit = false) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 128; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.font = isCrit ? 'bold 36px Cinzel, sans-serif' : 'bold 28px sans-serif';
+  ctx.fillStyle = isCrit ? '#f1c40f' : '#e74c3c';
+  ctx.textAlign = 'center';
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 4;
+  ctx.strokeText('-' + amount, 64, 44);
+  ctx.fillText('-' + amount, 64, 44);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 1 });
+  const sprite = new THREE.Sprite(mat);
+  sprite.position.set(x + (Math.random()-0.5)*0.5, y + (Math.random()-0.5)*0.5, 2.2);
+  sprite.scale.set(1.2, 0.6, 1);
+  scene.add(sprite);
+
+  new TWEEN.Tween(sprite.position)
+    .to({ z: 3.2 }, 800)
+    .easing(TWEEN.Easing.Quadratic.Out)
+    .start();
+
+  new TWEEN.Tween(mat)
+    .to({ opacity: 0 }, 800)
+    .onComplete(() => scene.remove(sprite))
+    .start();
+}
+
+function triggerMascotRoar() {
+  alert('🐾 Thần Thú gầm vang! Tăng +15% Công và +20 Giáp cho toàn bộ phe ta trong 5 giây!');
+}
+
+function filterClass(cls) {
+  alert('Đang lọc danh sách tướng theo hệ: ' + cls.toUpperCase());
+}
+
+// 7. Render các thẻ tướng dưới hàng chờ (Bench)
+function renderBenchCards() {
+  const container = document.getElementById('bench-container');
+  const benchHeroes = ['thanhgiong', 'thuytinh', 'tranhungdao', 'tranquoctoan', 'auco'];
+
+  container.innerHTML = '';
+  benchHeroes.forEach(k => {
+    const h = HERO_DB[k];
+    const card = document.createElement('div');
+    card.className = `hero-card cost-${h.cost}`;
+    card.innerHTML = `
+      <div class="hc-stars">${'★'.repeat(h.star)}</div>
+      <img class="hc-img" src="${h.sheet}" alt="${h.name}">
+      <div class="hc-name">${h.name}</div>
+      <div class="hc-cost">${h.cost}V</div>
+    `;
+    card.onclick = () => {
+      // Đặt tướng từ khay ra ô trống ngẫu nhiên trên sân
+      const emptyCol = Math.floor(Math.random() * 8);
+      const emptyRow = Math.floor(Math.random() * 2);
+      createHero3D(k, emptyCol, emptyRow, false);
+      document.getElementById('unit-count-badge').textContent = `Tướng ra trận: ${unitsOnBoard.filter(u=>!u.userData.isFoe).length}/6`;
+    };
+    container.appendChild(card);
+  });
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// Vòng lặp Render chính (60 FPS)
+function animate(time) {
+  requestAnimationFrame(animate);
+
+  TWEEN.update();
+  controls.update();
+
+  // Xoay nhẹ đĩa hào quang dưới chân các tướng
+  unitsOnBoard.forEach(u => {
+    if (u.userData.auraMesh) {
+      u.userData.auraMesh.rotation.z += 0.015;
+    }
+  });
+
+  renderer.render(scene, camera);
+}
+
+// Khởi chạy khi load xong DOM
+window.addEventListener('DOMContentLoaded', init3D);
+</script>
+</body>
+</html>

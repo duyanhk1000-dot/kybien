@@ -1,0 +1,322 @@
+[
+  {
+    "id": "item_thao_moc_linh_chi",
+    "name": "Thảo Mộc Linh Chi",
+    "type": "HERB",
+    "rarity": "COMMON",
+    "description": "Linh chi hoang dã hấp thụ tinh hoa đất trời, nguyên liệu cơ bản để luyện chế các loại thuốc bổ khí.",
+    "icon": "/assets/xianxia/items/thao_moc_linh_chi.webp",
+    "stackable": true,
+    "buy_price": 10,
+    "sell_price": 5
+  },
+  {
+    "id": "item_kim_ngan_hoa",
+    "name": "Kim Ngân Hoa",
+    "type": "HERB",
+    "rarity": "COMMON",
+    "description": "Hoa nở màu vàng óng có tính hàn, chuyên dùng thanh lọc độc tố và điều hòa dược tính trong đan lô.",
+    "icon": "/assets/xianxia/items/kim_ngan_hoa.webp",
+    "stackable": true,
+    "buy_price": 12,
+    "sell_price": 6
+  },
+  {
+    "id": "item_bach_nien_sam",
+    "name": "Bách Niên Sâm",
+    "type": "HERB",
+    "rarity": "UNCOMMON",
+    "description": "Củ nhân sâm trăm năm tuổi ẩn sâu dưới lòng đất, chứa lượng linh khí dồi dào bồi bổ kinh mạch.",
+    "icon": "/assets/xianxia/items/bach_nien_sam.webp",
+    "stackable": true,
+    "buy_price": 35,
+    "sell_price": 18
+  },
+  {
+    "id": "item_huyen_am_thao",
+    "name": "Huyền Âm Thảo",
+    "type": "HERB",
+    "rarity": "RARE",
+    "description": "Cỏ âm hàn ngàn năm chỉ mọc trên vách đá cheo leo, dược liệu tối thượng để ngưng tụ Trúc Cơ Đan.",
+    "icon": "/assets/xianxia/items/huyen_am_thao.webp",
+    "stackable": true,
+    "buy_price": 150,
+    "sell_price": 80
+  },
+  {
+    "id": "item_thiet_khoang",
+    "name": "Hắc Thiết Khoáng",
+    "type": "ORE",
+    "rarity": "COMMON",
+    "description": "Quặng sắt thô màu đen nhánh, độ cứng cao, dùng làm phôi rèn đúc giáp trụ và vũ khí sơ cấp.",
+    "icon": "/assets/xianxia/items/thiet_khoang.webp",
+    "stackable": true,
+    "buy_price": 8,
+    "sell_price": 4
+  },
+  {
+    "id": "item_bach_luyen_tinh_thiet",
+    "name": "Bạch Luyện Tinh Thiết",
+    "type": "ORE",
+    "rarity": "UNCOMMON",
+    "description": "Sắt vụn sau khi trải qua trăm lần tôi luyện trong lửa linh hồn, sáng bóng không tì vết.",
+    "icon": "/assets/xianxia/items/bach_luyen_tinh_thiet.webp",
+    "stackable": true,
+    "buy_price": 40,
+    "sell_price": 20
+  },
+  {
+    "id": "item_khoang_thach_linh_tinh",
+    "name": "Linh Tinh Khoáng Thạch",
+    "type": "ORE",
+    "rarity": "RARE",
+    "description": "Khối khoáng thạch kết tinh linh khí trời đất, là lõi dẫn linh năng cho các pháp bảo thượng phẩm.",
+    "icon": "/assets/xianxia/items/khoang_thach_linh_tinh.webp",
+    "stackable": true,
+    "buy_price": 120,
+    "sell_price": 60
+  },
+  {
+    "id": "item_lang_bi",
+    "name": "Lang Bì",
+    "type": "MATERIAL",
+    "rarity": "COMMON",
+    "description": "Da sói rừng dai chắc chống lạnh, dùng để may lót bên trong giáp sắt hoặc làm đai lưng.",
+    "icon": "/assets/xianxia/items/lang_bi.webp",
+    "stackable": true,
+    "buy_price": 15,
+    "sell_price": 7
+  },
+  {
+    "id": "item_nanh_soi_ngan_nam",
+    "name": "Nanh Sói Ngàn Năm",
+    "type": "MATERIAL",
+    "rarity": "RARE",
+    "description": "Nanh nhọn của U Minh Lang Vương cứng hơn sắt thép, mang theo sát khí sắc bén khát máu.",
+    "icon": "/assets/xianxia/items/nanh_soi_ngan_nam.webp",
+    "stackable": true,
+    "buy_price": 100,
+    "sell_price": 50
+  },
+  {
+    "id": "item_yeu_dan_so_cap",
+    "name": "Yêu Đan Sơ Cấp",
+    "type": "MATERIAL",
+    "rarity": "RARE",
+    "description": "Nội đan ngưng tụ toàn bộ tu vi của yêu thú cấp cao, năng lượng tinh thuần dùng làm dược dẫn.",
+    "icon": "/assets/xianxia/items/yeu_dan_so_cap.webp",
+    "stackable": true,
+    "buy_price": 180,
+    "sell_price": 90
+  },
+  {
+    "id": "item_hoi_xuan_dan",
+    "name": "Hồi Xuân Đan",
+    "type": "PILL",
+    "rarity": "COMMON",
+    "description": "Viên đan xanh biếc tỏa mùi thảo dược thanh mát, uống vào giúp hồi phục nhanh khí huyết.",
+    "icon": "/assets/xianxia/items/hoi_xuan_dan.webp",
+    "stackable": true,
+    "buy_price": 30,
+    "sell_price": 15,
+    "effects": {
+      "health_restore": 60
+    }
+  },
+  {
+    "id": "item_duong_khi_dan",
+    "name": "Dưỡng Khí Đan",
+    "type": "PILL",
+    "rarity": "UNCOMMON",
+    "description": "Đan dược bồi bổ thể chất, hồi phục thể lực và bổ sung 40 điểm tu vi chân nguyên.",
+    "icon": "/assets/xianxia/items/duong_khi_dan.webp",
+    "stackable": true,
+    "buy_price": 60,
+    "sell_price": 30,
+    "effects": {
+      "fatigue_restore": 35,
+      "cultivation_boost": 40
+    }
+  },
+  {
+    "id": "item_truc_co_dan",
+    "name": "Trúc Cơ Đan",
+    "type": "PILL",
+    "rarity": "LEGENDARY",
+    "description": "Chí bảo nghịch thiên giúp tu sĩ Luyện Khí đột phá bình cảnh bước vào Trúc Cơ Kỳ, tăng 500 điểm Tu vi!",
+    "icon": "/assets/xianxia/items/truc_co_dan.webp",
+    "stackable": false,
+    "buy_price": 800,
+    "sell_price": 400,
+    "effects": {
+      "cultivation_boost": 500,
+      "exp_boost": 200
+    }
+  },
+  {
+    "id": "item_thanh_phong_kiem",
+    "name": "Thanh Phong Kiếm",
+    "type": "EQUIPMENT",
+    "rarity": "UNCOMMON",
+    "description": "Thanh kiếm rèn từ Tinh Thiết và gân Lang Bì, lưỡi kiếm sáng loáng tựa như ngọn gió sớm mai.",
+    "icon": "/assets/xianxia/items/thanh_phong_kiem.webp",
+    "stackable": false,
+    "buy_price": 150,
+    "sell_price": 75,
+    "equipment_stats": {
+      "attack": 22,
+      "speed": 5,
+      "crit_rate": 0.05,
+      "realm_requirement": "LUYEN_KHI_2"
+    }
+  },
+  {
+    "id": "item_thiet_giap_y",
+    "name": "Thiết Giáp Y",
+    "type": "EQUIPMENT",
+    "rarity": "UNCOMMON",
+    "description": "Áo giáp ghép từ phiến Hắc Thiết dày dặn, giảm thiểu sát thương vật lý khi đối đầu mãnh thú.",
+    "icon": "/assets/xianxia/items/thiet_giap_y.webp",
+    "stackable": false,
+    "buy_price": 140,
+    "sell_price": 70,
+    "equipment_stats": {
+      "defense": 25,
+      "speed": -2,
+      "realm_requirement": "LUYEN_KHI_2"
+    }
+  },
+  {
+    "id": "item_phe_dan",
+    "name": "Phế Đan Vỡ Nát",
+    "type": "MISC",
+    "rarity": "COMMON",
+    "description": "Tàn dư cháy khét sau khi luyện đan thất bại, chỉ có thể bán ve chai cho dược đồng dọn lò.",
+    "icon": "/assets/xianxia/items/phe_dan.webp",
+    "stackable": true,
+    "sell_price": 1
+  },
+  {
+    "id": "item_can_sat",
+    "name": "Xỉ Sắt Vụn",
+    "type": "MISC",
+    "rarity": "COMMON",
+    "description": "Cặn quặng sắt gãy nát sau khi rèn đúc hỏng, không có giá trị sử dụng cao.",
+    "icon": "/assets/xianxia/items/can_sat.webp",
+    "stackable": true,
+    "sell_price": 1
+  },
+  {
+    "id": "item_thanh_tam_boi",
+    "name": "Thanh Tâm Ngọc Bội",
+    "type": "EQUIPMENT",
+    "rarity": "RARE",
+    "description": "Ngọc bội khắc phù văn trấn tĩnh tâm ma, tăng cường ngộ tính và hộ trì chân nguyên khi giao chiến.",
+    "icon": "/assets/xianxia/items/thanh_tam_boi.webp",
+    "stackable": false,
+    "buy_price": 220,
+    "sell_price": 110,
+    "equipment_stats": {
+      "slot": "relic",
+      "comprehension": 5,
+      "max_qi": 20,
+      "luck": 4,
+      "realm_requirement": "LUYEN_KHI_1"
+    }
+  },
+  {
+    "id": "item_ngan_nam_huyet_chi",
+    "name": "Ngàn Năm Huyết Chi",
+    "type": "HERB",
+    "rarity": "RARE",
+    "description": "Linh chi ngàn năm hấp thu huyết sát đầm lầy, tỏa ra huyết quang lộng lẫy, nguyên liệu cốt lõi luyện chế Cực Phẩm Trúc Cơ Đan.",
+    "icon": "/assets/xianxia/items/ngan_nam_huyet_chi.webp",
+    "stackable": true,
+    "buy_price": 250,
+    "sell_price": 120
+  },
+  {
+    "id": "item_cuc_pham_truc_co_dan",
+    "name": "Cực Phẩm Trúc Cơ Đan",
+    "type": "PILL",
+    "rarity": "EPIC",
+    "description": "Cực Phẩm Đan Hoàn ngưng tụ thiên địa huyền hoàng, tăng 55% tỷ lệ Trúc Cơ thành công và miễn trừ 100% thương tổn phản phệ kinh mạch, tăng 1200 Tu vi!",
+    "icon": "/assets/xianxia/items/cuc_pham_truc_co_dan.webp",
+    "stackable": false,
+    "buy_price": 1500,
+    "sell_price": 750,
+    "effects": {
+      "cultivation_boost": 1200,
+      "exp_boost": 500
+    }
+  },
+  {
+    "id": "item_ban_menh_kiem_thai",
+    "name": "Bản Mệnh Kiếm Thai",
+    "type": "EQUIPMENT",
+    "rarity": "EPIC",
+    "description": "Thanh kiếm thai ngưng tụ kiếm ý viễn cổ của Thiên Kiếm Tông, sắc bén vô song, trảm phá hư vô.",
+    "icon": "/assets/xianxia/items/ban_menh_kiem_thai.webp",
+    "stackable": false,
+    "buy_price": 1200,
+    "sell_price": 600,
+    "equipment_stats": {
+      "slot": "weapon",
+      "attack": 120,
+      "speed": 15,
+      "crit_rate": 0.15,
+      "realm_requirement": "TRUC_CO_SO_KY"
+    }
+  },
+  {
+    "id": "item_dao_co_ngoc_gian",
+    "name": "Đạo Cơ Ngọc Giản",
+    "type": "EQUIPMENT",
+    "rarity": "LEGENDARY",
+    "description": "Ngọc giản ghi lại truyền thừa đúc Đạo Cơ Vô Khuyết của thượng cổ đại năng, bảo vật trấn phái Thiên Kiếm Sơn.",
+    "icon": "/assets/xianxia/items/dao_co_ngoc_gian.webp",
+    "stackable": false,
+    "buy_price": 3000,
+    "sell_price": 1500,
+    "equipment_stats": {
+      "slot": "relic",
+      "comprehension": 15,
+      "max_qi": 50,
+      "luck": 10,
+      "realm_requirement": "TRUC_CO_HAU_KY"
+    }
+  },
+  {
+    "id": "item_huyet_ma_dao",
+    "name": "Huyết Sát Ma Đao",
+    "type": "EQUIPMENT",
+    "rarity": "UNCOMMON",
+    "description": "Lưỡi ma đao rèn từ khoáng thạch vực sâu và tẩm huyết yêu thú, phát ra sát khí đỏ rực, chuyên dùng cho Ma Tu.",
+    "icon": "/assets/xianxia/items/thanh_phong_kiem.webp",
+    "stackable": false,
+    "buy_price": 160,
+    "sell_price": 80,
+    "equipment_stats": {
+      "slot": "weapon",
+      "attack": 26,
+      "speed": 3,
+      "crit_rate": 0.08,
+      "realm_requirement": "LUYEN_KHI_1"
+    }
+  },
+  {
+    "id": "item_cuu_u_ma_dan",
+    "name": "Cửu U Huyết Ma Đan",
+    "type": "PILL",
+    "rarity": "UNCOMMON",
+    "description": "Đan dược bí truyền của Ma Tu ngưng tụ từ huyết tinh, uống vào kích phát cuồng bạo, lập tức hồi 80 Khí Huyết.",
+    "icon": "/assets/xianxia/items/hoi_xuan_dan.webp",
+    "stackable": true,
+    "buy_price": 45,
+    "sell_price": 22,
+    "use_effect": {
+      "type": "HEAL",
+      "heal_amount": 80
+    }
+  }
+]

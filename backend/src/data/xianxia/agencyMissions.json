@@ -1,0 +1,682 @@
+{
+  "organizations": [
+    {
+      "key": "thien_co_tieu_cuc",
+      "name": "Thiên Cơ Tiêu Cục",
+      "subtitle": "Đệ Nhất Giang Hồ Tiêu Cục - Vạn Lý Hộ Tiêu Bát Hoang",
+      "description": "Tổ chức tiêu cục uy danh chấn động giang hồ, chuyên đảm trách vận chuyển bảo vật, mật thư hỏa tốc, tầm nã dị thú và thám thính dị tượng bát phương.",
+      "ranks": [
+        {
+          "key": "ASSOCIATE",
+          "name": "Tập Sự Tiêu Sư",
+          "required_merit": 0,
+          "required_missions": 0,
+          "required_kinds": 0,
+          "daily_stipend_silver": 10,
+          "perks": "Được phép nhận các nhiệm vụ đưa tin và thu thập căn bản."
+        },
+        {
+          "key": "COPPER",
+          "name": "Đồng Bài Tiêu Sư",
+          "required_merit": 100,
+          "required_missions": 3,
+          "required_kinds": 2,
+          "daily_stipend_silver": 30,
+          "perks": "Mở khóa nhiệm vụ Áp Tiêu cận cảnh và Thảo Phạt Dị Thú sơ cấp."
+        },
+        {
+          "key": "SILVER",
+          "name": "Ngân Bài Tiêu Sư",
+          "required_merit": 300,
+          "required_missions": 8,
+          "required_kinds": 3,
+          "daily_stipend_silver": 80,
+          "perks": "Mở khóa Áp Tiêu Liên Phân Khu và Kho Quân Nhu Thần Hành Phù."
+        },
+        {
+          "key": "GOLD",
+          "name": "Kim Bài Tiêu Sư",
+          "required_merit": 700,
+          "required_missions": 18,
+          "required_kinds": 4,
+          "daily_stipend_silver": 200,
+          "perks": "Mở khóa Hoàng Kim Đại Tiêu và Kỳ Ngộ Điều Tra tàn tích bí cảnh."
+        },
+        {
+          "key": "CHIEF",
+          "name": "Tổng Tiêu Đầu",
+          "required_merit": 1500,
+          "required_missions": 30,
+          "required_kinds": 5,
+          "daily_stipend_silver": 500,
+          "perks": "Quyền hạn tối cao, mở khóa đổi Trúc Cơ Đan và Linh Khí Tiêu Cục."
+        },
+        {
+          "key": "DIVINE",
+          "name": "Thần Bộ Giang Hồ",
+          "required_merit": 3000,
+          "required_missions": 50,
+          "required_kinds": 5,
+          "daily_stipend_silver": 1000,
+          "perks": "Huyền thoại giang hồ, danh chấn vạn giới."
+        }
+      ],
+      "supply_hall": [
+        {
+          "id": "supply_hoi_xuan_dan",
+          "item_id": "item_hoi_xuan_dan",
+          "item_name": "Hồi Xuân Đan",
+          "type": "PILL",
+          "description": "Linh đan cấp cứu sinh mệnh khi thám hiểm bị thương, hồi phục 50 HP tức thì.",
+          "credit_cost": 20,
+          "min_rank": "ASSOCIATE",
+          "quantity_per_exchange": 2
+        },
+        {
+          "id": "supply_thao_moc_linh_chi",
+          "item_id": "item_thao_moc_linh_chi",
+          "item_name": "Thảo Mộc Linh Chi",
+          "type": "HERB",
+          "description": "Linh chi trăm năm dùng để luyện đan bồi dưỡng nguyên khí.",
+          "credit_cost": 25,
+          "min_rank": "ASSOCIATE",
+          "quantity_per_exchange": 3
+        },
+        {
+          "id": "supply_than_hanh_phu",
+          "item_id": "item_than_hanh_phu",
+          "item_name": "Thần Hành Phù",
+          "type": "TALISMAN",
+          "description": "Phù lục thần hành giúp bước đi như gió, giảm 50% hao tổn thể lực khi xuất hành thám hiểm.",
+          "credit_cost": 60,
+          "min_rank": "COPPER",
+          "quantity_per_exchange": 1
+        },
+        {
+          "id": "supply_bach_luyen_tinh_thiet",
+          "item_id": "item_bach_luyen_tinh_thiet",
+          "item_name": "Bạch Luyện Tinh Thiết",
+          "type": "ORE",
+          "description": "Thỏi kim loại tôi luyện qua trăm lần lửa, nguyên liệu chủ chốt rèn thần binh hộ giáp.",
+          "credit_cost": 80,
+          "min_rank": "COPPER",
+          "quantity_per_exchange": 2
+        },
+        {
+          "id": "supply_thien_co_lenh_phu",
+          "item_id": "item_thien_co_lenh_phu",
+          "item_name": "Thiên Cơ Hộ Mệnh Phù",
+          "type": "TALISMAN",
+          "description": "Linh bảo bí truyền của Tiêu Cục, giảm 30% sát thương khi bị quái vật hoặc đạo tặc tập kích.",
+          "credit_cost": 150,
+          "min_rank": "SILVER",
+          "quantity_per_exchange": 1
+        },
+        {
+          "id": "supply_tieu_cuc_tru_vat_dai",
+          "item_id": "item_tieu_cuc_tru_vat_dai",
+          "item_name": "Tiêu Cục Trữ Vật Đại",
+          "type": "BAG",
+          "description": "Túi gấm chứa càn khôn của tiêu sư, nâng cao phẩm chất hành trang thám hiểm.",
+          "credit_cost": 250,
+          "min_rank": "GOLD",
+          "quantity_per_exchange": 1
+        },
+        {
+          "id": "supply_truc_co_dan",
+          "item_id": "item_truc_co_dan",
+          "item_name": "Trúc Cơ Đan",
+          "type": "PILL",
+          "description": "Thần đan vô thượng phá vỡ bình cảnh Luyện Khí Kỳ, bước lên bậc thang Trúc Cơ Đạo Thể.",
+          "credit_cost": 500,
+          "min_rank": "CHIEF",
+          "quantity_per_exchange": 1
+        }
+      ]
+    }
+  ],
+  "missions": [
+    {
+      "id": "exp_escort_01_thanh_ha_to_truc_lam",
+      "template_key": "escort_provisions_basic",
+      "name": "[Áp Tiêu] Vận Chuyển Lương Thảo Thanh Hà → U Minh Trúc Lâm",
+      "kind": "ESCORT",
+      "origin_zone_id": "zone_thanh_ha_thon",
+      "origin_place_id": "place_thanh_ha_tieu_cuc",
+      "destination_zone_id": "zone_u_minh_truc_lam",
+      "destination_place_id": "place_truc_lam_dich_tram",
+      "destination_name": "U Minh Trúc Lâm (Trúc Lâm Dịch Trạm)",
+      "cargo_name": "Rương Lương Thực & Dược Liệu Tiếp Tế",
+      "escort_risk_percent": 25,
+      "travel_fatigue_cost": 8,
+      "min_realm": "PHAM_NHAN",
+      "min_level": 1,
+      "min_rank": "ASSOCIATE",
+      "summary": "Tiếp nhận chuyến tiêu vận tải rương lương thảo từ Thanh Hà Thôn vượt qua rừng ngoại ô tới dịch trạm U Minh Trúc Lâm. Cảnh giác dã thú cướp tiêu trên đường!",
+      "briefing_lines": [
+        "Tiêu Đầu Thiên Cơ Tiêu Cục khẽ nâng chung trà, giọng dõng dạc:",
+        "Dịch trạm tiền tiêu tại U Minh Trúc Lâm đang thiếu hụt quân lương trầm trọng.",
+        "Đây là chuyến tiêu áp tải 1 rương lương thảo và dược liệu cấp cứu.",
+        "Trên đường vượt rừng trúc, có thể đụng độ Thổ Lang đói ăn chặn đường. Hãy giữ vững tay kiếm, hộ vệ kiện hàng nguyên vẹn!"
+      ],
+      "turnin_lines": [
+        "Dịch Thừa Trúc Lâm Dịch Trạm tươi cười nghênh đón:",
+        "Kiện hàng còn nguyên phong ấn! Lương thảo đến kịp thời cứu nguy cho bao tu sĩ tiền tiêu.",
+        "Tiêu Cục xin ghi nhận công trạng hiển hách và gửi chút ngân lượng thù lao!"
+      ],
+      "rewards": {
+        "silver": 80,
+        "exp": 120,
+        "cultivation": 40,
+        "merit": 35,
+        "credits": 25,
+        "items": [
+          { "item_id": "item_hoi_xuan_dan", "quantity": 1 }
+        ]
+      }
+    },
+    {
+      "id": "exp_escort_02_truc_lam_to_hac_phong",
+      "template_key": "escort_rare_herbs_interzone",
+      "name": "[Áp Tiêu] Hộ Tống Trân Dược Bảo Tiêu → Hắc Phong Nhai",
+      "kind": "ESCORT",
+      "origin_zone_id": "zone_u_minh_truc_lam",
+      "origin_place_id": "place_truc_lam_dich_tram",
+      "destination_zone_id": "zone_hac_phong_nhai",
+      "destination_place_id": "place_hac_phong_cuong_bao",
+      "destination_name": "Hắc Phong Nhai (Cương Bảo Tiền Tiêu)",
+      "cargo_name": "Bảo Rương Trân Dược Trăm Năm",
+      "escort_risk_percent": 45,
+      "travel_fatigue_cost": 15,
+      "min_realm": "LUYEN_KHI_1",
+      "min_level": 2,
+      "min_rank": "COPPER",
+      "summary": "Áp tải rương dược liệu quý lên Hắc Phong Nhai hiểm trở. Nguy cơ chạm trán sơn tặc và dị thú U Minh Lang hung hãn rất cao!",
+      "briefing_lines": [
+        "Chưởng Quầy Trúc Lâm Dịch Trạm ghé sát thì thầm:",
+        "Chuyến tiêu này chứa linh dược ngàn năm thu hái từ tuyệt bích, giá trị liên thành.",
+        "Con đường lên Hắc Phong Nhai gió núi rít gào, bầy U Minh Lang mắt đỏ thường rình rập cướp phá.",
+        "Chỉ có Tiêu Sư đạt cấp Đồng Bài trở lên mới đủ tư cách đảm đương trọng trách này!"
+      ],
+      "turnin_lines": [
+        "Thủ lĩnh Hắc Phong Cương Bảo kiểm tra niêm phong bảo rương, gật đầu khen ngợi:",
+        "Trân dược hoàn hảo không tì vết! Có số dược liệu này, các chiến sĩ tiền tuyến vững tâm nghênh địch.",
+        "Thiên Cơ Tiêu Cục quả nhiên danh bất hư truyền!"
+      ],
+      "rewards": {
+        "silver": 180,
+        "exp": 300,
+        "cultivation": 120,
+        "merit": 80,
+        "credits": 60,
+        "items": [
+          { "item_id": "item_thao_moc_linh_chi", "quantity": 2 }
+        ]
+      }
+    },
+    {
+      "id": "exp_escort_03_hoang_kim_dai_tieu",
+      "template_key": "escort_gold_grand_cargo",
+      "name": "[Hoàng Kim Đại Tiêu] Áp Tải Tinh Thiết Cương Bảo → Thanh Hà",
+      "kind": "ESCORT",
+      "origin_zone_id": "zone_hac_phong_nhai",
+      "origin_place_id": "place_hac_phong_cuong_bao",
+      "destination_zone_id": "zone_thanh_ha_thon",
+      "destination_place_id": "place_thanh_ha_tieu_cuc",
+      "destination_name": "Thanh Hà Thôn (Thiên Cơ Tổng Quán)",
+      "cargo_name": "Rương Kim Bài Tinh Thiết Đúc Kiếm",
+      "escort_risk_percent": 60,
+      "travel_fatigue_cost": 20,
+      "min_realm": "LUYEN_KHI_2",
+      "min_level": 3,
+      "min_rank": "SILVER",
+      "summary": "Vận chuyển số lượng lớn Bạch Luyện Tinh Thiết từ quặng mỏ Hắc Phong về tổng đàn. Rủi ro cướp tiêu tột đỉnh, phần thưởng chiến công chấn động giang hồ!",
+      "briefing_lines": [
+        "Tổng Tiêu Đầu đích thân giao phó lệnh kỳ:",
+        "Đây là số Tinh Thiết vừa khai thác được dưới lòng vực thẳm Hắc Phong Nhai.",
+        "Bao nhiêu thế lực ma đạo và sơn tặc đang rình mò nhắm vào chuyến hàng này.",
+        "Tiêu còn người còn, tiêu mất người mất! Hãy phát huy toàn bộ bản lĩnh tu vi để bảo vệ chuyến tiêu!"
+      ],
+      "turnin_lines": [
+        "Tổng đàn Thiên Cơ Tiêu Cục tiếng pháo vang trời:",
+        "Đại công cáo thành! Kim Bài Tinh Thiết đã về tới lò rèn bình an vô sự.",
+        "Tiêu sư uy danh vang dội, xứng đáng lưu danh trên Bảng Vàng Tiêu Cục!"
+      ],
+      "rewards": {
+        "silver": 400,
+        "exp": 600,
+        "cultivation": 250,
+        "merit": 160,
+        "credits": 120,
+        "items": [
+          { "item_id": "item_bach_luyen_tinh_thiet", "quantity": 2 },
+          { "item_id": "item_than_hanh_phu", "quantity": 1 }
+        ]
+      }
+    },
+    {
+      "id": "exp_courier_01_mat_thu_hoa_toc",
+      "template_key": "courier_urgent_missive",
+      "name": "[Phi Tiêu] Mật Thư Hỏa Tốc: Thanh Hà → U Minh Trúc Lâm",
+      "kind": "COURIER",
+      "origin_zone_id": "zone_thanh_ha_thon",
+      "origin_place_id": "place_thanh_ha_tieu_cuc",
+      "destination_zone_id": "zone_u_minh_truc_lam",
+      "destination_place_id": "place_truc_lam_dich_tram",
+      "destination_name": "U Minh Trúc Lâm (Trúc Lâm Dịch Trạm)",
+      "min_realm": "PHAM_NHAN",
+      "min_level": 1,
+      "min_rank": "ASSOCIATE",
+      "travel_fatigue_cost": 5,
+      "summary": "Chuyển gấp phong mật thư hỏa tốc có đóng dấu sáp đỏ của Lý Trưởng Thôn cho dịch trạm tiền tiêu.",
+      "briefing_lines": [
+        "Tiêu Sư trao phong thư dán ba chiếc lông ngỗng hỏa tốc:",
+        "Bức thư này ghi chép biến động địa mạch mới nhất tại Thanh Hà Thôn.",
+        "Hãy di chuyển thật nhanh qua U Minh Trúc Lâm và giao tận tay trạm trưởng!"
+      ],
+      "turnin_lines": [
+        "Trạm trưởng đón lấy phong thư hỏa tốc, lập tức xé niêm phong:",
+        "Tin tức này vô cùng quan trọng đối với các đoàn thám hiểm đang trong rừng sâu.",
+        "Đa tạ tiêu sư đã phong trần bôn tẩu chuyển tin kịp lúc!"
+      ],
+      "rewards": {
+        "silver": 50,
+        "exp": 80,
+        "cultivation": 25,
+        "merit": 25,
+        "credits": 15
+      }
+    },
+    {
+      "id": "exp_courier_02_lenh_bai_hac_phong",
+      "template_key": "courier_crest_token",
+      "name": "[Phi Tiêu] Chuyển Giao Trấn Sơn Lệnh Bài → Hắc Phong Nhai",
+      "kind": "COURIER",
+      "origin_zone_id": "zone_u_minh_truc_lam",
+      "origin_place_id": "place_truc_lam_dich_tram",
+      "destination_zone_id": "zone_hac_phong_nhai",
+      "destination_place_id": "place_hac_phong_cuong_bao",
+      "destination_name": "Hắc Phong Nhai (Cương Bảo)",
+      "min_realm": "LUYEN_KHI_1",
+      "min_level": 2,
+      "min_rank": "COPPER",
+      "travel_fatigue_cost": 10,
+      "summary": "Đưa Trấn Sơn Lệnh Bài lên vọng lâu Hắc Phong Nhai để kích hoạt trận pháp phòng hộ.",
+      "briefing_lines": [
+        "Trấn Sơn Lệnh Bài tỏa ra ánh sáng thanh lãnh.",
+        "Các bậc tiền bối trên Hắc Phong Nhai đang cần lệnh bài này để mở cổng cương bảo.",
+        "Hãy cẩn trọng đường núi trơn trượt và dị thú phục kích."
+      ],
+      "turnin_lines": [
+        "Thủ quan tiếp nhận lệnh bài, trận pháp cương bảo lập tức phát sáng rực rỡ:",
+        "Lệnh bài đã về đúng vị trí, trận pháp hoàn bị!",
+        "Tiêu Cục xin ghi nhận công trạng đặc biệt này."
+      ],
+      "rewards": {
+        "silver": 120,
+        "exp": 180,
+        "cultivation": 70,
+        "merit": 50,
+        "credits": 40
+      }
+    },
+    {
+      "id": "exp_courier_03_cap_bao_dan_phuong",
+      "template_key": "courier_alchemy_formula",
+      "name": "[Phi Tiêu] Khẩn Cấp Đan Phương: Hắc Phong → Thanh Hà",
+      "kind": "COURIER",
+      "origin_zone_id": "zone_hac_phong_nhai",
+      "origin_place_id": "place_hac_phong_cuong_bao",
+      "destination_zone_id": "zone_thanh_ha_thon",
+      "destination_place_id": "place_hieu_thuoc",
+      "destination_name": "Thanh Hà Thôn (Hiệu Thuốc Trần Dược Sư)",
+      "min_realm": "LUYEN_KHI_2",
+      "min_level": 3,
+      "min_rank": "SILVER",
+      "travel_fatigue_cost": 15,
+      "summary": "Mang bản sao cổ phương giải độc từ vách đá Hắc Phong về cho Trần Dược Sư nghiên cứu.",
+      "briefing_lines": [
+        "Mảnh da dê cổ ghi chép phương thuốc áp chế hàn độc.",
+        "Trần Dược Sư dưới thôn đang ngày đêm nghiên cứu linh dược giải độc cho đệ tử.",
+        "Nhanh chân mang về, chớ để chậm trễ việc cứu mạng người!"
+      ],
+      "turnin_lines": [
+        "Trần Dược Sư mừng rỡ run rẩy khi đón nhận cổ phương:",
+        "Chính là nó! Phương thuốc ngàn năm thất truyền đã tìm lại được!",
+        "Ngươi đã lập đại công đức cho muôn dân trăm họ!"
+      ],
+      "rewards": {
+        "silver": 250,
+        "exp": 350,
+        "cultivation": 150,
+        "merit": 100,
+        "credits": 75,
+        "items": [
+          { "item_id": "item_duong_khi_dan", "quantity": 2 }
+        ]
+      }
+    },
+    {
+      "id": "exp_hunt_01_tho_lang_ngoai_o",
+      "template_key": "hunt_wolves_perimeter",
+      "name": "[Thảo Phạt] Trừ Khử Bầy Thổ Lang Quấy Nhiễu Ngoại Ô",
+      "kind": "HUNT",
+      "origin_zone_id": "zone_thanh_ha_thon",
+      "origin_place_id": "place_thanh_ha_tieu_cuc",
+      "destination_zone_id": "zone_thanh_ha_thon",
+      "target": {
+        "monster_id": "monster_tho_lang",
+        "name": "Thổ Lang",
+        "required_count": 3,
+        "current_count": 0
+      },
+      "min_realm": "PHAM_NHAN",
+      "min_level": 1,
+      "min_rank": "ASSOCIATE",
+      "summary": "Lùng bắt và tiêu diệt 3 Thổ Lang ngoài rìa Thanh Hà Thôn để lập công trạng tiêu sư.",
+      "briefing_lines": [
+        "Thổ Lang lảng vảng ngoài cánh đồng đe dọa các chuyến tiêu xuất nhập.",
+        "Tiêu Cục ủy thác tiêu diệt 3 con Thổ Lang để làm sạch quan lộ.",
+        "Hãy bước vào thám hiểm quanh thôn để truy lùng tung tích chúng!"
+      ],
+      "turnin_lines": [
+        "Tiêu Đầu kiểm tra tai sói mang về chứng thực:",
+        "Tốt lắm! Quan lộ đã thông thoáng, người dân yên tâm buôn bán.",
+        "Chiến công này xứng đáng được khen thưởng trước toàn thể tiêu sư!"
+      ],
+      "rewards": {
+        "silver": 90,
+        "exp": 150,
+        "cultivation": 50,
+        "merit": 40,
+        "credits": 30
+      }
+    },
+    {
+      "id": "exp_hunt_02_u_minh_lang_truc_lam",
+      "template_key": "hunt_shadow_wolves_forest",
+      "name": "[Thảo Phạt] Trảm Sát 2 U Minh Lang Trong Sương Rừng",
+      "kind": "HUNT",
+      "origin_zone_id": "zone_u_minh_truc_lam",
+      "origin_place_id": "place_truc_lam_dich_tram",
+      "destination_zone_id": "zone_u_minh_truc_lam",
+      "target": {
+        "monster_id": "monster_u_minh_lang",
+        "name": "U Minh Lang",
+        "required_count": 2,
+        "current_count": 0
+      },
+      "min_realm": "LUYEN_KHI_1",
+      "min_level": 2,
+      "min_rank": "COPPER",
+      "summary": "Lùng bắt và trảm sát 2 con U Minh Lang hung tợn ẩn nấp trong sương độc U Minh Trúc Lâm.",
+      "briefing_lines": [
+        "Bầy U Minh Lang thường phục kích các tiêu sư đơn độc trong sương mù.",
+        "Tiêu diệt 2 con để bẻ gãy nhuệ khí của đàn dã thú này.",
+        "Cẩn trọng móng vuốt mang hàn độc của chúng!"
+      ],
+      "turnin_lines": [
+        "Dịch Thừa nhìn móng vuốt U Minh Lang ngươi mang về, tán thưởng:",
+        "Chiến tích đáng nể! Trừ khử được mối họa lớn cho các đoàn áp tiêu.",
+        "Đây là phần thưởng xứng đáng cho dũng khí của ngươi!"
+      ],
+      "rewards": {
+        "silver": 180,
+        "exp": 280,
+        "cultivation": 110,
+        "merit": 75,
+        "credits": 55,
+        "items": [
+          { "item_id": "item_hoi_xuan_dan", "quantity": 2 }
+        ]
+      }
+    },
+    {
+      "id": "exp_hunt_03_thiet_giap_tru_hac_phong",
+      "template_key": "hunt_armored_boar_cliff",
+      "name": "[Thảo Phạt] Chinh Phạt Thiết Giáp Cuồng Trư",
+      "kind": "HUNT",
+      "origin_zone_id": "zone_hac_phong_nhai",
+      "origin_place_id": "place_hac_phong_cuong_bao",
+      "destination_zone_id": "zone_hac_phong_nhai",
+      "target": {
+        "monster_id": "monster_thiet_giap_tru",
+        "name": "Thiết Giáp Trư",
+        "required_count": 1,
+        "current_count": 0
+      },
+      "min_realm": "LUYEN_KHI_2",
+      "min_level": 3,
+      "min_rank": "SILVER",
+      "summary": "Truy sát quái vật Thiết Giáp Trư mình bọc giáp sắt trên đỉnh Hắc Phong Nhai.",
+      "briefing_lines": [
+        "Con Thiết Giáp Trư húc đổ bao nhiêu cọc rào tiêu trạm.",
+        "Da dày như đá tảng, móng guốc sắc bén vô song.",
+        "Chỉ có đao kiếm sắc bén và tu vi thâm hậu mới phá được lớp phòng ngự của nó!"
+      ],
+      "turnin_lines": [
+        "Tiêu Đầu Hắc Phong Trạm trầm trồ trước tấm da lợn rừng bọc thép:",
+        "Hảo công phu! Ngươi quả thực đã đạt tới cảnh giới cao thủ tiêu môn.",
+        "Tấm giáp này sẽ được nung chảy rèn thành khiên hộ thân cho chi nhánh."
+      ],
+      "rewards": {
+        "silver": 320,
+        "exp": 450,
+        "cultivation": 180,
+        "merit": 120,
+        "credits": 90,
+        "items": [
+          { "item_id": "item_bach_luyen_tinh_thiet", "quantity": 1 }
+        ]
+      }
+    },
+    {
+      "id": "exp_gather_01_thao_moc_linh_chi",
+      "template_key": "gather_herbs_resupply",
+      "name": "[Thu Thập] Tiếp Tế 3 Thảo Mộc Linh Chi Cho Tiêu Cục",
+      "kind": "GATHERING",
+      "origin_zone_id": "zone_thanh_ha_thon",
+      "origin_place_id": "place_thanh_ha_tieu_cuc",
+      "destination_zone_id": "zone_thanh_ha_thon",
+      "input": {
+        "item_id": "item_thao_moc_linh_chi",
+        "item_name": "Thảo Mộc Linh Chi",
+        "quantity": 3
+      },
+      "min_realm": "PHAM_NHAN",
+      "min_level": 1,
+      "min_rank": "ASSOCIATE",
+      "summary": "Thu hái đủ 3 cây Thảo Mộc Linh Chi từ các bãi dược liệu tự nhiên đem về giao nộp kho quân nhu.",
+      "briefing_lines": [
+        "Kho dược liệu Tiêu Cục đang cạn kiệt linh chi để ngưng tụ đan dược hồi phục.",
+        "Hãy thám hiểm bờ sông hoặc vườn thuốc thu hái 3 cây Linh Chi giao nộp.",
+        "Mỗi cây linh thảo đều là sự trợ giúp sinh mệnh quý báu cho huynh đệ tiêu sư!"
+      ],
+      "turnin_lines": [
+        "Dược sư Tiêu Cục hít hà mùi thơm linh thảo:",
+        "Linh chi tươi tốt, còn nguyên sương mai đầu cành!",
+        "Ta lập tức đưa vào lò luyện đan, cảm tạ công sức thu thập của ngươi."
+      ],
+      "rewards": {
+        "silver": 70,
+        "exp": 100,
+        "cultivation": 35,
+        "merit": 30,
+        "credits": 25
+      }
+    },
+    {
+      "id": "exp_gather_02_huyen_thiet_khoang",
+      "template_key": "gather_iron_ore_resupply",
+      "name": "[Thu Thập] Khai Thác 2 Quặng Huyền Thiết Đúc Khí Giới",
+      "kind": "GATHERING",
+      "origin_zone_id": "zone_u_minh_truc_lam",
+      "origin_place_id": "place_truc_lam_dich_tram",
+      "destination_zone_id": "zone_u_minh_truc_lam",
+      "input": {
+        "item_id": "item_huyen_thiet_khoang",
+        "item_name": "Huyền Thiết Khoáng",
+        "quantity": 2
+      },
+      "min_realm": "LUYEN_KHI_1",
+      "min_level": 2,
+      "min_rank": "COPPER",
+      "summary": "Đến các mỏ khoáng thạch tại U Minh Trúc Lâm khai thác 2 thỏi Huyền Thiết Khoáng giao nộp Tiêu Cục.",
+      "briefing_lines": [
+        "Lò rèn chi nhánh đang cần quặng sắt đen để tôi rèn cọc tiêu và mũi tên bảo tiêu.",
+        "Hãy vác búa vào mỏ khoáng khai thác 2 khối Huyền Thiết đem về.",
+        "Công việc nặng nhọc nhưng công trạng được tính rất hậu hĩnh!"
+      ],
+      "turnin_lines": [
+        "Thợ rèn gõ keng một tiếng lên quặng sắt, mắt sáng rực:",
+        "Quặng đặc, hàm lượng kim loại cực cao!",
+        "Thanh tiêu kiếm này chắc chắn sẽ sắc bén vô cùng. Nhận thù lao đi đạo hữu!"
+      ],
+      "rewards": {
+        "silver": 140,
+        "exp": 220,
+        "cultivation": 80,
+        "merit": 60,
+        "credits": 45
+      }
+    },
+    {
+      "id": "exp_gather_03_tinh_thiet_hac_phong",
+      "template_key": "gather_high_iron_cliff",
+      "name": "[Thu Thập] Khai Thác 2 Khối Quặng Quý Hắc Phong",
+      "kind": "GATHERING",
+      "origin_zone_id": "zone_hac_phong_nhai",
+      "origin_place_id": "place_hac_phong_cuong_bao",
+      "destination_zone_id": "zone_hac_phong_nhai",
+      "input": {
+        "item_id": "item_huyen_thiet_khoang",
+        "item_name": "Huyền Thiết Khoáng",
+        "quantity": 4
+      },
+      "min_realm": "LUYEN_KHI_2",
+      "min_level": 3,
+      "min_rank": "SILVER",
+      "summary": "Thu gom 4 khối quặng sắt cao cấp để củng cố phòng tuyến Hắc Phong Cương Bảo.",
+      "briefing_lines": [
+        "Gió lạnh trên nhai bích làm mòn vẹt khí giới bảo tiêu.",
+        "Tiêu Cục cần gấp 4 khối Huyền Thiết để gia cố khiên giáp tiền tuyến.",
+        "Hãy tận dụng ngộ tính và thể lực tìm các mạch khoáng phong phú nhất!"
+      ],
+      "turnin_lines": [
+        "Tổng Tiêu Đầu tiếp nhận số quặng sắt nặng trịch:",
+        "Đủ số lượng củng cố tường luỹ trước đợt tấn công của yêu thú!",
+        "Chiến công này sẽ được ghi vào sổ vàng vinh danh Tiêu Sư xuất sắc."
+      ],
+      "rewards": {
+        "silver": 260,
+        "exp": 380,
+        "cultivation": 160,
+        "merit": 110,
+        "credits": 80,
+        "items": [
+          { "item_id": "item_bach_luyen_tinh_thiet", "quantity": 1 }
+        ]
+      }
+    },
+    {
+      "id": "exp_event_01_thao_duoc_ky_ngo",
+      "template_key": "event_herb_investigation",
+      "name": "[Điều Tra] Thám Thính Kỳ Dị Linh Khí Bờ Sông Thanh Hà",
+      "kind": "EVENT",
+      "origin_zone_id": "zone_thanh_ha_thon",
+      "origin_place_id": "place_thanh_ha_tieu_cuc",
+      "destination_zone_id": "zone_thanh_ha_thon",
+      "event_target_id": "event_linh_duoc_ven_song",
+      "min_realm": "PHAM_NHAN",
+      "min_level": 1,
+      "min_rank": "ASSOCIATE",
+      "summary": "Thám hiểm bờ sông Thanh Hà, tìm kiếm và giải quyết sự kiện kỳ ngộ Linh Dược Ven Sông đem báo cáo về Tiêu Cục.",
+      "briefing_lines": [
+        "Người chài lưới báo cáo thấy ánh sáng xanh biếc lập lòe nơi bờ lau sậy.",
+        "Nghi ngờ có dị thảo nở hoa hoặc tàn hồn dị thú ẩn náu.",
+        "Hãy bước ra thám hiểm quanh sông, tiếp cận và xem xét sự tình!"
+      ],
+      "turnin_lines": [
+        "Tiêu Đầu nghe xong bản báo cáo tỉ mỉ của ngươi:",
+        "Ngươi xử lý tình huống rất đỗi khôn khéo và thấu tình đạt lý.",
+        "Một tiêu sư giỏi không chỉ biết vung kiếm mà còn phải biết ứng biến nhân quả!"
+      ],
+      "rewards": {
+        "silver": 100,
+        "exp": 160,
+        "cultivation": 60,
+        "merit": 50,
+        "credits": 35
+      }
+    },
+    {
+      "id": "exp_event_02_tan_tich_truc_lam",
+      "template_key": "event_ruins_investigation",
+      "name": "[Điều Tra] Khảo Sát Phế Tích Cổ Miếu Rừng Trúc",
+      "kind": "EVENT",
+      "origin_zone_id": "zone_u_minh_truc_lam",
+      "origin_place_id": "place_truc_lam_dich_tram",
+      "destination_zone_id": "zone_u_minh_truc_lam",
+      "event_target_id": "event_co_mieu_tan_tich",
+      "min_realm": "LUYEN_KHI_1",
+      "min_level": 2,
+      "min_rank": "COPPER",
+      "summary": "Tiến sâu vào Rừng Trúc U Minh, giải mã kỳ ngộ bí ẩn tại Phế Tích Cổ Miếu và nộp bản đồ khảo sát.",
+      "briefing_lines": [
+        "Ngôi cổ miếu hoang phế giữa rừng trúc đêm đêm phát ra tiếng tụng kinh quỷ dị.",
+        "Nhiều đoàn tiêu đi ngang qua đều hoa mắt chóng mặt suýt lạc lối.",
+        "Tiêu Cục cần ngươi trực tiếp thám hiểm điều tra thực hư nơi này!"
+      ],
+      "turnin_lines": [
+        "Dịch Thừa thở phào nhẹ nhõm khi xem xong sơ đồ trận pháp ngươi giải mã:",
+        "Hóa ra là trận pháp tiền nhân để lại chứ không phải ma đầu thức giấc.",
+        "Từ nay các đoàn áp tiêu có thể an tâm đi qua cung đường này rồi!"
+      ],
+      "rewards": {
+        "silver": 200,
+        "exp": 320,
+        "cultivation": 130,
+        "merit": 85,
+        "credits": 65,
+        "items": [
+          { "item_id": "item_duong_khi_dan", "quantity": 1 }
+        ]
+      }
+    },
+    {
+      "id": "exp_event_03_bi_canh_hac_phong",
+      "template_key": "event_cliff_secret_realm",
+      "name": "[Điều Tra] Giải Mã Tàn Tích Tiền Nhân Hắc Phong Nhai",
+      "kind": "EVENT",
+      "origin_zone_id": "zone_hac_phong_nhai",
+      "origin_place_id": "place_hac_phong_cuong_bao",
+      "destination_zone_id": "zone_hac_phong_nhai",
+      "event_target_id": "event_hac_phong_duong_bao",
+      "min_realm": "LUYEN_KHI_2",
+      "min_level": 3,
+      "min_rank": "SILVER",
+      "summary": "Thám hiểm vách đá Hắc Phong, đương đầu với cuồng phong bão táp và giải mã tàn tích tiên nhân.",
+      "briefing_lines": [
+        "Dị tượng mây đen cuồn cuộn trên vách Hắc Phong báo hiệu cơ duyên lớn.",
+        "Tiêu Cục treo giải thưởng tối cao cho ai đủ bản lĩnh leo lên nhai bích thám sát.",
+        "Đạo tâm vững vàng, sống sót trở về sẽ được suy tôn hàng đầu tiêu môn!"
+      ],
+      "turnin_lines": [
+        "Toàn thể tiêu sư tại Cương Bảo đứng dậy vỗ tay vang dội khi ngươi trở về:",
+        "Anh hùng xuất thiếu niên! Vượt qua cuồng phong bão táp đem về bí mật của tiền nhân.",
+        "Phần thưởng danh dự này thuộc về ngươi, xứng đáng là Kim Bài Tiêu Sư tương lai!"
+      ],
+      "rewards": {
+        "silver": 450,
+        "exp": 700,
+        "cultivation": 300,
+        "merit": 180,
+        "credits": 140,
+        "items": [
+          { "item_id": "item_bach_luyen_tinh_thiet", "quantity": 2 },
+          { "item_id": "item_than_hanh_phu", "quantity": 1 }
+        ]
+      }
+    }
+  ]
+}

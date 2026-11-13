@@ -1,0 +1,1 @@
+var e=`/icons/icon_coin_small.png`;export{e as t};

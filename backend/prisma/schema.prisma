@@ -23,6 +23,19 @@ model User {
   matches_as_white Match[] @relation("PlayerWhite")
   matches_as_black Match[] @relation("PlayerBlack")
 
+<<<<<<< Updated upstream
+=======
+  // Cờ Thế Relations
+  created_puzzles   Puzzle[]             @relation("UserCreatedPuzzles")
+  puzzle_progresses UserPuzzleProgress[]
+  puzzle_rewards    PuzzleRewardLog[]
+  puzzle_defeats    PuzzleDefeatLog[]
+  puzzle_sessions   PuzzleSession[]
+
+  // Tiên Lộ Tu Tiên Relations
+  xianxia_character XianxiaCharacter?
+
+>>>>>>> Stashed changes
   @@map("users")
 }
 
@@ -41,3 +54,557 @@ model Match {
 
   @@map("matches")
 }
+<<<<<<< Updated upstream
+=======
+
+enum PuzzleTier {
+  EASY
+  MEDIUM
+  HARD
+  UGC
+}
+
+enum PuzzleStatus {
+  DRAFT
+  VERIFIED
+  PUBLISHED
+  HIDDEN
+}
+
+enum PuzzlePlayMode {
+  TRADITIONAL
+  KYBIEN_SPELL
+}
+
+enum PuzzleSessionType {
+  PRACTICE
+  RANKED
+}
+
+enum SessionStatus {
+  ACTIVE
+  WON
+  DEFEATED
+  EXPIRED
+}
+
+model Puzzle {
+  id             Int          @id @default(autoincrement())
+  tier           PuzzleTier   @default(EASY)
+  order_index    Int?
+  title          String       @db.VarChar(150)
+  fen            String       @db.VarChar(150)
+  solution_tree  String       @db.Text // JSON Solution DAG / Move Tree
+  description    String?      @db.VarChar(255)
+  constraints    String?      @db.Text // JSON Challenge Constraints (max_moves, forbidden_pieces, etc.)
+  status         PuzzleStatus @default(PUBLISHED)
+  creator_id     Int?
+  is_daily       Boolean      @default(false)
+  daily_date     DateTime?    @db.Date
+  play_count     Int          @default(0)
+  defeat_count   Int          @default(0)
+  upvote_count   Int          @default(0)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+
+  creator     User?                @relation("UserCreatedPuzzles", fields: [creator_id], references: [id], onDelete: SetNull)
+  progresses  UserPuzzleProgress[]
+  defeat_logs PuzzleDefeatLog[]
+  reward_logs PuzzleRewardLog[]
+  sessions    PuzzleSession[]
+
+  @@unique([tier, order_index])
+  @@index([status, tier])
+  @@index([is_daily, daily_date])
+  @@map("puzzles")
+}
+
+model UserPuzzleProgress {
+  id              Int            @id @default(autoincrement())
+  user_id         Int
+  puzzle_id       Int
+  mode            PuzzlePlayMode @default(TRADITIONAL)
+  is_solved       Boolean        @default(false)
+  attempts        Int            @default(1)
+  best_time_sec   Int?
+  spells_used     Int            @default(0)
+  first_solved_at DateTime?
+  updated_at      DateTime       @updatedAt
+
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  puzzle Puzzle @relation(fields: [puzzle_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, puzzle_id, mode])
+  @@index([user_id, is_solved])
+  @@map("user_puzzle_progress")
+}
+
+model PuzzleRewardLog {
+  id         String         @id @default(uuid()) @db.Uuid
+  user_id    Int
+  puzzle_id  Int
+  mode       PuzzlePlayMode
+  reward_key String         @unique @db.VarChar(100) // Khóa chặn cộng trùng: "FIRST_CLEAR:100:3:TRADITIONAL" hoặc "DAILY:100:2026-10-17"
+  exp_amount Int
+  created_at DateTime       @default(now())
+
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  puzzle Puzzle @relation(fields: [puzzle_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, mode])
+  @@map("puzzle_reward_logs")
+}
+
+model PuzzleDefeatLog {
+  id           Int      @id @default(autoincrement())
+  puzzle_id    Int
+  solver_id    Int
+  ip_hash      String   @db.VarChar(64) // Băm SHA-256 ẩn danh
+  duration_sec Int
+  moves_count  Int
+  exp_granted  Int      @default(0)
+  created_at   DateTime @default(now())
+
+  puzzle Puzzle @relation(fields: [puzzle_id], references: [id], onDelete: Cascade)
+  solver User   @relation(fields: [solver_id], references: [id], onDelete: Cascade)
+
+  @@unique([puzzle_id, solver_id])
+  @@index([created_at])
+  @@map("puzzle_defeat_logs")
+}
+
+model PuzzleSession {
+  id           String            @id @default(uuid()) @db.Uuid
+  user_id      Int?
+  puzzle_id    Int
+  mode         PuzzlePlayMode    @default(TRADITIONAL)
+  session_type PuzzleSessionType @default(RANKED)
+  current_fen  String            @db.VarChar(150)
+  move_history String            @db.Text // JSON string array các nước đi UCI
+  status       SessionStatus     @default(ACTIVE)
+  expires_at   DateTime
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+
+  user   User?  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  puzzle Puzzle @relation(fields: [puzzle_id], references: [id], onDelete: Cascade)
+
+  @@index([expires_at])
+  @@index([user_id, status])
+  @@map("puzzle_sessions")
+}
+
+// ==========================================
+// TIÊN LỘ TU TIÊN (XIANXIA CORE GAMEPLAY MODELS)
+// ==========================================
+
+model XianxiaCharacter {
+  id                   Int       @id @default(autoincrement())
+  user_id              Int       @unique
+  name                 String    @db.VarChar(50)
+  linh_can             String    @default("THIEN_LINH_CAN") @db.VarChar(50)
+  origin               String    @default("TAN_TU") @db.VarChar(50)
+  realm                String    @default("PHAM_NHAN") @db.VarChar(50)
+  level                Int       @default(1)
+  exp                  Int       @default(0)
+  exp_required         Int       @default(100)
+  cultivation          Int       @default(0)
+  cultivation_required Int       @default(100)
+  health               Int       @default(120)
+  max_health           Int       @default(120)
+  fatigue              Int       @default(100)
+  max_fatigue          Int       @default(100)
+  physique             Int       @default(12)
+  comprehension        Int       @default(14)
+  luck                 Int       @default(10)
+  karma                Int       @default(0)
+  silver               Int       @default(100)
+  stat_points          Int       @default(0)
+  current_zone         String    @default("zone_thanh_ha_thon") @db.VarChar(60)
+  current_place        String    @default("place_dong_phu_tan_tu") @db.VarChar(60)
+  last_meditate        DateTime?
+  equipped_weapon      String?   @db.VarChar(60)
+  equipped_armor       String?   @db.VarChar(60)
+  equipped_relic       String?   @db.VarChar(60)
+  reputation           Int       @default(100)
+  pvp_wins             Int       @default(0)
+  pvp_losses           Int       @default(0)
+  pvp_draws            Int       @default(0)
+  created_at           DateTime  @default(now())
+  updated_at           DateTime  @updatedAt
+
+  user                    User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  inventory               XianxiaInventoryItem[]
+  battle_logs             XianxiaBattleLog[]
+  quest_progress          XianxiaQuestProgress[]
+  pvp_matches_as_attacker XianxiaPvpMatch[]       @relation("AttackerMatches")
+  pvp_matches_as_defender XianxiaPvpMatch[]       @relation("DefenderMatches")
+  chat_messages           XianxiaChatMessage[]
+  guild_led               XianxiaGuild?           @relation("GuildLeader")
+  guild_membership        XianxiaGuildMember?
+  guild_applications      XianxiaGuildApplication[]
+  party_led               XianxiaParty[]          @relation("PartyLeader")
+  party_membership        XianxiaPartyMember?
+  sent_party_invites      XianxiaPartyInvite[]    @relation("SentPartyInvites")
+  received_party_invites  XianxiaPartyInvite[]    @relation("ReceivedPartyInvites")
+  dungeon_memberships     XianxiaDungeonMember[]
+  dungeon_reward_claims   XianxiaDungeonRewardClaim[]
+  world_boss_damages       XianxiaWorldBossDamage[]
+  world_boss_reward_claims XianxiaWorldBossRewardClaim[]
+  world_bosses_killed      XianxiaWorldBoss[]            @relation("WorldBossKiller")
+
+  @@map("xianxia_characters")
+}
+
+model XianxiaInventoryItem {
+  id           Int      @id @default(autoincrement())
+  character_id Int
+  item_id      String   @db.VarChar(60)
+  quantity     Int      @default(1)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  character XianxiaCharacter @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@unique([character_id, item_id])
+  @@index([character_id])
+  @@map("xianxia_inventory_items")
+}
+
+model XianxiaBattleLog {
+  id              String   @id @default(uuid()) @db.Uuid
+  character_id    Int
+  idempotency_key String?  @unique @db.VarChar(100)
+  monster_id      String   @db.VarChar(60)
+  monster_name    String   @db.VarChar(100)
+  result          String   @db.VarChar(30)
+  turns_count     Int
+  exp_gained      Int      @default(0)
+  cultivation_gained Int   @default(0)
+  silver_gained   Int      @default(0)
+  damage_dealt    Int      @default(0)
+  items_gained    String?  @db.Text
+  combat_log      String   @db.Text
+  created_at      DateTime @default(now())
+
+  character XianxiaCharacter @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@index([character_id, created_at])
+  @@map("xianxia_battle_logs")
+}
+
+model XianxiaQuestProgress {
+  id            Int       @id @default(autoincrement())
+  character_id  Int
+  quest_id      String    @db.VarChar(60)
+  status        String    @default("IN_PROGRESS") @db.VarChar(30)
+  progress_data String?   @db.Text
+  completed_at  DateTime?
+
+  character XianxiaCharacter @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@unique([character_id, quest_id])
+  @@index([character_id])
+  @@map("xianxia_quest_progresses")
+}
+
+model XianxiaPvpMatch {
+  id                        String   @id @default(uuid()) @db.Uuid
+  idempotency_key           String?  @unique @db.VarChar(100)
+  attacker_id               Int
+  defender_id               Int
+  defender_snapshot         String   @db.Text
+  result                    String   @db.VarChar(30) // 'ATTACKER_WIN', 'DEFENDER_WIN', 'DRAW_ADVANTAGE', 'DRAW_TIMEOUT'
+  turns_count               Int
+  reputation_change         Int      @default(0)
+  attacker_reputation_after Int      @default(100)
+  silver_reward             Int      @default(0)
+  is_reward_eligible        Boolean  @default(true)
+  combat_log                String   @db.Text
+  playback_turns            String   @db.Text
+  created_at                DateTime @default(now())
+
+  attacker XianxiaCharacter @relation("AttackerMatches", fields: [attacker_id], references: [id], onDelete: Cascade)
+  defender XianxiaCharacter @relation("DefenderMatches", fields: [defender_id], references: [id], onDelete: Cascade)
+
+  @@index([attacker_id, created_at])
+  @@index([defender_id, created_at])
+  @@index([attacker_id, defender_id, created_at])
+  @@map("xianxia_pvp_matches")
+}
+
+model XianxiaChatMessage {
+  id                  Int      @id @default(autoincrement())
+  channel             String   @db.VarChar(20) // 'WORLD' | 'ZONE' | 'GUILD'
+  zone_id             String?  @db.VarChar(60) // NULL nếu là WORLD/GUILD, có giá trị nếu là ZONE
+  guild_id            Int?                      // NULL nếu là WORLD/ZONE, có giá trị nếu là GUILD
+  sender_user_id      Int
+  sender_character_id Int
+  sender_name         String   @db.VarChar(50)
+  sender_realm        String   @db.VarChar(50)
+  content             String   @db.VarChar(500)
+  created_at          DateTime @default(now())
+
+  sender_character XianxiaCharacter @relation(fields: [sender_character_id], references: [id], onDelete: Cascade)
+  guild            XianxiaGuild?     @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+
+  @@index([channel, zone_id, created_at])
+  @@index([channel, guild_id, created_at])
+  @@index([created_at])
+  @@map("xianxia_chat_messages")
+}
+
+// ==========================================
+// M4.3.2: BANG HỘI / TÔNG MÔN TU TIÊN (SECTS)
+// ==========================================
+
+model XianxiaGuild {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique @db.VarChar(50)  // Tên Tông môn duy nhất trên toàn cõi
+  description  String?  @db.VarChar(255)         // Tôn chỉ / Giới thiệu Tông môn
+  notice       String?  @db.VarChar(500)         // Lời răn / Bảng cáo thị nội bộ
+  leader_id    Int      @unique                  // ID nhân vật Chưởng môn (duy nhất)
+  level        Int      @default(1)              // Cấp độ Tông môn
+  reputation   Int      @default(0)              // Danh vọng Tông môn
+  member_count Int      @default(1)              // Số lượng thành viên hiện tại
+  max_members  Int      @default(20)             // Giới hạn số lượng thành viên tối đa
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  leader        XianxiaCharacter          @relation("GuildLeader", fields: [leader_id], references: [id], onDelete: Restrict)
+  members       XianxiaGuildMember[]
+  applications  XianxiaGuildApplication[]
+  chat_messages XianxiaChatMessage[]
+
+  @@index([reputation])
+  @@index([created_at])
+  @@map("xianxia_guilds")
+}
+
+model XianxiaGuildMember {
+  id           Int      @id @default(autoincrement())
+  guild_id     Int
+  character_id Int      @unique                  // ĐẢM BẢO 1 NHÂN VẬT CHỈ THUỘC 1 TÔNG MÔN TRÊN CẢ TOÀN BỘ DATABASE
+  role         String   @default("MEMBER") @db.VarChar(20) // 'LEADER' (Chưởng Môn) | 'ELDER' (Trưởng Lão) | 'MEMBER' (Đệ Tử)
+  joined_at    DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  guild     XianxiaGuild     @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  character XianxiaCharacter @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@index([guild_id, role])
+  @@map("xianxia_guild_members")
+}
+
+model XianxiaGuildApplication {
+  id           Int      @id @default(autoincrement())
+  guild_id     Int
+  character_id Int
+  status       String   @default("PENDING") @db.VarChar(20) // 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED'
+  message      String?  @db.VarChar(200)                    // Lời bái kiến gia nhập
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  guild     XianxiaGuild     @relation(fields: [guild_id], references: [id], onDelete: Cascade)
+  character XianxiaCharacter @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@unique([guild_id, character_id, status]) // Chặn nộp nhiều đơn PENDING cùng lúc vào 1 Tông môn
+  @@index([guild_id, status])
+  @@index([character_id, status])
+  @@map("xianxia_guild_applications")
+}
+
+// ==========================================
+// M4.3.3A: TỔ ĐỘI TU TIÊN (XIANXIA PARTY SYSTEM)
+// ==========================================
+
+model XianxiaParty {
+  id           Int      @id @default(autoincrement())
+  leader_id    Int                                // ID nhân vật Đội Trưởng
+  name         String   @db.VarChar(50)          // Tên Tổ Đội
+  status       String   @default("FORMING") @db.VarChar(20) // 'FORMING' | 'IN_DUNGEON' | 'DISBANDED'
+  max_members  Int      @default(4)              // Giới hạn 4 người tối đa (kể cả đội trưởng)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  leader       XianxiaCharacter     @relation("PartyLeader", fields: [leader_id], references: [id], onDelete: Restrict)
+  members      XianxiaPartyMember[]
+  invites      XianxiaPartyInvite[]
+  dungeon_runs XianxiaDungeonRun[]
+
+  @@index([leader_id])
+  @@index([status])
+  @@map("xianxia_parties")
+}
+
+model XianxiaPartyMember {
+  id           Int      @id @default(autoincrement())
+  party_id     Int
+  character_id Int      @unique                  // ĐẢM BẢO 1 NHÂN VẬT CHỈ THUỘC TỐI ĐA 1 TỔ ĐỘI TRÊN TOÀN CÕI DATABASE
+  role         String   @default("MEMBER") @db.VarChar(20) // 'LEADER' | 'MEMBER'
+  is_ready     Boolean  @default(false)
+  joined_at    DateTime @default(now())
+
+  party     XianxiaParty     @relation(fields: [party_id], references: [id], onDelete: Cascade)
+  character XianxiaCharacter @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@index([party_id, role])
+  @@map("xianxia_party_members")
+}
+
+model XianxiaPartyInvite {
+  id           Int      @id @default(autoincrement())
+  party_id     Int
+  inviter_id   Int                                // ID nhân vật người mời (Đội trưởng)
+  invitee_id   Int                                // ID nhân vật người nhận lời mời
+  status       String   @default("PENDING") @db.VarChar(20) // 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED' | 'CANCELLED'
+  expires_at   DateTime                           // Thời điểm hết hạn (2 phút sau khi tạo)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  party   XianxiaParty     @relation(fields: [party_id], references: [id], onDelete: Cascade)
+  inviter XianxiaCharacter @relation("SentPartyInvites", fields: [inviter_id], references: [id], onDelete: Cascade)
+  invitee XianxiaCharacter @relation("ReceivedPartyInvites", fields: [invitee_id], references: [id], onDelete: Cascade)
+
+  @@index([invitee_id, status])
+  @@index([party_id, status])
+  @@map("xianxia_party_invites")
+}
+
+// ==========================================
+// M4.3.3B: PHÓ BẢN CO-OP PVE (XIANXIA DUNGEON SYSTEM)
+// ==========================================
+
+model XianxiaDungeonRun {
+  id                  String   @id @default(uuid()) @db.Uuid
+  dungeon_id          String   @db.VarChar(60)       // 'dungeon_u_minh_co_dong'
+  party_id            Int
+  leader_character_id Int                            // Character ID của Đội Trưởng khi tạo run
+  status              String   @default("IN_PROGRESS") @db.VarChar(20) // 'WAITING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'EXPIRED'
+  current_wave        Int      @default(1)
+  total_waves         Int      @default(3)
+  turns_count         Int      @default(0)
+  version             Int      @default(1)          // Optimistic Concurrency Control (Version lock chống race condition trên combat-step)
+  combat_state        String?  @db.Text             // Snapshot JSON: Monster HPs, Player HPs, active turn order
+  combat_log          String?  @db.Text             // JSON Array: Lịch sử diễn biến hiệp đấu
+  idempotency_key     String?  @unique @db.VarChar(100) // Scoped key: 'dungeon:enter:p{partyId}:{rawKey}'
+  started_at          DateTime @default(now())
+  expires_at          DateTime                      // Thời điểm hết hạn phiên (started_at + 15 phút)
+  completed_at        DateTime?
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  party               XianxiaParty                 @relation(fields: [party_id], references: [id], onDelete: Cascade)
+  members             XianxiaDungeonMember[]
+  reward_claims       XianxiaDungeonRewardClaim[]
+
+  @@index([party_id, status])
+  @@index([status, expires_at])
+  @@map("xianxia_dungeon_runs")
+}
+
+model XianxiaDungeonMember {
+  id             Int      @id @default(autoincrement())
+  dungeon_run_id String   @db.Uuid
+  character_id   Int
+  initial_hp     Int
+  current_hp     Int
+  max_hp         Int
+  current_qi     Int      @default(25)
+  damage_dealt   Int      @default(0)
+  damage_taken   Int      @default(0)
+  is_alive       Boolean  @default(true)
+  is_connected   Boolean  @default(true)
+  last_seen_at   DateTime @default(now())
+
+  dungeon_run    XianxiaDungeonRun @relation(fields: [dungeon_run_id], references: [id], onDelete: Cascade)
+  character      XianxiaCharacter  @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@unique([dungeon_run_id, character_id])
+  @@index([dungeon_run_id])
+  @@map("xianxia_dungeon_members")
+}
+
+model XianxiaDungeonRewardClaim {
+  id                 String   @id @default(uuid()) @db.Uuid
+  dungeon_run_id     String   @db.Uuid
+  character_id       Int
+  idempotency_key    String   @unique @db.VarChar(100) // Scoped key: 'dungeon:reward:r{runId}:c{characterId}'
+  exp_reward         Int      @default(0)
+  cultivation_reward Int      @default(0)
+  silver_reward      Int      @default(0)
+  items_reward       String?  @db.Text                // JSON DroppedItem[]
+  claimed_at         DateTime @default(now())
+
+  dungeon_run        XianxiaDungeonRun @relation(fields: [dungeon_run_id], references: [id], onDelete: Cascade)
+  character          XianxiaCharacter  @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@unique([dungeon_run_id, character_id])          // RÀNG BUỘC KÉP CSDL: 1 nhân vật chỉ nhận thưởng tối đa 1 lần / run
+  @@map("xianxia_dungeon_reward_claims")
+}
+
+// ==========================================
+// M4.4: TOÀN DÂN TRẢM MA (WORLD BOSS REALTIME)
+// ==========================================
+
+model XianxiaWorldBoss {
+  id                  String   @id @default(uuid()) @db.Uuid
+  boss_id             String   @db.VarChar(60)                 // 'boss_xich_diem_ma_long'
+  name                String   @db.VarChar(80)                 // 'Xích Diễm Ma Long'
+  level               Int      @default(50)
+  max_hp              Int                                      // 10,000,000 HP
+  current_hp          Int                                      // Máu còn lại
+  status              String   @default("UPCOMING") @db.VarChar(20) // 'UPCOMING' | 'ACTIVE' | 'DEFEATED' | 'ESCAPED'
+  started_at          DateTime @default(now())
+  ends_at             DateTime                                 // Thời điểm kết thúc (ví dụ: started_at + 30 phút)
+  defeated_at         DateTime?
+  killer_character_id Int?
+  version             Int      @default(1)                     // Optimistic Concurrency Control
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  killer              XianxiaCharacter?             @relation("WorldBossKiller", fields: [killer_character_id], references: [id], onDelete: SetNull)
+  damages             XianxiaWorldBossDamage[]
+  reward_claims       XianxiaWorldBossRewardClaim[]
+
+  @@index([status, ends_at])
+  @@map("xianxia_world_bosses")
+}
+
+model XianxiaWorldBossDamage {
+  id               Int      @id @default(autoincrement())
+  boss_instance_id String   @db.Uuid
+  character_id     Int
+  damage_dealt     Int      @default(0)                      // Tổng sát thương tích lũy
+  attack_count     Int      @default(0)                      // Số lần xuất chiêu
+  last_attack_at   DateTime @default(now())
+
+  boss_instance    XianxiaWorldBoss @relation(fields: [boss_instance_id], references: [id], onDelete: Cascade)
+  character        XianxiaCharacter @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@unique([boss_instance_id, character_id])                 // 1 nhân vật có đúng 1 bản ghi sát thương trên 1 boss
+  @@index([boss_instance_id, damage_dealt])                   // Tối ưu hóa truy vấn Bảng Xếp Hạng Top 10
+  @@map("xianxia_world_boss_damages")
+}
+
+model XianxiaWorldBossRewardClaim {
+  id                 String   @id @default(uuid()) @db.Uuid
+  boss_instance_id   String   @db.Uuid
+  character_id       Int
+  rank               Int?                                      // Thứ hạng sát thương
+  is_killer          Boolean  @default(false)                  // Có phải đòn kết liễu
+  silver_reward      Int      @default(0)
+  exp_reward         Int      @default(0)
+  cultivation_reward Int      @default(0)
+  items_reward       String?  @db.Text                         // JSON danh sách vật phẩm
+  idempotency_key    String   @unique @db.VarChar(100)         // Scoped key: 'worldboss:reward:b{bossId}:c{charId}'
+  claimed_at         DateTime @default(now())
+
+  boss_instance      XianxiaWorldBoss @relation(fields: [boss_instance_id], references: [id], onDelete: Cascade)
+  character          XianxiaCharacter @relation(fields: [character_id], references: [id], onDelete: Cascade)
+
+  @@unique([boss_instance_id, character_id])                 // RÀNG BUỘC KÉP: Mỗi nhân vật chỉ nhận thưởng duy nhất 1 lần
+  @@map("xianxia_world_boss_reward_claims")
+}
+
+>>>>>>> Stashed changes

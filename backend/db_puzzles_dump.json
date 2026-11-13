@@ -1,0 +1,1268 @@
+[
+  {
+    "id": 1,
+    "order_index": 1,
+    "title": "Mã Đơn Khống Tướng",
+    "fen": "5k3/5n3/N8/9/9/9/9/9/9/5K3 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 315,
+    "solution_tree_parsed": {
+      "root_fen": "5k3/5n3/N8/9/9/9/9/9/9/5K3 w - - 0 1",
+      "branches": [
+        {
+          "move": "a7c8",
+          "is_correct": true,
+          "is_win": true,
+          "win_comment": "Sát cục thần tốc! Tuyệt kỹ phá thế tại Ải #1 thành công!"
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "a7b9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi không phải sát thủ quyết định. Đại hiệp đã thất thủ!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "order_index": 2,
+    "title": "Pháo Giác Mượn Sĩ",
+    "fen": "3ak4/4a4/4c4/7C1/9/9/9/9/9/5K3 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 319,
+    "solution_tree_parsed": {
+      "root_fen": "3ak4/4a4/4c4/7C1/9/9/9/9/9/5K3 w - - 0 1",
+      "branches": [
+        {
+          "move": "h6e6",
+          "is_correct": true,
+          "is_win": true,
+          "win_comment": "Sát cục thần tốc! Tuyệt kỹ phá thế tại Ải #2 thành công!"
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "h6h9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi không phải sát thủ quyết định. Đại hiệp đã thất thủ!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "order_index": 3,
+    "title": "Thí Xe Đoạt Sĩ",
+    "fen": "3akab2/9/4c1N1n/9/9/9/5R3/1r2BA3/4Apr2/4K1B2 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 333,
+    "solution_tree_parsed": {
+      "root_fen": "3akab2/9/4c1N1n/9/9/9/5R3/1r2BA3/4Apr2/4K1B2 w - - 0 1",
+      "branches": [
+        {
+          "move": "f3f9",
+          "is_correct": true,
+          "is_win": true,
+          "win_comment": "Sát cục thần tốc! Tuyệt kỹ phá thế tại Ải #3 thành công!"
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "g7f9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi không phải sát thủ quyết định. Đại hiệp đã thất thủ!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 4,
+    "order_index": 4,
+    "title": "Điệp Mã Chiếu Rút",
+    "fen": "CN1ak4/4a4/4b4/9/9/9/9/4B4/3rA1r2/4KAB1c w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 329,
+    "solution_tree_parsed": {
+      "root_fen": "CN1ak4/4a4/4b4/9/9/9/9/4B4/3rA1r2/4KAB1c w - - 0 1",
+      "branches": [
+        {
+          "move": "b9d8",
+          "is_correct": true,
+          "is_win": true,
+          "win_comment": "Sát cục thần tốc! Tuyệt kỹ phá thế tại Ải #4 thành công!"
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "a9d9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi không phải sát thủ quyết định. Đại hiệp đã thất thủ!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 5,
+    "order_index": 5,
+    "title": "Song Mã Ẩm Tuyền",
+    "fen": "3k5/9/9/2N6/2N6/9/9/9/3p1r3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 462,
+    "solution_tree_parsed": {
+      "root_fen": "3k5/9/9/2N6/2N6/9/9/9/3p1r3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "c6b8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "d9d8",
+              "reply_fen": "9/1N1k5/9/9/2N6/9/9/9/3p1r3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "c5b7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #5!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "c6d8",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 6,
+    "order_index": 6,
+    "title": "Song Xe Kẹp Nách",
+    "fen": "4k4/3RaR3/6n2/9/9/9/9/5p3/4pr3/3K5 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 687,
+    "solution_tree_parsed": {
+      "root_fen": "4k4/3RaR3/6n2/9/9/9/9/5p3/4pr3/3K5 w - - 0 1",
+      "branches": [
+        {
+          "move": "f8e8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e9f9",
+              "reply_fen": "5k3/3RR4/6n2/9/9/9/9/5p3/4pr3/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "d8d9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #6!"
+                }
+              ]
+            },
+            {
+              "reply_move": "g7e8",
+              "reply_fen": "4k4/3Rn4/9/9/9/9/9/5p3/4pr3/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "d8d9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #6!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "d8d9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 7,
+    "order_index": 7,
+    "title": "Song Pháo Trùng Thọc Đáy",
+    "fen": "r3kab2/4a4/9/4p4/9/9/4C4/4C4/4pr3/3K5 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 473,
+    "solution_tree_parsed": {
+      "root_fen": "r3kab2/4a4/9/4p4/9/9/4C4/4C4/4pr3/3K5 w - - 0 1",
+      "branches": [
+        {
+          "move": "e2e6",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "g9e7",
+              "reply_fen": "r3ka3/4a4/4b4/4C4/9/9/4C4/9/4pr3/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e3e7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #7!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "e3e8",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 8,
+    "order_index": 8,
+    "title": "Điệp Pháo Kê Đòn",
+    "fen": "5kb2/4a4/4ba2c/9/9/9/4C4/2n4C1/3r1p3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 479,
+    "solution_tree_parsed": {
+      "root_fen": "5kb2/4a4/4ba2c/9/9/9/4C4/2n4C1/3r1p3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "h2h9",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "f9f8",
+              "reply_fen": "6bC1/4ak3/4ba2c/9/9/9/4C4/2n6/3r1p3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e3f3",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #8!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "e3e8",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 9,
+    "order_index": 9,
+    "title": "Song Binh Nhập Cung",
+    "fen": "5k3/4P1P2/5n2b/9/9/5c3/9/9/3r1p3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 469,
+    "solution_tree_parsed": {
+      "root_fen": "5k3/4P1P2/5n2b/9/9/5c3/9/9/3r1p3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "g8f8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "f4f8",
+              "reply_fen": "5k3/4Pc3/5n2b/9/9/9/9/9/3r1p3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e8e9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #9!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "e8e9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 10,
+    "order_index": 10,
+    "title": "Xa Mã Tương Công",
+    "fen": "3ck4/4a1R2/9/9/9/7R1/9/9/3r1p3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 468,
+    "solution_tree_parsed": {
+      "root_fen": "3ck4/4a1R2/9/9/9/7R1/9/9/3r1p3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "g8e8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e9f9",
+              "reply_fen": "3c1k3/4R4/9/9/9/7R1/9/9/3r1p3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "h4f4",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #10!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "g8g9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 11,
+    "order_index": 11,
+    "title": "Bạch Mã Khiêu Khê",
+    "fen": "5kC2/4an3/3a1N3/9/9/9/9/5C3/3r1p3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 476,
+    "solution_tree_parsed": {
+      "root_fen": "5kC2/4an3/3a1N3/9/9/9/9/5C3/3r1p3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "f7h8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "f9e9",
+              "reply_fen": "4k1C2/4an1N1/3a5/9/9/9/9/5C3/3r1p3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "h8f9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #11!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "g9h9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 12,
+    "order_index": 12,
+    "title": "Hỏa Diệm Pháo Đài",
+    "fen": "3a2R2/4ak3/5rN2/7n1/9/9/9/2n6/5r3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 474,
+    "solution_tree_parsed": {
+      "root_fen": "3a2R2/4ak3/5rN2/7n1/9/9/9/2n6/5r3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "g9f9",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e8f9",
+              "reply_fen": "3a1a3/5k3/5rN2/7n1/9/9/9/2n6/5r3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "g7h9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #12!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "g9d9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 13,
+    "order_index": 13,
+    "title": "Đơn Xa Đoạt Mệnh",
+    "fen": "C3k1b2/2R1aR3/4b1n2/9/9/9/r8/6n2/2r2p3/4K3c w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 947,
+    "solution_tree_parsed": {
+      "root_fen": "C3k1b2/2R1aR3/4b1n2/9/9/9/r8/6n2/2r2p3/4K3c w - - 0 1",
+      "branches": [
+        {
+          "move": "f8e8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e9d9",
+              "reply_fen": "C2k2b2/2R1R4/4b1n2/9/9/9/r8/6n2/2r2p3/4K3c w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "c8c9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #13!"
+                }
+              ]
+            },
+            {
+              "reply_move": "e9f9",
+              "reply_fen": "C4kb2/2R1R4/4b1n2/9/9/9/r8/6n2/2r2p3/4K3c w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "c8c9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #13!"
+                }
+              ]
+            },
+            {
+              "reply_move": "g7e8",
+              "reply_fen": "C3k1b2/2R1n4/4b4/9/9/9/r8/6n2/2r2p3/4K3c w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "c8c9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #13!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "a9b9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 14,
+    "order_index": 14,
+    "title": "Kim Thiền Thoát Xác",
+    "fen": "3k1C3/9/5N3/9/9/4n4/9/4C4/3rAp3/4KARrc w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 476,
+    "solution_tree_parsed": {
+      "root_fen": "3k1C3/9/5N3/9/9/4n4/9/4C4/3rAp3/4KARrc w - - 0 1",
+      "branches": [
+        {
+          "move": "f7e9",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "d9d8",
+              "reply_fen": "4NC3/3k5/9/9/9/4n4/9/4C4/3rAp3/4KARrc w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "g0g8",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #14!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "f9e9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 15,
+    "order_index": 15,
+    "title": "Hổ Huyệt Vây Hãm",
+    "fen": "3a2R2/4ak3/5cN2/9/9/9/9/2n6/5r3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 472,
+    "solution_tree_parsed": {
+      "root_fen": "3a2R2/4ak3/5cN2/9/9/9/9/2n6/5r3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "g9g8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "f8f9",
+              "reply_fen": "3a1k3/4a1R2/5cN2/9/9/9/9/2n6/5r3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "g8e8",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #15!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "g9d9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 16,
+    "order_index": 16,
+    "title": "Tiểu Xa Mã Phá Địch",
+    "fen": "3k1n3/2R1c4/3abnN2/9/9/4C4/2R6/9/3pAp3/4KA1rc w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 953,
+    "solution_tree_parsed": {
+      "root_fen": "3k1n3/2R1c4/3abnN2/9/9/4C4/2R6/9/3pAp3/4KA1rc w - - 0 1",
+      "branches": [
+        {
+          "move": "c8d8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "d9e9",
+              "reply_fen": "4kn3/3Rc4/3abnN2/9/9/4C4/2R6/9/3pAp3/4KA1rc w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "c3c9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #16!"
+                }
+              ]
+            },
+            {
+              "reply_move": "d9d8",
+              "reply_fen": "5n3/3kc4/3abnN2/9/9/4C4/2R6/9/3pAp3/4KA1rc w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e4d4",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #16!"
+                }
+              ]
+            },
+            {
+              "reply_move": "f9d8",
+              "reply_fen": "3k5/3nc4/3abnN2/9/9/4C4/2R6/9/3pAp3/4KA1rc w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "c3c9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #16!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "c8c9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 17,
+    "order_index": 17,
+    "title": "Khổng Minh Tá Tiễn",
+    "fen": "3k1c3/2R1a4/3a5/9/9/4C4/9/9/3pAp3/4KA1rc w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 478,
+    "solution_tree_parsed": {
+      "root_fen": "3k1c3/2R1a4/3a5/9/9/4C4/9/9/3pAp3/4KA1rc w - - 0 1",
+      "branches": [
+        {
+          "move": "c8d8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "d9d8",
+              "reply_fen": "5c3/3ka4/3a5/9/9/4C4/9/9/3pAp3/4KA1rc w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e4d4",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #17!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "c8c9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 18,
+    "order_index": 18,
+    "title": "Bát Quái Kỳ Trận",
+    "fen": "2ba1ab2/1R7/4k1n2/6P2/5r3/1N2C4/4p4/6n2/3p5/1r1AK1B2 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 746,
+    "solution_tree_parsed": {
+      "root_fen": "2ba1ab2/1R7/4k1n2/6P2/5r3/1N2C4/4p4/6n2/3p5/1r1AK1B2 w - - 0 1",
+      "branches": [
+        {
+          "move": "b4c6",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e7d7",
+              "reply_fen": "2ba1ab2/1R7/3k2n2/2N3P2/5r3/4C4/4p4/6n2/3p5/1r1AK1B2 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "b8d8",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #18!"
+                }
+              ]
+            },
+            {
+              "reply_move": "e7f7",
+              "reply_fen": "2ba1ab2/1R7/5kn2/2N3P2/5r3/4C4/4p4/6n2/3p5/1r1AK1B2 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "g6g7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #18!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "b8b9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 19,
+    "order_index": 19,
+    "title": "Chinh Đông Khúc Ca",
+    "fen": "2bakab2/4n4/4R4/9/9/4C4/5R3/6n2/3p5/1r1AK1B2 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 487,
+    "solution_tree_parsed": {
+      "root_fen": "2bakab2/4n4/4R4/9/9/4C4/5R3/6n2/3p5/1r1AK1B2 w - - 0 1",
+      "branches": [
+        {
+          "move": "f3f9",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e9f9",
+              "reply_fen": "2ba1kb2/4n4/4R4/9/9/4C4/9/6n2/3p5/1r1AK1B2 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e7f7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #19!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "e7e8",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 20,
+    "order_index": 20,
+    "title": "Chinh Tây Huyết Chiến",
+    "fen": "3ak4/3PaP1N1/9/4n4/9/9/9/6n2/3p5/1r1AK1B2 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 482,
+    "solution_tree_parsed": {
+      "root_fen": "3ak4/3PaP1N1/9/4n4/9/9/9/6n2/3p5/1r1AK1B2 w - - 0 1",
+      "branches": [
+        {
+          "move": "f8f9",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e8f9",
+              "reply_fen": "3aka3/3P3N1/9/4n4/9/9/9/6n2/3p5/1r1AK1B2 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "h8f7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #20!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "d8d9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 21,
+    "order_index": 21,
+    "title": "Pháo Đả Diệp Lang Quan",
+    "fen": "3kn4/2P1a3c/3Pba3/9/9/9/9/4p1n2/4Ar3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 479,
+    "solution_tree_parsed": {
+      "root_fen": "3kn4/2P1a3c/3Pba3/9/9/9/9/4p1n2/4Ar3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "d7d8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "i8d8",
+              "reply_fen": "3kn4/2Pca4/4ba3/9/9/9/9/4p1n2/4Ar3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "c8c9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #21!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "c8c9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 22,
+    "order_index": 22,
+    "title": "Dã Mã Thao Điền",
+    "fen": "5k3/4a4/5a2r/9/r3N4/4R2R1/9/9/3p1p3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 478,
+    "solution_tree_parsed": {
+      "root_fen": "5k3/4a4/5a2r/9/r3N4/4R2R1/9/9/3p1p3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "h4h9",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "f9f8",
+              "reply_fen": "7R1/4ak3/5a2r/9/r3N4/4R4/9/9/3p1p3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e5d7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #22!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "e5d7",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 23,
+    "order_index": 23,
+    "title": "Thất Tinh Tụ Hội",
+    "fen": "2b1ka3/9/n4a3/9/4C4/cCR6/9/9/1r2p4/3K5 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 477,
+    "solution_tree_parsed": {
+      "root_fen": "2b1ka3/9/n4a3/9/4C4/cCR6/9/9/1r2p4/3K5 w - - 0 1",
+      "branches": [
+        {
+          "move": "c4c9",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e9e8",
+              "reply_fen": "2R2a3/4k4/n4a3/9/4C4/cC7/9/9/1r2p4/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "c9e9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #23!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "e5e8",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 24,
+    "order_index": 24,
+    "title": "Đơn Xa Cứu Chủ",
+    "fen": "4k4/4aP3/4b4/9/5Nb2/1R7/9/9/4Ap1r1/3AK3c w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 936,
+    "solution_tree_parsed": {
+      "root_fen": "4k4/4aP3/4b4/9/5Nb2/1R7/9/9/4Ap1r1/3AK3c w - - 0 1",
+      "branches": [
+        {
+          "move": "f8e8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e9d9",
+              "reply_fen": "3k5/4P4/4b4/9/5Nb2/1R7/9/9/4Ap1r1/3AK3c w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "b4b9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #24!"
+                }
+              ]
+            },
+            {
+              "reply_move": "e9f9",
+              "reply_fen": "5k3/4P4/4b4/9/5Nb2/1R7/9/9/4Ap1r1/3AK3c w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "f5g7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #24!"
+                }
+              ]
+            },
+            {
+              "reply_move": "e9e8",
+              "reply_fen": "9/4k4/4b4/9/5Nb2/1R7/9/9/4Ap1r1/3AK3c w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "f5g7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #24!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "f8f9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 25,
+    "order_index": 25,
+    "title": "Thiên La Địa Võng",
+    "fen": "2C1ka3/4a4/9/1N2r4/4C4/9/9/9/4p1p2/5K3 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 477,
+    "solution_tree_parsed": {
+      "root_fen": "2C1ka3/4a4/9/1N2r4/4C4/9/9/9/4p1p2/5K3 w - - 0 1",
+      "branches": [
+        {
+          "move": "b6d7",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e9d9",
+              "reply_fen": "2Ck1a3/4a4/3N5/4r4/4C4/9/9/9/4p1p2/5K3 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e5d5",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #25!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "c9a9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 26,
+    "order_index": 26,
+    "title": "Hàn Băng Thần Chưởng",
+    "fen": "3a5/5k3/5a3/9/2N6/9/9/8C/3r1p3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 693,
+    "solution_tree_parsed": {
+      "root_fen": "3a5/5k3/5a3/9/2N6/9/9/8C/3r1p3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "c5e6",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "f8f9",
+              "reply_fen": "3a1k3/9/5a3/4N4/9/9/9/8C/3r1p3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e6g7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #26!"
+                }
+              ]
+            },
+            {
+              "reply_move": "f8e8",
+              "reply_fen": "3a5/4k4/5a3/4N4/9/9/9/8C/3r1p3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "i2e2",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #26!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "c5b7",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 27,
+    "order_index": 27,
+    "title": "Tả Hữu Khai Cung",
+    "fen": "9/9/3k5/4P4/9/9/1r7/8C/5p3/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 461,
+    "solution_tree_parsed": {
+      "root_fen": "9/9/3k5/4P4/9/9/1r7/8C/5p3/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "e6d6",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "d7d8",
+              "reply_fen": "9/3k5/9/3P5/9/9/1r7/8C/5p3/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "i2d2",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #27!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "e6e7",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 28,
+    "order_index": 28,
+    "title": "Diệp Hạ Tàng Hoa",
+    "fen": "2baka3/1R7/4b4/4R4/4N4/9/9/3p5/2r1p4/3K5 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 937,
+    "solution_tree_parsed": {
+      "root_fen": "2baka3/1R7/4b4/4R4/4N4/9/9/3p5/2r1p4/3K5 w - - 0 1",
+      "branches": [
+        {
+          "move": "e6e7",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "c9e7",
+              "reply_fen": "3aka3/1R7/4b4/9/4N4/9/9/3p5/2r1p4/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e5d7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #28!"
+                }
+              ]
+            },
+            {
+              "reply_move": "d9e8",
+              "reply_fen": "2b1ka3/1R2a4/4R4/9/4N4/9/9/3p5/2r1p4/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e5f7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #28!"
+                }
+              ]
+            },
+            {
+              "reply_move": "f9e8",
+              "reply_fen": "2bak4/1R2a4/4R4/9/4N4/9/9/3p5/2r1p4/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "e5d7",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #28!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "b8b9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 29,
+    "order_index": 29,
+    "title": "Lôi Đình Vạn Quân",
+    "fen": "4ka3/9/5a3/9/9/6CRC/9/9/1r2p4/3K5 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 693,
+    "solution_tree_parsed": {
+      "root_fen": "4ka3/9/5a3/9/9/6CRC/9/9/1r2p4/3K5 w - - 0 1",
+      "branches": [
+        {
+          "move": "g4g9",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "e9e8",
+              "reply_fen": "5aC2/4k4/5a3/9/9/7RC/9/9/1r2p4/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "h4h8",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #29!"
+                }
+              ]
+            },
+            {
+              "reply_move": "f9e8",
+              "reply_fen": "4k1C2/4a4/5a3/9/9/7RC/9/9/1r2p4/3K5 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "i4i9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #29!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "g4g8",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  },
+  {
+    "id": 30,
+    "order_index": 30,
+    "title": "Cửu Long Tranh Châu",
+    "fen": "3a5/1N2a4/5k3/4R3N/9/9/9/9/3p1rn2/4K4 w - - 0 1",
+    "status": "PUBLISHED",
+    "tier": "EASY",
+    "solution_tree_length": 475,
+    "solution_tree_parsed": {
+      "root_fen": "3a5/1N2a4/5k3/4R3N/9/9/9/9/3p1rn2/4K4 w - - 0 1",
+      "branches": [
+        {
+          "move": "i6h8",
+          "is_correct": true,
+          "replies": [
+            {
+              "reply_move": "f7f8",
+              "reply_fen": "3a5/1N2ak1N1/9/4R4/9/9/9/9/3p1rn2/4K4 w - - 0 1",
+              "next_moves": [
+                {
+                  "move": "b8d9",
+                  "is_correct": true,
+                  "is_win": true,
+                  "win_comment": "Diệu thủ hoàn tất sát cục! Đại hiệp phá giải thành công Ải #30!"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "traps": [
+        {
+          "wrong_move": "b8d9",
+          "punish_move": null,
+          "defeat_reason": "Nước đi sơ hở! Đối phương phản công trảm Tướng, bại trận!"
+        }
+      ]
+    }
+  }
+]

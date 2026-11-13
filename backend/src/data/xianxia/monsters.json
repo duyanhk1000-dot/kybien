@@ -1,0 +1,480 @@
+{
+  "monsters": [
+    {
+      "id": "monster_tho_lang",
+      "name": "Thổ Lang",
+      "title": "Dã Thú Hung Hãn",
+      "tier": "TIER_1_BEAST",
+      "zone_id": "zone_thanh_ha_thon",
+      "realm_requirement": "PHAM_NHAN",
+      "max_health": 80,
+      "attack": 15,
+      "defense": 5,
+      "speed": 8,
+      "crit_rate": 0.05,
+      "dodge_rate": 0.05,
+      "exp_reward": 25,
+      "cultivation_reward": 5,
+      "silver_reward_min": 2,
+      "silver_reward_max": 6,
+      "avatar_image": "/assets/xianxia/monsters/monster_tho_lang.webp",
+      "skills": [
+        {
+          "id": "skill_tho_lang_bite",
+          "name": "Cắn Xé Sơ Cấp",
+          "description": "Nhe nanh lao vào ngoạm một đòn uy lực.",
+          "damage_multiplier": 1.1
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_da_soi",
+          "item_name": "Tấm Da Sói Thô",
+          "chance": 0.8,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item_id": "item_nanh_soi",
+          "item_name": "Nanh Sói Sắc",
+          "chance": 0.4,
+          "min_quantity": 1,
+          "max_quantity": 1
+        }
+      ]
+    },
+    {
+      "id": "monster_thao_moc_tinh",
+      "name": "Thảo Mộc Tinh",
+      "title": "Mộc Linh Biến Dị",
+      "tier": "TIER_1_BEAST",
+      "zone_id": "zone_u_minh_truc_lam",
+      "realm_requirement": "LUYEN_KHI_1",
+      "max_health": 120,
+      "attack": 22,
+      "defense": 10,
+      "speed": 6,
+      "crit_rate": 0.03,
+      "dodge_rate": 0.08,
+      "exp_reward": 45,
+      "cultivation_reward": 12,
+      "silver_reward_min": 4,
+      "silver_reward_max": 10,
+      "avatar_image": "/assets/xianxia/monsters/monster_thao_moc_tinh.webp",
+      "skills": [
+        {
+          "id": "skill_gai_doc",
+          "name": "Phóng Gai Độc",
+          "description": "Bắn ra những chùm gai độc gây sát thương và trúng độc nhẹ.",
+          "damage_multiplier": 1.15,
+          "effect": "POISON",
+          "effect_chance": 0.3
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_linh_truc_diep",
+          "item_name": "Linh Trúc Diệp",
+          "chance": 0.7,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item_id": "item_moc_tinh_hat",
+          "item_name": "Mộc Tinh Hạt",
+          "chance": 0.35,
+          "min_quantity": 1,
+          "max_quantity": 1
+        }
+      ]
+    },
+    {
+      "id": "monster_u_minh_lang",
+      "name": "U Minh Lang",
+      "title": "Yêu Lang Sương Đêm",
+      "tier": "TIER_2_ELITE",
+      "zone_id": "zone_u_minh_truc_lam",
+      "realm_requirement": "LUYEN_KHI_2",
+      "max_health": 240,
+      "attack": 38,
+      "defense": 18,
+      "speed": 16,
+      "crit_rate": 0.15,
+      "dodge_rate": 0.12,
+      "exp_reward": 90,
+      "cultivation_reward": 30,
+      "silver_reward_min": 12,
+      "silver_reward_max": 25,
+      "avatar_image": "/assets/xianxia/monsters/monster_u_minh_lang.webp",
+      "skills": [
+        {
+          "id": "skill_u_minh_trao",
+          "name": "U Minh Trảo Kích",
+          "description": "Vuốt quỷ xé gió đánh úp sau lưng gây hiệu ứng Chảy Máu liên tục.",
+          "damage_multiplier": 1.35,
+          "effect": "BLEED",
+          "effect_chance": 0.4
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_u_minh_nanh",
+          "item_name": "U Minh Sói Nanh",
+          "chance": 0.6,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item_id": "item_linh_thach_vun",
+          "item_name": "Linh Thạch Vụn",
+          "chance": 0.5,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item_id": "item_da_u_minh",
+          "item_name": "Tấm Da U Minh Dày",
+          "chance": 0.4,
+          "min_quantity": 1,
+          "max_quantity": 1
+        }
+      ]
+    },
+    {
+      "id": "monster_thiet_giap_tru",
+      "name": "Thiết Giáp Trư",
+      "title": "Hung Thú Mình Đồng",
+      "tier": "TIER_2_ELITE",
+      "zone_id": "zone_u_minh_truc_lam",
+      "realm_requirement": "LUYEN_KHI_2",
+      "max_health": 350,
+      "attack": 32,
+      "defense": 30,
+      "speed": 7,
+      "crit_rate": 0.08,
+      "dodge_rate": 0.02,
+      "exp_reward": 105,
+      "cultivation_reward": 35,
+      "silver_reward_min": 15,
+      "silver_reward_max": 30,
+      "avatar_image": "/assets/xianxia/monsters/monster_thiet_giap_tru.webp",
+      "skills": [
+        {
+          "id": "skill_thiet_huc_dam",
+          "name": "Dã Man Thiết Húc",
+          "description": "Lấy thân bọc sắt húc văng đối phương, có khả năng gây Choáng (Stun).",
+          "damage_multiplier": 1.4,
+          "effect": "STUN",
+          "effect_chance": 0.25
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_thiet_bi_giap",
+          "item_name": "Mảnh Giáp Da Sắt",
+          "chance": 0.75,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item_id": "item_thiet_khoang_thach",
+          "item_name": "Thiết Khoáng Thạch",
+          "chance": 0.55,
+          "min_quantity": 1,
+          "max_quantity": 3
+        }
+      ]
+    },
+    {
+      "id": "boss_u_minh_lang_vuong",
+      "name": "U Minh Lang Vương",
+      "title": "Bá Chủ Hắc Phong Nhai",
+      "tier": "TIER_3_BOSS",
+      "zone_id": "zone_hac_phong_nhai",
+      "realm_requirement": "LUYEN_KHI_3",
+      "max_health": 950,
+      "attack": 75,
+      "defense": 45,
+      "speed": 22,
+      "crit_rate": 0.25,
+      "dodge_rate": 0.15,
+      "exp_reward": 450,
+      "cultivation_reward": 180,
+      "silver_reward_min": 80,
+      "silver_reward_max": 160,
+      "avatar_image": "/assets/xianxia/monsters/boss_u_minh_lang_vuong.webp",
+      "skills": [
+        {
+          "id": "skill_cuong_no_lang_vuong",
+          "name": "Lang Vương Cuồng Hống",
+          "description": "Hú vang chấn động sơn hà, bùng nổ chân khí cuồng nộ tăng 50% bạo kích.",
+          "damage_multiplier": 1.6,
+          "effect": "ENRAGE",
+          "effect_chance": 0.4
+        },
+        {
+          "id": "skill_am_anh_liet_trao",
+          "name": "Ám Ảnh Liệt Trảo",
+          "description": "Hóa thành bóng đen bổ xuống nhát cào xé rách đạo bào.",
+          "damage_multiplier": 1.8,
+          "effect": "BLEED",
+          "effect_chance": 0.6
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_yeu_dan_so_cap",
+          "item_name": "Yêu Đan Nhất Giai (U Minh)",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item_id": "item_linh_thach_trung",
+          "item_name": "Hạ Phẩm Linh Thạch",
+          "chance": 0.9,
+          "min_quantity": 3,
+          "max_quantity": 8
+        },
+        {
+          "item_id": "item_thanh_phong_kiem_phoi",
+          "item_name": "Bản Vẽ [Thanh Phong Kiếm]",
+          "chance": 0.65,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item_id": "item_truc_co_dan_duoc_lieu",
+          "item_name": "Trúc Cơ Đan Dược Liệu",
+          "chance": 0.45,
+          "min_quantity": 1,
+          "max_quantity": 1
+        }
+      ]
+    },
+    {
+      "id": "monster_huyet_ngac",
+      "name": "Huyết Ngạc Đầm Lầy",
+      "title": "Hung Thú Đầm Lầy",
+      "tier": "TIER_1_BEAST",
+      "zone_id": "zone_van_mong_dam",
+      "realm_requirement": "LUYEN_KHI_5",
+      "max_health": 1200,
+      "attack": 85,
+      "defense": 50,
+      "speed": 12,
+      "crit_rate": 0.1,
+      "dodge_rate": 0.05,
+      "exp_reward": 220,
+      "cultivation_reward": 90,
+      "silver_reward_min": 25,
+      "silver_reward_max": 50,
+      "avatar_image": "/assets/xianxia/monsters/monster_huyet_ngac.webp",
+      "skills": [
+        {
+          "id": "skill_huyet_ngac_can",
+          "name": "Tử Vong Giảo Sát",
+          "description": "Hàm răng sắc nhọn xoay tròn xé rách da thịt, gây hiệu ứng Chảy Máu liên tục.",
+          "damage_multiplier": 1.25,
+          "effect": "BLEED",
+          "effect_chance": 0.35
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_ngan_nam_huyet_chi",
+          "item_name": "Ngàn Năm Huyết Chi",
+          "chance": 0.4,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item_id": "item_huyen_am_thao",
+          "item_name": "Huyền Âm Thảo",
+          "chance": 0.7,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item_id": "item_linh_thach_vun",
+          "item_name": "Linh Thạch Vụn",
+          "chance": 0.8,
+          "min_quantity": 2,
+          "max_quantity": 5
+        }
+      ]
+    },
+    {
+      "id": "monster_kiem_khoi",
+      "name": "Cổ Kiếm Khôi",
+      "title": "Kiếm Khôi Cổ Xưa",
+      "tier": "TIER_2_ELITE",
+      "zone_id": "zone_thien_kiem_son",
+      "realm_requirement": "TRUC_CO_SO_KY",
+      "max_health": 3500,
+      "attack": 160,
+      "defense": 110,
+      "speed": 25,
+      "crit_rate": 0.2,
+      "dodge_rate": 0.1,
+      "exp_reward": 550,
+      "cultivation_reward": 250,
+      "silver_reward_min": 60,
+      "silver_reward_max": 120,
+      "avatar_image": "/assets/xianxia/monsters/monster_kiem_khoi.webp",
+      "skills": [
+        {
+          "id": "skill_kiem_khi_tung_hoanh",
+          "name": "Kiếm Khí Tung Hoành",
+          "description": "Vung cổ kiếm chém ra kiếm khí xé gió, có xác suất làm Choáng đối thủ.",
+          "damage_multiplier": 1.5,
+          "effect": "STUN",
+          "effect_chance": 0.3
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_bach_luyen_tinh_thiet",
+          "item_name": "Bạch Luyện Tinh Thiết",
+          "chance": 0.75,
+          "min_quantity": 1,
+          "max_quantity": 3
+        },
+        {
+          "item_id": "item_ban_menh_kiem_thai",
+          "item_name": "Bản Mệnh Kiếm Thai",
+          "chance": 0.25,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item_id": "item_linh_thach_trung",
+          "item_name": "Hạ Phẩm Linh Thạch",
+          "chance": 0.8,
+          "min_quantity": 2,
+          "max_quantity": 5
+        }
+      ]
+    },
+    {
+      "id": "boss_tam_ma",
+      "name": "Tâm Ma Hóa Thân",
+      "title": "Bá Chủ Thử Thách",
+      "tier": "TIER_3_BOSS",
+      "zone_id": "zone_hac_phong_nhai",
+      "realm_requirement": "LUYEN_KHI_7",
+      "max_health": 5000,
+      "attack": 190,
+      "defense": 95,
+      "speed": 28,
+      "crit_rate": 0.25,
+      "dodge_rate": 0.15,
+      "exp_reward": 1200,
+      "cultivation_reward": 600,
+      "silver_reward_min": 150,
+      "silver_reward_max": 300,
+      "avatar_image": "/assets/xianxia/monsters/boss_tam_ma.webp",
+      "skills": [
+        {
+          "id": "skill_am_than_loan_tam",
+          "name": "Loạn Tâm Ma Khúc",
+          "description": "Khúc nhạc ma quái làm nhiễu loạn thần thức, ăn mòn chân khí gây trúng độc sâu.",
+          "damage_multiplier": 1.7,
+          "effect": "POISON",
+          "effect_chance": 0.5
+        },
+        {
+          "id": "skill_tam_ma_phan_phe",
+          "name": "Phệ Hồn Ma Diễm",
+          "description": "Ngọn lửa đen thiêu đốt linh hồn gây sát thương cực lớn và chảy máu liên tục.",
+          "damage_multiplier": 1.9,
+          "effect": "BLEED",
+          "effect_chance": 0.5
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_yeu_dan_so_cap",
+          "item_name": "Yêu Đan Sơ Cấp",
+          "chance": 1.0,
+          "min_quantity": 1,
+          "max_quantity": 2
+        },
+        {
+          "item_id": "item_truc_co_dan",
+          "item_name": "Trúc Cơ Đan",
+          "chance": 0.8,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item_id": "item_linh_thach_trung",
+          "item_name": "Hạ Phẩm Linh Thạch",
+          "chance": 0.9,
+          "min_quantity": 5,
+          "max_quantity": 10
+        }
+      ]
+    },
+    {
+      "id": "boss_ma_thi_vuong",
+      "name": "Thiên Cổ Ma Thi Vương",
+      "title": "Tuyệt Thế Thi Vương",
+      "tier": "TIER_3_BOSS",
+      "zone_id": "zone_thien_kiem_son",
+      "realm_requirement": "TRUC_CO_HAU_KY",
+      "max_health": 12000,
+      "attack": 290,
+      "defense": 160,
+      "speed": 32,
+      "crit_rate": 0.3,
+      "dodge_rate": 0.18,
+      "exp_reward": 3500,
+      "cultivation_reward": 1800,
+      "silver_reward_min": 400,
+      "silver_reward_max": 800,
+      "avatar_image": "/assets/xianxia/monsters/boss_ma_thi_vuong.webp",
+      "skills": [
+        {
+          "id": "skill_thi_vuong_cuong_sat",
+          "name": "Thi Vương Cuồng Nộ",
+          "description": "Bùng nổ ma khí ngàn năm kích hoạt trạng thái Cuồng Nộ tăng 50% bạo kích.",
+          "damage_multiplier": 2.0,
+          "effect": "ENRAGE",
+          "effect_chance": 0.5
+        },
+        {
+          "id": "skill_am_minh_thi_khi",
+          "name": "U Minh Thi Khí",
+          "description": "Phun luồng khí độc thối rữa ăn mòn sinh mệnh mục tiêu.",
+          "damage_multiplier": 1.8,
+          "effect": "POISON",
+          "effect_chance": 0.6
+        }
+      ],
+      "loot_table": [
+        {
+          "item_id": "item_cuc_pham_truc_co_dan",
+          "item_name": "Cực Phẩm Trúc Cơ Đan",
+          "chance": 0.8,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item_id": "item_dao_co_ngoc_gian",
+          "item_name": "Đạo Cơ Ngọc Giản",
+          "chance": 0.4,
+          "min_quantity": 1,
+          "max_quantity": 1
+        },
+        {
+          "item_id": "item_linh_thach_trung",
+          "item_name": "Hạ Phẩm Linh Thạch",
+          "chance": 1.0,
+          "min_quantity": 10,
+          "max_quantity": 20
+        }
+      ]
+    }
+  ]
+}

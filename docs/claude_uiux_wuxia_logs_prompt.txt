@@ -1,0 +1,63 @@
+BẠN LÀ CHUYÊN GIA THIẾT KẾ UI/UX GAME & TECH LEAD KIẾM HIỆP/TIÊN HIỆP (CLAUDE CODE).
+
+Người dùng làm rõ yêu cầu:
+"Không phải game giang hồ (Võ Lâm Idle hary9x), mà là GAME WUXIA trong thư mục docs (docs/wuxia_reference và docs/wuxia_mechanics_bible.md). Cho Claude đánh giá về giao diện, UI/UX của game Wuxia này và phân tích mức độ tương thích để chuyển đổi game Tiên Lộ giống game Wuxia đó. Sau đó đưa câu trả lời chi tiết cho tôi."
+
+Dưới đây là thông tin chi tiết trích xuất trực tiếp từ mã nguồn thực tế của game Wuxia trong `docs/wuxia_reference`:
+
+================================================================================
+I. KIẾN TRÚC GIAO DIỆN & UI/UX CỦA GAME "WUXIA" (WUXIA LOGS)
+Nguồn: docs/wuxia_reference/raw_assets/ & docs/wuxia_mechanics_bible.md
+================================================================================
+1. Công nghệ & Nền tảng UI:
+   - Framework: Vue 3 Single Page Application (SPA), Vue Router + KeepAlive cho 4 view cốt lõi:
+     `['ExplorationView', 'CharacterView', 'PlayerDashboardView', 'BattleView']`.
+   - CSS & Thiết kế: Tailwind CSS + LightningCSS (`index-CJn87ZYv.css`), font Inter/System-ui, Dark Theme tối giản (Minimalist Dark/Sepia Wuxia Palette: Slate-900, Amber-600/40, Gray-100).
+   - Tối ưu Mobile First: Khung ứng dụng dọc tập trung (`class="text-gray-100 flex flex-col mx-auto min-h-[95vh] max-w-xl"`), safe-area insets (`env(safe-area-inset-top)`).
+
+2. Khung Bố Cục Toàn Cục (GameLayout - GameLayout-gkwrJoHQ.js):
+   - Đỉnh màn hình (GlobalUserBar):
+     * Logo thư pháp Wuxia Logs (`wuxialogo.png`), trạng thái phiên bản, thông báo bảo trì/alert, nút mở Menu tổng (`MenuModal`).
+   - Thanh điều hướng chính (5 Tab Điều Hướng Chuẩn Mực):
+     1. [Home / Dashboard] (`/dashboard` - icon_home.png): Trạng thái hiệp khách (Health, Fatigue, Focus, Silver, Karma, Location), khu vực Tu luyện ngầm (Train: Luyện Thể, Luyện Cốt, Luyện Khí), các địa điểm tương tác trong vùng (Places: Tiêu cục Four Winds, Chợ trời Peddler, Kho hàng Storehouse).
+     2. [Character] (`/character` - icon_character.png): Ngũ đại căn bản (Sức mạnh, Thân pháp, Thể chất, Nội lực, Ý chí), điểm tiềm năng chưa cộng (badge thông báo đỏ), danh hiệu võ lâm (`unlocked_titles`).
+     3. [Exploration] (`/exploration` - icon_hill.png): Cỗ máy sự kiện phân nhánh ngẫu nhiên theo vùng (Choice-driven Event Engine). Nút động đổi giữa `Roam` (Du ngoạn) và `Wander` (Phiêu bạt). Khung nhật ký tương tác (Interactive Story Log) với các đoạn văn kiếm hiệp kèm nút lựa chọn chi phí/phần thưởng.
+     4. [Skill] (Modal - icon_book.png): Danh sách võ học, bí kíp, cấp độ chiêu thức, trang bị skill vào ô thi đấu.
+     5. [Inventory] (Modal - icon_bag.png): Túi đồ dạng lưới, kiểm soát sức chứa theo Thể chất & Sức mạnh, trang bị/sử dụng đan dược, vũ khí, y phục.
+   - Khu vực Chiến đấu (`BattleView`):
+     * Khi đi thám hiểm gặp địch, tự động chuyển cảnh sang `BattleView`.
+     * Giao diện Turn-based chiến thuật tối giản: Thanh Khí Huyết (HP) & Thể lực (Stamina) 2 bên, tốc độ xuất chiêu (Initiative), các nút lệnh hành động (Đánh thường, Thế thủ, Uống thuốc, Bỏ chạy, Tuyệt kỹ môn phái) và log hiệp đấu chi tiết.
+
+================================================================================
+II. HIỆN TRẠNG GIAO DIỆN & UI/UX CỦA GAME "TIÊN LỘ: VẠN GIỚI TRANH PHONG"
+Nguồn: frontend/tien-lo.html, frontend/tienlo-engine.js
+================================================================================
+1. Đặc điểm:
+   - Khởi nguồn từ blueprint Wuxia Logs nhưng hiện tại được thiết kế theo dạng Web Dashboard RPG một trang lớn.
+   - Thanh điều hướng icon (.wuxia-icon-nav) đang phình to với hơn 10 nút bấm cuộn ngang: [Động Phủ, Luyện Khí, Luyện Đan, Bát Hoang, Đấu Trường, Bách Thú, Nhiệm Vụ, Tông Môn, Tổ Đội Co-op, Trảm Ma].
+   - Nội dung hiển thị dạng lưới thẻ bài dài, người chơi phải cuộn trang nhiều để xem hết các khu vực, chưa có sự cô đọng, phân luồng mạch lạc cho trải nghiệm 1 tay trên mobile như Wuxia Logs.
+   - Mặt khác, Tiên Lộ đã mở rộng các hệ thống nhiều người chơi mạnh mẽ mà Wuxia Logs bản gốc chưa có: Tổ Đội 3 người Co-op Dungeon (Socket.IO realtime), Toàn Dân Trảm Ma (World Boss Xích Diễm Ma Long với thanh HP khổng lồ).
+
+================================================================================
+III. YÊU CẦU ĐÁNH GIÁ & TƯ VẤN CHO CLAUDE
+================================================================================
+Hãy phân tích và trả lời chi tiết:
+
+1. ĐÁNH GIÁ CHUYÊN SÂU UI/UX CỦA GAME WUXIA LOGS:
+   - Triết lý thiết kế (Minimalist, Story-driven, Focus UI) của Wuxia Logs có điểm mạnh/điểm yếu gì?
+   - Tại sao Wuxia Logs lại chọn mô hình 5 Tab (Home, Character, Explore, Skill, Inventory) và các Modal con thay vì trải rộng trên Dashboard?
+
+2. ĐÁNH GIÁ MỨC ĐỘ TƯƠNG THÍCH ĐỂ CHUYỂN ĐỔI GAME TIÊN LỘ SANG CHUẨN UI/UX CỦA WUXIA LOGS:
+   - Mức độ tương thích về Dữ liệu & Backend API (so sánh với docs/wuxia_mechanics_bible.md).
+   - Khả năng ánh xạ (Mapping) toàn bộ các tính năng của Tiên Lộ vào kiến trúc 5 Tab của Wuxia Logs:
+     * Động Phủ & Bế Quan $\rightarrow$ Home / PlayerDashboardView (Train).
+     * Bát Hoang Thám Hiểm $\rightarrow$ ExplorationView (Roam/Wander, Choice-driven Events).
+     * Cảnh Giới & Điểm Tiềm Năng $\rightarrow$ CharacterView (Ngũ Đại Căn Bản, Danh hiệu).
+     * Luyện Đan & Luyện Khí $\rightarrow$ Nằm ở đâu trong Wuxia Logs? (Places / Crafting hay Skill Modal?).
+     * Đặt các tính năng nâng cao (Tông Môn, Tổ Đội Co-op, World Boss M4.4) vào đâu trong kiến trúc Wuxia Logs để không phá vỡ tính tối giản, sạch sẽ?
+   - Đánh giá mức độ tương thích tổng thể (% điểm số).
+
+3. KẾ HOẠCH & GIẢI PHÁP TÁI CẤU TRÚC GIAO DIỆN (UI/UX TRANSFORMATION BLUEPRINT):
+   - Đề xuất layout chuẩn hóa cho Tiên Lộ theo phong cách Wuxia Logs.
+   - Trải nghiệm người dùng (UX) sau khi chuyển đổi sẽ được nâng tầm ra sao (về tính tập trung, cảm giác giang hồ/tiên hiệp, thao tác di động)?
+   - Kết luận và khuyến nghị hành động cụ thể cho đội ngũ phát triển.

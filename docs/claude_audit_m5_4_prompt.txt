@@ -1,0 +1,28 @@
+BẠN LÀ TECH LEAD & AUDITOR KIỂM ĐỊNH ĐỘC LẬP (CLAUDE CODE).
+HÃY ĐÁNH GIÁ VÀ NGHIỆM THU ĐỘC LẬP BƯỚC M5.4: INTERACTION & UX POLISH.
+
+Dưới đây là báo cáo M5.4: docs/M5_4_INTERACTION_UX_POLISH_REPORT.md và các thay đổi trong frontend/interaction-ux.css, frontend/tien-lo.html và frontend/tienlo-engine.js:
+1. Đã tạo file chuyên biệt frontend/interaction-ux.css và liên kết vào <head> của tien-lo.html.
+2. Tactile Button Interactions:
+   - .btn-plaque:active: transform: scale(0.96) translateY(1px), box-shadow dập nổi, filter brightness(0.92).
+   - .btn-plaque:focus-visible: outline 2px solid var(--gold-400), outline-offset 2px.
+   - @media (hover: hover) bảo vệ toàn bộ hiệu ứng hover, triệt tiêu lỗi sticky hover trên di động.
+3. Inventory Slots Accessibility:
+   - Ô trống .inv-slot.empty: viền nét đứt (dashed), opacity 0.35, aria-hidden="true".
+   - Ô có vật phẩm: tabindex="0", role="button", aria-label đầy đủ, onkeydown hỗ trợ phím Enter và Space để sử dụng vật phẩm trực tiếp từ bàn phím.
+4. Wuxia Toast Notifications:
+   - .notification-toast với các biến thể .toast-success (viền ngọc lục bảo), .toast-error (viền chu sa), .toast-info (viền thanh thiên), animation toastSlideIn.
+5. Highlight Glow Animation:
+   - Khống chế animation-iteration-count: 1, cubic-bezier(0.25, 1, 0.5, 1), tự tắt mượt mà sau 1.8s.
+6. Kiểm thử hồi quy Frontend xianxiaM4WorldBossFrontend.test.ts đạt 10/10 PASS (100%), không phát sinh lỗi hồi quy nào.
+
+YÊU CẦU ĐỐI VỚI BẠN:
+1. Đọc và thẩm định docs/M5_4_INTERACTION_UX_POLISH_REPORT.md và mã nguồn thực tế.
+2. Kiểm tra xem các tiêu chí của M5.4 đã đạt chưa:
+   - Tactile Micro-interactions & Button Feedback: [ĐẠT / CHƯA ĐẠT]
+   - Touch Safe trên Mobile & Không sticky hover: [ĐẠT / CHƯA ĐẠT]
+   - Accessibility & Keyboard Navigation cho ô đồ (Tab, Enter, Space, ARIA): [ĐẠT / CHƯA ĐẠT]
+   - Toast feedback & Highlight single iteration: [ĐẠT / CHƯA ĐẠT]
+   - Kết quả kiểm thử hồi quy: [ĐẠT / CHƯA ĐẠT]
+3. Đưa ra phán quyết: [PASS / FAIL] cho Bước M5.4.
+4. Cấp phép và đưa ra chỉ dẫn cụ thể cho Bước M5.5: Audit & Final Review (Tổng kết toàn bộ Milestone M5).

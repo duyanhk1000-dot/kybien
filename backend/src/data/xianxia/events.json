@@ -1,0 +1,413 @@
+[
+  {
+    "id": "event_dong_phu_tan_tu",
+    "title": "Tàn Tích Động Phủ Tiền Nhân",
+    "zone_id": "zone_thanh_ha_thon",
+    "type": "FORTUNE",
+    "rarity": "UNCOMMON",
+    "weight": 35,
+    "description": "Khi băng qua sườn núi hoang vắng rìa thôn, ngươi phát hiện một cửa động bị dây leo gai góc che khuất, phát ra dao động linh khí mỏng manh. Cửa động được niêm phong bởi một tàn trận cổ sơ.",
+    "banner_image": "/assets/xianxia/events/dong_phu_tan_tu.webp",
+    "choices": [
+      {
+        "id": "choice_pha_tran",
+        "text": "Tập trung thần thức, tìm mắt trận để phá giải",
+        "description": "Cần Ngộ tính cao để quan sát quy luật vận hành của linh khí trong trận pháp.",
+        "requirements": {
+          "cost_fatigue": 6
+        },
+        "stat_check": {
+          "stat": "comprehension",
+          "threshold": 12
+        },
+        "outcome_success": {
+          "narrative": "Ngươi khéo léo tìm ra nhược điểm của tàn trận, một luồng ánh sáng xanh lóe lên rồi tiêu tan. Tiến vào trong động, ngươi nhặt được một cuốn Tàn Thiên Bí Kíp và 50 lượng bạc linh thạch tiền nhân để lại!",
+          "exp_reward": 40,
+          "cultivation_reward": 60,
+          "silver_reward": 50,
+          "dropped_items": [
+            {
+              "item_id": "item_tan_thien_bi_kip",
+              "item_name": "Tàn Thiên Bí Kíp",
+              "quantity": 1
+            }
+          ]
+        },
+        "outcome_failure": {
+          "narrative": "Trận pháp đột nhiên phát nổ sóng xung kích, ngươi bị chấn lùi va mạnh vào vách đá, kinh mạch đau nhức chấn thương!",
+          "exp_reward": 15,
+          "health_change": -25,
+          "fatigue_change": -10
+        }
+      },
+      {
+        "id": "choice_dung_luc_pha",
+        "text": "Dùng chân khí cường trượng cưỡng ép công phá cửa đá",
+        "description": "Cần Căn cốt / Thể chất dồi dào để phá tan chướng ngại vật lý.",
+        "requirements": {
+          "cost_fatigue": 10
+        },
+        "stat_check": {
+          "stat": "physique",
+          "threshold": 14
+        },
+        "outcome_success": {
+          "narrative": "Ngươi vận chuyển toàn bộ khí huyết đấm vỡ nát tảng đá niêm phong, tìm thấy một chiếc rương gỉ sét chứa một lọ Dưỡng Khí Đan quý giá!",
+          "exp_reward": 30,
+          "cultivation_reward": 35,
+          "dropped_items": [
+            {
+              "item_id": "item_duong_khi_dan",
+              "item_name": "Dưỡng Khí Đan",
+              "quantity": 2
+            }
+          ]
+        },
+        "outcome_failure": {
+          "narrative": "Cửa đá có phản chấn quá mạnh khiến cánh tay ngươi tê liệt run rẩy, khí huyết xáo trộn nghiêm trọng!",
+          "exp_reward": 10,
+          "health_change": -15,
+          "fatigue_change": -5
+        }
+      },
+      {
+        "id": "choice_roi_di",
+        "text": "Cẩn tắc vô áy náy, đánh dấu vị trí rồi lùi lại rời đi",
+        "description": "Không mạo hiểm tính mạng khi chưa nắm chắc.",
+        "outcome_success": {
+          "narrative": "Ngươi thận trọng rút lui trong an toàn, bảo toàn thể trạng để tiếp tục tu luyện.",
+          "exp_reward": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": "event_huyen_am_thao_vuc_tham",
+    "title": "Huyền Âm Thảo Bên Bờ Vực",
+    "zone_id": "zone_hac_phong_nhai",
+    "type": "FORTUNE",
+    "rarity": "RARE",
+    "weight": 25,
+    "description": "Gió rít gào trên đỉnh Hắc Phong Nhai. Ngay bên vách đá dựng đứng cheo leo, một đóa cỏ tím lấp lánh sương lạnh toát ra hương thơm thanh khiết — chính là Huyền Âm Thảo cực phẩm! Tuy nhiên bên cạnh có đàn Độc Hạt đang rình rập.",
+    "banner_image": "/assets/xianxia/events/huyen_am_thao.webp",
+    "choices": [
+      {
+        "id": "choice_than_phap_hai_thuoc",
+        "text": "Khinh thân lướt qua vách đá, chớp mắt đoạt cỏ",
+        "description": "Đòi hỏi cảnh giới tối thiểu Luyện Khí Tầng 3 và Khí vận tốt để tránh rủi ro trượt chân.",
+        "requirements": {
+          "min_realm": "LUYEN_KHI_3",
+          "cost_fatigue": 12
+        },
+        "stat_check": {
+          "stat": "luck",
+          "threshold": 11
+        },
+        "outcome_success": {
+          "narrative": "Ngươi mượn chiều gió lướt xuống như một cánh chim, nhổ phăng đóa Huyền Âm Thảo trước khi đàn độc hạt kịp phản ứng rồi phi thân trở lại an toàn!",
+          "exp_reward": 70,
+          "cultivation_reward": 90,
+          "dropped_items": [
+            {
+              "item_id": "item_huyen_am_thao",
+              "item_name": "Huyền Âm Thảo",
+              "quantity": 1
+            }
+          ]
+        },
+        "outcome_failure": {
+          "narrative": "Gió độc bất ngờ đổi hướng cuốn theo cát bụi làm ngươi lóa mắt trượt chân, suýt nữa rơi xuống vực thẳm và bị độc hạt chích trúng vai!",
+          "exp_reward": 20,
+          "health_change": -45,
+          "fatigue_change": -5
+        }
+      },
+      {
+        "id": "choice_dung_lua_xua_duoi",
+        "text": "Dùng 20 ngân lượng mua bột lưu huỳnh hun tổ độc trùng",
+        "description": "Giải pháp tốn bạc nhưng an toàn và không yêu cầu chỉ số cao.",
+        "requirements": {
+          "cost_silver": 20,
+          "cost_fatigue": 6
+        },
+        "outcome_success": {
+          "narrative": "Khói cay tỏa ra mù mịt làm đàn độc hạt hoảng loạn rút sâu vào khe nứt, ngươi thong thả trèo xuống hái được thảo dược quý hiếm.",
+          "exp_reward": 45,
+          "cultivation_reward": 50,
+          "dropped_items": [
+            {
+              "item_id": "item_huyen_am_thao",
+              "item_name": "Huyền Âm Thảo",
+              "quantity": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "choice_lang_le_quay_ve",
+        "text": "Vực sâu nguy hiểm khôn lường, từ bỏ ý định",
+        "description": "Rút lui bảo toàn tính mạng.",
+        "outcome_success": {
+          "narrative": "Ngươi nhìn vực sâu vạn trượng một hồi rồi thở dài quyết định bảo vệ tính mạng của mình.",
+          "exp_reward": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": "event_tan_tu_trong_thuong",
+    "title": "Tán Tu Nguy Kịch Bên Suối",
+    "zone_id": "zone_u_minh_truc_lam",
+    "type": "MORAL_DILEMMA",
+    "rarity": "UNCOMMON",
+    "weight": 30,
+    "description": "Dưới bóng trúc âm u cạnh bờ suối nhỏ, một thiếu niên tu sĩ nằm bất tỉnh với vết thương sâu hoắm do vuốt sói cào rách. Bên hông hắn là một chiếc túi trữ vật thượng hạng đang phát ra linh quang.",
+    "banner_image": "/assets/xianxia/events/tan_tu_trong_thuong.webp",
+    "choices": [
+      {
+        "id": "choice_cuu_nguoi",
+        "text": "Cho uống Linh Dược và truyền chân khí cứu mạng (Tốn 15 Bạc, 8 Thể lực)",
+        "description": "Hành hiệp trượng nghĩa, tích lũy Đạo Tâm Thiện Đức.",
+        "requirements": {
+          "cost_silver": 15,
+          "cost_fatigue": 8
+        },
+        "outcome_success": {
+          "narrative": "Thiếu niên hồi tỉnh, mắt ngấn lệ dập đầu cảm tạ ân cứu mạng. Hắn rút từ túi ra một mảnh Trúc Giản bí truyền kính tặng ngươi làm lễ tạ, tâm tính ngươi sáng rực không vướng bụi trần!",
+          "exp_reward": 50,
+          "cultivation_reward": 40,
+          "karma_change": 20,
+          "dropped_items": [
+            {
+              "item_id": "item_truc_gian_bi_truyen",
+              "item_name": "Trúc Giản Bí Truyền",
+              "quantity": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "choice_giet_nguoi_doat_bao",
+        "text": "Hạ thủ diệt khẩu, giật lấy túi trữ vật rồi phi tang thi thể",
+        "description": "Hành vi Ma đạo, cướp đoạt tài phú nhưng tổn hao Đạo Tâm trầm trọng.",
+        "outcome_success": {
+          "narrative": "Ngươi lạnh lùng ra tay đoạt lấy bảo vật. Mở túi ra, bên trong có rất nhiều ngân lượng và khoáng thạch, nhưng trong tâm thức ngươi dấy lên một luồng ma khí âm hàn vẩn đục!",
+          "exp_reward": 30,
+          "silver_reward": 120,
+          "karma_change": -35,
+          "dropped_items": [
+            {
+              "item_id": "item_khoang_thach_linh_tinh",
+              "item_name": "Linh Tinh Khoáng Thạch",
+              "quantity": 2
+            }
+          ]
+        }
+      },
+      {
+        "id": "choice_khoanh_tay_dung_nhin",
+        "text": "Nhân quả giang hồ khó lường, tốt nhất làm ngơ",
+        "description": "Lặng lẽ rời đi, không gieo thêm thiện cũng không kết thêm ác duyên.",
+        "outcome_success": {
+          "narrative": "Ngươi quay người bước đi, dửng dưng không can thiệp vào sinh tử của người khác giữa chốn giang hồ hiểm ác.",
+          "exp_reward": 5,
+          "karma_change": -2
+        }
+      }
+    ]
+  },
+  {
+    "id": "event_kiem_y_co_tung",
+    "title": "Kiếm Ngân Dưới Tùng Cổ",
+    "zone_id": "zone_u_minh_truc_lam",
+    "type": "MYSTERY",
+    "rarity": "RARE",
+    "weight": 25,
+    "description": "Sâu trong rừng trúc có một gốc tùng cổ ngàn năm rễ ăn sâu vào tảng đá xanh. Trên thân đá có một vết chém sâu ba tấc, kiếm ý ngưng tụ ngàn năm vẫn sắc bén như sương tuyết phát ra tiếng ong ong.",
+    "banner_image": "/assets/xianxia/events/kiem_y_co_tung.webp",
+    "choices": [
+      {
+        "id": "choice_cam_ngo_kiem_y",
+        "text": "Khoanh chân tĩnh tọa, dùng thần niệm câu thông với kiếm ngân",
+        "description": "Yêu cầu cảnh giới Luyện Khí 2 và Ngộ tính tối thiểu 14 để thấu hiểu kiếm ý vô hình.",
+        "requirements": {
+          "min_realm": "LUYEN_KHI_2",
+          "cost_fatigue": 15
+        },
+        "stat_check": {
+          "stat": "comprehension",
+          "threshold": 14
+        },
+        "outcome_success": {
+          "narrative": "Kiếm ý cổ xưa bỗng cộng hưởng cùng đan điền! Một đường kiếm quang huyền ảo khắc sâu vào thức hải ngươi, đốn ngộ tinh hoa kiếm đạo ngàn xưa để lại!",
+          "exp_reward": 80,
+          "cultivation_reward": 120,
+          "health_change": 10,
+          "karma_change": 5
+        },
+        "outcome_failure": {
+          "narrative": "Kiếm ý quá mức cuồng bạo xé rách thần niệm phòng hộ của ngươi, máu tươi từ khóe miệng trào ra làm tổn thương chân nguyên!",
+          "exp_reward": 25,
+          "health_change": -35
+        }
+      },
+      {
+        "id": "choice_sao_chep_kiem_do",
+        "text": "Dùng 10 lượng bạc mua giấy chu sa dập lại vết kiếm",
+        "description": "Lưu lại bản rập kiếm ý đem bán kiếm lời.",
+        "requirements": {
+          "cost_silver": 10,
+          "cost_fatigue": 5
+        },
+        "outcome_success": {
+          "narrative": "Ngươi tỉ mỉ dập lại chuẩn xác đường vân vết kiếm lên giấy chu sa, có thể đem bán cho các kiếm tu trong phường thị với giá cao.",
+          "exp_reward": 30,
+          "dropped_items": [
+            {
+              "item_id": "item_ban_rap_kiem_y",
+              "item_name": "Bản Rập Kiếm Ý Cổ",
+              "quantity": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "choice_chiem_nguong_roi_di",
+        "text": "Cúi đầu bái vọng kiếm tích tiền bối rồi lui bước",
+        "description": "Tâm hướng về đạo nhưng biết tự lượng sức mình.",
+        "outcome_success": {
+          "narrative": "Tâm cảnh ngươi thanh thản, học được sự kính sợ và khiêm nhường trước đạo pháp vô biên của tiền nhân.",
+          "exp_reward": 10,
+          "cultivation_reward": 15
+        }
+      }
+    ]
+  },
+  {
+    "id": "event_quy_thi_cho_den",
+    "title": "Quỷ Thị Ẩn Hiện Nửa Đêm",
+    "zone_id": "ALL",
+    "type": "FORTUNE",
+    "rarity": "UNCOMMON",
+    "weight": 30,
+    "description": "Một làn khói mù tím sẫm lan tỏa, lồng đèn giấy đỏ treo lơ lửng giữa hư không. Một lão già mặc áo choàng đen xuất hiện cùng chiếc quầy bày những hộp gấm phong ấn phù chú — Quỷ Thị chợ đen kỳ bí tình cờ mở ra!",
+    "banner_image": "/assets/xianxia/events/quy_thi.webp",
+    "choices": [
+      {
+        "id": "choice_mua_khi_van_hop",
+        "text": "Bỏ ra 40 lượng bạc đánh cược mở Hộp Khí Vận",
+        "description": "Phụ thuộc vào Cơ duyên / Khí vận của người chơi.",
+        "requirements": {
+          "cost_silver": 40
+        },
+        "stat_check": {
+          "stat": "luck",
+          "threshold": 12
+        },
+        "outcome_success": {
+          "narrative": "Nắp hộp bật mở lóe ra ánh hào quang chói mắt! Ngươi tìm được một viên Linh Tinh Thượng Phẩm giá trị liên thành!",
+          "exp_reward": 50,
+          "cultivation_reward": 80,
+          "dropped_items": [
+            {
+              "item_id": "item_linh_tinh_thuong_pham",
+              "item_name": "Linh Tinh Thượng Phẩm",
+              "quantity": 1
+            }
+          ]
+        },
+        "outcome_failure": {
+          "narrative": "Bên trong hộp chỉ có một nắm cát mục rữa cùng tiếng cười khàn đục của lão chủ quầy. Ngươi mất trắng số bạc dành dụm!",
+          "exp_reward": 5
+        }
+      },
+      {
+        "id": "choice_giao_dich_thao_duoc",
+        "text": "Đổi 20 lượng bạc lấy Đan Dược Thối Thể",
+        "description": "Giao dịch sòng phẳng mua đan dược tôi luyện thể xác.",
+        "requirements": {
+          "cost_silver": 20
+        },
+        "outcome_success": {
+          "narrative": "Lão già trao cho ngươi một viên Thối Thể Đan nồng đượm dược lực, khí huyết bốc lên hừng hực.",
+          "exp_reward": 20,
+          "dropped_items": [
+            {
+              "item_id": "item_thoi_the_dan",
+              "item_name": "Thối Thể Đan",
+              "quantity": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "choice_can_than_tranh_xa",
+        "text": "Quỷ khí quá nồng, không giao dịch mà nhanh chóng rời bước",
+        "description": "Tránh xa nơi mờ ám.",
+        "outcome_success": {
+          "narrative": "Ngươi quay lưng rảo bước, làn sương mù và lồng đèn đỏ thoắt cái biến mất như một giấc mộng hư ảo.",
+          "exp_reward": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": "event_huyet_lang_phuc_kich",
+    "title": "Huyết Ma Lang Phục Kích",
+    "zone_id": "zone_hac_phong_nhai",
+    "type": "MISFORTUNE",
+    "rarity": "COMMON",
+    "weight": 40,
+    "description": "Tiếng gầm thét chói tai vang lên từ vách đá. Hai con Huyết Ma Lang nhe nanh đỏ lòm chắn đứt đường lui của ngươi, sát khí bốc lên ngùn ngụt!",
+    "banner_image": "/assets/xianxia/events/huyet_lang_phuc_kich.webp",
+    "choices": [
+      {
+        "id": "choice_quyet_chien",
+        "text": "Rút kiếm xông lên quyết chiến một trận sinh tử",
+        "description": "Thử thách sức mạnh và Căn cốt Thể chất trong giao tranh.",
+        "requirements": {
+          "cost_fatigue": 10
+        },
+        "stat_check": {
+          "stat": "physique",
+          "threshold": 12
+        },
+        "outcome_success": {
+          "narrative": "Thân thủ ngươi dũng mãnh, một kiếm đâm xuyên cổ họng con đầu đàn! Lũ quỷ lang còn lại khiếp sợ bỏ chạy, để lại Lang Bì và Nanh Sói quý hiếm!",
+          "exp_reward": 60,
+          "cultivation_reward": 70,
+          "dropped_items": [
+            {
+              "item_id": "item_nanh_soi_ngan_nam",
+              "item_name": "Nanh Sói Ngàn Năm",
+              "quantity": 1
+            },
+            {
+              "item_id": "item_lang_bi",
+              "item_name": "Lang Bì",
+              "quantity": 2
+            }
+          ]
+        },
+        "outcome_failure": {
+          "narrative": "Lũ ma lang quá hung hãn liều mạng cắn xé, ngươi phải chật vật chém giết mới đẩy lùi được chúng, khắp mình dính đầy thương tích!",
+          "exp_reward": 25,
+          "health_change": -40
+        }
+      },
+      {
+        "id": "choice_nem_moi_nhu_chay",
+        "text": "Vứt 15 lượng bạc và lương khô làm mồi nhử tháo chạy",
+        "description": "Dùng của cải đánh lạc hướng yêu thú.",
+        "requirements": {
+          "cost_silver": 15,
+          "cost_fatigue": 8
+        },
+        "outcome_success": {
+          "narrative": "Lũ sói bị mồi thơm thu hút tranh giành cắn xé, ngươi nhân cơ hội thi triển thân pháp trốn thoát bình an vô sự.",
+          "exp_reward": 15
+        }
+      }
+    ]
+  }
+]

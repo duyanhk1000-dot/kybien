@@ -1,0 +1,1 @@
+import{Rn as e}from"./ui-vendor-DqHKsdNW.js";var t=e([]),n=e([]);function r(){return{unlockedZones:t,unlockedPlaces:n}}var i=e(null);export{r as i,n,t as r,i as t};
