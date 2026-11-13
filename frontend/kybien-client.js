@@ -11,7 +11,7 @@
   // FR-06: Silent Wake-up ngầm khi DOMContentLoaded
   document.addEventListener('DOMContentLoaded', () => {
     console.log('[Kỷ Biến Client] Kích hoạt Silent Wake-up tới Server Render...');
-    fetch(`${SERVER_URL}/ping`, { mode: 'no-cors' }).catch(() => {});
+    fetchWithTimeout(`${SERVER_URL}/ping`, { mode: 'no-cors' }).catch(() => {});
 
     // Khởi tạo Widget Header Profile
     initHeaderProfileWidget();
@@ -74,30 +74,83 @@
       txt = txt.replace(/⏩\s*Đầu|◀\s*Lùi|Tiến\s*▶|Cuối\s*⏩|🔴\s*Nước\s*\d+.*$/gi, '').trim();
       if (txt) el.textContent = txt;
     });
+    // Lấy nội dung tóm tắt đầy đủ 100% từ Blogger JSON Feed cho mọi bài viết (kể cả bài cũ)
+    fetchFullPostSummaries();
+  }
+
+  function fetchFullPostSummaries() {
+    const cards = document.querySelectorAll('.post-card');
+    if (!cards.length) return;
+
+    const urlToCard = {};
+    cards.forEach((card) => {
+      const link = card.querySelector('.post-card-title a') || card.querySelector('.btn-read-post');
+      if (link && link.getAttribute('href')) {
+        try {
+          const u = new URL(link.getAttribute('href'), window.location.origin);
+          urlToCard[u.pathname] = card;
+        } catch (e) {}
+      }
+    });
+
+    fetchWithTimeout('/feeds/posts/default?alt=json&max-results=30')
+      .then((res) => { if (!res.ok) throw new Error('Feed HTTP ' + res.status); return res.json(); })
+      .then((data) => {
+        if (!data || !data.feed || !data.feed.entry) return;
+        data.feed.entry.forEach((entry) => {
+          const altLink = (entry.link || []).find((l) => l.rel === 'alternate');
+          if (!altLink || !altLink.href) return;
+          try {
+            const postPath = new URL(altLink.href).pathname;
+            const targetCard = urlToCard[postPath];
+            if (targetCard) {
+              const content = (entry.content && entry.content.$t) || '';
+              const m = content.match(/kybien-post-summary-text[^>]*>([\s\S]*?)<\/p>/i);
+              if (m && m[1]) {
+                let clean = m[1].replace(/<[^>]*>/g, '').replace(/[\r\n]+/g, ' ').trim();
+                if (!clean.startsWith('🎯')) clean = '🎯 Tóm tắt ván cờ: ' + clean;
+                const snippetEl = targetCard.querySelector('.post-card-snippet');
+                if (snippetEl) {
+                  snippetEl.textContent = clean;
+                }
+              }
+            }
+          } catch (e) {}
+        });
+      })
+      .catch(() => {});
   }
 
   function updateOnlineStatsUI(stats) {
     if (!stats) return;
     const textEls = document.querySelectorAll('#online-stats-text');
-    const total = stats.total ?? 0;
-    const members = stats.members ?? 0;
-    const guests = stats.guests ?? 0;
+    const total = Number(stats.total ?? 0) || 0;
+    const members = Number(stats.members ?? 0) || 0;
+    const guests = Number(stats.guests ?? 0) || 0;
     const htmlStr = `Tề tựu: <b>${total}</b> vị (<b>${members}</b> Kỳ thủ • <b>${guests}</b> Lữ khách)`;
     textEls.forEach((el) => {
       el.innerHTML = htmlStr;
     });
   }
 
+  function showOnlineStatsOffline() {
+    document.querySelectorAll('#online-stats-text').forEach((el) => {
+      el.textContent = 'Máy chủ tạm nghỉ — số liệu chưa cập nhật.';
+    });
+  }
+
   function initOnlineFooterWidget() {
     // 1. Fetch REST API để cập nhật tức thì khi tải trang
-    fetch(SERVER_URL + '/api/stats/online')
-      .then((res) => res.json())
+    fetchWithTimeout(SERVER_URL + '/api/stats/online')
+      .then((res) => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
       .then((data) => {
         if (data && data.success && data.data) {
           updateOnlineStatsUI(data.data);
+        } else {
+          showOnlineStatsOffline();
         }
       })
-      .catch(() => {});
+      .catch(() => { showOnlineStatsOffline(); });
 
     // 2. Lắng nghe real-time qua Socket
     if (typeof io !== 'undefined') {
@@ -110,6 +163,12 @@
         clientSocket.on('online_stats', (stats) => {
           updateOnlineStatsUI(stats);
         });
+        // Chỉ báo "đã kết nối lại" khi trước đó từng rớt mạng trong phiên này —
+        // 'connect' cũng bắn ở lần kết nối đầu tiên, nên không được báo ở đó.
+        let clientWasDown = false;
+        clientSocket.on('connect', () => { if (clientWasDown) { clientWasDown = false; showNetBanner('✅ Đã kết nối lại máy chủ.', false); } });
+        clientSocket.on('disconnect', () => { clientWasDown = true; showOnlineStatsOffline(); showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...', true); });
+        clientSocket.on('connect_error', () => { clientWasDown = true; showOnlineStatsOffline(); showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...', true); });
         window._kybienGlobalSocket = clientSocket;
       } catch (e) {
         console.warn('[Online Tracker Socket]', e);
@@ -144,10 +203,47 @@
       .replace(/'/g, '&#39;');
   }
 
+  // Fetch có timeout 8 giây: tránh treo vĩnh viễn khi backend chết/ngủ
+  function fetchWithTimeout(url, options, timeoutMs) {
+    const ms = timeoutMs || 8000;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    const opts = Object.assign({}, options, { signal: ctrl.signal });
+    return fetch(url, opts).finally(() => clearTimeout(timer));
+  }
+
+  // Banner trạng thái mạng cố định đầu trang (dùng textContent nên an toàn)
+  function showNetBanner(msg, isErr) {
+    let b = document.getElementById('kb-net-banner');
+    if (!b) {
+      b = document.createElement('div');
+      b.id = 'kb-net-banner';
+      b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;text-align:center;padding:8px 12px;font:700 .85rem sans-serif;display:none';
+      document.body.appendChild(b);
+    }
+    b.textContent = msg;
+    b.style.display = 'block';
+    b.style.background = isErr ? '#8b0000' : '#1e8449';
+    b.style.color = '#fff';
+    if (!isErr) {
+      clearTimeout(b._t);
+      b._t = setTimeout(() => { b.style.display = 'none'; }, 3000);
+    }
+  }
+
   // Central Auth & Profile Session Manager
   window.KybienAuth = {
     cachedUser: null,
     isFetching: false,
+    _authBusy: false,
+
+    // Chống double-submit: khóa nút Đăng nhập/Đăng ký trong lúc đang gửi
+    setAuthButtonsDisabled: function (disabled) {
+      ['btn-kb-login', 'btn-kb-register'].forEach((id) => {
+        const b = document.getElementById(id);
+        if (b) b.disabled = !!disabled;
+      });
+    },
 
     getToken: function () {
       return localStorage.getItem('kybien_jwt_token');
@@ -190,9 +286,12 @@
         if (errEl) { errEl.innerText = 'Vui lòng nhập Tên và Mật khẩu!'; errEl.style.display = 'block'; }
         return;
       }
+      if (this._authBusy) return;
+      this._authBusy = true;
+      this.setAuthButtonsDisabled(true);
       if (errEl) { errEl.innerText = 'Đang đăng nhập...'; errEl.style.color = '#f1c40f'; errEl.style.display = 'block'; }
       try {
-        const res = await fetch(`${SERVER_URL}/api/auth/login`, {
+        const res = await fetchWithTimeout(`${SERVER_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usernameOrEmail: username, password })
@@ -206,6 +305,9 @@
         }
       } catch (e) {
         if (errEl) { errEl.innerText = 'Lỗi kết nối máy chủ!'; errEl.style.color = '#ff6b6b'; errEl.style.display = 'block'; }
+      } finally {
+        this._authBusy = false;
+        this.setAuthButtonsDisabled(false);
       }
     },
 
@@ -220,9 +322,12 @@
         if (errEl) { errEl.innerText = 'Vui lòng nhập Tên và Mật khẩu!'; errEl.style.display = 'block'; }
         return;
       }
+      if (this._authBusy) return;
+      this._authBusy = true;
+      this.setAuthButtonsDisabled(true);
       if (errEl) { errEl.innerText = 'Đang tạo tài khoản...'; errEl.style.color = '#f1c40f'; errEl.style.display = 'block'; }
       try {
-        const res = await fetch(`${SERVER_URL}/api/auth/register`, {
+        const res = await fetchWithTimeout(`${SERVER_URL}/api/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, email: username + '@kybien.com', password })
@@ -236,6 +341,9 @@
         }
       } catch (e) {
         if (errEl) { errEl.innerText = 'Lỗi kết nối máy chủ!'; errEl.style.color = '#ff6b6b'; errEl.style.display = 'block'; }
+      } finally {
+        this._authBusy = false;
+        this.setAuthButtonsDisabled(false);
       }
     },
 
@@ -246,8 +354,8 @@
           <div class="kybien-nav-auth" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
             <input type="text" id="hdr-auth-u" placeholder="Tên kỳ thủ" style="background: #1e130a; border: 1px solid #5a3d22; color: #fff; padding: 5px 8px; border-radius: 5px; font-size: 0.78rem; width: 110px; outline: none;" onkeydown="if(event.key==='Enter')window.KybienAuth.handleLogin()"/>
             <input type="password" id="hdr-auth-p" placeholder="Mật khẩu" style="background: #1e130a; border: 1px solid #5a3d22; color: #fff; padding: 5px 8px; border-radius: 5px; font-size: 0.78rem; width: 100px; outline: none;" onkeydown="if(event.key==='Enter')window.KybienAuth.handleLogin()"/>
-            <button type="button" onclick="window.KybienAuth.handleLogin()" style="background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 5px 10px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Nhập</button>
-            <button type="button" onclick="window.KybienAuth.handleRegister()" style="background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; padding: 5px 9px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Ký</button>
+            <button type="button" id="btn-kb-login" onclick="window.KybienAuth.handleLogin()" style="background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 5px 10px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Nhập</button>
+            <button type="button" id="btn-kb-register" onclick="window.KybienAuth.handleRegister()" style="background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; padding: 5px 9px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Ký</button>
             <div id="hdr-auth-err" style="color: #ff6b6b; font-size: 0.72rem; font-weight: bold; width: 100%; display: none;"></div>
           </div>
         `;
@@ -454,7 +562,7 @@
       this.isFetching = true;
 
       try {
-        const res = await fetch(`${SERVER_URL}/api/auth/me`, {
+        const res = await fetchWithTimeout(`${SERVER_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -838,9 +946,9 @@
       const stepInfo = document.getElementById('kybien-step-info');
       if (stepInfo) {
         if (this.currentStep === 0) {
-          stepInfo.innerHTML = `🔴 <strong>Nước 0 / ${this.moves.length}</strong>: Khai cuộc trận đấu (${this.variant === 'kb' ? 'Cờ Kỳ Biến' : this.variant === 't' ? 'Cờ Úp Truyền Thống' : this.variant === 'g' ? 'Cờ Úp Gián Điệp' : 'Cờ Tiêu Chuẩn'})`;
+          stepInfo.innerHTML = `🔴 <strong>Nước 0 / ${Number(this.moves.length) || 0}</strong>: Khai cuộc trận đấu (${this.variant === 'kb' ? 'Cờ Kỳ Biến' : this.variant === 't' ? 'Cờ Úp Truyền Thống' : this.variant === 'g' ? 'Cờ Úp Gián Điệp' : 'Cờ Tiêu Chuẩn'})`;
         } else {
-          stepInfo.innerHTML = `<strong>Nước ${this.currentStep} / ${this.moves.length}</strong>: ${note || 'Di chuyển quân'}`;
+          stepInfo.innerHTML = `<strong>Nước ${Number(this.currentStep) || 0} / ${Number(this.moves.length) || 0}</strong>: ${escapeHtml(note || 'Di chuyển quân')}`;
         }
       }
     },
@@ -888,7 +996,7 @@
       `;
 
       try {
-        const res = await fetch(`${SERVER_URL}/api/auth/leaderboard`);
+        const res = await fetchWithTimeout(`${SERVER_URL}/api/auth/leaderboard`);
         if (!res.ok) throw new Error('API Error');
         const list = await res.json();
         const listContainer = document.getElementById('kybien-elo-list');
@@ -902,16 +1010,18 @@
         const rankIcons = ['🥇', '🥈', '🥉'];
         listContainer.innerHTML = list.slice(0, 5).map((u, i) => {
           const rankStr = rankIcons[i] || `#${i + 1}`;
-          const played = u.matchesPlayed !== undefined ? u.matchesPlayed : (u.matches_played !== undefined ? u.matches_played : 0);
-          const won = u.matchesWon !== undefined ? u.matchesWon : (u.matches_won !== undefined ? u.matches_won : 0);
-          const winRate = u.winRate !== undefined ? u.winRate : (played > 0 ? Math.round((won / played) * 100) : 0);
+          const played = Number(u.matchesPlayed !== undefined ? u.matchesPlayed : (u.matches_played !== undefined ? u.matches_played : 0)) || 0;
+          const won = Number(u.matchesWon !== undefined ? u.matchesWon : (u.matches_won !== undefined ? u.matches_won : 0)) || 0;
+          const winRate = Number(u.winRate !== undefined ? u.winRate : (played > 0 ? Math.round((won / played) * 100) : 0)) || 0;
+          const eloNum = Number(u.elo) || 1200;
+          const levelNum = Number(u.level) || 1;
 
           const safeName = escapeHtml(u.username);
           const getEloT = (window.KybienAuth && window.KybienAuth.getEloTitle) ? window.KybienAuth.getEloTitle : (r => (r<1000?'Kỳ Đồng':r<=1199?'Kỳ Đồ':r<=1399?'Kỳ Hiệp':r<=1599?'Kỳ Tướng':r<=1799?'Kỳ Vương':r<=1999?'Kỳ Tông':r<=2199?'Kỳ Thánh':'Kỳ Thần'));
           const getExpT = (window.KybienAuth && window.KybienAuth.getExpTitle) ? window.KybienAuth.getExpTitle : (l => (l<=15?'Khởi Khai':l<=30?'Đắc Thức':l<=50?'Tri Ý':l<=70?'Thông Biến':l<=85?'Thần Cơ':l<=99?'Hóa Cảnh':'Quy Chân'));
           
-          const eloTitle = getEloT(u.elo);
-          const expTitle = getExpT(u.level || 1);
+          const eloTitle = getEloT(eloNum);
+          const expTitle = getExpT(levelNum);
           const fullTitle = `[${eloTitle}] ${expTitle}`;
 
           return `
@@ -921,7 +1031,7 @@
                 <div>
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <b style="color: #e8dcc6; font-size: 0.9rem;">${safeName}</b>
-                    <span style="font-size: 0.75rem; color: #e67e22;">(Lv.${u.level || 1})</span>
+                    <span style="font-size: 0.75rem; color: #e67e22;">(Lv.${levelNum})</span>
                   </div>
                   <div style="font-size: 0.74rem; color: #f1c40f; font-weight: 600; margin-top: 2px;">
                     ${fullTitle}
@@ -929,7 +1039,7 @@
                 </div>
               </div>
               <div style="text-align: right;">
-                <strong style="color: #f1c40f; font-size: 0.95rem;">${u.elo || 1200} ELO</strong>
+                <strong style="color: #f1c40f; font-size: 0.95rem;">${eloNum} ELO</strong>
                 <div style="font-size: 0.72rem; color: #2ecc71;">${winRate}% thắng (${won}/${played})</div>
               </div>
             </div>
@@ -941,6 +1051,9 @@
       }
     });
   }
+
+  // Nút "Tải lại" trong bảng vàng gọi hàm này qua onclick inline nên phải expose ra window
+  window.initTopEloLeaderboard = initTopEloLeaderboard;
 
   // KHỐI KỲ ĐÀI LUẬN KIẾM TRANG CHỦ
   function initLiveRoomsWidget() {
@@ -988,14 +1101,25 @@
       };
 
       // 1. Lấy dữ liệu nhanh qua HTTP REST API
+      // Chỉ poll khi tab đang hiển thị; dừng hẳn sau 5 lần lỗi liên tiếp
+      let roomPollFails = 0;
+      let roomPollTimer = null;
       const fetchRoomsViaHttp = async () => {
+        if (document.visibilityState !== 'visible') return;
         try {
-          const res = await fetch(`${SERVER_URL}/api/match/public-rooms`);
-          if (res.ok) {
-            const rooms = await res.json();
-            renderRooms(rooms);
+          const res = await fetchWithTimeout(`${SERVER_URL}/api/match/public-rooms`);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const rooms = await res.json();
+          roomPollFails = 0;
+          renderRooms(rooms);
+        } catch (e) {
+          roomPollFails++;
+          if (roomPollFails >= 5) {
+            if (roomPollTimer) { clearInterval(roomPollTimer); roomPollTimer = null; }
+            const listContainer = document.getElementById('kybien-rooms-list');
+            if (listContainer) listContainer.innerHTML = '<div style="text-align:center; color:#a8947d; font-size:0.85rem; padding:12px;">Máy chủ tạm nghỉ, thử lại sau.</div>';
           }
-        } catch (e) {}
+        }
       };
 
       fetchRoomsViaHttp();
@@ -1005,7 +1129,11 @@
         try {
           const token = localStorage.getItem('kybien_jwt_token') || '';
           const socket = io(SERVER_URL, { auth: { token } });
-          socket.on('connect', () => socket.emit('get_public_rooms'));
+          // Như socket thống kê: chỉ báo "đã kết nối lại" khi trước đó từng rớt mạng.
+          let lobbyWasDown = false;
+          socket.on('connect', () => { if (lobbyWasDown) { lobbyWasDown = false; showNetBanner('✅ Đã kết nối lại máy chủ.', false); } socket.emit('get_public_rooms'); });
+          socket.on('disconnect', () => { lobbyWasDown = true; showNetBanner('⚠️ Mất kết nối máy chủ — đang thử kết nối lại...', true); });
+          socket.on('connect_error', () => { lobbyWasDown = true; showNetBanner('⚠️ Không kết nối được máy chủ — đang thử lại...', true); });
           socket.on('public_rooms_list', (rooms) => renderRooms(rooms));
           socket.on('match_found', () => {
             if (window.location.pathname.indexOf('/p/arena.html') === -1) {
@@ -1016,8 +1144,8 @@
         } catch (e) {}
       }
 
-      // 3. Heartbeat polling 10 giây/lần
-      setInterval(fetchRoomsViaHttp, 10000);
+      // 3. Heartbeat polling 10 giây/lần (chỉ khi tab hiển thị; dừng sau 5 lỗi liên tiếp)
+      roomPollTimer = setInterval(fetchRoomsViaHttp, 10000);
     });
   }
 

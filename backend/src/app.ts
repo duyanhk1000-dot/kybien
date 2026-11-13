@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
 import { config } from './config/index.js';
@@ -23,6 +25,39 @@ import { onlineTracker } from './services/onlineTracker.js';
 import { prisma } from './utils/prisma.js';
 
 const app = express();
+
+// Tin proxy của Render (1 hop) để req.ip là IP thật của người chơi thay vì IP
+// của load balancer — bắt buộc thì rate-limit mới đếm đúng theo từng IP.
+// Render chỉ có 1 lớp proxy nên dùng 1; KHÔNG set trust proxy = true.
+app.set('trust proxy', 1);
+
+// Helmet: bật các header bảo mật (X-Content-Type-Options, Referrer-Policy...).
+// TẮT CSP và COEP: game nạp script/font từ Blogger, jsDelivr, Google Fonts,
+// socket.io CDN và dùng inline script ở các trang Blogger — CSP mặc định sẽ
+// chặn vỡ game. Muốn bật CSP phải liệt kê đủ allowlist, làm ở đợt sau.
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// Rate-limit toàn cục (nhẹ) cho mọi API: 300 req / 15 phút / IP.
+// Chỉ gắn vào /api nên /ping, /health và file tĩnh không bị giới hạn —
+// UptimeRobot ping 5 phút/lần không bao giờ chạm ngưỡng này.
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 300,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  skip: (req) =>
+    req.method === 'OPTIONS' || // CORS preflight không tính
+    (req.method === 'GET' && req.path === '/stats/online'), // endpoint thống kê public, frontend poll liên tục
+  handler: (_req, res) => {
+    res.status(429).json({ error: 'Bạn gửi quá nhiều yêu cầu, vui lòng thử lại sau ít phút.' });
+  },
+});
+app.use('/api', apiLimiter);
 
 // Middlewares
 app.use(

@@ -39,13 +39,6 @@
     a { color: #e5b36a; text-decoration: none; transition: all 0.2s ease; }
     a:hover { color: #f1c40f; }
 
-
-.info-text,
-.small-text {
-  color: #ffffff; /* Màu trắng cho văn bản */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Hiệu ứng bóng chữ để tăng độ tương phản */
-}
-
     /* ===== EMBED & STANDALONE BLOGGER MODE ===== */
     html.is-embedded .kybien-navbar,
     body.is-embedded .kybien-navbar {
@@ -411,50 +404,11 @@
       .puzzle-panel.left-col { order: 2; }
       .rules-grid { grid-template-columns: 1fr; gap: 8px; }
     }
-
-@media (max-width: 768px) {
-  /* Điều chỉnh bố cục cho màn hình nhỏ hơn */
-  .puzzle-grid {
-    grid-template-columns: 1fr; /* Đặt bố cục thành 1 cột trên thiết bị di động */
-  }
-  .board-center-col {
-    order: 1; /* Đặt cột bàn cờ ở trên */
-  }
-  .puzzle-panel.left-col {
-    order: 2; /* Đặt cột thiết lập ở dưới */
-  }
-  /* Điều chỉnh khoảng cách và kích thước cho các thành phần */
-  .puzzle-panel {
-    padding: 12px; /* Giảm khoảng cách lề cho các bảng điều khiển */
-  }
-  .board-header-bar {
-    padding: 8px 12px; /* Giảm khoảng cách lề cho thanh tiêu đề bàn cờ */
-  }
-  /* ... */
-}
-
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR CHUẨN KỲ BIẾN SA TRƯỜNG -->
-  <header class="kybien-navbar">
-    <div class="nav-container">
-      <div class="brand-logo">
-        <span class="logo-general-badge">帥</span>
-        <span>KỲ BIẾN</span> SA TRƯỜNG
-      </div>
-      <ul class="nav-links">
-        <li><a href="index.html">Trang Chủ</a></li>
-        <li><a href="arena-page.html">Sàn Đấu PvP</a></li>
-        <li><a href="co-the.html">Giải Cờ Thế</a></li>
-        <li><a href="co-tam-quoc.html" class="active">Cờ Tam Quốc</a></li>
-        <li><a href="cam-nang.html">Bí Pháp Cẩm Nang</a></li>
-      </ul>
-    </div>
-  </header>
-
-  <!-- MAIN ARENA -->
+   <!-- MAIN ARENA -->
   <main class="puzzle-main-wrapper">
 
     <!-- SUBHEADER & CHỌN CHẾ ĐỘ NHANH -->
@@ -1107,18 +1061,6 @@ document.getElementById('sp').onchange = () => {
 // Khởi tạo tùy chọn phe và bắt đầu trận
 updateSideOptions();
 init();
-
-function cycleViewSide() {
-  viewSide = (viewSide + 1) % 3;
-  render();
-
-  // Thêm hiệu ứng chuyển động mượt mà
-  const sv = document.getElementById('sv');
-  sv.style.transition = 'transform 0.5s ease-in-out';
-  sv.style.transform = `rotate(${viewSide * 120}deg)`;
-}
-
-
 </script>
 </body>
 </html>

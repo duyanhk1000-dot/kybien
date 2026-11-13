@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sảnh Game — Kỳ Biến | Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Huyền Sử</title>
+  <meta name="description" content="Sảnh Game Kỳ Biến: chơi Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Nhảy, Cờ Huyền Sử — một sảnh, đủ loại cờ, vào là chơi."/>
+
+  <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC (giống co-the.html) -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ===== RESET & BASE WUXIA THEME (khớp co-the.html) ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Be Vietnam Pro', -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 0, #291e14, #0d0906);
+      color: #e8dcc6;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: #e5b36a; text-decoration: none; transition: all 0.2s ease; }
+    a:hover { color: #f1c40f; }
+
+    /* ===== NAVBAR (giống co-the.html) ===== */
+    .kybien-navbar {
+      background: linear-gradient(135deg, #8b0000, #4a0000);
+      color: #ffffff;
+      padding: 12px 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid #f1c40f;
+    }
+    .nav-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand-logo {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Noto Serif TC', serif;
+    }
+    .brand-logo span { color: #f1c40f; }
+    .logo-general-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #c62828;
+      color: #ffffff;
+      border: 2px solid #f1c40f;
+      font-family: 'Noto Serif TC', serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px rgba(241,196,15,0.4);
+    }
+    .nav-links { display: flex; gap: 18px; list-style: none; align-items: center; flex-wrap: wrap; }
+    .nav-links a { color: #ffffff; font-weight: 600; font-size: 0.92rem; }
+    .nav-links a:hover, .nav-links a.active { color: #f1c40f; text-shadow: 0 0 6px rgba(241,196,15,0.5); }
+
+    /* ===== MAIN LAYOUT ===== */
+    .hub-wrapper {
+      max-width: 1300px;
+      margin: 18px auto;
+      padding: 0 16px;
+      flex: 1;
+      width: 100%;
+    }
+    .kb-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ===== HERO ===== */
+    .hub-hero {
+      background: linear-gradient(135deg, #2c1a0e, #1a0f08);
+      border: 1px solid #5a3d22;
+      border-radius: 14px;
+      padding: 28px 24px;
+      text-align: center;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    .hub-hero h1 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 2.1rem;
+      color: #f1c40f;
+      font-weight: 900;
+      letter-spacing: 2px;
+      line-height: 1.25;
+    }
+    .hub-hero p {
+      color: #d1c0a5;
+      font-size: 1rem;
+      margin-top: 6px;
+    }
+    .hub-online {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid #5a3d22;
+      background: rgba(0, 0, 0, 0.4);
+      font-size: 0.85rem;
+      color: #a8947d;
+    }
+    .hub-online .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #888;
+      flex-shrink: 0;
+    }
+    .hub-online.is-online .dot { background: #2ecc71; box-shadow: 0 0 8px rgba(46,204,113,0.8); }
+    .hub-online.is-offline .dot { background: #e74c3c; box-shadow: 0 0 8px rgba(231,76,60,0.8); }
+    .hub-online.is-online { color: #e8dcc6; }
+    .hub-online b { color: #f1c40f; }
+
+    /* ===== FILTER CHIPS ===== */
+    .hub-filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .filter-chip {
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #5a3d22;
+      background: #1e120a;
+      color: #d1c0a5;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .filter-chip:hover { border-color: #f1c40f; color: #f1c40f; }
+    .filter-chip.active {
+      background: #8b0000;
+      border-color: #f1c40f;
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(241,196,15,0.3);
+    }
+    .filter-chip:focus-visible, .game-card:focus-visible, .featured-card:focus-visible {
+      outline: 2px solid #f1c40f;
+      outline-offset: 2px;
+    }
+
+    /* ===== FEATURED CARD (Cờ Thế hôm nay) ===== */
+    .featured-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: linear-gradient(135deg, rgba(139,0,0,0.35), rgba(241,196,15,0.08));
+      border: 1px solid #8b5a2b;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .featured-card:hover { border-color: #f1c40f; }
+    .featured-text { flex: 1; min-width: 220px; }
+    .featured-text h2 {
+      font-family: 'Noto Serif TC', serif;
+      color: #f1c40f;
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+    .featured-text p { color: #d1c0a5; font-size: 0.9rem; }
+    .btn-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #8b0000, #4a0000);
+      color: #ffffff;
+      border: 1px solid #f1c40f;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-play:hover { background: #a83a1f; color: #fff; }
+
+    /* ===== GAME GRID — lưới 4 cột như sketch (2 cột tablet, 1 cột mobile) ===== */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(min(260px, 100%), 1fr));
+      gap: 16px;
+    }
+    .game-card {
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #24160c, #150b05);
+      border: 1px solid #5a3d22;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      color: #e8dcc6;
+    }
+    a.game-card:hover {
+      transform: translateY(-4px);
+      border-color: #f1c40f;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), 0 0 12px rgba(241,196,15,0.25);
+      color: #e8dcc6;
+    }
+    .game-thumb {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #3d2716;
+      overflow: hidden;
+    }
+    .game-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+    .badge-hot { background: #8b0000; color: #fff; border: 1px solid #f1c40f; }
+    .badge-new { background: #27ae60; color: #fff; border: 1px solid #2ecc71; }
+    .badge-soon { background: #332114; color: #d4af37; border: 1px solid #5a3d22; }
+    .game-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .game-body h3 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.12rem;
+      color: #f1c40f;
+    }
+    .game-body p { font-size: 0.86rem; color: #d1c0a5; flex: 1; }
+    .game-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: #a8947d;
+      border-top: 1px dashed #3d2716;
+      padding-top: 8px;
+      margin-top: 4px;
+    }
+    .game-cta { color: #f1c40f; font-weight: 700; white-space: nowrap; }
+
+    /* Thẻ sắp ra mắt: mờ, không bấm được */
+    .game-card.is-coming {
+      opacity: 0.62;
+      cursor: default;
+    }
+    .game-card.is-coming .game-body h3 { color: #d1c0a5; }
+    .game-card.is-coming .game-thumb { filter: grayscale(0.55); }
+
+    /* ===== MINI BOARD THUMBNAILS (vẽ bằng CSS, không cần ảnh) ===== */
+    /* Cờ Thế: bàn cờ tướng thu nhỏ, nền gỗ + vạch kẻ + 3 quân */
+    .thumb-cothe {
+      background:
+        linear-gradient(rgba(90, 61, 34, 0.55), rgba(90, 61, 34, 0.55)),
+        repeating-linear-gradient(0deg, transparent 0 23px, #5a3d22 23px 24px),
+        repeating-linear-gradient(90deg, transparent 0 23px, #5a3d22 23px 24px),
+        linear-gradient(135deg, #e9c88f, #d9a860);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    }
+    .thumb-cothe::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 48%, rgba(139, 0, 0, 0.35) 48% 52%, transparent 52%);
+    }
+    /* Cờ Tam Quốc: 3 phe */
+    .thumb-tamquoc { background: linear-gradient(135deg, #2a0d0d, #0d1a0d 55%, #0d1426); }
+    /* Cờ Caro: lưới 5x5 + 2 quân */
+    .thumb-caro {
+      background:
+        repeating-linear-gradient(0deg, transparent 0 21px, #8a6a42 21px 22px),
+        repeating-linear-gradient(90deg, transparent 0 21px, #8a6a42 21px 22px),
+        linear-gradient(135deg, #e9c88f, #d9a860);
+    }
+    /* Cờ Vây: bàn gỗ + lưới 19x19 thu nhỏ + 2 quân */
+    .thumb-covay {
+      background:
+        repeating-linear-gradient(0deg, transparent 0 13px, #8a6a42 13px 14px),
+        repeating-linear-gradient(90deg, transparent 0 13px, #8a6a42 13px 14px),
+        linear-gradient(135deg, #e9c88f, #d9a860);
+    }
+    /* Cờ Cá Ngựa: 4 góc màu */
+    .thumb-cangua {
+      background:
+        linear-gradient(135deg, #c62828 0 50%, #1565c0 50% 100%);
+    }
+    .thumb-cangua::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent 49.5%, rgba(0,0,0,0.35) 49.5% 50.5%, transparent 50.5%),
+                   linear-gradient(-45deg, transparent 49.5%, rgba(0,0,0,0.35) 49.5% 50.5%, transparent 50.5%);
+    }
+    /* Cờ Huyền Sử: sơn mài đỏ – vàng đồng */
+    .thumb-huyensu { background: linear-gradient(135deg, #4a0000, #8b5a2b 55%, #2c1a0e); }
+    /* Cờ Nhảy: nền tối + chấm */
+    .thumb-conhay { background: radial-gradient(circle at 50% 30%, #2c1a0e, #150b05); }
+    .mini-pieces {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 12px;
+    }
+    .mini-piece {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Noto Serif TC', serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      border: 2px solid #5a3d22;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+      flex-shrink: 0;
+    }
+    .mini-piece.red { background: #f5e6c8; color: #c62828; border-color: #8b0000; }
+    .mini-piece.black { background: #222; color: #eee; border-color: #555; }
+    .mini-piece.green { background: #1b5e20; color: #a5d6a7; border-color: #2e7d32; }
+    .mini-piece.blue { background: #0d47a1; color: #90caf9; border-color: #1565c0; }
+    .mini-piece.stone-b { background: #1a1a1a; color: #1a1a1a; border-color: #000; width: 34px; height: 34px; }
+    .mini-piece.stone-w { background: #f5f5f5; color: #f5f5f5; border-color: #bbb; width: 34px; height: 34px; }
+    .mini-piece.ludo { width: 44px; height: 44px; font-size: 1.3rem; border-width: 3px; }
+    .mini-piece.ludo.r { background: #c62828; color: #fff; border-color: #ef9a9a; }
+    .mini-piece.ludo.g { background: #2e7d32; color: #fff; border-color: #a5d6a7; }
+    .mini-piece.ludo.b { background: #1565c0; color: #fff; border-color: #90caf9; }
+    .mini-piece.ludo.y { background: #f9a825; color: #fff; border-color: #ffe082; }
+    .mini-dots {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(5, 14px);
+      gap: 8px;
+      justify-content: center;
+    }
+    .mini-dots i {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #f1c40f;
+      box-shadow: 0 0 6px rgba(241,196,15,0.6);
+    }
+    .mini-dots i:nth-child(even) { background: #e74c3c; box-shadow: 0 0 6px rgba(231,76,60,0.6); }
+
+    /* ===== FOOTER NOTE ===== */
+    .hub-footer {
+      margin-top: 20px;
+      background: linear-gradient(180deg, #24160c, #150b05);
+      border: 1px solid #5a3d22;
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 0.88rem;
+      color: #a8947d;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .hub-footer strong { color: #f1c40f; }
+    .hub-empty {
+      display: none;
+      text-align: center;
+      color: #a8947d;
+      padding: 28px 12px;
+      border: 1px dashed #5a3d22;
+      border-radius: 12px;
+      grid-column: 1 / -1;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1050px) {
+      .games-grid { grid-template-columns: repeat(2, minmax(min(260px, 100%), 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .games-grid { grid-template-columns: minmax(min(260px, 100%), 1fr); }
+      .hub-hero h1 { font-size: 1.6rem; }
+      .hub-hero { padding: 22px 16px; }
+      .featured-card { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="kb-sr-only">Sảnh Game — Kỳ Biến: Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Huyền Sử</h1>
+
+
+  <!-- MAIN -->
+  <main class="hub-wrapper">
+
+    <!-- HERO -->
+    <section class="hub-hero">
+      <h1>🏮 SẢNH GAME</h1>
+      <p>Một sảnh, đủ loại cờ — vào là chơi. Cờ Thế, Cờ Tam Quốc, Cờ Caro, Cờ Vây, Cờ Cá Ngựa, Cờ Huyền Sử và nhiều game nữa đang trên đường tới.</p>
+     
+        <span id="hub-online-text">Đang kiểm tra máy chủ…</span>
+    </section>
+
+    <!-- FILTERS -->
+    <div class="hub-filters" role="group" aria-label="Lọc game theo loại">
+      <button class="filter-chip active" data-filter="all" aria-pressed="true">Tất cả</button>
+      <button class="filter-chip" data-filter="truyen-thong" aria-pressed="false">Cờ truyền thống</button>
+      <button class="filter-chip" data-filter="2-nguoi" aria-pressed="false">2 người</button>
+      <button class="filter-chip" data-filter="nhieu-nguoi" aria-pressed="false">Nhiều người</button>
+      <button class="filter-chip" data-filter="dau-may" aria-pressed="false">Đấu máy</button>
+      <button class="filter-chip" data-filter="sap-ra-mat" aria-pressed="false">Sắp ra mắt</button>
+    </div>
+
+    <!-- FEATURED: Cờ Thế hôm nay -->
+    <a class="featured-card" href="https://kybien.blogspot.com/p/co-the.html">
+      <div class="featured-text">
+        <h2>📅 Cờ Thế hôm nay — 3 ải mới mỗi ngày</h2>
+        <p>Giải xong cả 3 ải trong ngày nhận +15 EXP. Hôm nay bạn đã phá được mấy thế?</p>
+      </div>
+      <span class="btn-play">Giải ngay →</span>
+    </a>
+
+    <!-- GAME GRID -->
+    <div class="games-grid" id="games-grid">
+
+      <!-- CỜ THẾ -->
+      <a class="game-card" href="https://kybien.blogspot.com/p/co-the.html" data-cat="truyen-thong dau-may">
+        <div class="game-thumb thumb-cothe">
+          <span class="game-badge badge-hot">MỖI NGÀY 3 ẢI</span>
+          <div class="mini-pieces">
+            <span class="mini-piece red">帥</span>
+            <span class="mini-piece black">將</span>
+            <span class="mini-piece red">炮</span>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Thế</h3>
+          <p>Giải thế cờ, nhận EXP, leo hạng hiệp khách. 1.500 kỳ trận đang chờ phá giải.</p>
+          <div class="game-meta">
+            <span>1 người · Đấu máy · Online</span>
+            <span class="game-cta">Chơi ngay ›</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CỜ TAM QUỐC -->
+      <a class="game-card" href="https://kybien.blogspot.com/p/co-tam-quoc.html" data-cat="truyen-thong nhieu-nguoi dau-may">
+        <div class="game-thumb thumb-tamquoc">
+          <span class="game-badge badge-new">MỚI</span>
+          <div class="mini-pieces">
+            <span class="mini-piece red">魏</span>
+            <span class="mini-piece green">蜀</span>
+            <span class="mini-piece blue">吳</span>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Tam Quốc</h3>
+          <p>Ba phe Ngụy – Thục – Ngô tranh bá trên một bàn cờ. Liên minh hay phản bội, tùy bạn.</p>
+          <div class="game-meta">
+            <span>3 người · Đấu máy</span>
+            <span class="game-cta">Chơi ngay ›</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CỜ CARO -->
+      <a class="game-card" href="https://kybien.blogspot.com/p/co-caro.html" data-cat="2-nguoi dau-may">
+        <div class="game-thumb thumb-caro">
+          <span class="game-badge badge-new">MỚI</span>
+          <div class="mini-pieces">
+            <span class="mini-piece stone-b">●</span>
+            <span class="mini-piece stone-w">●</span>
+            <span class="mini-piece stone-b">●</span>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Caro</h3>
+          <p>Luật Việt Nam &amp; Gomoku quốc tế (Swap2). Đấu với bạn chung máy hoặc thách đấu máy.</p>
+          <div class="game-meta">
+            <span>2 người · Đấu máy</span>
+            <span class="game-cta">Chơi ngay ›</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CỜ VÂY -->
+      <a class="game-card" href="https://kybien.blogspot.com/p/co-vay.html" data-cat="2-nguoi dau-may">
+        <div class="game-thumb thumb-covay">
+          <span class="game-badge badge-new">MỚI</span>
+          <div class="mini-pieces">
+            <span class="mini-piece stone-b">●</span>
+            <span class="mini-piece stone-w">●</span>
+            <span class="mini-piece stone-b">●</span>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Vây</h3>
+          <p>Bao vây lãnh thổ trên bàn 9×9, 13×13, 19×19. Chấp quân, komi, luật ko — đấu máy hoặc 2 người.</p>
+          <div class="game-meta">
+            <span>2 người · Đấu máy</span>
+            <span class="game-cta">Chơi ngay ›</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CỜ CÁ NGỰA -->
+      <a class="game-card" href="https://kybien.blogspot.com/p/co-ca-ngua.html" data-cat="nhieu-nguoi dau-may">
+        <div class="game-thumb thumb-cangua">
+          <span class="game-badge badge-new">MỚI</span>
+          <div class="mini-pieces">
+            <span class="mini-piece ludo r">1</span>
+            <span class="mini-piece ludo g">2</span>
+            <span class="mini-piece ludo b">3</span>
+            <span class="mini-piece ludo y">4</span>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Cá Ngựa</h3>
+          <p>Đổ xúc xắc, đua 4 ngựa về đích. Luật bay số 1, chơi 1 hoặc 2 xúc xắc, 2–4 người hoặc đấu máy.</p>
+          <div class="game-meta">
+            <span>2–4 người · Đấu máy</span>
+            <span class="game-cta">Chơi ngay ›</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CỜ HUYỀN SỬ -->
+      <a class="game-card" href="https://kybien.blogspot.com/p/co-huyen-su.html" data-cat="dau-may">
+        <div class="game-thumb thumb-huyensu">
+          <span class="game-badge badge-new">MỚI</span>
+          <div class="mini-pieces">
+            <span class="mini-piece red">趙</span>
+            <span class="mini-piece green">風</span>
+            <span class="mini-piece blue">陳</span>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Huyền Sử</h3>
+          <p>Auto chess 30 thần tướng Việt — mua tướng, kích tộc/hệ, đấu 7 máy tới vòng cuối.</p>
+          <div class="game-meta">
+            <span>1 người · Đấu 7 máy</span>
+            <span class="game-cta">Chơi ngay ›</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CỜ NHẢY — SẮP RA MẮT -->
+      <article class="game-card is-coming" data-cat="nhieu-nguoi sap-ra-mat" aria-label="Cờ Nhảy — sắp ra mắt">
+        <div class="game-thumb thumb-conhay">
+          <span class="game-badge badge-soon">SẮP RA MẮT</span>
+          <div class="mini-dots">
+            <i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="game-body">
+          <h3>Cờ Nhảy</h3>
+          <p>Nhảy qua quân đối thủ để đưa cả đội về đích trước. Càng nhảy xa càng sướng tay.</p>
+          <div class="game-meta">
+            <span>2–6 người</span>
+            <span class="game-cta">Sắp ra mắt</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="hub-empty" id="hub-empty">Không có game nào thuộc loại này — thử bộ lọc khác nhé.</div>
+    </div>
+
+    <!-- FOOTER NOTE -->
+    <section class="hub-footer">
+      <div>✨ <strong>Mới cập nhật:</strong> vừa thêm Cờ Huyền Sử — auto chess 30 thần tướng Việt, đấu 7 máy. <a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html">Tiêu điểm tướng</a> xem chiêu trực tiếp trên bàn thật. Sắp tới: Cờ Nhảy.</div>
+      </section>
+
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ===== Bộ lọc game ===== */
+      var chips = Array.prototype.slice.call(document.querySelectorAll('.filter-chip'));
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.game-card'));
+      var emptyBox = document.getElementById('hub-empty');
+
+      function applyFilter(filter) {
+        var visible = 0;
+        cards.forEach(function (card) {
+          var cats = (card.getAttribute('data-cat') || '').split(' ');
+          var show = filter === 'all' || cats.indexOf(filter) !== -1;
+          card.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+        if (emptyBox) emptyBox.style.display = visible === 0 ? 'block' : 'none';
+      }
+
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          chips.forEach(function (c) {
+            c.classList.remove('active');
+            c.setAttribute('aria-pressed', 'false');
+          });
+          chip.classList.add('active');
+          chip.setAttribute('aria-pressed', 'true');
+          applyFilter(chip.getAttribute('data-filter'));
+        });
+      });
+
+      /* ===== Số người online (giống theme: fetch có timeout, lỗi thì báo máy chủ nghỉ) ===== */
+      var pill = document.getElementById('hub-online-pill');
+      var textEl = document.getElementById('hub-online-text');
+      function showOffline() {
+        if (!pill || !textEl) return;
+        pill.classList.remove('is-online');
+        pill.classList.add('is-offline');
+        textEl.textContent = 'Máy chủ tạm nghỉ — số liệu chưa cập nhật.';
+      }
+      try {
+        var controller = new AbortController();
+        var timer = setTimeout(function () { controller.abort(); }, 8000);
+        fetch('https://kybien-backend.onrender.com/api/stats/online', { signal: controller.signal })
+          .then(function (res) {
+            clearTimeout(timer);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            if (!data || !data.success || !data.data) { showOffline(); return; }
+            var total = Number(data.data.total || 0);
+            var members = Number(data.data.members || 0);
+            var guests = Number(data.data.guests || 0);
+            pill.classList.add('is-online');
+            textEl.innerHTML = 'Tề tựu: <b>' + total + '</b> vị (<b>' + members + '</b> Kỳ thủ • <b>' + guests + '</b> Lữ khách)';
+          })
+          .catch(showOffline);
+      } catch (e) {
+        showOffline();
+      }
+    })();
+  </script>
+
+</body>
+</html>

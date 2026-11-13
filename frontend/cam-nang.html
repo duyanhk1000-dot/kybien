@@ -54,6 +54,40 @@
       font-family: sans-serif;
     }
 
+    /* NAV ĐIỀU HƯỚNG (trang vốn mồ côi, không có lối thoát) */
+    .cn-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .cn-nav a, .cn-nav span {
+      color: #e8dcc6;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border: 1px solid #5a3d22;
+      border-radius: 6px;
+      background: #22150c;
+    }
+    .cn-nav a:hover { border-color: #f1c40f; color: #f1c40f; }
+    .cn-nav .active { color: #f1c40f; border-color: #f1c40f; background: #33251a; }
+
+    /* FOOTER */
+    .cn-footer {
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 1px solid #5a3d22;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #a8947d;
+      line-height: 1.8;
+    }
+    .cn-footer a { color: #f1c40f; text-decoration: none; font-weight: 600; }
+    .cn-footer a:hover { text-decoration: underline; }
+
     /* BỐ CỤC 2 CỘT TỔNG THỂ */
     .cn-layout {
       display: grid;
@@ -440,6 +474,13 @@
     <span style="font-size:0.82rem;color:#a8947d">Hướng dẫn Luật Chơi, Chế Độ & Bảng 16 Bí Pháp Kiếm Hiệp</span>
   </div>
 
+  <nav class="cn-nav" aria-label="Điều hướng Kỳ Biến">
+    <a href="/">🏠 Trang Chủ</a>
+    <a href="/p/arena.html">⚔️ Sàn Đấu PvP</a>
+    <a href="/p/co-the.html">♟️ Giải Cờ Thế</a>
+    <span class="active">📖 Bí Pháp Cẩm Nang</span>
+  </nav>
+
   <div class="cn-layout">
     <!-- CỘT 1: CÂY MENU PHÂN TẦNG -->
     <aside class="cn-sidebar">
@@ -567,7 +608,7 @@
         <h2 class="cn-title">🔴 Cờ Tướng Truyền Thống — Chính Đạo Kỳ Nghệ</h2>
         <div class="mode-split-layout">
           <div class="cn-box">
-            <p><b>Bổn Trang kính cáo chư vị kỳ hữu:</b> Cờ Tướng vốn là kỳ nghệ ngàn năm lưu truyền chốn giang hồ, lấy bàn cờ 64 ô 90 giao điểm làm sa trường, lấy sông Sở Hà - Hán Giới phân định ranh giới sinh tử. Nơi đây anh hùng hào kiệt thi thố tài ba mưu lược qua từng nước đi chính đạo:</p>
+            <p><b>Bổn Trang kính cáo chư vị kỳ hữu:</b> Cờ Tướng vốn là kỳ nghệ ngàn năm lưu truyền chốn giang hồ, lấy bàn cờ 9 đường dọc × 10 đường ngang, 90 giao điểm làm sa trường, lấy sông Sở Hà - Hán Giới phân định ranh giới sinh tử. Nơi đây anh hùng hào kiệt thi thố tài ba mưu lược qua từng nước đi chính đạo:</p>
             <ul style="margin-left: 20px; margin-top: 8px;">
               <li><b>Quyền tiên phong:</b> Quân Đỏ nắm giữ tiên cơ đi trước. Bị đối phương vây hãm chiếu bí hoặc tắc nghẽn mọi sinh lộ (vô phương ứng biến) thì nhận lấy thất bại.</li>
               <li><b>Hai Tướng bất kiến:</b> Nghiêm cấm hai Chủ Tướng nhìn thẳng mặt nhau trên cùng một cột mà không có quân cờ che chắn ở giữa.</li>
@@ -1074,6 +1115,11 @@
 
     </main>
   </div>
+
+  <footer class="cn-footer">
+    <a href="/">🏠 Trang Chủ</a> • <a href="/p/arena.html">⚔️ Sàn Đấu PvP</a> • <a href="/p/co-the.html">♟️ Giải Cờ Thế</a><br/>
+    Kỳ Biến Chess Sa Trường — Cẩm Nang Kiếm Hiệp 2026
+  </footer>
 </div>
 
 <script>

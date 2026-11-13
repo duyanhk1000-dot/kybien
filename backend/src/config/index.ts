@@ -1,17 +1,25 @@
 import dotenv from 'dotenv';
-import crypto from 'crypto';
 dotenv.config();
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 
+const MIN_JWT_SECRET_LENGTH = 32;
+
 /**
- * 🛡️ Safe Production JWT Fallback:
- * If JWT_SECRET environment variable is missing or insecure in Render production environment,
- * dynamically derive a secure, deterministic SHA-256 secret based on instance signature.
- * This guarantees zero server crash on deployment while enforcing top-tier security!
+ * ⚠️ JWT_SECRET BẮT BUỘC ở production — không còn fallback tự sinh.
+ *
+ * Trước đây code tự sinh secret từ DATABASE_URL (ai biết DATABASE_URL đều
+ * tính lại được secret rồi tự ký JWT giả mạo bất kỳ user nào) và có secret
+ * mặc định công khai 'default_secret_key_kybien' trong repo.
+ *
+ * Bây giờ: ở production, thiếu JWT_SECRET, ngắn hơn 32 ký tự, hoặc nằm trong
+ * danh sách yếu → server THROW NGAY lúc khởi động (fail fast, chủ ý, không
+ * phải lỗi deploy). Hãy set JWT_SECRET (chuỗi ngẫu nhiên ≥ 32 ký tự, ví dụ
+ * chạy `openssl rand -hex 32`) trong Render → Environment rồi deploy lại.
+ * Ở development vẫn cho dùng secret mặc định nhưng log cảnh báo lớn.
  */
 function resolveJwtSecret(): string {
-  const envSecret = process.env.JWT_SECRET;
+  const envSecret = process.env.JWT_SECRET?.trim();
   const unsafeSecrets = [
     'default_secret_key_kybien',
     'kybien_super_secret_jwt_key_2026',
@@ -21,18 +29,24 @@ function resolveJwtSecret(): string {
     'change_me',
   ];
 
-  if (envSecret && envSecret.trim() !== '' && !unsafeSecrets.includes(envSecret.toLowerCase())) {
-    return envSecret;
+  const isUsable =
+    !!envSecret &&
+    envSecret.length >= MIN_JWT_SECRET_LENGTH &&
+    !unsafeSecrets.includes(envSecret.toLowerCase());
+
+  if (isUsable) {
+    return envSecret as string;
   }
 
   if (nodeEnv === 'production') {
-    const seed = process.env.DATABASE_URL || process.env.RENDER_SERVICE_ID || 'kybien_secure_fallback_seed_2026';
-    const generatedSecret = 'kybien_prod_jwt_' + crypto.createHash('sha256').update(seed).digest('hex');
-    console.warn('⚠️ WARNING: JWT_SECRET environment variable was missing or insecure in production.');
-    console.warn('🔒 Dynamically derived secure fallback JWT_SECRET based on instance signature.');
-    return generatedSecret;
+    throw new Error(
+      'JWT_SECRET chưa được cấu hình hoặc quá yếu. Server từ chối khởi động để tránh bị giả mạo token. ' +
+        'Hãy set JWT_SECRET (chuỗi ngẫu nhiên ít nhất 32 ký tự, ví dụ chạy `openssl rand -hex 32`) ' +
+        'trong Render → Environment, rồi deploy lại.'
+    );
   }
 
+  console.warn('⚠️⚠️⚠️ CẢNH BÁO BẢO MẬT: JWT_SECRET chưa được cấu hình hoặc quá yếu — đang dùng secret mặc định CHỈ DÀNH CHO DEV. TUYỆT ĐỐI không dùng cấu hình này ở production.');
   return 'default_secret_key_kybien';
 }
 
@@ -42,6 +56,13 @@ export const config = {
   port: parseInt(process.env.PORT || '4000', 10),
   nodeEnv,
   jwtSecret,
+  // Email quản trị, phân tách dấu phẩy — dùng cho middleware requireAdmin.
+  // Ví dụ: ADMIN_EMAILS=admin@kybien.com,mod@kybien.com
+  // So sánh không phân biệt hoa/thường. Chưa set = mọi endpoint admin đều khóa.
+  adminEmails: (process.env.ADMIN_EMAILS || '')
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean),
   clientOrigin: process.env.CLIENT_ORIGIN
     ? process.env.CLIENT_ORIGIN.split(',').map((item) => item.trim())
     : ['https://kybien.blogspot.com', 'http://localhost:3000', 'http://localhost:4000'],

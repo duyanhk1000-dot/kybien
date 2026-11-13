@@ -9,8 +9,8 @@
   <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC -->
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap" rel="stylesheet"/>
 
-  <!-- Ky Bien Puzzle Script -->
-  <script defer src="kybien-puzzle.js?v=1.0.0"></script>
+  <!-- Ky Bien Puzzle Script (đường dẫn tuyệt đối jsDelivr — bản trên Blogger live đang dùng URL này, v1.0.1; KHÔNG dùng đường dẫn tương đối vì trang Blogger ở /p/co-the.html sẽ resolve sai thành /p/kybien-puzzle.js) -->
+  <script defer src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-puzzle.js?v=1.0.2"></script>
 
   <!-- Embed / Standalone Detection for Blogger (kybien.blogspot.com) -->
   <script>
@@ -363,6 +363,22 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
+      /* Co vừa màn hình hẹp: tọa độ click trong kybien-puzzle.js đã scale theo tỉ lệ hiển thị nên chơi bình thường */
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Tiêu đề chỉ dành cho screen reader / SEO (trang vốn không có <h1>) */
+    .kb-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .board-actions {
@@ -618,6 +634,8 @@
 </head>
 <body>
 
+  <h1 class="kb-sr-only">Cờ Thế &amp; Sát Cục — Kỳ Biến Chess Sa Trường</h1>
+
   <!-- NAVBAR -->
   <header class="kybien-navbar">
     <div class="nav-container">
@@ -641,6 +659,8 @@
     <div class="mode-bar">
       <div class="mode-tabs">
         <button class="mode-btn active" id="tab-library-standard">⚔️ Cửu Trùng Ải (Chính Tông)</button>
+        <button class="mode-btn" id="tab-library-medium">🥈 Ải Vừa (Trung Cấp)</button>
+        <button class="mode-btn" id="tab-library-hard">🥇 Ải Khó (Cao Thủ)</button>
         <button class="mode-btn" id="tab-library-ugc">👥 Giang Hồ Kỳ Trận (Cộng Đồng)</button>
         <button class="mode-btn" id="btn-open-creator" style="background: linear-gradient(135deg, #8b0000, #4a0000); border-color: #f1c40f; color: #f1c40f; font-weight: bold;">
           🛠️ Tự Tạo Thế Cờ (Bày Thế)
