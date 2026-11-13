@@ -327,46 +327,47 @@ html, body {
    ========================================================================== */
 
 // --- DỮ LIỆU TƯỚNG MẪU (SỬ DỤNG SPRITESHEET ĐÃ CÓ TRONG REPO) ---
+const SPR_BASE = 'https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/hero/';
 const HERO_DB = {
   'thanhgiong': {
     name: 'Thánh Gióng', star: 2, cost: 5, cls: 'Cận Chiến', origin: 'Hồng Bàng',
-    sheet: './img/hero/thanh-giong-sheet-128.webp',
+    sheet: SPR_BASE + 'thanh-giong-sheet-128.webp',
     hp: 1400, maxHp: 1400, mana: 50, maxMana: 100, ad: 130,
     skill: 'Thiên Hỏa Lôi Đình: Triệu hoán sấm sét giáng xuống diện rộng'
   },
   'thuytinh': {
     name: 'Thủy Tinh', star: 2, cost: 4, cls: 'Pháp Sư', origin: 'Hồng Bàng',
-    sheet: './img/hero/thuy-tinh-sheet-128.webp',
+    sheet: SPR_BASE + 'thuy-tinh-sheet-128.webp',
     hp: 950, maxHp: 950, mana: 30, maxMana: 90, ad: 85,
     skill: 'Đại Hồng Thủy: Càn quét làn sóng nước đẩy lùi kẻ địch'
   },
   'tranhungdao': {
     name: 'Trần Hưng Đạo', star: 3, cost: 5, cls: 'Cận Chiến', origin: 'Đại Việt',
-    sheet: './img/hero/tran-hung-dao-sheet-128.webp',
+    sheet: SPR_BASE + 'tran-hung-dao-sheet-128.webp',
     hp: 1650, maxHp: 1650, mana: 40, maxMana: 100, ad: 145,
     skill: 'Bình Than Thệ Sư: Tăng 40% giáp và miễn nhiễm khống chế'
   },
   'tranquoctoan': {
     name: 'Trần Quốc Toản', star: 2, cost: 3, cls: 'Cận Chiến', origin: 'Đại Việt',
-    sheet: './img/hero/tran-quoc-toan-sheet-128.webp',
+    sheet: SPR_BASE + 'tran-quoc-toan-sheet-128.webp',
     hp: 1100, maxHp: 1100, mana: 20, maxMana: 80, ad: 110,
     skill: 'Phá Cường Địch: Đâm kích liên hoàn xuyên giáp'
   },
   'auco': {
     name: 'Âu Cơ', star: 2, cost: 3, cls: 'Hộ Vệ', origin: 'Hồng Bàng',
-    sheet: './img/hero/au-co-sheet-128.webp',
+    sheet: SPR_BASE + 'au-co-sheet-128.webp',
     hp: 1200, maxHp: 1200, mana: 0, maxMana: 90, ad: 70,
     skill: 'Trứng Tiên: Ban khiên hộ thể và hồi sinh đồng minh'
   },
   'phunghung': {
     name: 'Phùng Hưng', star: 1, cost: 2, cls: 'Hộ Vệ', origin: 'Tiền Lý',
-    sheet: './img/hero/phung-hung-sheet-128.webp',
+    sheet: SPR_BASE + 'phung-hung-sheet-128.webp',
     hp: 1300, maxHp: 1300, mana: 0, maxMana: 80, ad: 95,
     skill: 'Bố Cái Đại Vương: Hống dũng mãnh gây choáng 1.5s'
   },
   'trungtrac': {
     name: 'Trưng Trắc', star: 2, cost: 4, cls: 'Cận Chiến', origin: 'Ba Triệu',
-    sheet: './img/hero/trung-trac-sheet-128.webp',
+    sheet: SPR_BASE + 'trung-trac-sheet-128.webp',
     hp: 1500, maxHp: 1500, mana: 60, maxMana: 110, ad: 120,
     skill: 'Voi Chiến Mê Linh: Giẫm đạp diện rộng làm chậm 50%'
   }
