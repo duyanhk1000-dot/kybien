@@ -21,7 +21,7 @@ html,body{margin:0;height:100%}
 body{background:radial-gradient(1100px 520px at 50% -8%,rgba(214,163,53,.16),transparent 62%),var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;overflow-x:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-#app{min-height:100dvh;display:flex;flex-direction:column}
+#app{min-height:100dvh;display:flex;flex-direction:column;isolation:isolate}
 .pagefoot{text-align:center;padding:12px 10px 16px;color:var(--ink2);font-size:13px}
 .pagefoot a{color:var(--gold);text-decoration:none;font-weight:600}
 .pagefoot a:hover{text-decoration:underline}
@@ -404,7 +404,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .sellz{position:absolute;inset:0;border-radius:12px;background:rgba(179,40,29,.88);color:#ffe9b0;display:none;place-items:center;font-family:var(--serif);font-weight:800;font-size:18px;z-index:5}
 .shop.selling .sellz{display:grid}.shop.selling.over .sellz{background:rgba(214,60,40,1)}
 .ghost{position:fixed;left:0;top:0;z-index:99;pointer-events:none;display:grid;place-items:center;transform:translate(-50%,-50%)}
-.ov{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(10,6,4,.8);padding:14px;overflow-y:auto}
+.ov{position:fixed;inset:0;z-index:9000;display:none;place-items:center;background:rgba(10,6,4,.8);padding:14px;overflow-y:auto}
 .ov.show{display:grid}
 .dlg{position:relative;width:min(460px,100%);background:var(--panel);border:1.5px solid var(--bronze);border-radius:16px;padding:20px 18px;box-shadow:0 20px 60px rgba(0,0,0,.6);max-height:96dvh;overflow-y:auto}
 .dlg h1{font-family:var(--serif);font-weight:800;font-size:38px;margin:0;line-height:1;color:var(--cinn)}
@@ -424,7 +424,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .relic b{font-family:var(--serif);font-size:16px}.relic span{display:block;color:var(--ink2);font-size:12.5px}
 .relic:hover{background:var(--panel)}
 .drumbg{position:absolute;right:-40px;top:-40px;width:200px;height:200px;opacity:.14;pointer-events:none}
-#toast{position:fixed;left:50%;top:58px;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
+#toast{position:fixed;left:50%;top:58px;transform:translateX(-50%);z-index:10000;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
 #toast div{background:#2a1a12;color:#ffe9b0;border:1px solid #d6a335;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;animation:tst 2.4s forwards;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 @keyframes tst{0%{opacity:0;transform:translateY(-8px)}10%,80%{opacity:1;transform:none}100%{opacity:0}}
 .himg{width:1em;height:1em;object-fit:cover;border-radius:50%;display:inline-block;vertical-align:middle}
@@ -475,7 +475,7 @@ body.demo .skill-panel{display:block;grid-column:2;grid-row:1}
 .demobar .dres.show{display:block}
 
 /* Bảng Thống Kê Chiến Trận (Kết thúc ván: Sát thương / Chống đỡ) */
-.qc-modal{position:fixed;inset:0;background:rgba(10,6,4,.78);backdrop-filter:blur(6px);z-index:1000;display:none;place-items:center;padding:12px;box-sizing:border-box}
+.qc-modal{position:fixed;inset:0;background:rgba(10,6,4,.78);backdrop-filter:blur(6px);z-index:9500;display:none;place-items:center;padding:12px;box-sizing:border-box}
 .qc-modal.show{display:grid}
 .qc-panel{position:relative;width:min(760px,96vw);max-height:min(640px,92vh);background:radial-gradient(circle at 50% 15%,#fff9ea,#f1e2c6 75%),#ebd6b3;border:2px solid #8e622b;outline:1.5px solid #d6a335;outline-offset:-5px;box-shadow:0 20px 50px rgba(0,0,0,.85),0 0 30px rgba(214,163,53,.3);border-radius:14px;display:flex;flex-direction:column;padding:20px 20px 16px 20px;box-sizing:border-box;animation:qcPop .28s cubic-bezier(.16,1,.3,1);color:#24160c}
 @keyframes qcPop{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
