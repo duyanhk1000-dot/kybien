@@ -879,7 +879,7 @@ function pveUnits(r){
     case 2:return [mon('Hồ Quái','🦊',380,32,10,1,.7,5,1),mon('Hồ Quái','🦊',380,32,10,1,.7,5,3),mon('Hồ Quái','🦊',380,32,10,1,.7,5,5)];
     case 3:return [mon('Mộc Quái','🌳',460,36,20,1,.7,5,1),mon('Mộc Quái','🌳',460,36,20,1,.7,5,5),mon('Mộc Quái','🌳',460,36,20,1,.7,5,3),mon('Ngư Quái','🦑',330,40,5,3,.7,7,3)];
     case 8:return [mon('Hồ Tinh','🦊',4600,75,35,3,.75,6,3,Object.assign({},boss,{nm:'Yêu Pháp',cen:'tgt',d:260,r:2})),mon('Hồ Quái','🦊',650,45,15,1,.7,4,2),mon('Hồ Quái','🦊',650,45,15,1,.7,4,4)];
-    case 15:return [mon('Ngư Tinh','🐙',9000,110,50,1,.65,4,3,boss),mon('Ngư Quái','🦑',900,60,10,3,.7,6,1),mon('Ngư Quái','🦑',900,60,10,3,.7,6,5),mon('Ngư Quái','🦑',900,60,20,1,.7,4,2),mon('Ngư Quái','🦑',900,60,20,1,.7,4,4)];
+    case 15:return [mon('Ngư Tinh','🐙',9000,110,50,1,.65,4,3,boss),mon('Ngư Quái','🦑',900,60,10,3,.7,6,1),mon('Ngư Quái','🦑',900,60,10,3,.7,6,5),mon('Ngư Quái','🦑',900,60,15,3,.7,5,2),mon('Ngư Quái','🦑',900,60,15,3,.7,5,4)];
     default:return [mon('Mộc Tinh','🌲',16000,160,70,1,.65,4,3,Object.assign({},boss,{d:400,r:3})),mon('Mộc Quái','🌳',1500,90,30,1,.7,4,1),mon('Mộc Quái','🌳',1500,90,30,1,.7,4,5),mon('Mộc Quái','🌳',1500,90,30,1,.7,5,2),mon('Mộc Quái','🌳',1500,90,30,1,.7,5,4)];
   }})();
   if(r===8||r===15||r===22)arr[0].boss=true;
@@ -2395,7 +2395,7 @@ function events(B){
       if(e.type!=='heal'&&els)els.tok.animate([{filter:'brightness(2.4)'},{filter:'none'}],{duration:180});
       else spawnP(p[0],p[1],4,{col:'#7dffa6',sp:40,g:-50,life:.6,size:2.5});}break;
     case 'atk':{const t=byId(B,e.tid);if(!u||!t||!els)break;const a=ctr(u),b=ctr(t);
-      if(e.ranged){if(u.cls==='cungno')proj(a,b,.2,'#ffe9b0',3,null,arrowByCost(u.cost));else if(u.name==='Hồ Tinh')proj(a,b,.22,'#5eead4',4.5,null,null,'#34d399');else proj(a,b,.2,u.side?'#ff9d8a':'#ffe9b0',u.cost>=4?3.3:2.7);}
+      if(e.ranged){if(u.cls==='cungno')proj(a,b,.2,'#ffe9b0',3,null,arrowByCost(u.cost));else if(u.name==='Hồ Tinh')proj(a,b,.22,'#5eead4',4.5,null,null,'#34d399');else if(u.name==='Ngư Quái')proj(a,b,.2,'#f0e6cf',3.2,null,null,'#c2a778');else proj(a,b,.2,u.side?'#ff9d8a':'#ffe9b0',u.cost>=4?3.3:2.7);}
       else{const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1,k=U.c*.32/l;els.tok.animate([{translate:'0px 0px'},{translate:(dx*k)+'px '+(dy*k)+'px'},{translate:'0px 0px'}],{duration:230/U.speed});}
       if(els&&els.spr){els.atkUntil=B.t+0.38;els.atkKind=u.mon?'fire':'windup';}
       break;}
