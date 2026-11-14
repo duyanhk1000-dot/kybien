@@ -1503,6 +1503,7 @@ const HIMG_P={};for(const k in HIMG)HIMG_P[k]=HIMG[k].replace('-tok.webp','.webp
 function portrait(h){return HIMG_P[h]?'<img class="pimg" draggable="false" src="'+HIMG_P[h]+'" alt="" onerror="this.onerror=null;if(\''+(HIMG[h]||'')+'\'){this.src=\''+(HIMG[h]||'')+'\';this.onerror=function(){this.style.display=\'none\';};}else{this.style.display=\'none\';}">':ico(h);}
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
 const MON_IMG={'Hồ Quái':MON_BASE+'ho-quai.webp?v=2','Mộc Quái':MON_BASE+'moc-quai.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh.webp?v=2','Ngư Tinh':MON_BASE+'ngu-tinh.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh.webp?v=2'};
+const MON_SPRITES={'Ngư Quái':MON_BASE+'ngu-quai-sheet-128.webp?v=2'};
 const FXIMG_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/fx/';
 const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
@@ -2230,14 +2231,14 @@ function mkEl(u){
   ulEl.appendChild(d);
   U.els[u.id]={d,tok:d.querySelector('.tok'),hf:d.querySelector('.hf'),sf:d.querySelector('.sf'),mp:d.querySelector('.mp i'),stt:d.querySelector('.stt'),sttv:'',mt:null,gr:false,hid:false,isEgg:false,face:u.side===0?1:-1};
   const _el=U.els[u.id];d.dataset.face=u.side===0?'1':'-1';
-  const _sprFile=u.h&&HERO_SPRITES[u.h];
+  const _sprFile=(u.h&&HERO_SPRITES[u.h])||(u.mon&&MON_SPRITES&&MON_SPRITES[u.name]);
   _el.spr=!!_sprFile;_el.sprLoaded=false;_el.sprPose='';_el.lx=u.x;_el.ly=u.y;_el.mvUntil=0;_el.atkUntil=0;_el.atkKind='';
   if(_el.spr){
     const _applySpr=(src)=>{d.style.setProperty('--spr','url("'+src+'")');_el.sprLoaded=true;d.classList.add('has-spr');d.dataset.spr='idle';_el.sprPose='idle';_el.tok.textContent='';};
     const _im=new Image();
     _im.onload=()=>_applySpr(_sprFile);
     _im.onerror=()=>{
-      const altSrc=_sprFile.startsWith('http')?('./img/hero/'+_sprFile.split('/').pop()):(SPR_CDN+_sprFile.split('/').pop());
+      const altSrc=_sprFile.startsWith('http')?((u.mon?'./img/mon/':'./img/hero/')+_sprFile.split('/').pop().split('?')[0]):(SPR_CDN+_sprFile.split('/').pop());
       const _im2=new Image();
       _im2.onload=()=>_applySpr(altSrc);
       _im2.onerror=()=>{_el.spr=false;d.classList.remove('has-spr');};
@@ -2396,7 +2397,7 @@ function events(B){
     case 'atk':{const t=byId(B,e.tid);if(!u||!t||!els)break;const a=ctr(u),b=ctr(t);
       if(e.ranged){if(u.cls==='cungno')proj(a,b,.2,'#ffe9b0',3,null,arrowByCost(u.cost));else proj(a,b,.2,u.side?'#ff9d8a':'#ffe9b0',u.cost>=4?3.3:2.7);}
       else{const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1,k=U.c*.32/l;els.tok.animate([{translate:'0px 0px'},{translate:(dx*k)+'px '+(dy*k)+'px'},{translate:'0px 0px'}],{duration:230/U.speed});}
-      if(els&&els.spr){els.atkUntil=B.t+0.35;els.atkKind='windup';}
+      if(els&&els.spr){els.atkUntil=B.t+0.38;els.atkKind=u.mon?'fire':'windup';}
       break;}
     case 'shot':{const t=byId(B,e.tid);if(!u||!t)break;proj(ctr(u),ctr(t),.26,'#ffffff',2.5,null,arrowByCost(u.cost),'#ffffff');break;}
     case 'cast':if(u){const p=ctr(u);const s=document.createElement('div');s.className='sk';s.textContent=e.nm;s.style.left=Math.max(U.c*1.2,Math.min(U.c*5.8,p[0]))+'px';s.style.top=(p[1]-U.c*.75)+'px';fxl.appendChild(s);s.animate([{transform:'translate(-50%,0)',opacity:0},{transform:'translate(-50%,-6px)',opacity:1,offset:.2},{transform:'translate(-50%,'+(-U.c*.5)+'px)',opacity:0}],{duration:1300/U.speed}).onfinish=()=>s.remove();
