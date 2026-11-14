@@ -190,7 +190,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bu .tok{margin-top:calc(var(--c)*.1);transition:width .2s,transform .3s,scale .18s,rotate .18s}
 .bu.e .tok{box-shadow:0 0 0 calc(var(--c)*.03) #351c1c,0 0 0 calc(var(--c)*.055) #1b130d,0 4px 10px rgba(0,0,0,.55),inset 0 0 0 calc(var(--c)*.06) rgba(0,0,0,.35)}
 .bu.sm{--tw:70%!important}.bu.sm .tok{opacity:.92;filter:hue-rotate(-20deg) brightness(1.1)}
-.bu.boss{--tw:125%!important}
+.bu.boss:not(.has-spr){--tw:125%!important}
 .bu.grow .tok{scale:1.4}
 .bu.grow.has-spr[data-face="-1"] .tok{scale:-1.4 1.4}
 .bu.hid{opacity:.28}
@@ -878,7 +878,7 @@ function pveUnits(r){
     case 1:return [mon('Hồ Quái','🦊',330,26,10,1,.7,5,2),mon('Hồ Quái','🦊',330,26,10,1,.7,5,4)];
     case 2:return [mon('Hồ Quái','🦊',380,32,10,1,.7,5,1),mon('Hồ Quái','🦊',380,32,10,1,.7,5,3),mon('Hồ Quái','🦊',380,32,10,1,.7,5,5)];
     case 3:return [mon('Mộc Quái','🌳',460,36,20,1,.7,5,1),mon('Mộc Quái','🌳',460,36,20,1,.7,5,5),mon('Mộc Quái','🌳',460,36,20,1,.7,5,3),mon('Ngư Quái','🦑',330,40,5,3,.7,7,3)];
-    case 8:return [mon('Hồ Tinh','🦊',4600,70,40,1,.65,4,3,boss),mon('Hồ Quái','🦊',650,45,15,1,.7,5,1),mon('Hồ Quái','🦊',650,45,15,1,.7,5,5)];
+    case 8:return [mon('Hồ Tinh','🦊',4600,75,35,3,.75,6,3,Object.assign({},boss,{nm:'Yêu Pháp',cen:'tgt',d:260,r:2})),mon('Hồ Quái','🦊',650,45,15,1,.7,4,2),mon('Hồ Quái','🦊',650,45,15,1,.7,4,4)];
     case 15:return [mon('Ngư Tinh','🐙',9000,110,50,1,.65,4,3,boss),mon('Ngư Quái','🦑',900,60,10,3,.7,6,1),mon('Ngư Quái','🦑',900,60,10,3,.7,6,5),mon('Ngư Quái','🦑',900,60,20,1,.7,4,2),mon('Ngư Quái','🦑',900,60,20,1,.7,4,4)];
     default:return [mon('Mộc Tinh','🌲',16000,160,70,1,.65,4,3,Object.assign({},boss,{d:400,r:3})),mon('Mộc Quái','🌳',1500,90,30,1,.7,4,1),mon('Mộc Quái','🌳',1500,90,30,1,.7,4,5),mon('Mộc Quái','🌳',1500,90,30,1,.7,5,2),mon('Mộc Quái','🌳',1500,90,30,1,.7,5,4)];
   }})();
@@ -992,7 +992,7 @@ function attack(B,u,t){
   u.acd=1/(u.as*asMul(u));
   gainMana(u,12);
   em(B,{k:'atk',id:u.id,tid:t.id,ranged:u.range>1});
-  dealDamage(B,u,t,u.ad*adMul(u)*(crit?1.6:1),'phys',crit);
+  dealDamage(B,u,t,u.ad*adMul(u)*(crit?1.6:1),u.name==='Hồ Tinh'?'mag':'phys',crit);
 }
 function addZone(B,o){
   const z=Object.assign({id:B.zid++,arm:o.delay||0,t:o.dur,hit:new Set()},o);
@@ -1503,7 +1503,7 @@ const HIMG_P={};for(const k in HIMG)HIMG_P[k]=HIMG[k].replace('-tok.webp','.webp
 function portrait(h){return HIMG_P[h]?'<img class="pimg" draggable="false" src="'+HIMG_P[h]+'" alt="" onerror="this.onerror=null;if(\''+(HIMG[h]||'')+'\'){this.src=\''+(HIMG[h]||'')+'\';this.onerror=function(){this.style.display=\'none\';};}else{this.style.display=\'none\';}">':ico(h);}
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
 const MON_IMG={'Hồ Quái':MON_BASE+'ho-quai.webp?v=2','Mộc Quái':MON_BASE+'moc-quai.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh.webp?v=2','Ngư Tinh':MON_BASE+'ngu-tinh.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh.webp?v=2'};
-const MON_SPRITES={'Ngư Quái':MON_BASE+'ngu-quai-sheet-128.webp?v=2','Mộc Quái':MON_BASE+'moc-quai-sheet-128.webp?v=2','Hồ Quái':MON_BASE+'ho-quai-sheet-128.webp?v=2'};
+const MON_SPRITES={'Ngư Quái':MON_BASE+'ngu-quai-sheet-128.webp?v=2','Mộc Quái':MON_BASE+'moc-quai-sheet-128.webp?v=2','Hồ Quái':MON_BASE+'ho-quai-sheet-128.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh-sheet-128.webp?v=2'};
 const FXIMG_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/fx/';
 const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
@@ -2224,7 +2224,7 @@ function beginRound(){
 function mkEl(u){
   const d=document.createElement('div');
   d.className='bu'+(u.side?' e':'')+(u.sm?' sm':'')+(u.boss?' boss':'');
-  d.dataset.s=u.sm?'2':(u.mon?(u.boss?(G&&G.round>=15?'3':'2'):'1'):String(u.star||1));
+  d.dataset.s=u.sm?'2':(u.mon?(u.boss?(u.name==='Hồ Tinh'?'1':(G&&G.round>=15?'3':'2')):'1'):String(u.star||1));
   d.innerHTML='<div class="bars"><i class="hf"></i><i class="sf"></i></div><div class="mp"><i></i></div>'+
     '<div class="tok" style="--rc:'+(u.mon?'#7a2a14':costCol(u.h))+'">'+(u.h?ico(u.h):u.mon&&MON_IMG[u.name]?'<img class="himg" draggable="false" src="'+MON_IMG[u.name]+'" alt="">':u.ico)+((u.mon||u.sm)?'':'<i class="cg">'+CS[u.cls].ico+'</i>')+'</div>'+((u.mon||u.sm)?'':'<div class="st s'+u.star+'">'+'\u2605'.repeat(u.star)+'</div>')+'<div class="stt"></div>';
   d.style.transform='translate('+(u.x*U.c)+'px,'+(u.y*U.c)+'px)';
@@ -2395,7 +2395,7 @@ function events(B){
       if(e.type!=='heal'&&els)els.tok.animate([{filter:'brightness(2.4)'},{filter:'none'}],{duration:180});
       else spawnP(p[0],p[1],4,{col:'#7dffa6',sp:40,g:-50,life:.6,size:2.5});}break;
     case 'atk':{const t=byId(B,e.tid);if(!u||!t||!els)break;const a=ctr(u),b=ctr(t);
-      if(e.ranged){if(u.cls==='cungno')proj(a,b,.2,'#ffe9b0',3,null,arrowByCost(u.cost));else proj(a,b,.2,u.side?'#ff9d8a':'#ffe9b0',u.cost>=4?3.3:2.7);}
+      if(e.ranged){if(u.cls==='cungno')proj(a,b,.2,'#ffe9b0',3,null,arrowByCost(u.cost));else if(u.name==='Hồ Tinh')proj(a,b,.22,'#5eead4',4.5,null,null,'#34d399');else proj(a,b,.2,u.side?'#ff9d8a':'#ffe9b0',u.cost>=4?3.3:2.7);}
       else{const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1,k=U.c*.32/l;els.tok.animate([{translate:'0px 0px'},{translate:(dx*k)+'px '+(dy*k)+'px'},{translate:'0px 0px'}],{duration:230/U.speed});}
       if(els&&els.spr){els.atkUntil=B.t+0.38;els.atkKind=u.mon?'fire':'windup';}
       break;}
