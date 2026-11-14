@@ -45,7 +45,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .box{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}
 .box::-webkit-scrollbar{display:none}
 .stage{width:calc(var(--c)*8);display:flex;flex-direction:column;gap:6px}
-.boardrow{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:57px}
+.boardrow{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:57px;margin-bottom:16px}
 .boardrow .boardwrap{order:0}.boardrow .benchL{order:1}.boardrow .benchR{order:2}
 .boardwrap{position:relative;flex:none;width:calc(var(--c)*8);display:flex;flex-direction:column;justify-content:flex-end}
 .tiltwrap{flex:none;transition:transform .45s ease,height .45s ease}
@@ -53,7 +53,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .tiltwrap.tilt .arena{overflow:visible;flex:none}
 @media(min-width:980px){
   .stage{width:calc(var(--c)*9.8 + 24px)}
-  .boardrow{flex-direction:row;align-items:stretch;justify-content:center;gap:6px;margin-top:57px}
+  .boardrow{flex-direction:row;align-items:stretch;justify-content:center;gap:6px;margin-top:57px;margin-bottom:16px}
   .boardrow .benchL{order:0;position:relative;z-index:100!important;pointer-events:auto}
   .boardrow .boardwrap{order:1;position:relative;z-index:1}
   .boardrow .benchR{order:2}
@@ -194,11 +194,11 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bu.grow .tok{scale:1.4}
 .bu.grow.has-spr[data-face="-1"] .tok{scale:-1.4 1.4}
 .bu.hid{opacity:.28}
-/* sprite tướng trên bàn: 1s chuẩn 150% (100%), 2s là 108% (162%), 3s là 116% (174%) */
-.bu.has-spr, .pu.has-spr{--tw:150%}
-.bu.has-spr[data-s="1"], .pu.has-spr[data-s="1"]{--tw:150%}
-.bu.has-spr[data-s="2"], .pu.has-spr[data-s="2"]{--tw:162%}
-.bu.has-spr[data-s="3"], .pu.has-spr[data-s="3"]{--tw:174%}
+/* sprite tướng trên bàn: 1s chuẩn 135% (100%), 2s là 144%, 3s là 154% */
+.bu.has-spr, .pu.has-spr{--tw:135%}
+.bu.has-spr[data-s="1"], .pu.has-spr[data-s="1"]{--tw:135%}
+.bu.has-spr[data-s="2"], .pu.has-spr[data-s="2"]{--tw:144%}
+.bu.has-spr[data-s="3"], .pu.has-spr[data-s="3"]{--tw:154%}
 .bu.has-spr.sm{--tw:102%!important}
 .bu.has-spr.sm[data-s="1"]{--tw:102%!important}
 .bu.has-spr.sm[data-s="2"]{--tw:110%!important}
@@ -218,7 +218,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .cell .pu .nm,
 .pu[data-kind="board"] .nm{
   display:inline-flex!important;align-items:center;justify-content:center;
-  position:absolute;bottom:calc(var(--c)*.10);left:50%;
+  position:absolute;bottom:calc(var(--c)*.06);left:50%;
   transform:translateX(-50%);
   width:max-content;max-width:calc(var(--c)*1.25);
   padding:1px 6px;
@@ -256,7 +256,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bu.has-spr[data-s="2"]::before,
 .cell .pu.has-spr[data-s="2"]::before,
 .pu[data-kind="board"].has-spr[data-s="2"]::before{
-  content:'';position:absolute;left:50%;bottom:calc(var(--c)*.43);width:calc(var(--c)*.88);height:calc(var(--c)*.42);
+  content:'';position:absolute;left:50%;bottom:calc(var(--c)*.28);width:calc(var(--c)*.88);height:calc(var(--c)*.40);
   transform:translateX(-50%);border-radius:50%;pointer-events:none;z-index:0;
   border:1.5px solid rgba(255,220,80,.75);
   background:radial-gradient(ellipse at center,rgba(255,235,120,.7) 0%,rgba(240,180,40,.45) 45%,rgba(180,115,15,.15) 70%,transparent 85%);
@@ -267,7 +267,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bu.has-spr[data-s="3"]::before,
 .cell .pu.has-spr[data-s="3"]::before,
 .pu[data-kind="board"].has-spr[data-s="3"]::before{
-  content:'';position:absolute;left:50%;bottom:calc(var(--c)*.41);width:calc(var(--c)*.98);height:calc(var(--c)*.46);
+  content:'';position:absolute;left:50%;bottom:calc(var(--c)*.26);width:calc(var(--c)*.96);height:calc(var(--c)*.44);
   transform:translateX(-50%);border-radius:50%;pointer-events:none;z-index:0;
   border:2px solid rgba(230,250,255,.9);
   background:radial-gradient(ellipse at center,rgba(240,252,255,.85) 0%,rgba(110,220,255,.52) 45%,rgba(40,150,240,.22) 70%,transparent 88%);
@@ -325,7 +325,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bu.has-spr[data-spr="idle"] .tok, .pu.has-spr .tok{animation:sprBob 2.6s ease-in-out infinite}
 /* goc nhin nghieng: dung token/sprite thang len (billboard gia: keo dai doc 1/cos38) */
 .tiltwrap.tilt .bu:not(.has-spr) .tok,.tiltwrap.tilt .pu:not(.has-spr) .tok{transform:translateY(calc(var(--c)*.06)) scaleY(1.32);transform-origin:50% 100%}
-.tiltwrap.tilt .bu.has-spr .tok, .tiltwrap.tilt .pu.has-spr .tok{transform:translateY(calc(var(--c)*-.56)) scaleY(1.36);transform-origin:50% 100%}
+.tiltwrap.tilt .bu.has-spr .tok, .tiltwrap.tilt .pu.has-spr .tok{transform:translateY(calc(var(--c)*-.40)) scaleY(1.32);transform-origin:50% 100%}
 .tiltwrap.tilt .hint{transform:translateY(-50%) scaleY(1.2)}
 .tiltwrap.tilt .cbtns{transform:scaleY(1.2);transform-origin:50% 100%}
 .tiltwrap.tilt .banner{transform:scaleY(1.2)}
@@ -340,17 +340,17 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bu.has-spr .st, .pu.has-spr .st{top:calc(var(--c)*-.70 - 8px);z-index:3}
 .bu.has-spr .bars{top:calc(var(--c)*-.54 - 8px)}
 .bu.has-spr .mp{top:calc(var(--c)*-.46 - 8px)}
-.tiltwrap.tilt .bu.has-spr .bars,.tiltwrap.tilt .bu.has-spr .mp,.tiltwrap.tilt .bu.has-spr .st,.tiltwrap.tilt .pu.has-spr .st{transform:translateY(calc(var(--c)*-.46 - 8px)) scaleY(1.36);transform-origin:50% 100%}
+.tiltwrap.tilt .bu.has-spr .bars,.tiltwrap.tilt .bu.has-spr .mp,.tiltwrap.tilt .bu.has-spr .st,.tiltwrap.tilt .pu.has-spr .st{transform:translateY(calc(var(--c)*-.34 - 8px)) scaleY(1.32);transform-origin:50% 100%}
 
 .bu.has-spr[data-s="1"] .st, .pu.has-spr[data-s="1"] .st{top:calc(var(--c)*-.66 - 8px)}
 .bu.has-spr[data-s="1"] .bars{top:calc(var(--c)*-.50 - 8px)}
 .bu.has-spr[data-s="1"] .mp{top:calc(var(--c)*-.42 - 8px)}
-.tiltwrap.tilt .bu.has-spr[data-s="1"] .bars,.tiltwrap.tilt .bu.has-spr[data-s="1"] .mp,.tiltwrap.tilt .bu.has-spr[data-s="1"] .st,.tiltwrap.tilt .pu.has-spr[data-s="1"] .st{transform:translateY(calc(var(--c)*-.42 - 8px)) scaleY(1.36);transform-origin:50% 100%}
+.tiltwrap.tilt .bu.has-spr[data-s="1"] .bars,.tiltwrap.tilt .bu.has-spr[data-s="1"] .mp,.tiltwrap.tilt .bu.has-spr[data-s="1"] .st,.tiltwrap.tilt .pu.has-spr[data-s="1"] .st{transform:translateY(calc(var(--c)*-.30 - 8px)) scaleY(1.32);transform-origin:50% 100%}
 
 .bu.has-spr[data-s="3"] .st, .pu.has-spr[data-s="3"] .st{top:calc(var(--c)*-.76 - 8px)}
 .bu.has-spr[data-s="3"] .bars{top:calc(var(--c)*-.60 - 8px)}
 .bu.has-spr[data-s="3"] .mp{top:calc(var(--c)*-.52 - 8px)}
-.tiltwrap.tilt .bu.has-spr[data-s="3"] .bars,.tiltwrap.tilt .bu.has-spr[data-s="3"] .mp,.tiltwrap.tilt .bu.has-spr[data-s="3"] .st,.tiltwrap.tilt .pu.has-spr[data-s="3"] .st{transform:translateY(calc(var(--c)*-.52 - 8px)) scaleY(1.36);transform-origin:50% 100%}
+.tiltwrap.tilt .bu.has-spr[data-s="3"] .bars,.tiltwrap.tilt .bu.has-spr[data-s="3"] .mp,.tiltwrap.tilt .bu.has-spr[data-s="3"] .st,.tiltwrap.tilt .pu.has-spr[data-s="3"] .st{transform:translateY(calc(var(--c)*-.40 - 8px)) scaleY(1.32);transform-origin:50% 100%}
 .mp i{display:block;height:100%;background:linear-gradient(90deg,#8f5f16,#d6a335,#ffe9b0);width:0}
 .mp i.full{animation:mpulse .6s infinite alternate}
 @keyframes mpulse{from{box-shadow:0 0 2px #ffd36a}to{box-shadow:0 0 8px #ffd36a,0 0 3px #fff}}
@@ -1276,6 +1276,20 @@ function moveUnit(P,f,t){
 function buyXp(P){if(P.gold<4||P.lvl>=9)return false;P.gold-=4;P.xp+=4;levelCheck(P);return true;}
 function reroll(G,P){if(P.gold<2)return false;P.gold-=2;P.shop=rollShop(G,P);return true;}
 const MELEE=['hove','chienbinh','dukich'];
+const MELEE_FORM_SLOTS=[
+  [3,3],[2,3],[4,3],
+  [1,2],[3,2],[5,2],[2,2],[4,2],
+  [1,3],[5,3],
+  [2,1],[4,1],[3,1],[1,1],[5,1],
+  [0,3],[6,3],[0,2],[6,2],[0,1],[6,1],[0,0],[6,0]
+];
+const RANGED_FORM_SLOTS=[
+  [3,0],[2,0],[4,0],[1,0],[5,0],
+  [3,1],[2,1],[4,1],[1,1],[5,1],
+  [1,2],[3,2],[5,2],[2,2],[4,2],
+  [3,3],[2,3],[4,3],[1,3],[5,3],
+  [0,0],[6,0],[0,1],[6,1],[0,2],[6,2],[0,3],[6,3]
+];
 function autoArrange(P){
   const all=[];P.board.forEach(u=>u&&all.push(u));P.bench.forEach(u=>u&&all.push(u));
   const cap=Math.min(P.lvl,all.length),chosen=[],pool=all.slice();
@@ -1294,11 +1308,17 @@ function autoArrange(P){
   }
   P.board.fill(null);P.bench.fill(null);
   const rest=pool;rest.forEach((u,i)=>{P.bench[i]=u;});
-  const order=[3,2,4,1,5,0,6];
   const melee=chosen.filter(u=>MELEE.includes(HERO[u.h].c)).sort((a,b)=>MELEE.indexOf(HERO[a.h].c)-MELEE.indexOf(HERO[b.h].c));
   const rng=chosen.filter(u=>!MELEE.includes(HERO[u.h].c));
-  melee.forEach((u,i)=>{P.board[order[i%7]*4+(i<7?3:2)]=u;});
-  rng.forEach((u,i)=>{P.board[order[i%7]*4+(i<7?0:1)]=u;});
+  const placeUnit=(u,slots)=>{
+    for(const [r,c] of slots){
+      const idx=r*4+c;
+      if(!P.board[idx]){P.board[idx]=u;return true;}
+    }
+    return false;
+  };
+  melee.forEach(u=>placeUnit(u,MELEE_FORM_SLOTS));
+  rng.forEach(u=>placeUnit(u,RANGED_FORM_SLOTS));
 }
 
 /* --- ván đấu --- */
@@ -2176,12 +2196,18 @@ function readyGo(force){
   U.armed=false;startCombat();
 }
 function fillBoard(P){
-  const order=[3,2,4,1,5,0,6];
   const list=P.bench.map((u,i)=>u?{u,i}:null).filter(Boolean).sort((a,b)=>HERO[b.u.h].cost*b.u.s-HERO[a.u.h].cost*a.u.s);
   for(const b of list){
     if(boardCount(P)>=P.lvl)break;
-    const cols=MELEE.includes(HERO[b.u.h].c)?[3,2,1,0]:[0,1,2,3];let done=false;
-    for(const cc of cols){for(const r of order){const idx=r*4+cc;if(!P.board[idx]){P.board[idx]=b.u;P.bench[b.i]=null;done=true;break;}}if(done)break;}
+    const slots=MELEE.includes(HERO[b.u.h].c)?MELEE_FORM_SLOTS:RANGED_FORM_SLOTS;
+    for(const [r,c] of slots){
+      const idx=r*4+c;
+      if(!P.board[idx]){
+        P.board[idx]=b.u;
+        P.bench[b.i]=null;
+        break;
+      }
+    }
   }
 }
 
