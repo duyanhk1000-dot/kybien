@@ -402,6 +402,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-thantoc-burst{position:absolute;pointer-events:none;transform:translate(-50%,-88%);z-index:43}
 .tiltwrap.tilt .fx-thantoc-burst{transform:translate(-50%,-88%) scaleY(1.32);transform-origin:50% 100%}
 .fx-thantoc-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(255,69,0,.95)) drop-shadow(0 0 36px rgba(255,215,0,.75)) brightness(1.15)}
+.fx-hich-vortex{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 16px rgba(56,189,248,.85)) drop-shadow(0 0 32px rgba(255,215,0,.65));z-index:22}
+.fx-hich-scroll{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:43}
+.tiltwrap.tilt .fx-hich-scroll{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-hich-scroll img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(255,215,0,.95)) drop-shadow(0 0 36px rgba(255,106,0,.65)) brightness(1.15)}
+.fx-hich-satthat{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44}
+.tiltwrap.tilt .fx-hich-satthat{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-hich-satthat img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 16px rgba(224,36,36,.95)) drop-shadow(0 0 32px rgba(255,215,0,.85)) brightness(1.2)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -1863,7 +1870,91 @@ VF.rong=e=>{
 VF.lu=e=>{const a=px(e.x1,e.y1),b=px(e.cx,e.cy);shape('song',a[0],a[1],U.c*2.2,'#5fb7ff',[{opacity:.9,transform:'translate('+0+'px,0)'},{opacity:.9,transform:'translate('+(b[0]-a[0])+'px,'+(b[1]-a[1])+'px)',offset:.7},{opacity:0,transform:'translate('+(b[0]-a[0])+'px,'+(b[1]-a[1])+'px) scale(1.2)'}],600,.45);spawnP(b[0],b[1],14*SC(e.s),{col:'#bfe3ff',sp:80,g:60,life:.8,size:3});shake(4,300);};
 VF.coc=e=>{const b=px(e.cx,e.cy);dustAt(b[0],b[1],10,'#a58a68');};
 VF.luoi=e=>{const [x,y]=px(e.x1,e.y1);ringFx(x,y,U.c*.7,'#9fd3a8',360);};
-VF.hich=e=>{const [x,y]=px(e.x1,e.y1);shape('cuon',x,y-U.c*.6,U.c*1.8,'#ffe9b0',[{opacity:0,transform:'scale(.4)'},{opacity:1,transform:'scale(1)',offset:.3},{opacity:1,offset:.75},{opacity:0,transform:'scale(1.2)'}],900,.6);ringFx(x,y,U.c*1.6,'#6fa0ff',620,true);shake(4,300);};
+VF.hich=e=>{
+  const [x,y]=px(e.x1,e.y1),k=SC(e.s);
+  const spd=U.speed||1;
+
+  if(FX.big){
+    // Layer 1: Pháp Trận Chân Không Xoáy Hút Đông A (Dong A Vacuum Pull Vortex)
+    const vw=U.c*5.6*k,vh=vw*0.58;
+    const vEl=document.createElement('div');
+    vEl.className='fxs fx-hich-vortex';
+    vEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+vw+'px;height:'+vh+'px;z-index:22;';
+    const vSrc=FX_BASE+'tran-hung-dao-vortex.webp';
+    vEl.style.backgroundImage='url("'+vSrc+'")';
+    const _imV=new Image();
+    _imV.onerror=()=>{vEl.style.backgroundImage='url("./img/fx/tran-hung-dao-vortex.webp")';};
+    _imV.src=vSrc;
+    fxl.appendChild(vEl);
+
+    vEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
+      {opacity:1,transform:'translate(-50%,-50%) scale(1.05)',offset:0.18},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1)',offset:0.75},
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.92)'}
+    ],{duration:2100/spd,fill:'forwards'}).onfinish=()=>vEl.remove();
+
+    // Layer 2: Cuộn Hịch Tướng Sĩ Dát Vàng Hoàng Kim bay lơ lửng
+    const sw=U.c*3.8*k,sh=sw*(266/540);
+    const sEl=document.createElement('div');
+    sEl.className='fxs fx-hich-scroll';
+    sEl.style.cssText='left:'+x+'px;top:'+(y-U.c*1.1*k)+'px;width:'+sw+'px;height:'+sh+'px;z-index:43;';
+    const sImg=document.createElement('img');
+    const sSrc=FX_BASE+'tran-hung-dao-scroll.webp';
+    sImg.onerror=()=>{sImg.src='./img/fx/tran-hung-dao-scroll.webp';};
+    sImg.src=sSrc;sImg.draggable=false;
+    sEl.appendChild(sImg);
+    fxl.appendChild(sEl);
+
+    sEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.2, 0.4)'},
+      {opacity:1,transform:'translate(-50%,-50%) scale(1.06, 1.06)',offset:0.25},
+      {opacity:1,transform:'translate(-50%,-54%) scale(1, 1)',offset:0.55},
+      {opacity:1,transform:'translate(-50%,-50%) scale(1, 1)',offset:0.8},
+      {opacity:0,transform:'translate(-50%,-46%) scale(1.08, 1.08)'}
+    ],{duration:1950/spd,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}).onfinish=()=>sEl.remove();
+
+    // Layer 3: Ấn Ký Chữ Lửa "SÁT THÁT" Bùng Cháy
+    setTimeout(()=>{
+      const rw=U.c*2.6*k,rh=rw*(356/380);
+      const rEl=document.createElement('div');
+      rEl.className='fxs fx-hich-satthat';
+      rEl.style.cssText='left:'+x+'px;top:'+(y-U.c*1.75*k)+'px;width:'+rw+'px;height:'+rh+'px;z-index:44;';
+      const rImg=document.createElement('img');
+      const rSrc=FX_BASE+'tran-hung-dao-satthat.webp';
+      rImg.onerror=()=>{rImg.src='./img/fx/tran-hung-dao-satthat.webp';};
+      rImg.src=rSrc;rImg.draggable=false;
+      rEl.appendChild(rImg);
+      fxl.appendChild(rEl);
+
+      rEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(0.4)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.15)',offset:0.22},
+        {opacity:1,transform:'translate(-50%,-52%) scale(1)',offset:0.65},
+        {opacity:0,transform:'translate(-50%,-60%) scale(1.1)'}
+      ],{duration:1750/spd,easing:'cubic-bezier(.15,.8,.25,1)',fill:'forwards'}).onfinish=()=>rEl.remove();
+    },180/spd);
+  }
+
+  // Sóng chấn động lôi cuốn + Hào quang chiến ý hoàng kim + Rung lắc chiến trường
+  ringFx(x,y,U.c*2.2*k,'#ffd700',700,true);
+  setTimeout(()=>ringFx(x,y,U.c*3.0*k,'#ff4500',800,false),140/spd);
+  setTimeout(()=>ringFx(x,y,U.c*3.8*k,'#38bdf8',900,false),320/spd);
+
+  spawnP(x,y,28*k,{col:'#ffd700',sp:160,g:-40,life:1.2,size:4});
+  spawnP(x,y,20*k,{col:'#ff4500',sp:140,g:60,life:.9,size:3.5});
+  spawnP(x,y,16*k,{col:'#ffffff',sp:180,g:-20,life:.8,size:3});
+
+  textFx('SÁT THÁT!',x,y-U.c*2.2*k,'#ff4500',U.c*0.55*k,[
+    {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
+    {opacity:1,transform:'translate(-50%,-80%) scale(1.2)',offset:.3},
+    {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
+    {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
+  ],1200);
+
+  shake(8*k,480);
+  hitstop(80);
+};
 
 /* ---------- trạng thái và vùng ---------- */
 function statusStr(u,B){
@@ -2576,7 +2667,7 @@ function events(B){
     case 'fx':{const f=VF[e.v]||VF.burst;try{f(e);}catch(err){}break;}
     case 'press':if(u){const p=ctr(u);dustAt(p[0],p[1],6,'#a58a68');}break;
     case 'steal':{const f=byId(B,e.from);if(u&&f){const a=ctr(f),b=ctr(u);shape('luoi',b[0],b[1],U.c*1.3,'#9fd3a8',[{opacity:0,transform:'translate('+(a[0]-b[0])+'px,'+(a[1]-b[1])+'px) scale(.3)'},{opacity:.95,transform:'translate(0,0) scale(1)',offset:.5},{opacity:0,transform:'scale(.7)'}],700,1);proj(b,a,.35,'#bfe8c8',2);}break;}
-    case 'pull':{const f=byId(B,e.from);if(u&&f){proj(ctr(f),ctr(u),.18,'#ffe9b0',4);const p=ctr(u);spawnP(p[0],p[1],6,{col:'#ffe9b0',sp:50,life:.4});}break;}
+    case 'pull':{const f=byId(B,e.from);if(u&&f){const cf=ctr(f),cu=ctr(u);proj(cf,cu,.22,'#ffd700',6);proj(cf,cu,.26,'#ff4500',2.5);const p=cu;spawnP(p[0],p[1],10,{col:'#ffd700',sp:80,life:.5});ringFx(cf[0],cf[1],U.c*.6,'#ffd700',360);}break;}
     case 'taunt':if(u){const p=ctr(u);floatText(p[0],p[1]-U.c*.5,'🎯','big');}break;
     case 'exec':if(u){const p=ctr(u);floatText(p[0],p[1]-U.c*.4,'\u2620','big');spawnP(p[0],p[1],14,{col:'#ff5a4a',sp:110,g:80,life:.6});hitstop(60);}break;
     case 'eggmark':if(u){const p=ctr(u);ringFx(p[0],p[1],U.c*.9,'#ffd36a',500,true);spawnP(p[0],p[1],10,{col:'#fff3c4',sp:60,g:-40,life:.7,size:2.5});floatText(p[0],p[1]-U.c*.6,'TRỨNG TIÊN','big');}break;
