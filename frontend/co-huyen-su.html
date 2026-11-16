@@ -416,6 +416,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-thuan-thien-slash{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44}
 .tiltwrap.tilt .fx-thuan-thien-slash{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-thuan-thien-slash img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(255,215,0,.95)) drop-shadow(0 0 40px rgba(0,255,200,.85)) brightness(1.22)}
+.fx-giong-trail{position:absolute;pointer-events:none;transform-origin:50% 50%;background-size:100% 100%;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 14px rgba(255,69,0,.85)) drop-shadow(0 0 28px rgba(255,215,0,.55));z-index:1}
+.fx-giong-steed{position:absolute;pointer-events:none;transform:translate(-50%,-85%);z-index:43}
+.tiltwrap.tilt .fx-giong-steed{transform:translate(-50%,-85%) scaleY(1.32);transform-origin:50% 100%}
+.fx-giong-steed img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(255,69,0,.95)) drop-shadow(0 0 36px rgba(255,215,0,.75)) brightness(1.15)}
+.fx-giong-burst{position:absolute;pointer-events:none;transform:translate(-50%,-88%);z-index:44}
+.tiltwrap.tilt .fx-giong-burst{transform:translate(-50%,-88%) scaleY(1.32);transform-origin:50% 100%}
+.fx-giong-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(255,69,0,.95)) drop-shadow(0 0 40px rgba(255,215,0,.85)) brightness(1.2)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -1689,10 +1696,111 @@ VF.voi=e=>{
   ringFx(x,y,e.r*U.c,e.col,560,true);dustAt(x,y,12*k);shake(3*k,260);
 };
 VF.ngua=e=>{
-  const a=px(e.x0,e.y0),b=px(e.x1,e.y1),k=SC(e.s);
-  shape('ngua',a[0],a[1],U.c*2*k,'#ff9a3c',[{opacity:.95,transform:'translate('+0+'px,0)'},{opacity:.95,transform:'translate('+(b[0]-a[0])+'px,'+(b[1]-a[1])+'px)',offset:.7},{opacity:0,transform:'translate('+(b[0]-a[0])+'px,'+(b[1]-a[1])+'px) scale(1.2)'}],420);
-  for(let i=0;i<=6;i++){const t=i/6;spawnP(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,5*k,{col:i%2?'#ff7a1a':'#ffd36a',sp:40,g:-50,life:.8,size:3.5});}
-  ringFx(b[0],b[1],e.r*U.c,'#ff8a2a',520,true);shake(5*k,320);hitstop(60);
+  const [x0,y0]=px(e.x0!=null?e.x0:0,e.y0!=null?e.y0:0);
+  const [x1,y1]=px(e.x1!=null?e.x1:e.tx!=null?e.tx:0,e.y1!=null?e.y1:e.ty!=null?e.ty:0);
+  const dx=x1-x0,dy=y1-y0,dist=Math.hypot(dx,dy)||1,ang=Math.atan2(dy,dx);
+  const k=SC(e.s),spd=U.speed||1;
+  const dashDur=Math.max(200,Math.min(350,dist*0.48))/spd;
+
+  // Điểm xuất phát: Sóng chấn động lôi hỏa bộc phát
+  ringFx(x0,y0,U.c*1.1*k,'#ff4500',420,true);
+  spawnP(x0,y0,12*k,{col:'#ffd700',sp:120,g:-30,life:.7,size:3.5});
+
+  if(FX.big){
+    // Layer 1: Thảm Lửa Liệt Diễm Nung Đỏ trên sàn (nằm ở zlEl dưới chân tướng & quái)
+    const tW=dist*1.08,tH=U.c*1.3;
+    const tEl=document.createElement('div');
+    tEl.className='fxs fx-giong-trail';
+    tEl.style.cssText='left:'+((x0+x1)/2)+'px;top:'+((y0+y1)/2)+'px;width:'+tW+'px;height:'+tH+'px;transform:translate(-50%,-50%) rotate('+ang+'rad);';
+    const tSrc=FX_BASE+'thanh-giong-trail.webp';
+    tEl.style.backgroundImage='url("'+tSrc+'")';
+    const _imT=new Image();
+    _imT.onerror=()=>{tEl.style.backgroundImage='url("./img/fx/thanh-giong-trail.webp")';};
+    _imT.src=tSrc;
+    (zlEl||fxl).appendChild(tEl);
+
+    // Thời gian cháy của thảm lửa khớp với duration kỹ năng (3.5s - 5s)
+    const trailDur=Math.max(2500,Math.min(4500,(e.trail&&e.trail.dur?e.trail.dur*1000:3500)))/spd;
+    tEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) rotate('+ang+'rad) scaleX(0.2)'},
+      {opacity:1,transform:'translate(-50%,-50%) rotate('+ang+'rad) scaleX(1)',offset:0.12},
+      {opacity:0.95,transform:'translate(-50%,-50%) rotate('+ang+'rad) scaleX(1)',offset:0.75},
+      {opacity:0,transform:'translate(-50%,-50%) rotate('+ang+'rad) scaleX(0.98)'}
+    ],{duration:trailDur,fill:'forwards'}).onfinish=()=>tEl.remove();
+
+    // Layer 2: Thiết Mã Thần Thoại Khổng Lồ Phi Nước Đại Qua Đội Hình (nằm ở fxl trên tướng)
+    const flip=dx<0; // Lật mặt nếu lướt sang trái
+    const hw=U.c*2.4*Math.min(1.2,k),hh=hw*(313/480);
+    const hEl=document.createElement('div');
+    hEl.className='fxs fx-giong-steed';
+    hEl.style.cssText='left:'+x0+'px;top:'+y0+'px;width:'+hw+'px;height:'+hh+'px;z-index:43;';
+    const hImg=document.createElement('img');
+    const hSrc=FX_BASE+'thanh-giong-steed.webp';
+    hImg.onerror=()=>{hImg.src='./img/fx/thanh-giong-steed.webp';};
+    hImg.src=hSrc;hImg.draggable=false;
+    if(flip)hImg.style.transform='scaleX(-1)';
+    hEl.appendChild(hImg);
+    fxl.appendChild(hEl);
+
+    hEl.animate([
+      {left:x0+'px',top:y0+'px',opacity:0,transform:'translate(-50%,-85%) scale(0.6)'},
+      {left:(x0+dx*0.18)+'px',top:(y0+dy*0.18)+'px',opacity:1,transform:'translate(-50%,-85%) scale(1.08)',offset:0.15},
+      {left:(x0+dx*0.82)+'px',top:(y0+dy*0.82)+'px',opacity:1,transform:'translate(-50%,-85%) scale(1.0)',offset:0.8},
+      {left:x1+'px',top:y1+'px',opacity:0.95,transform:'translate(-50%,-85%) scale(1.05)'}
+    ],{duration:dashDur,easing:'cubic-bezier(.2,.8,.25,1)',fill:'forwards'}).onfinish=()=>hEl.remove();
+
+    // Bụi lửa & than hồng rải dọc bước phi của Thiết Mã
+    for(let i=0;i<=7;i++){
+      const t=i/7;
+      setTimeout(()=>{
+        spawnP(x0+dx*t,y0+dy*t,5*k,{col:i%2?'#ff4500':'#ffd700',sp:50,g:-40,life:.8,size:3.5});
+      },(t*dashDur));
+    }
+
+    // Layer 3: Điểm Đến — Cột Lửa Bộc Phá Dậm Vó Khi Thiết Mã Chạm Đất (Contact Frame)
+    setTimeout(()=>{
+      const bw=U.c*2.2*Math.min(1.2,k),bh=bw*(419/450);
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-giong-burst';
+      bEl.style.cssText='left:'+x1+'px;top:'+y1+'px;width:'+bw+'px;height:'+bh+'px;z-index:44;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'thanh-giong-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/thanh-giong-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-70%) scale(0.4)'},
+        {opacity:1,transform:'translate(-50%,-88%) scale(1.1)',offset:0.22},
+        {opacity:1,transform:'translate(-50%,-88%) scale(1)',offset:0.65},
+        {opacity:0,transform:'translate(-50%,-92%) scale(1.06)'}
+      ],{duration:1400/spd,easing:'cubic-bezier(.15,.8,.25,1)',fill:'forwards'}).onfinish=()=>bEl.remove();
+
+      // Rung chấn mặt đất & chấn động bộc phá
+      shake(9*k,480);
+      hitstop(85);
+    },dashDur*0.9);
+  }
+
+  // Chấn động & Hào quang liệt diễm
+  setTimeout(()=>{
+    ringFx(x1,y1,(e.r||1.5)*U.c,'#ff3b00',650,true);
+    setTimeout(()=>ringFx(x1,y1,((e.r||1.5)+0.6)*U.c,'#ffd700',750,false),120/spd);
+    setTimeout(()=>ringFx(x1,y1,((e.r||1.5)+1.2)*U.c,'#ff8c00',850,false),280/spd);
+
+    spawnP(x1,y1,28*k,{col:'#ff3b00',sp:170,g:-40,life:1.2,size:4});
+    spawnP(x1,y1,20*k,{col:'#ffd700',sp:150,g:50,life:.9,size:3.5});
+    spawnP(x1,y1,16*k,{col:'#ffffff',sp:190,g:-20,life:.7,size:3});
+
+    // Tiếng gầm chiến ý Phù Đổng
+    textFx('PHÙ ĐỔNG!',x1,y1-U.c*2.2*k,'#ff4500',U.c*0.58*k,[
+      {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
+      {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
+      {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
+      {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
+    ],1250);
+  },dashDur*0.9);
 };
 VF.chem=e=>{const a=px(e.x1,e.y1),b=px(e.tx,e.ty);slashFx(a,b,e.col,5);spawnP(b[0],b[1],8*SC(e.s),{col:'#fff',shape:'l',sp:140,life:.3});};
 VF.cam=e=>{const b=px(e.tx,e.ty);spawnP(b[0],b[1],16*SC(e.s),{col:'#ff9d2e',sp:120,g:120,life:.7,size:3.5});ringFx(b[0],b[1],U.c*.9,'#ff9d2e',420,true);textFx('🍊',b[0],b[1],'#ff9d2e',U.c*.5,[{opacity:1,transform:'translate(-50%,-50%) scale(1)'},{opacity:0,transform:'translate(-50%,-50%) scale(2)'}],400);};
