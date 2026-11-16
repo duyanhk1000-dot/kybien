@@ -1700,8 +1700,8 @@ VF.thantoc=e=>{
   spawnP(x0,y0,12*k,{col:'#ffd700',sp:110,g:-30,life:.6,size:3.5});
 
   if(FX.big){
-    // Layer 1: Vệt lướt Hỏa Lôi Thần Tốc (Dash Streak)
-    const dH=Math.max(U.c*1.5,dist*0.36)*k;
+    // Layer 1: Vệt lướt Hỏa Lôi Thần Tốc (Dash Streak gọn gàng chuẩn mũi tên lướt)
+    const dH=U.c*0.85;
     const dEl=document.createElement('div');
     dEl.className='fxs fx-thantoc-dash';
     dEl.style.cssText='left:'+x0+'px;top:'+y0+'px;width:'+(dist*1.06)+'px;height:'+dH+'px;transform:translate(0,-50%) rotate('+ang+'rad);z-index:38;';
@@ -1725,7 +1725,7 @@ VF.thantoc=e=>{
       spawnP(x0+dx*t,y0+dy*t,4*k,{col:i%2?'#ff4500':'#ffd700',sp:45,g:-25,life:.65,size:3.2});
     }
 
-    // Layer 2: Vết nứt đất dung nham tại điểm va chạm (AoE chuẩn số ô cờ)
+    // Layer 2: Vết nứt đất dung nham tại điểm va chạm (AoE chuẩn đúng 4 ô cờ)
     setTimeout(()=>{
       const aoeSpan=(e.r||2)*2;
       const cw=U.c*aoeSpan,ch=cw*0.58;
@@ -1746,8 +1746,8 @@ VF.thantoc=e=>{
         {opacity:0,transform:'translate(-50%,-50%) scale(0.95)'}
       ],{duration:1600/spd,fill:'forwards'}).onfinish=()=>cEl.remove();
 
-      // Layer 3: Cột Hỏa Lôi Bộc Phá (Towering Fiery Thunder Burst)
-      const ew=U.c*2.9*k,eh=ew*(826/480);
+      // Layer 3: Cột Hỏa Lôi Bộc Phá (Towering Fiery Thunder Burst gọn trong vùng nổ)
+      const ew=U.c*1.8*Math.min(1.2,k),eh=ew*(826/480);
       const bEl=document.createElement('div');
       bEl.className='fxs fx-thantoc-burst';
       bEl.style.cssText='left:'+x1+'px;top:'+y1+'px;width:'+ew+'px;height:'+eh+'px;z-index:43;';
@@ -1835,8 +1835,8 @@ VF.rong=e=>{
       vEl.remove();
     };
 
-    // Layer 2: Thần Long Thủy Tộc nguyên vẹn vươn mình bay vút thẳng lên trời (đã giảm 80%)
-    const dw=U.c*2.88*k,dh=U.c*6.08*k;
+    // Layer 2: Thần Long Thủy Tộc nguyên vẹn vươn mình bay vút thẳng lên trời (chuẩn phạm vi AoE 6 ô cờ)
+    const dw=U.c*2.2*Math.min(1.2,k),dh=U.c*4.6*Math.min(1.2,k);
     const dWrap=document.createElement('div');
     dWrap.className='fxs fx-dragon-wrap';
     dWrap.style.cssText='left:'+x+'px;top:'+(y+vh*0.1)+'px;width:'+dw+'px;height:'+dh+'px;z-index:42;overflow:hidden;';
@@ -1875,8 +1875,9 @@ VF.hich=e=>{
   const spd=U.speed||1;
 
   if(FX.big){
-    // Layer 1: Pháp Trận Chân Không Xoáy Hút Đông A (Dong A Vacuum Pull Vortex)
-    const vw=U.c*5.6*k,vh=vw*0.58;
+    // Layer 1: Pháp Trận Chân Không Xoáy Hút Đông A (chuẩn bán kính kéo địch 3 ô cờ)
+    const aoeSpan=(e.r||1.5)*2;
+    const vw=U.c*aoeSpan,vh=vw*0.58;
     const vEl=document.createElement('div');
     vEl.className='fxs fx-hich-vortex';
     vEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+vw+'px;height:'+vh+'px;z-index:22;';
@@ -1894,11 +1895,11 @@ VF.hich=e=>{
       {opacity:0,transform:'translate(-50%,-50%) scale(0.92)'}
     ],{duration:2100/spd,fill:'forwards'}).onfinish=()=>vEl.remove();
 
-    // Layer 2: Cuộn Hịch Tướng Sĩ Dát Vàng Hoàng Kim bay lơ lửng
-    const sw=U.c*3.8*k,sh=sw*(266/540);
+    // Layer 2: Cuộn Hịch Tướng Sĩ Dát Vàng Hoàng Kim bay lơ lửng gọn gàng trên đầu tướng
+    const sw=U.c*2.0*Math.min(1.2,k),sh=sw*(266/540);
     const sEl=document.createElement('div');
     sEl.className='fxs fx-hich-scroll';
-    sEl.style.cssText='left:'+x+'px;top:'+(y-U.c*1.1*k)+'px;width:'+sw+'px;height:'+sh+'px;z-index:43;';
+    sEl.style.cssText='left:'+x+'px;top:'+(y-U.c*0.95*Math.min(1.2,k))+'px;width:'+sw+'px;height:'+sh+'px;z-index:43;';
     const sImg=document.createElement('img');
     const sSrc=FX_BASE+'tran-hung-dao-scroll.webp';
     sImg.onerror=()=>{sImg.src='./img/fx/tran-hung-dao-scroll.webp';};
@@ -1914,12 +1915,12 @@ VF.hich=e=>{
       {opacity:0,transform:'translate(-50%,-46%) scale(1.08, 1.08)'}
     ],{duration:1950/spd,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}).onfinish=()=>sEl.remove();
 
-    // Layer 3: Ấn Ký Chữ Lửa "SÁT THÁT" Bùng Cháy
+    // Layer 3: Ấn Ký Chữ Lửa "SÁT THÁT" Bùng Cháy tinh gọn
     setTimeout(()=>{
-      const rw=U.c*2.6*k,rh=rw*(356/380);
+      const rw=U.c*1.25*Math.min(1.2,k),rh=rw*(356/380);
       const rEl=document.createElement('div');
       rEl.className='fxs fx-hich-satthat';
-      rEl.style.cssText='left:'+x+'px;top:'+(y-U.c*1.75*k)+'px;width:'+rw+'px;height:'+rh+'px;z-index:44;';
+      rEl.style.cssText='left:'+x+'px;top:'+(y-U.c*1.5*Math.min(1.2,k))+'px;width:'+rw+'px;height:'+rh+'px;z-index:44;';
       const rImg=document.createElement('img');
       const rSrc=FX_BASE+'tran-hung-dao-satthat.webp';
       rImg.onerror=()=>{rImg.src='./img/fx/tran-hung-dao-satthat.webp';};
@@ -1937,9 +1938,9 @@ VF.hich=e=>{
   }
 
   // Sóng chấn động lôi cuốn + Hào quang chiến ý hoàng kim + Rung lắc chiến trường
-  ringFx(x,y,U.c*2.2*k,'#ffd700',700,true);
-  setTimeout(()=>ringFx(x,y,U.c*3.0*k,'#ff4500',800,false),140/spd);
-  setTimeout(()=>ringFx(x,y,U.c*3.8*k,'#38bdf8',900,false),320/spd);
+  ringFx(x,y,(e.r||1.5)*U.c,'#ffd700',650,true);
+  setTimeout(()=>ringFx(x,y,((e.r||1.5)+0.5)*U.c,'#ff4500',750,false),140/spd);
+  setTimeout(()=>ringFx(x,y,((e.r||1.5)+1.0)*U.c,'#38bdf8',850,false),300/spd);
 
   spawnP(x,y,28*k,{col:'#ffd700',sp:160,g:-40,life:1.2,size:4});
   spawnP(x,y,20*k,{col:'#ff4500',sp:140,g:60,life:.9,size:3.5});
