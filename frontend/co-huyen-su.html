@@ -409,6 +409,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-hich-satthat{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44}
 .tiltwrap.tilt .fx-hich-satthat{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-hich-satthat img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 16px rgba(224,36,36,.95)) drop-shadow(0 0 32px rgba(255,215,0,.85)) brightness(1.2)}
+.fx-thuan-thien-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 16px rgba(255,215,0,.85)) drop-shadow(0 0 32px rgba(34,211,238,.6));z-index:1}
+.fx-thuan-thien-sword{position:absolute;pointer-events:none;transform:translate(-50%,-100%);z-index:43}
+.tiltwrap.tilt .fx-thuan-thien-sword{transform:translate(-50%,-100%) scaleY(1.32);transform-origin:50% 100%}
+.fx-thuan-thien-sword img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(255,215,0,.95)) drop-shadow(0 0 36px rgba(34,211,238,.75)) brightness(1.18)}
+.fx-thuan-thien-slash{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44}
+.tiltwrap.tilt .fx-thuan-thien-slash{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-thuan-thien-slash img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(255,215,0,.95)) drop-shadow(0 0 40px rgba(0,255,200,.85)) brightness(1.22)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -1779,9 +1786,91 @@ VF.thantoc=e=>{
   },dashDur*0.65);
 };
 VF.guom=e=>{
-  const a=px(e.x1,e.y1),b=px(e.cx,e.cy),dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;
-  slashFx([b[0]-dx/l*U.c*1.6-dy/l*U.c,b[1]-dy/l*U.c*1.6+dx/l*U.c],[b[0]+dx/l*U.c*1.6+dy/l*U.c,b[1]+dy/l*U.c*1.6-dx/l*U.c],'#7dff9a',7);
-  ringFx(b[0],b[1],e.r*U.c,'#7dff9a',560,true);spawnP(b[0],b[1],14*SC(e.s),{col:'#b8ffcb',shape:'l',sp:150,life:.4});shake(5,300);hitstop(50);
+  const [x,y]=px(e.cx!=null?e.cx:(e.x1!=null?e.x1:0),e.cy!=null?e.cy:(e.y1!=null?e.y1:0));
+  const k=SC(e.s),spd=U.speed||1;
+
+  if(FX.big){
+    // Layer 1: Pháp Trận Thái Cực Kiếm Trận Hoàng Kim (nằm ở zlEl dưới chân tướng và quái)
+    const aoeSpan=(e.r||2)*2;
+    const aw=U.c*aoeSpan,ah=aw*0.58;
+    const aEl=document.createElement('div');
+    aEl.className='fxs fx-thuan-thien-array';
+    aEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+aw+'px;height:'+ah+'px;';
+    const aSrc=FX_BASE+'thuan-thien-array.webp';
+    aEl.style.backgroundImage='url("'+aSrc+'")';
+    const _imA=new Image();
+    _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/thuan-thien-array.webp")';};
+    _imA.src=aSrc;
+    (zlEl||fxl).appendChild(aEl);
+
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.3)'},
+      {opacity:1,transform:'translate(-50%,-50%) scale(1.06)',offset:0.18},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1)',offset:0.75},
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.92)'}
+    ],{duration:2000/spd,fill:'forwards'}).onfinish=()=>aEl.remove();
+
+    // Layer 2: Cự Kiếm Thuận Thiên Hoàng Kim Giáng Thế (cắm từ tầng mây đâm thẳng xuống tâm trận)
+    const sw=U.c*1.9*Math.min(1.2,k),sh=sw*(720/244);
+    const sEl=document.createElement('div');
+    sEl.className='fxs fx-thuan-thien-sword';
+    sEl.style.cssText='left:'+x+'px;top:'+(y+ah*0.08)+'px;width:'+sw+'px;height:'+sh+'px;z-index:43;';
+    const sImg=document.createElement('img');
+    const sSrc=FX_BASE+'thuan-thien-sword.webp';
+    sImg.onerror=()=>{sImg.src='./img/fx/thuan-thien-sword.webp';};
+    sImg.src=sSrc;sImg.draggable=false;
+    sEl.appendChild(sImg);
+    fxl.appendChild(sEl);
+
+    sEl.animate([
+      {opacity:0,transform:'translate(-50%,-200%) scale(0.7, 1.3)'},
+      {opacity:1,transform:'translate(-50%,-100%) scale(1.08, 0.95)',offset:0.28},
+      {opacity:1,transform:'translate(-50%,-100%) scale(1, 1)',offset:0.65},
+      {opacity:0,transform:'translate(-50%,-105%) scale(1.05, 1.05)'}
+    ],{duration:1750/spd,easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>sEl.remove();
+
+    // Layer 3: Sóng Kiếm Khí Hoàng Kim Trảm Quét Ngang Bộc Phá (khi cự kiếm chạm đất)
+    setTimeout(()=>{
+      const slw=U.c*3.2*Math.min(1.2,k),slh=slw*(287/560);
+      const slEl=document.createElement('div');
+      slEl.className='fxs fx-thuan-thien-slash';
+      slEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+slw+'px;height:'+slh+'px;z-index:44;';
+      const slImg=document.createElement('img');
+      const slSrc=FX_BASE+'thuan-thien-slash.webp';
+      slImg.onerror=()=>{slImg.src='./img/fx/thuan-thien-slash.webp';};
+      slImg.src=slSrc;slImg.draggable=false;
+      slEl.appendChild(slImg);
+      fxl.appendChild(slEl);
+
+      slEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.15)',offset:0.25},
+        {opacity:0.95,transform:'translate(-50%,-50%) scale(1.02)',offset:0.6},
+        {opacity:0,transform:'translate(-50%,-50%) scale(1.2)'}
+      ],{duration:1200/spd,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}).onfinish=()=>slEl.remove();
+
+      // Rung chấn mặt đất & chấn động bộc phá khi kiếm cắm đất
+      shake(9*k,480);
+      hitstop(80);
+    },380/spd);
+  }
+
+  // Chấn động & Hào quang kiếm khí hoàng kim + ngọc bích
+  ringFx(x,y,(e.r||2)*U.c,'#ffd700',650,true);
+  setTimeout(()=>ringFx(x,y,((e.r||2)+0.6)*U.c,'#22d3ee',750,false),140/spd);
+  setTimeout(()=>ringFx(x,y,((e.r||2)+1.2)*U.c,'#10b981',850,false),320/spd);
+
+  spawnP(x,y,26*k,{col:'#ffd700',shape:'l',sp:170,g:-30,life:1.1,size:4});
+  spawnP(x,y,20*k,{col:'#22d3ee',sp:150,g:50,life:.9,size:3.5});
+  spawnP(x,y,16*k,{col:'#ffffff',sp:190,g:-10,life:.7,size:3});
+
+  // Text hiệu ứng "THUẬN THIÊN!" uy nghiêm
+  textFx('THUẬN THIÊN!',x,y-U.c*2.2*k,'#ffd700',U.c*0.58*k,[
+    {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
+    {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
+    {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
+    {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
+  ],1250);
 };
 VF.co=e=>{const [x,y]=px(e.x1,e.y1);shape('co',x,y-U.c*.2,U.c*1.5,'#e0503f',[{opacity:0,transform:'translateY(-40px)'},{opacity:1,transform:'translateY(0)',offset:.3},{opacity:1,offset:.7},{opacity:0}],900,1.25);ringFx(x,y,e.r*U.c,'#e0503f',560,true);spawnP(x,y,12*SC(e.s),{col:'#ff9a8a',sp:100,g:-20,life:.7});};
 VF.chu=e=>{
