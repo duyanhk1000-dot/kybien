@@ -439,11 +439,11 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .tiltwrap.tilt .fx-trungtrac-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-trungtrac-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(245,158,11,.95)) drop-shadow(0 0 36px rgba(220,38,38,.85)) brightness(1.2)}
 .fx-ngoquyen-water{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 16px rgba(2,132,199,.85)) drop-shadow(0 0 32px rgba(34,211,238,.6));z-index:1}
-.fx-ngoquyen-stakes{position:absolute;pointer-events:none;transform:translate(-50%,-85%);z-index:43}
-.tiltwrap.tilt .fx-ngoquyen-stakes{transform:translate(-50%,-85%) scaleY(1.32);transform-origin:50% 100%}
+.fx-ngoquyen-stakes{position:absolute;pointer-events:none;transform:translate(-50%,-55%);z-index:43}
+.tiltwrap.tilt .fx-ngoquyen-stakes{transform:translate(-50%,-55%) scaleY(1.32);transform-origin:50% 100%}
 .fx-ngoquyen-stakes img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 16px rgba(2,132,199,.95)) drop-shadow(0 0 32px rgba(34,211,238,.75)) brightness(1.15)}
-.fx-ngoquyen-burst{position:absolute;pointer-events:none;transform:translate(-50%,-75%);z-index:44}
-.tiltwrap.tilt .fx-ngoquyen-burst{transform:translate(-50%,-75%) scaleY(1.32);transform-origin:50% 100%}
+.fx-ngoquyen-burst{position:absolute;pointer-events:none;transform:translate(-50%,-65%);z-index:44}
+.tiltwrap.tilt .fx-ngoquyen-burst{transform:translate(-50%,-65%) scaleY(1.32);transform-origin:50% 100%}
 .fx-ngoquyen-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(34,211,238,.95)) drop-shadow(0 0 40px rgba(2,132,199,.85)) brightness(1.2)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
@@ -2291,7 +2291,46 @@ VF.coc=e=>{
   }
 
   if(FX.big){
-    // Layer 3: Cột Nước & Sóng Bộc Phá Thủy Triều bùng nổ dữ dội khi bãi cọc trồi lên
+    // Layer 1: Xoáy Nước Bạch Đằng Giang (NẰM Ở zlEl - DƯỚI LỚP HÌNH ẢNH QUÁI)
+    const aoeSpan=(e.r||2)*2;
+    const aw=U.c*aoeSpan,ah=aw*0.58;
+    const aEl=document.createElement('div');
+    aEl.className='fxs fx-ngoquyen-water';
+    aEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+aw+'px;height:'+ah+'px;z-index:1;';
+    const aSrc=FX_BASE+'ngo-quyen-water.webp';
+    aEl.style.backgroundImage='url("'+aSrc+'")';
+    const _imA=new Image();
+    _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/ngo-quyen-water.webp")';};
+    _imA.src=aSrc;
+    (zlEl||fxl).appendChild(aEl);
+
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1.05)',offset:0.08},
+      {opacity:0.92,transform:'translate(-50%,-50%) scale(1)',offset:0.85},
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.95)'}
+    ],{duration:7800/spd,fill:'forwards'}).onfinish=()=>aEl.remove();
+
+    // Layer 2: Bãi Cọc Gỗ Bịt Sắt Bạch Đằng (NẰM Ở fxl - Ở TRÊN LỚP HÌNH ẢNH QUÁI)
+    const sw=U.c*3.8*Math.min(1.2,k),sh=sw*(588/560);
+    const sEl=document.createElement('div');
+    sEl.className='fxs fx-ngoquyen-stakes';
+    sEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+sw+'px;height:'+sh+'px;z-index:43;';
+    const sImg=document.createElement('img');
+    const sSrc=FX_BASE+'ngo-quyen-stakes.webp';
+    sImg.onerror=()=>{sImg.src='./img/fx/ngo-quyen-stakes.webp';};
+    sImg.src=sSrc;sImg.draggable=false;
+    sEl.appendChild(sImg);
+    fxl.appendChild(sEl);
+
+    sEl.animate([
+      {opacity:0,transform:'translate(-50%,20%) scale(0.65, 0.3)'},
+      {opacity:1,transform:'translate(-50%,-55%) scale(1.06, 1.03)',offset:0.10},
+      {opacity:1,transform:'translate(-50%,-55%) scale(1, 1)',offset:0.85},
+      {opacity:0,transform:'translate(-50%,-45%) scale(0.95)'}
+    ],{duration:7500/spd,easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>sEl.remove();
+
+    // Layer 3: Cột Nước & Sóng Bộc Phá Thủy Triều khi bãi cọc trồi lên (nằm ở #fxl z-index: 44)
     setTimeout(()=>{
       const bw=U.c*3.4*Math.min(1.2,k),bh=bw*(400/440);
       const bEl=document.createElement('div');
@@ -2306,14 +2345,14 @@ VF.coc=e=>{
 
       bEl.animate([
         {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
-        {opacity:1,transform:'translate(-50%,-75%) scale(1.18)',offset:0.25},
-        {opacity:0.95,transform:'translate(-50%,-75%) scale(1.02)',offset:0.6},
-        {opacity:0,transform:'translate(-50%,-80%) scale(1.12)'}
+        {opacity:1,transform:'translate(-50%,-65%) scale(1.18)',offset:0.25},
+        {opacity:0.95,transform:'translate(-50%,-65%) scale(1.02)',offset:0.6},
+        {opacity:0,transform:'translate(-50%,-70%) scale(1.12)'}
       ],{duration:1400/spd,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}).onfinish=()=>bEl.remove();
 
       shake(8*k,460);
       hitstop(80);
-    },280/spd);
+    },220/spd);
   }
 
   // Chấn động & Hào quang thủy ba xanh thẳm + hoàng kim tại chân quái
@@ -2438,55 +2477,6 @@ function buildZone(z){
   const [x,y]=px(z.x,z.y),rad=z.r*U.c;
   const d=document.createElement('div');d.className='zone '+z.kind+(z.delay>0?' tel':'');
   d.style.cssText='left:'+x+'px;top:'+y+'px;width:'+(rad*2)+'px;height:'+(rad*2)+'px';
-  if(z.kind==='stakes'&&FX.big){
-    const sWrap=document.createElement('div');
-    sWrap.className='fxs fxs-stakes-field-wrap';
-    sWrap.style.cssText='left:'+x+'px;top:'+(y+rad*0.12)+'px;width:0;height:0;z-index:43;';
-    fxl.appendChild(sWrap);
-    d._stakesWrap=sWrap;
-
-    // Cụm bãi cọc gỗ bịt sắt trung tâm khổng lồ
-    const cW=U.c*3.8,cH=cW*(588/560);
-    const coreEl=document.createElement('div');
-    coreEl.className='fxs-stake-core';
-    coreEl.style.cssText='position:absolute;left:0;top:0;width:'+cW+'px;height:'+cH+'px;transform:translate(-50%,-85%) scale(0.65,0);transform-origin:50% 100%;';
-    const cImg=document.createElement('img');
-    const cSrc=FX_BASE+'ngo-quyen-stakes.webp';
-    cImg.onerror=()=>{cImg.src='./img/fx/ngo-quyen-stakes.webp';};
-    cImg.src=cSrc;cImg.draggable=false;
-    cImg.style.cssText='width:100%;height:100%;object-fit:contain;';
-    coreEl.appendChild(cImg);
-    sWrap.appendChild(coreEl);
-
-    // 6 cụm cọc gỗ bịt sắt phụ xung quanh phủ kín trận địa 2 ô cờ
-    const offsets=[
-      {dx:-0.72, dy:-0.35, s:0.72, r:-8},
-      {dx:0.75,  dy:-0.38, s:0.76, r:9},
-      {dx:-0.58, dy:0.42,  s:0.68, r:6},
-      {dx:0.62,  dy:0.45,  s:0.74, r:-7},
-      {dx:-0.18, dy:-0.65, s:0.70, r:4},
-      {dx:0.22,  dy:0.58,  s:0.66, r:-5}
-    ];
-    offsets.forEach(o=>{
-      const oW=cW*o.s,oH=cH*o.s;
-      const subEl=document.createElement('div');
-      subEl.className='fxs-stake-sub';
-      subEl.style.cssText='position:absolute;left:'+(o.dx*rad)+'px;top:'+(o.dy*rad*0.7)+'px;width:'+oW+'px;height:'+oH+'px;transform:translate(-50%,-85%) scale(0.6,0) rotate('+o.r+'deg);transform-origin:50% 100%;';
-      const sImg=document.createElement('img');
-      sImg.onerror=()=>{sImg.src='./img/fx/ngo-quyen-stakes.webp';};
-      sImg.src=cSrc;sImg.draggable=false;
-      sImg.style.cssText='width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 14px rgba(2,132,199,.8)) drop-shadow(0 0 28px rgba(34,211,238,.6)) brightness(1.1);';
-      subEl.appendChild(sImg);
-      sWrap.appendChild(subEl);
-    });
-
-    if(!(z.delay>0)){
-      coreEl.style.transform='translate(-50%,-85%) scale(1,1)';
-      sWrap.querySelectorAll('.fxs-stake-sub').forEach(sub=>{
-        sub.style.transform=sub.style.transform.replace('scale(0.6,0)','scale(1,1)');
-      });
-    }
-  }
   zlEl.appendChild(d);U.zel[z.id]=d;
 }
 
@@ -3195,49 +3185,8 @@ function events(B){
     case 'grow':if(u){const p=ctr(u);dustAt(p[0],p[1],8);}break;
     case 'spawn':{const un=e.u,el2=mkEl(un);const p=ctr(un);ringFx(p[0],p[1],U.c*.6,'#5fb7ff',400);spawnP(p[0],p[1],8,{col:'#bfe3ff',sp:60,g:40,life:.5});const _sp=el2.face===-1?'-1':'1';el2.tok.animate([{scale:(_sp==='-1'?'-0.2':'0.2')+' 0.2',opacity:0},{scale:_sp+' 1',opacity:1}],{duration:300/U.speed});break;}
     case 'zone':buildZone(e.z);break;
-    case 'zoneOn':{
-      const d=U.zel[e.id];
-      if(d){
-        d.classList.remove('tel');
-        if(d._stakesWrap){
-          const spd=U.speed||1;
-          const core=d._stakesWrap.querySelector('.fxs-stake-core');
-          if(core){
-            core.animate([
-              {opacity:0,transform:'translate(-50%,25%) scale(0.65,0.2)'},
-              {opacity:1,transform:'translate(-50%,-85%) scale(1.08,1.04)',offset:0.25},
-              {opacity:1,transform:'translate(-50%,-85%) scale(1,1)'}
-            ],{duration:650/spd,easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'});
-          }
-          d._stakesWrap.querySelectorAll('.fxs-stake-sub').forEach((sub,i)=>{
-            const curTr=sub.style.transform;
-            const targetTr=curTr.replace('scale(0.6,0)','scale(1,1)');
-            sub.animate([
-              {opacity:0,transform:curTr},
-              {opacity:1,transform:targetTr}
-            ],{duration:550/spd,delay:(60+i*40)/spd,easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'});
-          });
-          shake(8,460);
-          hitstop(80);
-        }
-      }
-      break;
-    }
-    case 'zoneEnd':{
-      const d=U.zel[e.id];
-      if(d){
-        d.style.opacity='0';
-        if(d._stakesWrap){
-          d._stakesWrap.animate([
-            {opacity:1,transform:'translate(0,0)'},
-            {opacity:0,transform:'translate(0,35px) scale(0.92)'}
-          ],{duration:600/(U.speed||1),fill:'forwards'}).onfinish=()=>{if(d._stakesWrap&&d._stakesWrap.parentNode)d._stakesWrap.remove();};
-        }
-        setTimeout(()=>{if(d.parentNode)d.remove();},650);
-        delete U.zel[e.id];
-      }
-      break;
-    }
+    case 'zoneOn':{const d=U.zel[e.id];if(d)d.classList.remove('tel');break;}
+    case 'zoneEnd':{const d=U.zel[e.id];if(d){d.style.opacity='0';setTimeout(()=>d.remove(),450);delete U.zel[e.id];}break;}
     case 'die':if(els){
       els.d.classList.add('dead');
       if(els.spr)setSpr(els,'death');
