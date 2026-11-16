@@ -452,6 +452,14 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-thuytinh-burst{position:absolute;pointer-events:none;transform:translate(-50%,-65%);z-index:44}
 .tiltwrap.tilt .fx-thuytinh-burst{transform:translate(-50%,-65%) scaleY(1.32);transform-origin:50% 100%}
 .fx-thuytinh-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(34,211,238,.95)) drop-shadow(0 0 45px rgba(129,140,248,.85)) brightness(1.25)}
+.fx-auco-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;z-index:1;filter:drop-shadow(0 0 18px rgba(244,114,182,.85)) drop-shadow(0 0 35px rgba(251,191,36,.65))}
+.tiltwrap.tilt .fx-auco-array{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-auco-egg{position:absolute;pointer-events:none;transform:translate(-50%,-75%);z-index:43}
+.tiltwrap.tilt .fx-auco-egg{transform:translate(-50%,-75%) scaleY(1.32);transform-origin:50% 100%}
+.fx-auco-egg img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(251,191,36,.95)) drop-shadow(0 0 35px rgba(244,114,182,.8)) brightness(1.15)}
+.fx-auco-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44}
+.tiltwrap.tilt .fx-auco-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-auco-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(251,191,36,.95)) drop-shadow(0 0 45px rgba(244,114,182,.9)) brightness(1.25)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -1137,6 +1145,11 @@ function castSkill(B,u){
   }
   const tx=t?t.x:u.x,ty=t?t.y:u.y;
   let cx=tx,cy=ty;
+  if(sk.egg){
+    const eggAllies=alv(B,u.side).filter(a=>!a.sm&&!a.egg);
+    const eggLow=eggAllies.reduce((a,b)=>(!a||b.hp/b.max<a.hp/a.max)?b:a,null);
+    if(eggLow){cx=eggLow.x;cy=eggLow.y;}
+  }
   const hits=[];
   if(sk.d&&foesAll.length){
     const dmg=sc(sk.d,s)*sp;
@@ -2433,6 +2446,113 @@ VF.lu=e=>{
     shake(4,300);
   }
 };
+VF.trungtien=e=>{
+  const sx=e.x1!=null?px(e.x1,e.y1)[0]:0;
+  const sy=e.x1!=null?px(e.x1,e.y1)[1]:0;
+  const tgtX=e.cx!=null?e.cx:(e.tx!=null?e.tx:e.x1);
+  const tgtY=e.cy!=null?e.cy:(e.ty!=null?e.ty:e.y1);
+  const [tx,ty]=px(tgtX,tgtY);
+  const k=SC(e.s),spd=U.speed||1;
+
+  // 1. Khởi chiêu: Quốc Mẫu Âu Cơ tỏa vầng hào quang bồ đề hoàng kim & hoa sen
+  ringFx(sx,sy,U.c*1.15*k,'#fb7185',500,true);
+  spawnP(sx,sy,14*k,{col:'#f472b6',shape:'p',sp:85,g:-30,life:.8,size:3.5});
+  spawnP(sx,sy,10*k,{col:'#ffd700',sp:110,g:-20,life:.6,size:3});
+
+  // Luồng tiên khí chim Lạc bay từ Âu Cơ tới đồng minh nếu khác vị trí
+  if(e.x1!==tgtX||e.y1!==tgtY){
+    proj([sx,sy],[tx,ty],.28/spd,'#fb7185',4);
+    proj([sx,sy],[tx,ty],.32/spd,'#ffd700',2.5);
+  }
+
+  // Chữ chiến ý thần uy "TRỨNG TIÊN!"
+  textFx('TRỨNG TIÊN!',tx,ty-U.c*1.6*k,'#fb7185',U.c*0.5*k,[
+    {opacity:0,transform:'scale(.5)'},
+    {opacity:1,transform:'scale(1.2)',offset:.28},
+    {opacity:1,transform:'scale(1)',offset:.75},
+    {opacity:0,transform:'scale(1.25)'}
+  ],1250);
+
+  if(FX.big){
+    // Layer 1: Pháp Trận Hoa Sen Chim Lạc Đông Sơn (NẰM Ở zlEl - DƯỚI LỚP QUÁI & ĐỒNG MINH)
+    const aw=U.c*2.8*Math.min(1.2,k),ah=aw*(298/512);
+    const aEl=document.createElement('div');
+    aEl.className='fxs fx-auco-array';
+    aEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+aw+'px;height:'+ah+'px;z-index:1;';
+    const aSrc=FX_BASE+'au-co-array.webp';
+    aEl.style.backgroundImage='url("'+aSrc+'")';
+    const _imA=new Image();
+    _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/au-co-array.webp")';};
+    _imA.src=aSrc;
+    (zlEl||fxl).appendChild(aEl);
+
+    const vfxDur=2600/spd;
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
+      {opacity:0.96,transform:'translate(-50%,-50%) scale(1.05)',offset:0.18},
+      {opacity:0.94,transform:'translate(-50%,-50%) scale(1)',offset:0.75},
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.92)'}
+    ],{duration:vfxDur,fill:'forwards'}).onfinish=()=>aEl.remove();
+
+    // Layer 2: Quả Trứng Tiên Thần Quang Lơ Lửng (NẰM Ở fxl - TRÊN THÂN ĐỒNG MINH)
+    const ew=U.c*2.1*Math.min(1.2,k),eh=ew*(507/380);
+    const eEl=document.createElement('div');
+    eEl.className='fxs fx-auco-egg';
+    eEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+ew+'px;height:'+eh+'px;z-index:43;';
+    const eImg=document.createElement('img');
+    const eSrc=FX_BASE+'au-co-egg.webp';
+    eImg.onerror=()=>{eImg.src='./img/fx/au-co-egg.webp';};
+    eImg.src=eSrc;eImg.draggable=false;
+    eEl.appendChild(eImg);
+    fxl.appendChild(eEl);
+
+    eEl.animate([
+      {opacity:0,transform:'translate(-50%,-130%) scale(0.5)'},
+      {opacity:1,transform:'translate(-50%,-75%) scale(1.08)',offset:0.22},
+      {opacity:0.95,transform:'translate(-50%,-75%) scale(1)',offset:0.75},
+      {opacity:0,transform:'translate(-50%,-85%) scale(1.15)'}
+    ],{duration:vfxDur*0.9,easing:'cubic-bezier(.15,.85,.25,1)',fill:'forwards'}).onfinish=()=>eEl.remove();
+
+    // Layer 3: Tiên Hoa Lạc Vũ Bộc Phá (Cánh sen, lông vũ hạc tiên & hào quang kim sắc)
+    setTimeout(()=>{
+      const bw=U.c*2.8*Math.min(1.2,k),bh=bw;
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-auco-burst';
+      bEl.style.cssText='left:'+tx+'px;top:'+(ty-U.c*0.3)+'px;width:'+bw+'px;height:'+bh+'px;z-index:44;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'au-co-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/au-co-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(0.3)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.12)',offset:0.25},
+        {opacity:0.95,transform:'translate(-50%,-50%) scale(1.0)',offset:0.65},
+        {opacity:0,transform:'translate(-50%,-50%) scale(1.15)'}
+      ],{duration:1400/spd,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}).onfinish=()=>bEl.remove();
+
+      // Cánh hoa sen hồng & lông vũ trắng bay bồng bềnh
+      for(let i=0;i<6;i++){
+        setTimeout(()=>{
+          spawnP(tx+(Math.random()-0.5)*U.c*2,ty+(Math.random()-0.5)*U.c,4*k,{
+            col:i%2?'#fb7185':'#fff',shape:'p',sp:55,g:-35,life:1.1,size:3.2
+          });
+        },i*70/spd);
+      }
+    },160/spd);
+  }
+
+  // Sóng xung kích tiên quang phát quang đa tầng
+  ringFx(tx,ty,U.c*1.1*k,'#fb7185',550,true);
+  setTimeout(()=>ringFx(tx,ty,U.c*1.6*k,'#ffd700',650,false),140/spd);
+  setTimeout(()=>ringFx(tx,ty,U.c*2.2*k,'#34d399',750,false),280/spd);
+
+  spawnP(tx,ty,24*k,{col:'#fb7185',shape:'p',sp:110,g:-45,life:1.1,size:3.5});
+  spawnP(tx,ty,18*k,{col:'#ffd700',sp:130,g:-30,life:0.9,size:3});
+  spawnP(tx,ty,14*k,{col:'#ffffff',shape:'p',sp:100,g:-50,life:1.2,size:3});
+};
 VF.coc=e=>{
   const cx=e.cx!=null?e.cx:(e.tx!=null?e.tx:(e.x1!=null?e.x1:0));
   const cy=e.cy!=null?e.cy:(e.ty!=null?e.ty:(e.y1!=null?e.y1:0));
@@ -3191,7 +3311,7 @@ function startDemo(heroId){
   U.demo=heroId;U.demoDmg=0;U.demoLastCast=null;U.phase='battle';U.sel=null;U.peek=null;
   const hero=mkBU({h:heroId,s:3},0,2,3,{},{});hero.mana=hero.maxMana;hero.max*=3;hero.hp=hero.max;
   let allies=[hero];
-  if(heroId==='auc\u01a1'){hero.x=3;hero.y=3;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,1,3,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
+  if(heroId==='aucơ'){hero.x=1;hero.y=3;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,3,3,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
   if(heroId==='sontinh'||heroId==='trungtrac'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   if(heroId==='thuytinh'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
@@ -3338,8 +3458,49 @@ function events(B){
     case 'exec':if(u){const p=ctr(u);floatText(p[0],p[1]-U.c*.4,'\u2620','big');spawnP(p[0],p[1],14,{col:'#ff5a4a',sp:110,g:80,life:.6});hitstop(60);}break;
     case 'eggmark':if(u){const p=ctr(u);ringFx(p[0],p[1],U.c*.9,'#ffd36a',500,true);spawnP(p[0],p[1],10,{col:'#fff3c4',sp:60,g:-40,life:.7,size:2.5});floatText(p[0],p[1]-U.c*.6,'TRỨNG TIÊN','big');}break;
     case 'eggheal':if(u){const p=ctr(u);spawnP(p[0],p[1],12,{col:'#9fe8a8',sp:60,g:-60,life:.8,size:3});}break;
-    case 'egg':if(u){const p=ctr(u);ringFx(p[0],p[1],U.c*1.1,'#ffd36a',700,true);spawnP(p[0],p[1],22,{col:'#fff3c4',sp:100,g:-60,life:1,size:3});shape('hoa',p[0],p[1]-U.c*.4,U.c*1.2,'#fff3c4',[{opacity:0,transform:'translateY(20px) scale(.5)'},{opacity:1,transform:'translateY(-10px) scale(1)',offset:.4},{opacity:0,transform:'translateY(-40px)'}],900,1.25);floatText(p[0],p[1]-U.c*.6,'HÓA TRỨNG','big');}break;
-    case 'hatch':if(u){const p=ctr(u);ringFx(p[0],p[1],U.c*1.4,'#ffd36a',700,true);spawnP(p[0],p[1],26,{col:'#fff3c4',sp:130,g:-100,life:1,size:3.5});spawnP(p[0],p[1],12,{col:'#ffd36a',sp:70,g:60,life:.8,size:3});floatText(p[0],p[1]-U.c*.6,'TÁI SINH','big');}break;
+    case 'egg':if(u){
+      const p=ctr(u);
+      ringFx(p[0],p[1],U.c*1.3,'#fb7185',700,true);
+      setTimeout(()=>ringFx(p[0],p[1],U.c*1.8,'#ffd700',800,false),140/U.speed);
+      spawnP(p[0],p[1],24,{col:'#fb7185',shape:'p',sp:110,g:-50,life:1.2,size:3.5});
+      spawnP(p[0],p[1],18,{col:'#ffd700',sp:130,g:-30,life:0.9,size:3});
+      if(FX.big){
+        const bw=U.c*2.6,bh=bw;
+        const bEl=document.createElement('div');
+        bEl.className='fxs fx-auco-burst';
+        bEl.style.cssText='left:'+p[0]+'px;top:'+(p[1]-U.c*0.2)+'px;width:'+bw+'px;height:'+bh+'px;z-index:44;';
+        bEl.innerHTML='<img src="'+FX_BASE+'au-co-burst.webp" onerror="this.src=\'./img/fx/au-co-burst.webp\'">';
+        fxl.appendChild(bEl);
+        bEl.animate([
+          {opacity:0,transform:'translate(-50%,-50%) scale(0.4)'},
+          {opacity:1,transform:'translate(-50%,-50%) scale(1.1)',offset:0.3},
+          {opacity:0,transform:'translate(-50%,-50%) scale(1.2)'}
+        ],{duration:900/U.speed,fill:'forwards'}).onfinish=()=>bEl.remove();
+      }
+      floatText(p[0],p[1]-U.c*.6,'HÓA TRỨNG','big');
+    }break;
+    case 'hatch':if(u){
+      const p=ctr(u);
+      ringFx(p[0],p[1],U.c*1.8,'#ffd700',700,true);
+      setTimeout(()=>ringFx(p[0],p[1],U.c*2.4,'#fb7185',800,false),120/U.speed);
+      spawnP(p[0],p[1],30,{col:'#fff',shape:'p',sp:150,g:-80,life:1.3,size:4});
+      spawnP(p[0],p[1],22,{col:'#ffd700',sp:170,g:-40,life:1,size:3.5});
+      if(FX.big){
+        hitstop(70);shake(6,400);
+        const bw=U.c*3.2,bh=bw;
+        const bEl=document.createElement('div');
+        bEl.className='fxs fx-auco-burst';
+        bEl.style.cssText='left:'+p[0]+'px;top:'+(p[1]-U.c*0.3)+'px;width:'+bw+'px;height:'+bh+'px;z-index:44;';
+        bEl.innerHTML='<img src="'+FX_BASE+'au-co-burst.webp" onerror="this.src=\'./img/fx/au-co-burst.webp\'">';
+        fxl.appendChild(bEl);
+        bEl.animate([
+          {opacity:0,transform:'translate(-50%,-50%) scale(0.3)'},
+          {opacity:1,transform:'translate(-50%,-50%) scale(1.25)',offset:0.25},
+          {opacity:0,transform:'translate(-50%,-50%) scale(1.35)'}
+        ],{duration:1100/U.speed,fill:'forwards'}).onfinish=()=>bEl.remove();
+      }
+      floatText(p[0],p[1]-U.c*.6,'TÁI SINH','big');
+    }break;
     case 'knock':if(u){const p=ctr(u);spawnP(p[0],p[1],8,{col:'#ffd36a',sp:90,g:40,life:.5,size:3});}break;
     case 'burst':{const p=px(e.x,e.y);ringFx(p[0],p[1],e.r*U.c,'#e8c07a',520,true);spawnP(p[0],p[1],18,{col:'#e8c07a',sp:130,g:80,life:.6,shape:'q',size:3.5});shake(4,260);break;}
     case 'shield':if(els&&!els.spr)els.tok.animate([{boxShadow:'0 0 0 3px #bfe3ff,0 0 16px 6px #8fc7ff'},{boxShadow:'0 0 0 0 transparent'}],{duration:600/U.speed});break;
