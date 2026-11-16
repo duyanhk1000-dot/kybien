@@ -1710,8 +1710,9 @@ VF.rong=e=>{
     spawnP(x0,y0,12,{col:'#40e0d0',sp:90,g:-30,life:.7,size:3});
   }
   if(FX.big){
-    // Layer 1: Xoáy Nước Sprite Sheet 4 frame xoay tròn trên mặt sàn
-    const vw=U.c*4.2*k,vh=U.c*2.2*k;
+    // Layer 1: Xoáy Nước Sprite Sheet 4 frame xoay tròn trên mặt sàn chuẩn kích thước AoE ô cờ
+    const aoeSpan=(e.r||3)*2;
+    const vw=U.c*aoeSpan,vh=vw*0.58;
     const vEl=document.createElement('div');
     vEl.className='fxs fx-water-vortex';
     vEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+vw+'px;height:'+vh+'px;z-index:22;';
@@ -1738,8 +1739,8 @@ VF.rong=e=>{
       vEl.remove();
     };
 
-    // Layer 2: Thần Long Thủy Tộc nguyên vẹn vươn mình bay vút thẳng lên trời
-    const dw=U.c*3.6*k,dh=U.c*7.6*k;
+    // Layer 2: Thần Long Thủy Tộc nguyên vẹn vươn mình bay vút thẳng lên trời (đã giảm 80%)
+    const dw=U.c*2.88*k,dh=U.c*6.08*k;
     const dWrap=document.createElement('div');
     dWrap.className='fxs fx-dragon-wrap';
     dWrap.style.cssText='left:'+x+'px;top:'+(y+vh*0.1)+'px;width:'+dw+'px;height:'+dh+'px;z-index:42;overflow:hidden;';
