@@ -396,6 +396,12 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-dragon-wrap{position:absolute;pointer-events:none;overflow:hidden;transform:translate(-50%,-100%);z-index:42}
 .tiltwrap.tilt .fx-dragon-wrap{transform:translate(-50%,-100%) scaleY(1.32);transform-origin:50% 100%}
 .fx-dragon-wrap img{width:100%;height:auto;display:block;filter:drop-shadow(0 0 16px rgba(64,224,208,.95)) drop-shadow(0 0 32px rgba(250,204,21,.6)) brightness(1.15)}
+.fx-fire-crater{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 14px rgba(255,69,0,.85)) drop-shadow(0 0 28px rgba(255,215,0,.55));z-index:22}
+.fx-thantoc-dash{position:absolute;pointer-events:none;transform-origin:0% 50%;z-index:38;filter:drop-shadow(0 0 14px rgba(255,69,0,.9)) drop-shadow(0 0 28px rgba(255,215,0,.7))}
+.fx-thantoc-dash img{width:100%;height:100%;object-fit:fill;display:block}
+.fx-thantoc-burst{position:absolute;pointer-events:none;transform:translate(-50%,-88%);z-index:43}
+.tiltwrap.tilt .fx-thantoc-burst{transform:translate(-50%,-88%) scaleY(1.32);transform-origin:50% 100%}
+.fx-thantoc-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(255,69,0,.95)) drop-shadow(0 0 36px rgba(255,215,0,.75)) brightness(1.15)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -1677,10 +1683,93 @@ VF.ngua=e=>{
 VF.chem=e=>{const a=px(e.x1,e.y1),b=px(e.tx,e.ty);slashFx(a,b,e.col,5);spawnP(b[0],b[1],8*SC(e.s),{col:'#fff',shape:'l',sp:140,life:.3});};
 VF.cam=e=>{const b=px(e.tx,e.ty);spawnP(b[0],b[1],16*SC(e.s),{col:'#ff9d2e',sp:120,g:120,life:.7,size:3.5});ringFx(b[0],b[1],U.c*.9,'#ff9d2e',420,true);textFx('🍊',b[0],b[1],'#ff9d2e',U.c*.5,[{opacity:1,transform:'translate(-50%,-50%) scale(1)'},{opacity:0,transform:'translate(-50%,-50%) scale(2)'}],400);};
 VF.thantoc=e=>{
-  const a=px(e.x0,e.y0),b=px(e.x1,e.y1);
-  proj(a,b,.14,'#ff9a3c',9);proj(a,b,.2,'#fff3c4',3);
-  for(let i=0;i<4;i++){const t=i/4;spawnP(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,4,{col:'#ff9a3c',sp:30,life:.5,size:4});}
-  ringFx(b[0],b[1],e.r*U.c,'#ff9a3c',560,true);shake(6,360);hitstop(90);
+  const [x0,y0]=px(e.x0,e.y0),[x1,y1]=px(e.x1,e.y1),k=SC(e.s);
+  const dx=x1-x0,dy=y1-y0,dist=Math.hypot(dx,dy)||1,ang=Math.atan2(dy,dx);
+  const spd=U.speed||1;
+  const dashDur=Math.max(140,Math.min(260,dist*0.4))/spd;
+
+  // Điểm xuất phát: Bộc phát sóng xung kích lửa và tàn tro
+  ringFx(x0,y0,U.c*1.1*k,'#ff4500',380,true);
+  spawnP(x0,y0,12*k,{col:'#ffd700',sp:110,g:-30,life:.6,size:3.5});
+
+  if(FX.big){
+    // Layer 1: Vệt lướt Hỏa Lôi Thần Tốc (Dash Streak)
+    const dH=Math.max(U.c*1.5,dist*0.36)*k;
+    const dEl=document.createElement('div');
+    dEl.className='fxs fx-thantoc-dash';
+    dEl.style.cssText='left:'+x0+'px;top:'+y0+'px;width:'+(dist*1.06)+'px;height:'+dH+'px;transform:translate(0,-50%) rotate('+ang+'rad);z-index:38;';
+    const dImg=document.createElement('img');
+    const dSrc=FX_BASE+'nguyen-hue-dash.webp';
+    dImg.onerror=()=>{dImg.src='./img/fx/nguyen-hue-dash.webp';};
+    dImg.src=dSrc;dImg.draggable=false;
+    dEl.appendChild(dImg);
+    fxl.appendChild(dEl);
+
+    dEl.animate([
+      {opacity:0,transform:'translate(0,-50%) rotate('+ang+'rad) scaleX(0.2)'},
+      {opacity:1,transform:'translate(0,-50%) rotate('+ang+'rad) scaleX(1)',offset:0.45},
+      {opacity:0.9,transform:'translate(0,-50%) rotate('+ang+'rad) scaleX(1.05)',offset:0.8},
+      {opacity:0,transform:'translate(0,-50%) rotate('+ang+'rad) scaleX(1.1)'}
+    ],{duration:dashDur*1.4,easing:'ease-out',fill:'forwards'}).onfinish=()=>dEl.remove();
+
+    // Rải vệt lửa dọc đường lướt
+    for(let i=0;i<=6;i++){
+      const t=i/6;
+      spawnP(x0+dx*t,y0+dy*t,4*k,{col:i%2?'#ff4500':'#ffd700',sp:45,g:-25,life:.65,size:3.2});
+    }
+
+    // Layer 2: Vết nứt đất dung nham tại điểm va chạm (AoE chuẩn số ô cờ)
+    setTimeout(()=>{
+      const aoeSpan=(e.r||2)*2;
+      const cw=U.c*aoeSpan,ch=cw*0.58;
+      const cEl=document.createElement('div');
+      cEl.className='fxs fx-fire-crater';
+      cEl.style.cssText='left:'+x1+'px;top:'+y1+'px;width:'+cw+'px;height:'+ch+'px;z-index:22;';
+      const cSrc=FX_BASE+'nguyen-hue-crater.webp';
+      cEl.style.backgroundImage='url("'+cSrc+'")';
+      const _imC=new Image();
+      _imC.onerror=()=>{cEl.style.backgroundImage='url("./img/fx/nguyen-hue-crater.webp")';};
+      _imC.src=cSrc;
+      fxl.appendChild(cEl);
+
+      cEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(0.3)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.05)',offset:0.18},
+        {opacity:0.95,transform:'translate(-50%,-50%) scale(1)',offset:0.75},
+        {opacity:0,transform:'translate(-50%,-50%) scale(0.95)'}
+      ],{duration:1600/spd,fill:'forwards'}).onfinish=()=>cEl.remove();
+
+      // Layer 3: Cột Hỏa Lôi Bộc Phá (Towering Fiery Thunder Burst)
+      const ew=U.c*2.9*k,eh=ew*(826/480);
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-thantoc-burst';
+      bEl.style.cssText='left:'+x1+'px;top:'+y1+'px;width:'+ew+'px;height:'+eh+'px;z-index:43;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'nguyen-hue-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/nguyen-hue-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-75%) scale(0.4, 0.4)'},
+        {opacity:1,transform:'translate(-50%,-88%) scale(1.08, 1.08)',offset:0.2},
+        {opacity:1,transform:'translate(-50%,-88%) scale(1, 1)',offset:0.65},
+        {opacity:0,transform:'translate(-50%,-92%) scale(0.95, 1.05)'}
+      ],{duration:1300/spd,easing:'cubic-bezier(.15,.8,.25,1)',fill:'forwards'}).onfinish=()=>bEl.remove();
+    },dashDur*0.65);
+  }
+
+  // Điểm đến: Sóng chấn động lôi hỏa + rung lắc màn hình & khựng hình
+  setTimeout(()=>{
+    ringFx(x1,y1,e.r*U.c,'#ff3b00',620,true);
+    setTimeout(()=>ringFx(x1,y1,(e.r+0.5)*U.c,'#ffd700',720,false),110/spd);
+    spawnP(x1,y1,22*k,{col:'#ff4500',sp:150,g:50,life:1.1,size:4});
+    spawnP(x1,y1,16*k,{col:'#ffd700',sp:170,g:-40,life:.9,size:3.5});
+    spawnP(x1,y1,12*k,{col:'#ffffff',sp:180,g:60,life:.7,size:3});
+    shake(9*k,460);
+    hitstop(90);
+  },dashDur*0.65);
 };
 VF.guom=e=>{
   const a=px(e.x1,e.y1),b=px(e.cx,e.cy),dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;
