@@ -1,12 +1,13 @@
 ---
 name: vfx-asset-creation
 description: >-
-  Standardized guide and workflow for creating sequential VFX sprite sheets and ability animation assets for heroes in the 2.5D auto-chess game Ky Bien. Use whenever generating, designing, or integrating skill effects (VFX) such as Long Triều Triệu Tướng (Lạc Long Quân), Thiên Mã Xung Trận (Thánh Gióng), Thuận Thiên Kiếm (Lê Lợi), etc.
+  Standardized guide and workflow for creating sequential VFX sprite sheets and ability animation assets for heroes in the 2.5D auto-chess game Ky Bien. Incorporates BeanFX production standards (craft gates, 3-layer architecture, color/light layer separation, peak-first design, 3-scale particle grouping, and contact frame hit-stop synchronization).
 ---
 
-# Quy Trình Tạo Asset Chiêu Thức & Hiệu Ứng (VFX Sprite Sheet Creation)
+# Quy Trình Tạo Asset Chiêu Thức & Hiệu Ứng (VFX Production Standard)
+### Dự án: Kỳ Biến (Cổ Huyền Sử) — Tích hợp Chuẩn Kỹ Thuật BeanFX Engine
 
-Tài liệu chuẩn hóa phương pháp sản xuất asset hoạt ảnh kỹ năng (Skill VFX) cho tựa game chiến thuật cờ nhân phẩm 2.5D **Kỳ Biến (Cổ Huyền Sử)**.
+Tài liệu chuẩn hóa phương pháp sản xuất asset hoạt ảnh kỹ năng (Skill VFX) cho tựa game chiến thuật cờ nhân phẩm 2.5D **Kỳ Biến (Cổ Huyền Sử)**, kết hợp kiến trúc phân lớp chuyên sâu từ hệ thống **BeanFX Engine**.
 
 ---
 
@@ -16,12 +17,8 @@ Tài liệu chuẩn hóa phương pháp sản xuất asset hoạt ảnh kỹ nă
 * **Tính nhất quán giải phẫu (Anatomical Consistency):** Tuyệt đối **không** tạo các hình rời rạc, ngẫu nhiên độc lập. Mọi frame trong một chuỗi hoạt ảnh phải mô tả:
   * **Cùng một chủ thể** (cùng tỷ lệ, sừng, râu, vảy, màu sắc, chi tiết).
   * **Cùng một trận địa / điểm gốc thi triển** (vị trí summoning point cố định).
-  * **Cùng một góc camera / phối cảnh** (isometric 2.5D cố định, không đổi góc nhìn).
+  * **Cùng một góc camera / phối cảnh** (isometric 2.5D cố định, tỷ lệ elip $\approx 1.72:1$, không đổi góc nhìn).
   * Thể hiện ở các mốc thời điểm thời gian nối tiếp nhau.
-* **Phương án sản xuất chuẩn (Anchor Reference Workflow):**
-  1. **Bước 1:** Tạo một hình ảnh chủ thể hoàn chỉnh (Anchor Master) để chốt thiết kế, bảng màu và giải phẫu chuẩn.
-  2. **Bước 2:** Sử dụng hình chuẩn làm reference để sinh hoặc dựng biến đổi cho từng frame chuyển động nối tiếp.
-  3. **Bước 3:** Ghép các frame riêng lẻ thành một dải **Horizontal Sprite Sheet** bằng script xử lý ảnh tự động (Python/PIL) để kiểm soát kích thước, canh lề và biên cách mép chính xác tuyệt đối.
 
 ---
 
@@ -29,105 +26,97 @@ Tài liệu chuẩn hóa phương pháp sản xuất asset hoạt ảnh kỹ nă
 
 Mọi kỹ năng phức tạp trong game được cấu thành từ 3 lớp độc lập để tối ưu hóa hiệu năng, dễ lập trình và tái sử dụng:
 
-| Lớp | Thành phần | Vai trò & Cách hoạt động |
-| :--- | :--- | :--- |
-| **Layer 1** | **Ground / Surface VFX** | Sóng biển, vòng pháp trận, xoáy nước, nứt đất, dấu vết thiêu đốt trên mặt sàn ô cờ. Cố định tại điểm gốc thi triển. |
-| **Layer 2** | **Main Subject VFX** | Chủ thể chính của chiêu thức (Rồng thần, Cự kiếm hoàng kim, Ngựa thần, Mũi tên sao băng) biến chuyển tuần tự qua các frame. |
-| **Layer 3** | **Energy / Particle VFX** | Các hạt năng lượng bay tản mát, giọt nước bắn tung tóe, tia sét ma thuật, hào quang phát sáng (Additive/Screen blend). |
+| Lớp | Thành phần | Vị trí DOM / Render | Vai trò & Cách hoạt động |
+| :--- | :--- | :--- | :--- |
+| **Layer 1** | **Ground Decal / Array** | Container `#zl` (`zlEl`, `z-index: 0`) | **Nằm dưới chân tướng & quái:** Pháp trận, xoáy nước, nứt đất bốc khói, thảm lửa, bãi cọc nhọn... nằm bẹp theo phối cảnh sàn đấu 2.5D. |
+| **Layer 2** | **Main Subject VFX** | Container `#fxl` (`z-index: 42 - 43`) | **Nằm trên tướng & quái:** Chủ thể chính của chiêu thức (Thần Long vươn mình, Cự kiếm Thuận Thiên cắm đất, Thiết Mã phi nước đại, Cự thạch giáng thế). |
+| **Layer 3** | **Energy / Slash / Burst** | Container `#fxl` (`z-index: 44`) | **Nằm trên cùng:** Sóng kiếm khí quét ngang, cột lôi hỏa bộc phá, hào quang chiến ý, ấn ký chữ thần (`textFx`), sóng xung kích đa tầng (`ringFx`), hạt tia lửa (`spawnP`). |
 
 ---
 
-## 3. Tiêu Chuẩn Phân Loại Chiêu Thức & Số Lượng Frame Toàn Game
+## 3. Bộ Quy Chuẩn Tạo Hình BeanFX (VFX Craft Gates)
 
-### Bảng phân loại giai đoạn chiêu thức:
-* **Triệu hồi (Summoning):** `Tụ năng lượng` $\rightarrow$ `Xuất hiện` $\rightarrow$ `Hình thành` $\rightarrow$ `Hoàn chỉnh`
-* **Tấn công (Offensive / Strike):** `Khởi động (Windup)` $\rightarrow$ `Phóng chiêu (Release)` $\rightarrow$ `Va chạm (Impact)` $\rightarrow$ `Bùng nổ (Burst)`
-* **Phòng thủ (Shield / Ward):** `Kích hoạt` $\rightarrow$ `Dựng lá chắn` $\rightarrow$ `Chịu đòn` $\rightarrow$ `Tan biến`
-* **Hồi phục (Healing / Buff):** `Tụ sáng` $\rightarrow$ `Bao phủ` $\rightarrow$ `Hồi phục` $\rightarrow$ `Tan sáng`
-* **Biến hình (Transformation):** `Tích tụ` $\rightarrow$ `Biến đổi` $\rightarrow$ `Hoàn tất`
-* **Tử trận (Defeat):** `Trúng đòn` $\rightarrow$ `Sụp đổ` $\rightarrow$ `Tan biến`
+👉 Chi tiết đầy đủ tại: [references/craft-gates.md](references/craft-gates.md)
 
-### Quy chuẩn số frame theo quy mô chiêu:
-* **Chiêu thức nhỏ / Đòn đánh tăng cường:** 6 frames.
-* **Chiêu thức lớn / Kỹ năng diện rộng (AoE):** 8 – 12 frames.
-* **Chiêu thức tối thượng (Ultimate 5 Vàng):** 16 – 24 frames (hoặc kết hợp 6 frame chủ thể + hiệu ứng hạt bổ trợ).
-
----
-
-## 4. Đặc Tả Chiêu Thức Mẫu: "Long Triều Triệu Tướng" (Lạc Long Quân)
-
-### Diễn tiến 6 Frame Tuần Tự (Timeline: 1.700 ms)
-* **Frame 1 (Biển thức tỉnh - 250ms):** Mặt biển dậy sóng, vòng xoáy nước tụ năng lượng ma thuật xanh ngọc, chưa thấy rồng. Thiết lập điểm gốc cố định.
-* **Frame 2 (Đầu rồng xuất hiện - 200ms):** Đầu Thủy Long khổng lồ trồi lên từ tâm vòng xoáy, râu rồng, sừng hươu vàng, mắt phát sáng, nước bắn tung tóe xung quanh.
-* **Frame 3 (Cổ rồng trồi lên - 250ms):** Thân cổ uốn lượn vươn cao, nước trút xuống từ lớp vảy ngọc, nét mặt đồng nhất với Frame 2.
-* **Frame 4 (Thân trên và 2 chân trước - 250ms):** Thân trên và 2 móng vuốt trước lộ diện hoàn toàn, thân uốn lượn hướng lên trời, nước cuộn trào.
-* **Frame 5 (Thân dưới và 2 chân sau - 250ms):** Thân giữa và 2 chân sau trồi lên, thân rồng tạo hình xoắn ốc uyển chuyển vươn cao, đuôi rồng bắt đầu rời mặt nước.
-* **Frame 6 (Rồng bay lên hoàn toàn - 500ms):** Toàn bộ thân rồng, 4 móng vuốt và đuôi cuộn vút lên trời, đầu ngẩng cao uy dũng hướng về chiến trường, dưới chân là vòng xoáy nước dữ dội.
+1. **Chiến lược "Peak First" (Thiết kế Frame Đỉnh trước):**
+   * Luôn chốt **Frame Đỉnh (Peak Frame)** trước tiên (thời điểm năng lượng và kích thước bùng nổ cực đại).
+   * Nội suy giai đoạn **Tích tụ (Windup, 15 - 25% thời lượng)** từ các điểm gốc của Peak Frame tụ về tâm. Điểm phát sáng cốt lõi (Hot Core) phải xuất hiện ngay từ Frame 0.
+   * Nội suy giai đoạn **Tiêu tán (Dissolve, 50 - 65% thời lượng)** tản mát thành các hạt tàn dư.
+2. **Quy tắc 5% Dissolve (Biến mất êm dịu):**
+   * Frame cuối cùng chỉ giữ lại tối đa **$5\%$** số pixel năng lượng của Peak Frame. Tránh hiện tượng giật tắt phụt (pop-off).
+3. **Quy tắc 3 Kích Cỡ Hạt (3-Scale Particle Grouping):**
+   * Các hạt năng lượng lặp lại (tia lửa, bọt nước, mảnh đá) phải phân bổ theo: *vài hạt to, một số hạt vừa, nhiều hạt nhỏ*. Tuyệt đối không dàn hàng hạt cùng kích cỡ gây cảm giác "giấy dán tường".
+4. **Đồng Bộ Khung Hình Va Chạm (Contact Frame & Hit-Stop):**
+   * Tại đúng mili-giây tiếp đất (Contact Frame), kích hoạt đồng thời:
+     - Khựng hình va chạm: `hitstop(60 - 90ms)`.
+     - Rung chấn màn hình: `shake(amplitude, duration)`.
+     - Sóng xung kích mở rộng: `ringFx(x, y, r, color)`.
+     - Chớp trắng mục tiêu: `flash`.
 
 ---
 
-## 5. Master Prompt Template (Dành cho AI Image Generators)
+## 4. Kỹ Thuật Tách 2 Lớp: Màu Gốc & Ánh Sáng (Color vs Additive Light)
 
-Khi yêu cầu AI sinh sprite sheet, sử dụng prompt tiếng Anh chuẩn hóa để đạt độ chính xác cao nhất:
+👉 Chi tiết đầy đủ tại: [references/light-and-bloom.md](references/light-and-bloom.md)
+
+* **Color Layer (`_color.webp`):** Thể hiện hình thể, vật liệu, viền sắc nét ở chế độ `source-over` (Normal).
+* **Light Layer (`_light.webp`):** Thể hiện vầng sáng phát quang (Bloom/Glow) ở chế độ hòa trộn `lighter` (Additive) hoặc `screen`.
+* **Cấp độ phát quang (Glow Levels):**
+  - `Subtle`: Kỹ năng phụ, đốm lửa tàn tro.
+  - `Medium`: Chiêu thức diện rộng bình thường (2 - 3 Vàng).
+  - `Strong`: Chiêu thức Tối Thượng (4 - 5 Vàng: Thuận Thiên Kiếm, Triệu Long, Sát Thát).
+
+---
+
+## 5. Quy Chuẩn Master Prompt Template (Dành cho AI Image Generators)
+
+Khi yêu cầu AI sinh asset hoặc sprite sheet, áp dụng cấu trúc chuẩn hóa tiếng Anh:
 
 ```text
-LONG TRIỀU TRIỆU TƯỚNG – VFX SPRITE SHEET
-Create ONE horizontal VFX animation sprite sheet, containing exactly 6 sequential animation frames arranged from LEFT to RIGHT in ONE single row.
-Canvas: 2048 × 512 pixels, aspect ratio 4:1.
-Layout: 6 equal-sized vertical frames, each frame approximately 341 × 512 pixels.
-All six frames must show the SAME continuous animation sequence of one identical mythical Vietnamese-inspired Asian Azure Dragon emerging from the ocean.
-
-1. MAIN SUBJECT – THE AZURE DRAGON
-A majestic ancient East Asian celestial sea dragon, inspired by Vietnamese dragon mythology.
-Dragon characteristics:
-- Long serpentine Asian dragon body, NOT a western dragon.
-- Four powerful clawed legs.
-- Long elegant neck and elongated dragon head.
-- Two golden antler-like horns.
-- Long flowing whiskers.
-- Sharp glowing turquoise eyes.
-- Dense overlapping cyan-blue scales.
-- Pale turquoise belly scales.
-- Long flowing blue-green mane.
-- Glowing turquoise energy flowing between its scales.
-- Extremely long flexible serpentine tail.
-- No wings.
-- No humanoid features.
-Color palette:
-Deep ocean blue, turquoise, cyan, jade green, pale aqua and subtle antique gold accents.
-The dragon must look identical in every frame: same head shape, same horns, same whiskers, same scales, same legs, same colors and same body proportions.
-
-2. ANIMATION SEQUENCE – EXACTLY 6 FRAMES
-FRAME 1 – OCEAN AWAKENING: Only ocean surface visible, swirling circular waves gathering energy, central water rising, glowing particles, NO dragon visible.
-FRAME 2 – DRAGON HEAD EMERGES: Head emerges from center, horns, whiskers, open mouth, water splash. Rest submerged.
-FRAME 3 – NECK RISES: Long elegant curved neck pushes upward, head higher, cascading water, lower body submerged.
-FRAME 4 – UPPER BODY AND FRONT LEGS: Upper torso and both front clawed legs emerge, serpentine curve, water flowing down.
-FRAME 5 – HIND BODY AND REAR LEGS: Middle and lower body emerge, both hind legs visible, spiral upward, tail partially in water.
-FRAME 6 – COMPLETE DRAGON ASCENSION: ENTIRE dragon fully visible above ocean, coiling majestically into sky, head commanding, tail completely separated from ocean, massive whirlpool beneath.
-
-3. COMPOSITION AND ANIMATION CONSISTENCY
-Six equal-sized frames horizontally in one row. Each frame depicts one consecutive moment in time.
-Ocean summoning point remains at exactly the same coordinates. Camera angle and isometric perspective completely fixed.
-Keep dragon and water inside respective frames, leaving empty margin. No overlapping adjacent frames.
-
-4. ART STYLE
-Premium 2.5D fantasy auto-chess game VFX. Vietnamese mythological fantasy aesthetic.
-Dong Ho folk-art inspired outlines combined with modern fantasy game illustration.
-Bold readable silhouettes, luminous turquoise magical energy, rich contrast.
-
-5. BACKGROUND
-Transparent background (alpha channel) or pure solid black background for additive/screen blending.
-No environment, no mountains, no ground shadows, no background gradient.
-
-6. STRICT NEGATIVE CONSTRAINTS
-NO text, NO numbers, NO labels, NO watermarks, NO logos, NO grid lines, NO panel borders, NO frame separators, NO additional dragons, NO duplicate dragon heads, NO western dragons, NO dragon wings, NO unrelated characters, NO scenery, NO camera movement, NO perspective changes, NO inconsistent dragon anatomy, NO cropped dragon body, NO cropped tail.
+[TÊN CHIÊU THỨC HOẶC ASSET] – VFX ASSET CREATION
+Subject: [Mô tả chủ thể chính: Thần Long, Cự Kiếm, Pháp Trận, Vết Nứt...]
+Style: Premium 2.5D fantasy auto-chess game VFX, Vietnamese mythological aesthetic (Dong Son / Later Le / Tay Son).
+Perspective: 2.5D isometric view matching game board floor (for decals: elliptical aspect ratio 1.72:1; for strikes: vertical/diagonal downward orientation).
+Color Palette: [Xác định rõ mã màu chính, ví dụ: Royal Gold #ffd700, Celestial Cyan #22d3ee, Emerald Jade #10b981].
+Lighting: Intense glowing core fading into soft transparent aura edges. Clear readable silhouette.
+Background: Isolated on a PURE SOLID BLACK background (RGB 0,0,0) for clean alpha cutout and screen/additive blending.
+Strict Constraints: NO background environment, NO ground shadows, NO text, NO watermarks, NO cropped parts, NO western fantasy clichés.
 ```
 
 ---
 
-## 6. Checklist Kiểm Thử Asset VFX Trước Khi Đưa Vào Code
-- [ ] Tính nhất quán hình ảnh: Đầu, sừng, chi tiết thân rồng có giữ nguyên vẹn giữa các frame không?
-- [ ] Tọa độ điểm gốc: Điểm tâm thi triển dưới mặt đất có bị dịch chuyển lệch sang hai bên không?
-- [ ] Không dính viền: Hiệu ứng ở biên frame có bị cắt cụt (cropped) hoặc lem sang ô bên cạnh không?
-- [ ] Kênh Alpha / Nền: Đã làm sạch nền đen hoặc chuyển thành PNG trong suốt chưa?
-- [ ] Hiệu năng: Dung lượng WebP đã tối ưu dưới 150 KB chưa?
+## 6. Công Cụ Hỗ Trợ Kỹ Thuật (Tooling & Automation)
+
+### ①. Python Utility: `scripts/process_vfx.py`
+Tự động tách nền đen sang kênh Alpha RGBA trong suốt, tự động crop bounding box, resize chuẩn kích thước AoE ô cờ và xuất WebP:
+```bash
+python .agents/skills/vfx-asset-creation/scripts/process_vfx.py \
+    path/to/raw_output.jpg \
+    frontend/img/fx/skill-asset.webp \
+    --width 512 --thresh 16.0 --quality 88
+```
+Tùy chọn tách riêng 2 lớp Color & Light:
+```bash
+python .agents/skills/vfx-asset-creation/scripts/process_vfx.py \
+    path/to/raw_output.jpg \
+    frontend/img/fx/skill-asset.webp \
+    --width 512 --split
+```
+
+### ②. Lightweight Canvas Runtime: `runtime/beanfx.js`
+Bộ phát hoạt ảnh canvas 2D siêu nhẹ (~200 dòng code ES Module) hỗ trợ đọc Sprite Sheet, tự động tính toán Heading theo góc bắn, căn chỉnh Pivot, xử lý Hit Timing, Freeze và Camera Shake:
+```javascript
+import { loadFx, createFx } from "./runtime/beanfx.js";
+const fxData = await loadFx("fx/thuan_thien.json");
+const fx = createFx(fxData, { x: 300, y: 250, onHit: (h) => shake(h.shake, h.freeze) });
+```
+
+---
+
+## 7. Checklist Kiểm Thử Asset VFX Trước Khi Đưa Vào Game
+- [ ] **Phân tầng hiển thị:** Layer 1 (pháp trận/xoáy nước) đã gắn vào `#zl` để nằm dưới chân tướng & quái chưa?
+- [ ] **Kích thước AoE:** Kích thước hiển thị đã khớp chính xác với bán kính ô cờ ($r \times 2 \times \text{cell\_size}$) chưa?
+- [ ] **Quy tắc 5% Dissolve:** Frame cuối cùng có biến mất êm dịu không bị giật tắt phụt không?
+- [ ] **Contact Frame:** Đã đồng bộ đúng mili-giây va chạm với `hitstop`, `shake` và `ringFx` chưa?
+- [ ] **Tối ưu WebP:** Dung lượng mỗi file asset đã được nén tối ưu dưới $150\text{ KB}$ chưa?
+- [ ] **Đồng bộ CDN:** Đã commit lên GitHub và purge cache jsDelivr chưa?
