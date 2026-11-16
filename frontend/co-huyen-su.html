@@ -438,6 +438,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-trungtrac-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:42}
 .tiltwrap.tilt .fx-trungtrac-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-trungtrac-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(245,158,11,.95)) drop-shadow(0 0 36px rgba(220,38,38,.85)) brightness(1.2)}
+.fx-ngoquyen-water{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 16px rgba(2,132,199,.85)) drop-shadow(0 0 32px rgba(34,211,238,.6));z-index:1}
+.fx-ngoquyen-stakes{position:absolute;pointer-events:none;transform:translate(-50%,-85%);z-index:43}
+.tiltwrap.tilt .fx-ngoquyen-stakes{transform:translate(-50%,-85%) scaleY(1.32);transform-origin:50% 100%}
+.fx-ngoquyen-stakes img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 16px rgba(2,132,199,.95)) drop-shadow(0 0 32px rgba(34,211,238,.75)) brightness(1.15)}
+.fx-ngoquyen-burst{position:absolute;pointer-events:none;transform:translate(-50%,-75%);z-index:44}
+.tiltwrap.tilt .fx-ngoquyen-burst{transform:translate(-50%,-75%) scaleY(1.32);transform-origin:50% 100%}
+.fx-ngoquyen-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(34,211,238,.95)) drop-shadow(0 0 40px rgba(2,132,199,.85)) brightness(1.2)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -447,7 +454,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @keyframes rip{from{transform:scale(.4);opacity:.9}to{transform:scale(1);opacity:0}}
 .zone.fire{background:radial-gradient(circle,rgba(255,150,40,.6),rgba(255,80,20,.25) 60%,transparent 75%);animation:fl .35s infinite alternate}
 @keyframes fl{to{transform:translate(-50%,-50%) scale(1.12)}}
-.zone.stakes{background:radial-gradient(circle,rgba(150,110,60,.28),transparent 70%);border:1.5px dashed rgba(220,180,120,.55)}
+.zone.stakes{background:radial-gradient(circle,rgba(2,132,199,.32),rgba(34,211,238,.12) 60%,transparent 72%);border:1.5px dashed rgba(34,211,238,.65);box-shadow:inset 0 0 20px rgba(2,132,199,.35)}
 .zone .sp{position:absolute;width:14%;height:34%;color:#d9c29a;transform-origin:50% 100%}
 .zone .sp svg{width:100%;height:100%;fill:currentColor}
 .cf{position:absolute;left:0;right:0;bottom:6px;top:auto;height:auto;z-index:9;pointer-events:none;display:flex;justify-content:center}
@@ -2269,7 +2276,102 @@ VF.rong=e=>{
   setTimeout(()=>hitstop(80),400/(U.speed||1));
 };
 VF.lu=e=>{const a=px(e.x1,e.y1),b=px(e.cx,e.cy);shape('song',a[0],a[1],U.c*2.2,'#5fb7ff',[{opacity:.9,transform:'translate('+0+'px,0)'},{opacity:.9,transform:'translate('+(b[0]-a[0])+'px,'+(b[1]-a[1])+'px)',offset:.7},{opacity:0,transform:'translate('+(b[0]-a[0])+'px,'+(b[1]-a[1])+'px) scale(1.2)'}],600,.45);spawnP(b[0],b[1],14*SC(e.s),{col:'#bfe3ff',sp:80,g:60,life:.8,size:3});shake(4,300);};
-VF.coc=e=>{const b=px(e.cx,e.cy);dustAt(b[0],b[1],10,'#a58a68');};
+VF.coc=e=>{
+  const cx=e.cx!=null?e.cx:(e.tx!=null?e.tx:(e.x1!=null?e.x1:0));
+  const cy=e.cy!=null?e.cy:(e.ty!=null?e.ty:(e.y1!=null?e.y1:0));
+  const [x,y]=px(cx,cy);
+  const k=SC(e.s),spd=U.speed||1;
+
+  if(e.x1!=null&&e.y1!=null&&(e.x1!==cx||e.y1!==cy)){
+    const [sx,sy]=px(e.x1,e.y1);
+    proj([sx,sy],[x,y],.24/spd,'#22d3ee',4);
+    ringFx(sx,sy,U.c*1.1,'#0284c7',450,true);
+    spawnP(sx,sy,10*k,{col:'#22d3ee',sp:110,g:-20,life:.6});
+  }
+
+  if(FX.big){
+    // Layer 1: Xoáy Nước Bạch Đằng Giang (nằm ở zlEl dưới chân quái & mục tiêu)
+    const aoeSpan=(e.r||2)*2;
+    const aw=U.c*aoeSpan,ah=aw*0.58;
+    const aEl=document.createElement('div');
+    aEl.className='fxs fx-ngoquyen-water';
+    aEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+aw+'px;height:'+ah+'px;';
+    const aSrc=FX_BASE+'ngo-quyen-water.webp';
+    aEl.style.backgroundImage='url("'+aSrc+'")';
+    const _imA=new Image();
+    _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/ngo-quyen-water.webp")';};
+    _imA.src=aSrc;
+    (zlEl||fxl).appendChild(aEl);
+
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.3)'},
+      {opacity:1,transform:'translate(-50%,-50%) scale(1.06)',offset:0.18},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1)',offset:0.75},
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.92)'}
+    ],{duration:2400/spd,fill:'forwards'}).onfinish=()=>aEl.remove();
+
+    // Layer 2: Bãi Cọc Bạch Đằng trồi vút lên găm chặt tại chân quái mục tiêu
+    const sw=U.c*2.6*Math.min(1.2,k),sh=sw*(480/420);
+    const sEl=document.createElement('div');
+    sEl.className='fxs fx-ngoquyen-stakes';
+    sEl.style.cssText='left:'+x+'px;top:'+(y+ah*0.06)+'px;width:'+sw+'px;height:'+sh+'px;z-index:43;';
+    const sImg=document.createElement('img');
+    const sSrc=FX_BASE+'ngo-quyen-stakes.webp';
+    sImg.onerror=()=>{sImg.src='./img/fx/ngo-quyen-stakes.webp';};
+    sImg.src=sSrc;sImg.draggable=false;
+    sEl.appendChild(sImg);
+    fxl.appendChild(sEl);
+
+    sEl.animate([
+      {opacity:0,transform:'translate(-50%,30%) scale(0.65, 0.4)'},
+      {opacity:1,transform:'translate(-50%,-85%) scale(1.08, 1.02)',offset:0.25},
+      {opacity:1,transform:'translate(-50%,-85%) scale(1, 1)',offset:0.75},
+      {opacity:0,transform:'translate(-50%,-90%) scale(1.04, 1.04)'}
+    ],{duration:2100/spd,easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>sEl.remove();
+
+    // Layer 3: Cột Nước & Sóng Bộc Phá Thủy Triều khi bãi cọc trồi lên
+    setTimeout(()=>{
+      const bw=U.c*2.8*Math.min(1.2,k),bh=bw*(400/440);
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-ngoquyen-burst';
+      bEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+bw+'px;height:'+bh+'px;z-index:44;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'ngo-quyen-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/ngo-quyen-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
+        {opacity:1,transform:'translate(-50%,-75%) scale(1.15)',offset:0.25},
+        {opacity:0.95,transform:'translate(-50%,-75%) scale(1.02)',offset:0.6},
+        {opacity:0,transform:'translate(-50%,-80%) scale(1.12)'}
+      ],{duration:1400/spd,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}).onfinish=()=>bEl.remove();
+
+      // Rung chấn mặt đất & khựng hình va chạm
+      shake(8*k,460);
+      hitstop(80);
+    },240/spd);
+  }
+
+  // Chấn động & Hào quang thủy ba xanh thẳm + hoàng kim tại chân quái
+  ringFx(x,y,(e.r||2)*U.c,'#0284c7',720,true);
+  setTimeout(()=>ringFx(x,y,((e.r||2)+0.5)*U.c,'#22d3ee',820,false),130/spd);
+  setTimeout(()=>ringFx(x,y,((e.r||2)+1.0)*U.c,'#ffd700',920,false),280/spd);
+
+  spawnP(x,y,24*k,{col:'#22d3ee',sp:160,g:50,life:1.1,size:4});
+  spawnP(x,y,18*k,{col:'#0284c7',sp:150,g:60,life:.9,size:3.5});
+  spawnP(x,y,14*k,{col:'#ffffff',sp:180,g:40,life:.7,size:3});
+
+  // Text chiến ý thần uy "BẠCH ĐẰNG!" tại chân quái
+  textFx('BẠCH ĐẰNG!',x,y-U.c*2.2*k,'#22d3ee',U.c*0.58*k,[
+    {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
+    {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
+    {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
+    {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
+  ],1250);
+};
 VF.luoi=e=>{const [x,y]=px(e.x1,e.y1);ringFx(x,y,U.c*.7,'#9fd3a8',360);};
 VF.hich=e=>{
   const [x,y]=px(e.x1,e.y1),k=SC(e.s);
