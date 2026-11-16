@@ -445,6 +445,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-ngoquyen-burst{position:absolute;pointer-events:none;transform:translate(-50%,-65%);z-index:44}
 .tiltwrap.tilt .fx-ngoquyen-burst{transform:translate(-50%,-65%) scaleY(1.32);transform-origin:50% 100%}
 .fx-ngoquyen-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(34,211,238,.95)) drop-shadow(0 0 40px rgba(2,132,199,.85)) brightness(1.2)}
+.fx-thuytinh-swamp{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 18px rgba(2,132,199,.85)) drop-shadow(0 0 32px rgba(34,211,238,.6));z-index:1}
+.fx-thuytinh-wave{position:absolute;pointer-events:none;z-index:43}
+.tiltwrap.tilt .fx-thuytinh-wave{transform-origin:50% 100%}
+.fx-thuytinh-wave img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(34,211,238,.95)) drop-shadow(0 0 35px rgba(2,132,199,.8)) brightness(1.15)}
+.fx-thuytinh-burst{position:absolute;pointer-events:none;transform:translate(-50%,-65%);z-index:44}
+.tiltwrap.tilt .fx-thuytinh-burst{transform:translate(-50%,-65%) scaleY(1.32);transform-origin:50% 100%}
+.fx-thuytinh-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(34,211,238,.95)) drop-shadow(0 0 45px rgba(129,140,248,.85)) brightness(1.25)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -1691,6 +1698,18 @@ function slashFx(a,b,col,w){
   d.innerHTML='<div class="in">'+SV.chem+'</div>';fxl.appendChild(d);
   d.firstChild.animate([{opacity:0,transform:'scaleX(.2)'},{opacity:1,transform:'scaleX(1)',offset:.35},{opacity:0,transform:'scaleX(1.1)'}],{duration:380/U.speed}).onfinish=()=>d.remove();
 }
+function lightningFx(x,y,len){
+  if(!FX.big)return;
+  const h=len||(U.c*4),w=U.c*1.8;
+  const d=document.createElement('div');d.className='fxs';
+  d.style.cssText='left:'+x+'px;top:'+(y-h*0.5)+'px;width:'+w+'px;height:'+h+'px;transform:translate(-50%,-50%);z-index:45;pointer-events:none;';
+  let path='M '+(w*0.5)+' 0';const segs=6;
+  for(let i=1;i<segs;i++){const px=w*0.5+(Math.random()-0.5)*(w*0.48);const py=(h/segs)*i;path+=' L '+px.toFixed(1)+' '+py.toFixed(1);}
+  path+=' L '+(w*0.5)+' '+h;
+  d.innerHTML='<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 10px #22d3ee) drop-shadow(0 0 24px #818cf8);"><path d="'+path+'" fill="none" stroke="#22d3ee" stroke-width="7" stroke-linecap="round" opacity="0.85"/><path d="'+path+'" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/></svg>';
+  fxl.appendChild(d);
+  d.animate([{opacity:0,transform:'translate(-50%,-50%) scaleY(0.4)'},{opacity:1,transform:'translate(-50%,-50%) scaleY(1)',offset:0.2},{opacity:0.9,transform:'translate(-50%,-50%) scaleY(1)',offset:0.65},{opacity:0,transform:'translate(-50%,-50%) scaleY(1)'}],{duration:380/(U.speed||1),fill:'forwards'}).onfinish=()=>d.remove();
+}
 /* khung tung chiêu (hàng đợi, tối đa 2) */
 const CF=[];let cfBusy=false;
 function castFrame(e){
@@ -2276,7 +2295,144 @@ VF.rong=e=>{
   setTimeout(()=>shake(8*k,520),380/(U.speed||1));
   setTimeout(()=>hitstop(80),400/(U.speed||1));
 };
-VF.lu=e=>{const a=px(e.x1,e.y1),b=px(e.cx,e.cy);shape('song',a[0],a[1],U.c*2.2,'#5fb7ff',[{opacity:.9,transform:'translate('+0+'px,0)'},{opacity:.9,transform:'translate('+(b[0]-a[0])+'px,'+(b[1]-a[1])+'px)',offset:.7},{opacity:0,transform:'translate('+(b[0]-a[0])+'px,'+(b[1]-a[1])+'px) scale(1.2)'}],600,.45);spawnP(b[0],b[1],14*SC(e.s),{col:'#bfe3ff',sp:80,g:60,life:.8,size:3});shake(4,300);};
+VF.lu=e=>{
+  const sx=e.x1!=null?px(e.x1,e.y1)[0]:0;
+  const sy=e.x1!=null?px(e.x1,e.y1)[1]:0;
+  const tgtX=e.cx!=null?e.cx:(e.tx!=null?e.tx:e.x1);
+  const tgtY=e.cy!=null?e.cy:(e.ty!=null?e.ty:e.y1);
+  const [tx,ty]=px(tgtX,tgtY);
+  const k=SC(e.s),spd=U.speed||1;
+
+  // 1. Thủy Tinh xuất chiêu: hào quang thủy ba xanh thẳm & chữ chiến ý thần uy
+  ringFx(sx,sy,U.c*1.15*k,'#0284c7',450,true);
+  spawnP(sx,sy,14*k,{col:'#22d3ee',sp:110,g:-25,life:.6,size:3.5});
+  textFx('NỘ ĐÀO CUỒNG LAN!',sx,sy-U.c*1.4*k,'#22d3ee',U.c*0.48*k,[
+    {opacity:0,transform:'scale(.5)'},
+    {opacity:1,transform:'scale(1.18)',offset:.28},
+    {opacity:1,transform:'scale(1)',offset:.75},
+    {opacity:0,transform:'scale(1.25)'}
+  ],1200);
+
+  if(FX.big){
+    // Layer 1: Đầm lầy ngập nước (NẰM Ở zlEl - DƯỚI LỚP HÌNH ẢNH QUÁI)
+    const aoeSpan=(e.r||1.5)*2.8;
+    const sw=U.c*aoeSpan,sh=sw*(298/512);
+    const swampEl=document.createElement('div');
+    swampEl.className='fxs fx-thuytinh-swamp';
+    swampEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+sw+'px;height:'+sh+'px;z-index:1;';
+    const swSrc=FX_BASE+'thuy-tinh-swamp.webp';
+    swampEl.style.backgroundImage='url("'+swSrc+'")';
+    const _imS=new Image();
+    _imS.onerror=()=>{swampEl.style.backgroundImage='url("./img/fx/thuy-tinh-swamp.webp")';};
+    _imS.src=swSrc;
+    (zlEl||fxl).appendChild(swampEl);
+
+    const vfxDur=2800/spd;
+    swampEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.3)'},
+      {opacity:0.96,transform:'translate(-50%,-50%) scale(1.06)',offset:0.15},
+      {opacity:0.94,transform:'translate(-50%,-50%) scale(1)',offset:0.72},
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.92)'}
+    ],{duration:vfxDur,fill:'forwards'}).onfinish=()=>swampEl.remove();
+
+    // Layer 2: Bức tường sóng biển dâng cuộn trào chạy từ vị trí tướng đến vị trí quái
+    const dx=tx-sx,dy=ty-sy;
+    const dist=Math.hypot(dx,dy)||1;
+    const travelDur=Math.max(400,Math.min(700,dist*0.75))/spd;
+    const ww=U.c*3.6*Math.min(1.2,k),wh=ww*(320/560);
+    const waveEl=document.createElement('div');
+    waveEl.className='fxs fx-thuytinh-wave';
+    waveEl.style.cssText='left:'+sx+'px;top:'+sy+'px;width:'+ww+'px;height:'+wh+'px;z-index:43;';
+    const wImg=document.createElement('img');
+    const wSrc=FX_BASE+'thuy-tinh-wave.webp';
+    wImg.onerror=()=>{wImg.src='./img/fx/thuy-tinh-wave.webp';};
+    wImg.src=wSrc;wImg.draggable=false;
+    waveEl.appendChild(wImg);
+    fxl.appendChild(waveEl);
+
+    const flip=dx<0?'scaleX(-1)':'';
+    waveEl.animate([
+      {opacity:0,transform:'translate(-50%,-80%) '+flip+' scale(0.4, 0.4)'},
+      {opacity:1,transform:'translate(calc(-50% + '+(dx*0.25)+'px), calc(-85% + '+(dy*0.25)+'px)) '+flip+' scale(1.06, 1.04)',offset:0.25},
+      {opacity:1,transform:'translate(calc(-50% + '+(dx*0.82)+'px), calc(-88% + '+(dy*0.82)+'px)) '+flip+' scale(1.0, 1.0)',offset:0.82},
+      {opacity:0,transform:'translate(calc(-50% + '+dx+'px), calc(-90% + '+dy+'px)) '+flip+' scale(1.18, 0.85)'}
+    ],{duration:travelDur,easing:'cubic-bezier(.22,.8,.32,1)',fill:'forwards'}).onfinish=()=>waveEl.remove();
+
+    // Rải bọt sóng dọc đường tiến của tường sóng
+    const tSteps=6;
+    for(let i=0;i<=tSteps;i++){
+      setTimeout(()=>{
+        const t=i/tSteps;
+        spawnP(sx+dx*t,sy+dy*t,5*k,{col:'#22d3ee',sp:75,g:30,life:.55,size:3});
+        spawnP(sx+dx*t,sy+dy*t,3*k,{col:'#ffffff',sp:95,g:20,life:.45,size:2.5});
+      },(travelDur*0.85*(i/tSteps)));
+    }
+
+    // Layer 3: Khi tường sóng thần chạm quái -> Vỡ thành Lốc Xoáy Nước và Mưa Dầm Sấm Chớp
+    setTimeout(()=>{
+      // Khựng hình va chạm & Rung chấn màn hình mãnh liệt
+      shake(10*k,550);
+      hitstop(85);
+
+      // Cột nước bộc phá vút lên tại tâm va chạm
+      const bw=U.c*3.5*Math.min(1.2,k),bh=bw*(400/440);
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-thuytinh-burst';
+      bEl.style.cssText='left:'+tx+'px;top:'+(ty-U.c*0.2)+'px;width:'+bw+'px;height:'+bh+'px;z-index:44;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'ngo-quyen-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/ngo-quyen-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
+        {opacity:1,transform:'translate(-50%,-65%) scale(1.18)',offset:0.25},
+        {opacity:0.95,transform:'translate(-50%,-65%) scale(1.02)',offset:0.6},
+        {opacity:0,transform:'translate(-50%,-70%) scale(1.12)'}
+      ],{duration:1400/spd,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}).onfinish=()=>bEl.remove();
+
+      // Sấm sét thiên lôi xé toạc màn nước giáng xuống đầu quái
+      lightningFx(tx,ty,U.c*4.5);
+      setTimeout(()=>lightningFx(tx+(Math.random()-0.5)*U.c*1.5,ty,U.c*4),140/spd);
+
+      // Mưa dầm xối xả đan chéo
+      for(let w=0;w<4;w++){
+        setTimeout(()=>{
+          for(let j=0;j<16;j++){
+            const rx=(Math.random()-0.5)*U.c*3.6;
+            const ry=(Math.random()-0.5)*U.c*2.2;
+            spawnP(tx+rx,ty+ry-U.c*1.6,1,{
+              col:j%2?'#cffafe':'#a5f3fc',
+              shape:'l',
+              sp:40,
+              vy:380,
+              life:0.42,
+              size:3
+            });
+          }
+        },w*110/spd);
+      }
+
+      // Sóng xung kích thủy lôi phát quang đa tầng
+      ringFx(tx,ty,(e.r||1.5)*U.c*1.4,'#ffffff',400,true);
+      setTimeout(()=>ringFx(tx,ty,((e.r||1.5)+0.5)*U.c,'#22d3ee',550,false),130/spd);
+      setTimeout(()=>ringFx(tx,ty,((e.r||1.5)+1.1)*U.c,'#818cf8',700,false),280/spd);
+
+      // Bọt nước văng tung tóe
+      spawnP(tx,ty,32*k,{col:'#22d3ee',sp:190,g:60,life:1.1,size:4});
+      spawnP(tx,ty,22*k,{col:'#0284c7',sp:160,g:70,life:0.9,size:3.5});
+      spawnP(tx,ty,18*k,{col:'#ffffff',sp:210,g:50,life:0.7,size:3});
+      spawnP(tx,ty,14*k,{col:'#818cf8',sp:140,g:-40,life:0.8,size:2.8});
+    },travelDur*0.85);
+  }else{
+    proj([sx,sy],[tx,ty],.25/spd,'#22d3ee',4);
+    ringFx(tx,ty,e.r*U.c,'#22d3ee',450,true);
+    spawnP(tx,ty,14*k,{col:'#bfe3ff',sp:80,g:60,life:.8,size:3});
+    shake(4,300);
+  }
+};
 VF.coc=e=>{
   const cx=e.cx!=null?e.cx:(e.tx!=null?e.tx:(e.x1!=null?e.x1:0));
   const cy=e.cy!=null?e.cy:(e.ty!=null?e.ty:(e.y1!=null?e.y1:0));
@@ -3038,6 +3194,7 @@ function startDemo(heroId){
   if(heroId==='auc\u01a1'){hero.x=3;hero.y=3;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,1,3,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
   if(heroId==='sontinh'||heroId==='trungtrac'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
+  if(heroId==='thuytinh'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
   for(const f of foes){f.maxMana=100;f.mana=50;}
   const B=newBattle(allies.concat(foes),true);
   U.B=B;U.els={};U.zel={};
