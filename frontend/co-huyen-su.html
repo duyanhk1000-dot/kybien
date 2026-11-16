@@ -382,7 +382,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .mp i.full{animation:mpulse .6s infinite alternate}
 @keyframes mpulse{from{box-shadow:0 0 2px #ffd36a}to{box-shadow:0 0 8px #ffd36a,0 0 3px #fff}}
 .stt{position:absolute;left:0;right:0;bottom:-2%;text-align:center;font-size:calc(var(--c)*.22);line-height:1;z-index:3;text-shadow:0 1px 2px #000;letter-spacing:-1px}
-.bu .mt{position:absolute;left:8%;right:8%;top:-10%;height:74%;color:#9b8670;filter:drop-shadow(0 3px 3px #000a);z-index:4}
+.bu .mt{position:absolute;left:-15%;right:-15%;top:-40%;height:120%;pointer-events:none;z-index:4}
+.bu .mt img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 10px rgba(217,119,6,.95)) drop-shadow(0 0 20px rgba(251,191,36,.65))}
 .bu .mt svg{width:100%;height:100%;fill:currentColor}
 .ft{position:absolute;pointer-events:none;font-weight:800;font-size:calc(var(--c)*.26);text-shadow:0 1px 2px #000,0 0 4px #000;color:#fff;z-index:6;transform:translate(-50%,0);white-space:nowrap}
 .ft.crit{color:#ffd36a;font-size:calc(var(--c)*.34)}.ft.mag{color:#d9a8ff}.ft.heal{color:#7dffa6}.ft.big{font-family:var(--serif);font-size:calc(var(--c)*.42);color:#ffb3a0}
@@ -1588,7 +1589,7 @@ function setFxLabel(){$('#fxm').textContent='Hiệu ứng: '+FX.n;}
 
 /* ---------- hình vẽ SVG (một màu, đổi màu bằng CSS) ---------- */
 const SV={
- nui:'<svg viewBox="0 0 100 80"><path d="M0 80L28 28l12 14L62 6l38 74z"/><path d="M62 6l-9 17 7-4 5 8 5-8 6 4z" fill="#fff" opacity=".85"/></svg>',
+ nui:'<img class="sv-mt-img" draggable="false" src="'+FX_BASE+'son-tinh-mountain.webp" onerror="this.src=\'./img/fx/son-tinh-mountain.webp\'">',
  rong:'<svg viewBox="0 0 120 90"><path d="M8 72C28 20 50 104 72 50S106 14 108 34" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"/><path d="M100 24l18 4-8 10 8 8-18-2z"/><path d="M96 22l-4-14 10 8zM106 18l2-12 6 10z"/><circle cx="108" cy="32" r="2.4" fill="#fff"/></svg>',
  voi:'<svg viewBox="0 0 110 80"><ellipse cx="50" cy="38" rx="34" ry="22"/><circle cx="86" cy="32" r="15"/><path d="M96 38q14 12 4 30" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><rect x="22" y="52" width="9" height="24" rx="3"/><rect x="40" y="54" width="9" height="22" rx="3"/><rect x="58" y="54" width="9" height="22" rx="3"/><rect x="72" y="50" width="9" height="26" rx="3"/><circle cx="76" cy="26" r="9" fill="#000" opacity=".25"/></svg>',
  ngua:'<svg viewBox="0 0 120 80"><ellipse cx="52" cy="40" rx="30" ry="14"/><path d="M70 34l14-24 12 6-4 20z"/><path d="M84 10l16 2 6 12-14-2z"/><path d="M26 32C8 24 6 46 2 52c12-4 18-8 26-10z"/><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><path d="M34 50l-6 22M46 52l-2 22M64 52l4 22M74 48l8 22"/></g></svg>',
@@ -2024,7 +2025,7 @@ VF.nui=e=>{
     ],{duration:2200/spd,fill:'forwards'}).onfinish=()=>aEl.remove();
 
     // Layer 2: Đỉnh Cự Thạch Tản Viên Giáng Thế (từ tầng mây giáng mạnh xuống đất)
-    const mw=U.c*2.4*Math.min(1.2,k),mh=mw*(560/400);
+    const mw=U.c*2.8*Math.min(1.2,k),mh=mw*(560/400);
     const mEl=document.createElement('div');
     mEl.className='fxs fx-sontinh-mountain';
     mEl.style.cssText='left:'+x+'px;top:'+(y+ah*0.08)+'px;width:'+mw+'px;height:'+mh+'px;z-index:43;';
@@ -2822,6 +2823,7 @@ function startDemo(heroId){
   let allies=[hero];
   if(heroId==='auc\u01a1'){hero.x=3;hero.y=3;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,1,3,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
+  if(heroId==='sontinh'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   for(const f of foes){f.maxMana=100;f.mana=50;}
   const B=newBattle(allies.concat(foes),true);
   U.B=B;U.els={};U.zel={};
