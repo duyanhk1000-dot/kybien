@@ -845,7 +845,7 @@ const HEROES_RAW=[
 ['lythuongkiet','Lý Thường Kiệt','📜','lytran','thuatsi',3,{nm:'Nam Quốc Sơn Hà',t:'aoe',v:'chu',d:290,r:2.5,cen:'tgt',stun:[1,1.2,1.5],mana:90}],
 ['nguyentrai','Nguyễn Trãi','✒️','lamson','thuatsi',3,{nm:'Bình Ngô Mưu Lược',t:'none',v:'but',as:[.45,.55,.7],heal:80,al:'all',dur:6,mana:80}],
 ['buithixuan','Bùi Thị Xuân','⚔️','tayson','cungno',3,{nm:'Phi Tiễn Xuyên Tâm',t:'nuke',v:'ten',d:540,mana:100}],
-['sontinh','Sơn Tinh','⛰️','hongbang','hove',4,{nm:'Tản Viên Trấn Áp',t:'aoe',v:'nui',d:350,r:2,cen:'self',press:[1.5,2,2.5],sh:500,al:'self',dur:6,mana:100}],
+['sontinh','Sơn Tinh','⛰️','hongbang','hove',4,{nm:'Tản Viên Trấn Áp',t:'aoe',v:'nui',d:350,r:2,cen:'tgt',press:[1.5,2,2.5],sh:500,al:'self',dur:6,mana:100}],
 ['thanhgiong','Thánh Gióng','🐎','hongbang','chienbinh',4,{nm:'Thiết Mã Liệt Diễm',t:'dash',v:'ngua',d:560,r:1.5,tg:'far',ph:true,mana:90,trail:{dps:[60,100,170],dur:[3,4,5]}}],
 ['leloi','Lê Lợi','👑','lamson','chienbinh',4,{nm:'Thuận Thiên Khai Quốc',t:'aoe',v:'guom',d:400,r:2,cen:'tgt',ad:.3,al:'all',dur:6,mana:100,exec:.25}],
 ['trungtrac','Trưng Trắc','🎌','khoinghia','chienbinh',4,{nm:'Hát Môn Thệ Sư',t:'aoe',v:'co',d:380,r:2.5,cen:'self',as:[.35,.45,.6],al:'all',dur:6,mana:100}],
@@ -2000,11 +2000,20 @@ VF.hoisinh=e=>{const [x,y]=px(e.x1,e.y1);for(let i=0;i<5;i++)setTimeout(()=>spaw
 VF.khiendong=e=>{const [x,y]=px(e.x1,e.y1);ringFx(x,y,U.c*.8*SC(e.s),'#d9a05b',520,true);spawnP(x,y,8,{col:'#e8c07a',sp:60,life:.6});};
 VF.kim=e=>{const [x,y]=px(e.x1,e.y1),k=SC(e.s);shape('kim',x,y,U.c*2.4*k,'#e8c040',[{opacity:0,transform:'scale(.3)'},{opacity:.85,transform:'scale(1)',offset:.35},{opacity:0,transform:'scale(1.25)'}],750);ringFx(x,y,e.r*U.c,'#e8c040',600,true);shake(3,240);};
 VF.nui=e=>{
-  const [x,y]=px(e.x1!=null?e.x1:(e.cx!=null?e.cx:0),e.y1!=null?e.y1:(e.cy!=null?e.cy:0));
+  // Tọa độ mục tiêu quái: ưu tiên tâm ngắm cx/cy hoặc mục tiêu tx/ty
+  const cx=e.cx!=null?e.cx:(e.tx!=null?e.tx:(e.x1!=null?e.x1:0));
+  const cy=e.cy!=null?e.cy:(e.ty!=null?e.ty:(e.y1!=null?e.y1:0));
+  const [x,y]=px(cx,cy);
   const k=SC(e.s),spd=U.speed||1;
 
+  if(e.x1!=null&&e.y1!=null&&(e.x1!==cx||e.y1!==cy)){
+    const [sx,sy]=px(e.x1,e.y1);
+    ringFx(sx,sy,U.c*1.1,'#d97706',450,true);
+    spawnP(sx,sy,12*k,{col:'#d97706',sp:110,g:-20,life:.6});
+  }
+
   if(FX.big){
-    // Layer 1: Pháp Trận Địa Chấn Nứt Đá Tản Viên (nằm ở zlEl dưới chân tướng & quái)
+    // Layer 1: Pháp Trận Địa Chấn Nứt Đá Tản Viên (nằm ở zlEl dưới chân quái & mục tiêu)
     const aoeSpan=(e.r||2)*2;
     const aw=U.c*aoeSpan,ah=aw*0.58;
     const aEl=document.createElement('div');
@@ -2024,7 +2033,7 @@ VF.nui=e=>{
       {opacity:0,transform:'translate(-50%,-50%) scale(0.92)'}
     ],{duration:2200/spd,fill:'forwards'}).onfinish=()=>aEl.remove();
 
-    // Layer 2: Đỉnh Cự Thạch Tản Viên Giáng Thế (từ tầng mây giáng mạnh xuống đất)
+    // Layer 2: Đỉnh Cự Thạch Tản Viên Giáng Thế (lao từ trên trời rơi thẳng vào người quái)
     const mw=U.c*2.8*Math.min(1.2,k),mh=mw*(560/400);
     const mEl=document.createElement('div');
     mEl.className='fxs fx-sontinh-mountain';
@@ -2043,7 +2052,7 @@ VF.nui=e=>{
       {opacity:0,transform:'translate(-50%,-105%) scale(1.05, 1.05)'}
     ],{duration:1750/spd,easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>mEl.remove();
 
-    // Layer 3: Vụ Nổ Đất Đá & Sóng Xung Kích Cự Thạch (khi đỉnh núi chạm đất)
+    // Layer 3: Vụ Nổ Đất Đá & Sóng Xung Kích Cự Thạch (nổ tung ngay tại chỗ quái đứng)
     setTimeout(()=>{
       const bw=U.c*2.6*Math.min(1.2,k),bh=bw*(398/440);
       const bEl=document.createElement('div');
@@ -2069,7 +2078,7 @@ VF.nui=e=>{
     },360/spd);
   }
 
-  // Chấn động & Hào quang địa linh hoàng thổ + ngọc bích
+  // Chấn động & Hào quang địa linh hoàng thổ + ngọc bích tại tâm chấn quái đứng
   ringFx(x,y,(e.r||2)*U.c,'#d97706',700,true);
   setTimeout(()=>ringFx(x,y,((e.r||2)+0.6)*U.c,'#f59e0b',800,false),140/spd);
   setTimeout(()=>ringFx(x,y,((e.r||2)+1.2)*U.c,'#10b981',900,false),300/spd);
@@ -2078,7 +2087,7 @@ VF.nui=e=>{
   spawnP(x,y,20*k,{col:'#f59e0b',sp:150,g:80,life:.9,size:3.5});
   spawnP(x,y,16*k,{col:'#ffffff',sp:190,g:40,life:.7,size:3});
 
-  // Text chiến ý thần uy "TẢN VIÊN!"
+  // Text chiến ý thần uy "TẢN VIÊN!" tại vị trí quái bị đè
   textFx('TẢN VIÊN!',x,y-U.c*2.3*k,'#f59e0b',U.c*0.58*k,[
     {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
     {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
