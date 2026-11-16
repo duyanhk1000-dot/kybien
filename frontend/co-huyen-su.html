@@ -476,6 +476,14 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-kimquy-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44}
 .tiltwrap.tilt .fx-kimquy-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-kimquy-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 25px rgba(251,191,36,.95)) drop-shadow(0 0 50px rgba(16,185,129,.85)) brightness(1.25)}
+.fx-lythuongkiet-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;z-index:1;filter:drop-shadow(0 0 18px rgba(245,158,11,.85)) drop-shadow(0 0 35px rgba(56,189,248,.65))}
+.tiltwrap.tilt .fx-lythuongkiet-array{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-lythuongkiet-scroll{position:absolute;pointer-events:none;transform:translate(-50%,-80%);z-index:43}
+.tiltwrap.tilt .fx-lythuongkiet-scroll{transform:translate(-50%,-80%) scaleY(1.32);transform-origin:50% 100%}
+.fx-lythuongkiet-scroll img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(251,191,36,.95)) drop-shadow(0 0 45px rgba(245,158,11,.85)) brightness(1.18)}
+.fx-lythuongkiet-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44}
+.tiltwrap.tilt .fx-lythuongkiet-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-lythuongkiet-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 25px rgba(251,191,36,.95)) drop-shadow(0 0 50px rgba(56,189,248,.85)) brightness(1.25)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -2147,9 +2155,102 @@ VF.co=e=>{
   ],1300);
 };
 VF.chu=e=>{
-  const [x,y]=px(e.cx,e.cy),ch=['南','國','山','河'];
-  ch.forEach((c,i)=>setTimeout(()=>textFx(c,x+(i-1.5)*U.c*.55,y-U.c*.3,'#ffe9b0',U.c*.6,[{opacity:0,transform:'translate(-50%,-30%) scale(.5)'},{opacity:1,transform:'translate(-50%,-70%) scale(1)',offset:.3},{opacity:0,transform:'translate(-50%,-110%) scale(1.15)'}],900),i*90/U.speed));
-  setTimeout(()=>{ringFx(x,y,e.r*U.c,'#ffe9b0',560,true);spawnP(x,y,12*SC(e.s),{col:'#ffe9b0',sp:100,life:.6});},360/U.speed);
+  // Tọa độ mục tiêu quái: cx, cy hoặc tx, ty
+  const cx=e.cx!=null?e.cx:(e.tx!=null?e.tx:0);
+  const cy=e.cy!=null?e.cy:(e.ty!=null?e.ty:0);
+  const [tx,ty]=px(cx,cy);
+  const k=SC(e.s);
+  const spd=U.speed||1;
+  const dur=Math.round(2800/spd);
+  
+  // Vị trí Lý Thường Kiệt (caster)
+  if(e.x1!=null&&e.y1!=null){
+    const [sx,sy]=px(e.x1,e.y1);
+    ringFx(sx,sy,U.c*1.1,'#fbbf24',500,true);
+    textFx('NAM QUỐC SƠN HÀ!',sx,sy-U.c*1.1,'#fbbf24',U.c*.42,[
+      {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
+      {opacity:1,transform:'translate(-50%,0) scale(1.15)',offset:.25},
+      {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
+      {opacity:0,transform:'translate(-50%,-18px) scale(1.05)'}
+    ],Math.round(1400/spd));
+  }
+  
+  // Rung chấn và âm vang thần sấm khi bài thơ giáng thế
+  shake(10, 520);
+  hitstop(75);
+  
+  // 1. LAYER 1: Pháp Trận Sông Như Nguyệt & Thiên Thư Đồ (#zl, z-index: 1 - nằm dưới sàn chân quái)
+  const aW=Math.round(U.c*3.5*k), aH=Math.round(aW*(308/512));
+  const aEl=document.createElement('div');
+  aEl.className='fx-lythuongkiet-array';
+  aEl.style.width=aW+'px';
+  aEl.style.height=aH+'px';
+  aEl.style.left=tx+'px';
+  aEl.style.top=ty+'px';
+  aEl.style.backgroundImage="url('frontend/img/fx/ly-thuong-kiet-array.webp')";
+  zlEl.appendChild(aEl);
+  
+  aEl.animate([
+    {opacity:0,transform:'translate(-50%,-50%) scale(.4) rotate(-10deg)'},
+    {opacity:1,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.15},
+    {opacity:1,transform:'translate(-50%,-50%) scale(1) rotate(4deg)',offset:.8},
+    {opacity:0,transform:'translate(-50%,-50%) scale(.95) rotate(8deg)'}
+  ],{duration:dur,fill:'forwards'}).onfinish=()=>aEl.remove();
+  
+  // 2. LAYER 2: Cuộn Chiếu Thần Thiên Thư Nam Quốc Sơn Hà lơ lửng (#fxl, z-index: 43)
+  const sW=Math.round(U.c*2.6*k), sH=Math.round(sW*(465/480));
+  const sEl=document.createElement('div');
+  sEl.className='fx-lythuongkiet-scroll';
+  sEl.style.width=sW+'px';
+  sEl.style.height=sH+'px';
+  sEl.style.left=tx+'px';
+  sEl.style.top=ty+'px';
+  sEl.innerHTML="<img src='frontend/img/fx/ly-thuong-kiet-scroll.webp'>";
+  fxl.appendChild(sEl);
+  
+  sEl.animate([
+    {opacity:0,transform:'translate(-50%,-30%) scale(.4)'},
+    {opacity:1,transform:'translate(-50%,-80%) scale(1.1)',offset:.15},
+    {opacity:1,transform:'translate(-50%,-78%) scale(1)',offset:.55},
+    {opacity:1,transform:'translate(-50%,-80%) scale(1.02)',offset:.8},
+    {opacity:0,transform:'translate(-50%,-85%) scale(.9)'}
+  ],{duration:Math.round(2000/spd),fill:'forwards'}).onfinish=()=>sEl.remove();
+  
+  // 4 chữ vàng bay lên từ cuộn chiếu thần: 南 國 山 河
+  const ch=['南','國','山','河'];
+  ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-1.5)*U.c*.58,ty-U.c*.75,'#fbbf24',U.c*.65,[
+    {opacity:0,transform:'translate(-50%,-20%) scale(.5)'},
+    {opacity:1,transform:'translate(-50%,-80%) scale(1.2)',offset:.35},
+    {opacity:0,transform:'translate(-50%,-130%) scale(1.3)'}
+  ],Math.round(1100/spd)),i*110/spd));
+  
+  // 3. LAYER 3: Hào Khí Thần Long Bộc Phá & Sóng Chấn Động Làm Choáng (#fxl, z-index: 44)
+  const bW=Math.round(U.c*(e.r||2.5)*2.0*k), bH=Math.round(bW*(476/479));
+  const bEl=document.createElement('div');
+  bEl.className='fx-lythuongkiet-burst';
+  bEl.style.width=bW+'px';
+  bEl.style.height=bH+'px';
+  bEl.style.left=tx+'px';
+  bEl.style.top=ty+'px';
+  bEl.innerHTML="<img src='frontend/img/fx/ly-thuong-kiet-burst.webp'>";
+  fxl.appendChild(bEl);
+  
+  bEl.animate([
+    {opacity:0,transform:'translate(-50%,-50%) scale(.3) rotate(-15deg)'},
+    {opacity:1,transform:'translate(-50%,-50%) scale(1.15) rotate(0deg)',offset:.15},
+    {opacity:1,transform:'translate(-50%,-50%) scale(1.22) rotate(6deg)',offset:.65},
+    {opacity:0,transform:'translate(-50%,-50%) scale(1.3) rotate(12deg)'}
+  ],{duration:Math.round(1100/spd),fill:'forwards'}).onfinish=()=>bEl.remove();
+  
+  // Sóng xung kích hoàng kim mở rộng
+  for(let i=0;i<3;i++){
+    setTimeout(()=>ringFx(tx,ty,(e.r||2.5)*U.c*(.6+i*.4)*k,'#fbbf24',520,true),i*110/spd);
+  }
+  
+  // Tia sét và mực vàng thần tiên
+  dustAt(tx,ty,20);
+  spawnP(tx,ty,24*k,{col:'#fbbf24',sp:160,g:70,life:.7,size:4,shape:'q'});
+  spawnP(tx,ty,16*k,{col:'#38bdf8',sp:130,g:50,life:.8,size:3.2,shape:'l'});
 };
 VF.but=e=>{const [x,y]=px(e.x1,e.y1);['文','謀','策'].forEach((c,i)=>setTimeout(()=>textFx(c,x+(i-1)*U.c*.6,y,'#7dff9a',U.c*.45,[{opacity:0,transform:'translate(-50%,-50%)'},{opacity:1,transform:'translate(-50%,-120%)',offset:.4},{opacity:0,transform:'translate(-50%,-190%)'}],900),i*100/U.speed));ringFx(x,y,U.c*1.2,'#7dff9a',520);};
 VF.hoa=e=>{for(let i=0;i<5;i++)setTimeout(()=>{for(let j=0;j<4;j++)spawnP(Math.random()*U.c*8,U.c*3.5,2,{col:'#ff9ec1',shape:'p',sp:20,vy:60,g:20,life:1.2,size:3,a:1.57,spread:.6});},i*90/U.speed);const [x,y]=px(e.x1,e.y1);ringFx(x,y,U.c*1.1,'#ff9ec1',520,true);};
@@ -3480,7 +3581,7 @@ function startDemo(heroId){
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
   if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   if(heroId==='anduongvuong'){foes.forEach(f=>{f.ad=120;f.as=0.9;});}
-  if(heroId==='thuytinh'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
+  if(heroId==='thuytinh'||heroId==='lythuongkiet'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
   for(const f of foes){f.maxMana=100;f.mana=50;}
   const B=newBattle(allies.concat(foes),true);
   U.B=B;U.els={};U.zel={};
