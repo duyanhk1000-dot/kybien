@@ -454,7 +454,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @keyframes rip{from{transform:scale(.4);opacity:.9}to{transform:scale(1);opacity:0}}
 .zone.fire{background:radial-gradient(circle,rgba(255,150,40,.6),rgba(255,80,20,.25) 60%,transparent 75%);animation:fl .35s infinite alternate}
 @keyframes fl{to{transform:translate(-50%,-50%) scale(1.12)}}
-.zone.stakes{background:radial-gradient(circle,rgba(2,132,199,.32),rgba(6,182,212,.14) 55%,transparent 72%),url("./img/fx/ngo-quyen-water.webp") center/contain no-repeat;border:1.5px dashed rgba(34,211,238,.45);box-shadow:inset 0 0 35px rgba(2,132,199,.55),0 0 24px rgba(2,132,199,.35);filter:drop-shadow(0 0 16px rgba(2,132,199,.7))}
+.zone.stakes{background:radial-gradient(circle,rgba(2,132,199,.25),rgba(6,182,212,.1) 55%,transparent 72%);border:1.5px dashed rgba(34,211,238,.45);box-shadow:inset 0 0 25px rgba(2,132,199,.4),0 0 16px rgba(2,132,199,.25)}
 .fxs-stakes-field-wrap{position:absolute;pointer-events:none;z-index:43}
 .tiltwrap.tilt .fxs-stakes-field-wrap{transform:scaleY(1.32);transform-origin:50% 100%}
 .fxs-stakes-field-wrap img{display:block;filter:drop-shadow(0 0 16px rgba(2,132,199,.95)) drop-shadow(0 0 32px rgba(34,211,238,.75)) brightness(1.15)}
@@ -2304,13 +2304,6 @@ VF.coc=e=>{
     _imA.src=aSrc;
     (zlEl||fxl).appendChild(aEl);
 
-    aEl.animate([
-      {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
-      {opacity:0.95,transform:'translate(-50%,-50%) scale(1.05)',offset:0.08},
-      {opacity:0.92,transform:'translate(-50%,-50%) scale(1)',offset:0.85},
-      {opacity:0,transform:'translate(-50%,-50%) scale(0.95)'}
-    ],{duration:7800/spd,fill:'forwards'}).onfinish=()=>aEl.remove();
-
     // Layer 2: Bãi Cọc Gỗ Bịt Sắt Bạch Đằng (NẰM Ở fxl - Ở TRÊN LỚP HÌNH ẢNH QUÁI)
     const sw=U.c*3.8*Math.min(1.2,k),sh=sw*(588/560);
     const sEl=document.createElement('div');
@@ -2323,12 +2316,22 @@ VF.coc=e=>{
     sEl.appendChild(sImg);
     fxl.appendChild(sEl);
 
+    const vfxDur=2800/spd;
+
+    // Đồng bộ thời gian: xoáy nước và bãi cọc cùng xuất hiện và rút đi đồng thời
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.35)'},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1.05)',offset:0.12},
+      {opacity:0.92,transform:'translate(-50%,-50%) scale(1)',offset:0.68},
+      {opacity:0,transform:'translate(-50%,-50%) scale(0.95)'}
+    ],{duration:vfxDur,fill:'forwards'}).onfinish=()=>aEl.remove();
+
     sEl.animate([
       {opacity:0,transform:'translate(-50%,20%) scale(0.65, 0.3)'},
-      {opacity:1,transform:'translate(-50%,-55%) scale(1.06, 1.03)',offset:0.10},
-      {opacity:1,transform:'translate(-50%,-55%) scale(1, 1)',offset:0.85},
+      {opacity:1,transform:'translate(-50%,-55%) scale(1.06, 1.03)',offset:0.14},
+      {opacity:1,transform:'translate(-50%,-55%) scale(1, 1)',offset:0.72},
       {opacity:0,transform:'translate(-50%,-45%) scale(0.95)'}
-    ],{duration:7500/spd,easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>sEl.remove();
+    ],{duration:vfxDur,easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>sEl.remove();
 
     // Layer 3: Cột Nước & Sóng Bộc Phá Thủy Triều khi bãi cọc trồi lên (nằm ở #fxl z-index: 44)
     setTimeout(()=>{
@@ -3074,6 +3077,8 @@ function endDemo(B){
     U.demoLastCast=null;
   }
   U.phase='demo-end';
+  Object.values(U.zel||{}).forEach(d=>{if(d&&d.parentNode){d.style.transition='opacity .3s';d.style.opacity='0';setTimeout(()=>d.remove(),320);}});
+  U.zel={};
   const H=HERO[U.demo];
   const r=$('#dres');
   r.textContent=(B.winner===0?('\u2713 '+H.name+' thắng trận demo.'):('\u2717 '+H.name+' đã ngã xuống.'))+' Bấm \u201cXem lại\u201d để xem chiêu lần nữa.';
@@ -3210,6 +3215,8 @@ function events(B){
 function endBattle(B){
   if(B._endedTimer){clearTimeout(B._endedTimer);B._endedTimer=null;}
   U.phase='result';const _cb=$('#cbtns');if(_cb)_cb.classList.remove('show');if(U.cbtnT){clearTimeout(U.cbtnT);U.cbtnT=null;}const _rb=$('#ribbon');if(_rb){_rb.style.display='none';_rb.classList.add('battle-hide');}
+  Object.values(U.zel||{}).forEach(d=>{if(d&&d.parentNode){d.style.transition='opacity .3s';d.style.opacity='0';setTimeout(()=>d.remove(),320);}});
+  U.zel={};
   const m=U.lm;m.res={win0:B.winner===0,surv:B.surv,draw:B.winner===null};
   recordBattleStats(B);
   const before=me().hp;
