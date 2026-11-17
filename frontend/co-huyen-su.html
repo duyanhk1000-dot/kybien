@@ -487,6 +487,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-nguyentrai-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44;mix-blend-mode:screen}
 .tiltwrap.tilt .fx-nguyentrai-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-nguyentrai-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 25px rgba(16,185,129,.95)) drop-shadow(0 0 50px rgba(251,191,36,.85)) brightness(1.25)}
+.fx-buithixuan-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;z-index:1;filter:drop-shadow(0 0 18px rgba(239,68,68,.85)) drop-shadow(0 0 35px rgba(245,158,11,.65))}
+.fx-buithixuan-arrow{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:43}
+.tiltwrap.tilt .fx-buithixuan-arrow{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-buithixuan-arrow img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 25px rgba(239,68,68,.95)) drop-shadow(0 0 50px rgba(251,191,36,.85)) brightness(1.25)}
+.fx-buithixuan-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44;mix-blend-mode:screen}
+.tiltwrap.tilt .fx-buithixuan-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-buithixuan-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 25px rgba(239,68,68,.95)) drop-shadow(0 0 55px rgba(251,191,36,.9)) brightness(1.3)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:900;transform:translate(-50%,-50%);text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 2px 4px #000;z-index:100}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -901,7 +908,7 @@ const HEROES_RAW=[
 ['kimquy','Kim Quy','🐢','aulac','hove',3,{nm:'Thần Quy Linh Giáp',t:'aoe',v:'kim',d:200,r:2.5,cen:'self',stun:[1.2,1.8,2.5],sh:300,al:'self',dur:5,mana:90}],
 ['lythuongkiet','Lý Thường Kiệt','📜','lytran','thuatsi',3,{nm:'Nam Quốc Sơn Hà',t:'aoe',v:'chu',d:290,r:2.5,cen:'tgt',stun:[1,1.2,1.5],mana:90}],
 ['nguyentrai','Nguyễn Trãi','✒️','lamson','thuatsi',3,{nm:'Bình Ngô Mưu Lược',t:'none',v:'but',as:[.45,.55,.7],heal:80,al:'all',dur:6,mana:80}],
-['buithixuan','Bùi Thị Xuân','⚔️','tayson','cungno',3,{nm:'Phi Tiễn Xuyên Tâm',t:'nuke',v:'ten',d:540,mana:100}],
+['buithixuan','Bùi Thị Xuân','⚔️','tayson','cungno',3,{nm:'Phi Tiễn Xuyên Tâm',t:'nuke',v:'phitien',d:540,mana:100}],
 ['sontinh','Sơn Tinh','⛰️','hongbang','hove',4,{nm:'Tản Viên Trấn Áp',t:'aoe',v:'nui',d:350,r:2,cen:'tgt',press:[1.5,2,2.5],sh:500,al:'self',dur:6,mana:100}],
 ['thanhgiong','Thánh Gióng','🐎','hongbang','chienbinh',4,{nm:'Thiết Mã Liệt Diễm',t:'dash',v:'ngua',d:560,r:1.5,tg:'far',ph:true,mana:90,trail:{dps:[60,100,170],dur:[3,4,5]}}],
 ['leloi','Lê Lợi','👑','lamson','chienbinh',4,{nm:'Thuận Thiên Khai Quốc',t:'aoe',v:'guom',d:400,r:2,cen:'tgt',ad:.3,al:'all',dur:6,mana:100,exec:.25}],
@@ -2347,6 +2354,108 @@ VF.but=e=>{
   spawnP(x,y,14*k,{col:'#10b981',sp:95,g:30,life:.7,size:3.2});
   spawnP(x,y,10*k,{col:'#fbbf24',sp:75,g:-15,life:.8,size:2.8});
 };
+VF.phitien=e=>{
+  const [x0,y0]=px(e.x1,e.y1);
+  const cx=e.tx!=null?e.tx:(e.cx!=null?e.cx:e.x1+2);
+  const cy=e.ty!=null?e.ty:(e.cy!=null?e.cy:e.y1);
+  const [tx,ty]=px(cx,cy);
+  const k=SC(e.s);
+  const spd=U.speed||1;
+  
+  // Banner hiệu triệu thần tiễn Tây Sơn (thu nhỏ chữ U.c*0.28, z-index 100 lớp trên cùng)
+  textFx('PHI TIỄN XUYÊN TÂM!',x0,y0-U.c*1.1,'#f97316',Math.round(U.c*.28),[
+    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
+    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
+    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
+    {opacity:0,transform:'translate(-50%,-18px) scale(1.05)'}
+  ],Math.round(1400/spd),100);
+  
+  // Hào quang tích tụ tại vị trí Bùi Thị Xuân
+  ringFx(x0,y0,U.c*1.1,'#ef4444',400,true);
+  spawnP(x0,y0,10*k,{col:'#f97316',sp:90,g:20,life:.5,size:3});
+  
+  // Đường đạn hỏa lôi thần tốc bay từ vị trí Bùi Thị Xuân đến mục tiêu
+  proj([x0,y0],[tx,ty],0.18/spd,'#f97316',3.5*k,()=>{
+    // Khi mũi tên chạm đích:
+    shake(11, 520);
+    hitstop(75);
+    
+    if(FX.big){
+      // 1. LAYER 1: Pháp Trận Hỏa Diệm Cờ Đào Tây Sơn (nằm ở #zl z-index:1 dưới #ul z-index:10 - tuyệt đối dưới chân quái & tướng)
+      const aW=Math.round(U.c*2.0*Math.min(1.2,k)), aH=Math.round(aW*(315/512));
+      const aEl=document.createElement('div');
+      aEl.className='fxs fx-buithixuan-array';
+      aEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
+      const aSrc=FX_BASE+'bui-thi-xuan-array.webp';
+      aEl.style.backgroundImage='url("'+aSrc+'")';
+      const _imA=new Image();
+      _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/bui-thi-xuan-array.webp")';};
+      _imA.src=aSrc;
+      zlEl.appendChild(aEl);
+      
+      aEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(.4) rotate(-15deg)'},
+        {opacity:0.95,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.15},
+        {opacity:0.9,transform:'translate(-50%,-50%) scale(1) rotate(4deg)',offset:.8},
+        {opacity:0,transform:'translate(-50%,-50%) scale(.95) rotate(8deg)'}
+      ],{duration:Math.round(3000/spd),fill:'forwards'}).onfinish=()=>aEl.remove();
+      
+      // 2. LAYER 2: Cự Tiễn Hỏa Phượng Xuyên Tâm lao cắm phập từ trên cao (#fxl, z-index: 43)
+      const arW=Math.round(U.c*2.2*Math.min(1.2,k)), arH=Math.round(arW*(518/512));
+      const arEl=document.createElement('div');
+      arEl.className='fxs fx-buithixuan-arrow';
+      arEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+arW+'px;height:'+arH+'px;z-index:43;';
+      const arImg=document.createElement('img');
+      const arSrc=FX_BASE+'bui-thi-xuan-arrow.webp';
+      arImg.onerror=()=>{arImg.src='./img/fx/bui-thi-xuan-arrow.webp';};
+      arImg.src=arSrc;arImg.draggable=false;
+      arEl.appendChild(arImg);
+      fxl.appendChild(arEl);
+      
+      arEl.animate([
+        {opacity:0,transform:'translate(-90%,-160%) scale(.5)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.1)',offset:.3},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1)',offset:.7},
+        {opacity:0,transform:'translate(-50%,-50%) scale(1.05)'}
+      ],{duration:Math.round(1500/spd),easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>arEl.remove();
+      
+      // 4 chữ vàng đỏ Tây Sơn bộc phát: 西 (Tây), 山 (Sơn), 神 (Thần), 箭 (Tiễn)
+      const ch=['西','山','神','箭'];
+      ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-1.5)*U.c*.55,ty-U.c*.8,'#ef4444',Math.round(U.c*.62),[
+        {opacity:0,transform:'translate(-50%,-20%) scale(.5)'},
+        {opacity:1,transform:'translate(-50%,-80%) scale(1.25)',offset:.35},
+        {opacity:0,transform:'translate(-50%,-130%) scale(1.35)'}
+      ],Math.round(1100/spd),100),i*110/spd));
+      
+      // 3. LAYER 3: Hỏa Lôi Phượng Hoàng Bộc Phá & Sóng Xung Kích (#fxl, z-index: 44, mix-blend-mode: screen)
+      const bW=Math.round(U.c*2.5*Math.min(1.2,k)), bH=Math.round(bW*(453/480));
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-buithixuan-burst';
+      bEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+bW+'px;height:'+bH+'px;z-index:44;mix-blend-mode:screen;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'bui-thi-xuan-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/bui-thi-xuan-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+      
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(.35)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.12)',offset:.22},
+        {opacity:0.85,transform:'translate(-50%,-50%) scale(1.18)',offset:.65},
+        {opacity:0,transform:'translate(-50%,-50%) scale(1.25)'}
+      ],{duration:Math.round(1350/spd),easing:'ease-out',fill:'forwards'}).onfinish=()=>bEl.remove();
+      
+      ringFx(tx,ty,U.c*2.1*k,'#ef4444',550,true);
+      ringFx(tx,ty,U.c*1.5*k,'#fbbf24',450,true);
+    }
+    
+    // Tàn tro và hoa lửa Tây Sơn
+    dustAt(tx,ty,16);
+    spawnP(tx,ty,16*k,{col:'#ef4444',sp:125,g:35,life:.75,size:3.5});
+    spawnP(tx,ty,12*k,{col:'#fbbf24',sp:95,g:20,life:.85,size:2.8});
+  });
+};
 VF.hoa=e=>{for(let i=0;i<5;i++)setTimeout(()=>{for(let j=0;j<4;j++)spawnP(Math.random()*U.c*8,U.c*3.5,2,{col:'#ff9ec1',shape:'p',sp:20,vy:60,g:20,life:1.2,size:3,a:1.57,spread:.6});},i*90/U.speed);const [x,y]=px(e.x1,e.y1);ringFx(x,y,U.c*1.1,'#ff9ec1',520,true);};
 VF.hoisinh=e=>{const [x,y]=px(e.x1,e.y1);for(let i=0;i<5;i++)setTimeout(()=>spawnP(Math.random()*U.c*8,U.c*3.5,3,{col:'#fff3c4',shape:'p',sp:25,vy:50,g:25,life:1.3,size:3.5,a:1.57,spread:.6}),i*90/U.speed);ringFx(x,y,U.c*1.4,'#ffd36a',620,true);shape('hoa',x,y-U.c*.4,U.c*1.1,'#fff3c4',[{opacity:0,transform:'scale(.4)'},{opacity:.9,transform:'scale(1)',offset:.4},{opacity:0,transform:'scale(1.3) translateY(-20px)'}],800,1.25);};
 VF.khiendong=e=>{
@@ -3680,11 +3789,12 @@ function startDemo(heroId){
   let allies=[hero];
   if(heroId==='aucơ'){hero.x=1;hero.y=3;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,3,3,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
   if(heroId==='nguyentrai'){hero.x=1;hero.y=3;const leloi=mkBU({h:'leloi',s:2},0,3,3,{},{});leloi.hp=Math.round(leloi.max*.8);allies.push(leloi);}
+  if(heroId==='buithixuan'){hero.x=1;hero.y=3;const tqd=mkBU({h:'tranquangdieu',s:2},0,3,3,{},{});tqd.hp=Math.round(tqd.max*.8);allies.push(tqd);}
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
   if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   if(heroId==='anduongvuong'){foes.forEach(f=>{f.ad=120;f.as=0.9;});}
   if(heroId==='thuytinh'||heroId==='lythuongkiet'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
-  if(heroId==='nguyentrai'){foes.forEach(f=>f.x=5);}
+  if(heroId==='nguyentrai'||heroId==='buithixuan'){foes.forEach(f=>f.x=5);}
   for(const f of foes){f.maxMana=100;f.mana=50;}
   const B=newBattle(allies.concat(foes),true);
   U.B=B;U.els={};U.zel={};
