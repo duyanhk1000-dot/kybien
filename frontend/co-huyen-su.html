@@ -502,10 +502,10 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .tiltwrap.tilt .fx-nguyenxi-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-nguyenxi-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(220,38,38,.95)) drop-shadow(0 0 45px rgba(245,158,11,.85)) brightness(1.25)}
 .fx-datuong-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;z-index:1;filter:drop-shadow(0 0 12px rgba(217,119,6,.85)) drop-shadow(0 0 25px rgba(245,158,11,.55))}
-.fx-datuong-elephant{position:absolute;pointer-events:none;transform:translate(-50%,-75%);z-index:43}
-.tiltwrap.tilt .fx-datuong-elephant{transform:translate(-50%,-75%) scaleY(1.32);transform-origin:50% 100%}
-.fx-datuong-elephant img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(217,119,6,.95)) drop-shadow(0 0 35px rgba(245,158,11,.8)) brightness(1.15)}
-.fx-datuong-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44;mix-blend-mode:screen}
+.fx-datuong-elephant{position:absolute;pointer-events:none;transform:translate(-50%,-85%);z-index:45}
+.tiltwrap.tilt .fx-datuong-elephant{transform:translate(-50%,-85%) scaleY(1.32);transform-origin:50% 100%}
+.fx-datuong-elephant img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(217,119,6,.95)) drop-shadow(0 0 35px rgba(245,158,11,.8)) brightness(1.2)}
+.fx-datuong-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
 .tiltwrap.tilt .fx-datuong-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-datuong-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(217,119,6,.95)) drop-shadow(0 0 45px rgba(245,158,11,.85)) brightness(1.25)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:900;transform:translate(-50%,-50%);text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 2px 4px #000;z-index:100}
@@ -907,7 +907,7 @@ const HEROES_RAW=[
 ['yetkieu','Yết Kiêu','🐟','lytran','dukich',1,{nm:'Kình Ngư Phá Hạm',t:'none',v:'lan',mana:50,hide:1.5,emerge:{d:260,shred:[15,25,40],shredT:4}}],
 ['lelai','Lê Lai','🥋','lamson','hove',1,{nm:'Hoán Bào Cứu Chúa',t:'none',v:'gam',mana:60,taunt:{r:2.5,t:3},tarm:[40,70,110],sh:150,al:'self',dur:6}],
 ['nguyenxi','Nguyễn Xí','🎯','lamson','cungno',1,{nm:'Xích Huyết Xuyên Giáp',t:'nuke',v:'xichhuyet',d:280,mana:70}],
-['datuong','Dã Tượng','🐘','lytran','chienbinh',1,{nm:'Cự Tượng Đạp Trận',t:'aoe',v:'cutuong',d:140,r:1.5,cen:'self',stun:[1,1.2,1.5],mana:60}],
+['datuong','Dã Tượng','🐘','lytran','chienbinh',1,{nm:'Cự Tượng Đạp Trận',t:'aoe',v:'cutuong',d:140,r:1.5,cen:'tgt',stun:[1,1.2,1.5],mana:60}],
 ['tiendung','Tiên Dung','🌸','hongbang','thuatsi',2,{nm:'Liên Hoa Dũ Thương',t:'none',v:'hoa',heal:120,al:'all',mana:80}],
 ['lyongtrong','Lý Ông Trọng','🗿','aulac','hove',2,{nm:'Đồng Tượng Trấn Ải',t:'aoe',v:'ongtrong',d:120,r:1.5,cen:'self',stun:[.8,1,1.2],sh:200,al:'self',dur:5,mana:70,grow:{ad:[.25,.35,.5],arm:[30,50,80],dur:[5,6,7]}}],
 ['trungnhi','Trưng Nhị','🌺','khoinghia','dukich',2,{nm:'Tuyệt Ảnh Trảm Tướng',t:'dash',v:'chem',d:340,tg:'low',mana:60}],
@@ -1660,6 +1660,7 @@ const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
 const ARROW_IMG={};
 for(const k of ['arrow-gold','arrow-wood','arrow-wood-bright']){const im=new Image();im.src=FXIMG_BASE+k+'.webp';ARROW_IMG[k]=im;}
+['da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
 function arrowByCost(c){return ARROW_IMG[c<=1?'arrow-wood':c<=3?'arrow-wood-bright':'arrow-gold'];}
 function ico(h){return HIMG[h]?'<img class="himg" draggable="false" src="'+HIMG[h]+'" alt="" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+(HERO[h]?HERO[h].ico:'')+'\'))">':h==='datuong'?'<img class="himg" draggable="false" src="'+DATUONG_IMG+'" alt="Dã Tượng" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode)this.parentNode.appendChild(document.createTextNode(\'🐘\'))">':HERO[h]?HERO[h].ico:'';}
 const arena=$('#arena'),cellsEl=$('#cells'),benchEl=$('#benchL'),benchEl2=$('#benchR'),blEl=$('#bl'),ulEl=$('#ul'),zlEl=$('#zl'),fxl=$('#fxl'),cv=$('#fxc'),ctx=cv.getContext('2d');
@@ -2572,29 +2573,31 @@ VF.xichhuyet=e=>{
   });
 };
 VF.cutuong=e=>{
-  const [x,y]=px(e.cx!=null?e.cx:e.x1,e.cy!=null?e.cy:e.y1);
+  const [x0,y0]=px(e.x1,e.y1);
+  const cx=e.tx!=null?e.tx:(e.cx!=null?e.cx:e.x1+1);
+  const cy=e.ty!=null?e.ty:(e.cy!=null?e.cy:e.y1);
+  const [tx,ty]=px(cx,cy);
   const k=SC(e.s);
   const spd=U.speed||1;
   
-  // Banner hiệu triệu tướng 1 sao: thu nhỏ chữ U.c*0.21 (nhỏ hơn hẳn tướng 3-5 sao), z-index 100 lớp trên cùng
-  textFx('CỰ TƯỢNG ĐẠP TRẬN!',x,y-U.c*1.0,'#f59e0b',Math.round(U.c*.21),[
+  // Banner hiệu triệu tướng 1 sao: thu nhỏ chữ U.c*0.21 (nhỏ hơn hẳn tướng 3-5 sao), z-index 100 lớp trên cùng tại vị trí Dã Tượng
+  textFx('CỰ TƯỢNG ĐẠP TRẬN!',x0,y0-U.c*1.0,'#f59e0b',Math.round(U.c*.21),[
     {opacity:0,transform:'translate(-50%,-8px) scale(.75)'},
     {opacity:1,transform:'translate(-50%,0) scale(1.08)',offset:.25},
     {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
     {opacity:0,transform:'translate(-50%,-14px) scale(1.02)'}
   ],Math.round(1100/spd),100);
   
-  // Rung chấn và âm vang địa chấn dậm đất (shake 6 vừa phải cho tướng 1 sao)
-  shake(6, 350);
-  hitstop(60);
-  ringFx(x,y,U.c*1.2*k,'#d97706',450,true);
+  // Hào quang hiệu triệu và âm vang tại vị trí Dã Tượng
+  ringFx(x0,y0,U.c*.8*k,'#d97706',320,true);
+  spawnP(x0,y0,6*k,{col:'#f59e0b',sp:65,g:15,life:.45,size:2.4});
   
   if(FX.big){
-    // 1. LAYER 1: Pháp Trận Vết Nứt Địa Chấn Cự Tượng (tướng 1 sao: nhỏ gọn 1.35 ô, nằm ở #zl z-index:1 dưới chân quái & tướng)
-    const aW=Math.round(U.c*1.35*Math.min(1.15,k)), aH=Math.round(aW*(382/512));
+    // 1. LAYER 1: Pháp Trận Vết Nứt Địa Chấn Cự Tượng tại vị trí MỤC TIÊU (nằm ở #zl z-index:1 tuyệt đối dưới chân quái & tướng)
+    const aW=Math.round(U.c*1.55*Math.min(1.15,k)), aH=Math.round(aW*(382/512));
     const aEl=document.createElement('div');
     aEl.className='fxs fx-datuong-array';
-    aEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
+    aEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
     const aSrc=FX_BASE+'da-tuong-array.webp';
     aEl.style.backgroundImage='url("'+aSrc+'")';
     const _imA=new Image();
@@ -2603,17 +2606,17 @@ VF.cutuong=e=>{
     zlEl.appendChild(aEl);
     
     aEl.animate([
-      {opacity:0,transform:'translate(-50%,-50%) scale(.4) rotate(-10deg)'},
-      {opacity:0.95,transform:'translate(-50%,-50%) scale(1.04) rotate(0deg)',offset:.15},
-      {opacity:0.9,transform:'translate(-50%,-50%) scale(1) rotate(3deg)',offset:.8},
-      {opacity:0,transform:'translate(-50%,-50%) scale(.95) rotate(6deg)'}
-    ],{duration:Math.round(2000/spd),fill:'forwards'}).onfinish=()=>aEl.remove();
+      {opacity:0,transform:'translate(-50%,-50%) scale(.3) rotate(-10deg)'},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.15},
+      {opacity:0.9,transform:'translate(-50%,-50%) scale(1) rotate(2deg)',offset:.8},
+      {opacity:0,transform:'translate(-50%,-50%) scale(.95) rotate(4deg)'}
+    ],{duration:Math.round(2200/spd),fill:'forwards'}).onfinish=()=>aEl.remove();
     
-    // 2. LAYER 2: Chiến Tượng Trần Triều Giáng Chân Đạp Trận (tướng 1 sao: nhỏ gọn 1.3 ô, giáng mạnh từ trên cao)
-    const elW=Math.round(U.c*1.3*Math.min(1.15,k)), elH=Math.round(elW*(562/512));
+    // 2. LAYER 2: Chiến Tượng Trần Triều Giáng Chân Đạp Trận tại vị trí MỤC TIÊU (cỡ 1.65 ô, dẫm đạp nát mục tiêu)
+    const elW=Math.round(U.c*1.65*Math.min(1.15,k)), elH=Math.round(elW*(562/512));
     const elEl=document.createElement('div');
     elEl.className='fxs fx-datuong-elephant';
-    elEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+elW+'px;height:'+elH+'px;z-index:43;';
+    elEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+elW+'px;height:'+elH+'px;z-index:45;';
     const elImg=document.createElement('img');
     const elSrc=FX_BASE+'da-tuong-elephant.webp';
     elImg.onerror=()=>{elImg.src='./img/fx/da-tuong-elephant.webp';};
@@ -2622,46 +2625,52 @@ VF.cutuong=e=>{
     fxl.appendChild(elEl);
     
     elEl.animate([
-      {opacity:0,transform:'translate(-50%,-130%) scale(.7)'},
-      {opacity:1,transform:'translate(-50%,-75%) scale(1.08)',offset:.25},
-      {opacity:1,transform:'translate(-50%,-73%) scale(1)',offset:.65},
-      {opacity:0,transform:'translate(-50%,-75%) scale(1.02)'}
-    ],{duration:Math.round(1200/spd),easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>elEl.remove();
+      {opacity:0.4,transform:'translate(-50%,-150%) scale(.7)'},
+      {opacity:1,transform:'translate(-50%,-85%) scale(1.15)',offset:.2},
+      {opacity:1,transform:'translate(-50%,-82%) scale(1.0)',offset:.65},
+      {opacity:0,transform:'translate(-50%,-85%) scale(1.04)'}
+    ],{duration:Math.round(1300/spd),easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>elEl.remove();
     
-    // 2 chữ thần Hán-Nôm gọn gàng: 踏 (Đạp) — 陣 (Trận) (cỡ chữ U.c*0.45 nhỏ gọn thanh thoát)
-    const ch=['踏','陣'];
-    ch.forEach((c,i)=>setTimeout(()=>textFx(c,x+(i-.5)*U.c*.5,y-U.c*.8,'#f59e0b',Math.round(U.c*.45),[
-      {opacity:0,transform:'translate(-50%,-15%) scale(.6)'},
-      {opacity:1,transform:'translate(-50%,-70%) scale(1.2)',offset:.35},
-      {opacity:0,transform:'translate(-50%,-115%) scale(1.25)'}
-    ],Math.round(900/spd),100),i*90/spd));
-    
-    // 3. LAYER 3: Địa Chấn Thạch Bộc & Sóng Làm Choáng (tướng 1 sao: nổ cục bộ 1.45 ô, đất đá văng tung tóe)
-    const bW=Math.round(U.c*1.45*Math.min(1.15,k)), bH=Math.round(bW*(408/480));
-    const bEl=document.createElement('div');
-    bEl.className='fxs fx-datuong-burst';
-    bEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+bW+'px;height:'+bH+'px;z-index:44;mix-blend-mode:screen;';
-    const bImg=document.createElement('img');
-    const bSrc=FX_BASE+'da-tuong-burst.webp';
-    bImg.onerror=()=>{bImg.src='./img/fx/da-tuong-burst.webp';};
-    bImg.src=bSrc;bImg.draggable=false;
-    bEl.appendChild(bImg);
-    fxl.appendChild(bEl);
-    
-    bEl.animate([
-      {opacity:0,transform:'translate(-50%,-50%) scale(.35)'},
-      {opacity:1,transform:'translate(-50%,-50%) scale(1.1)',offset:.22},
-      {opacity:0.8,transform:'translate(-50%,-50%) scale(1.16)',offset:.65},
-      {opacity:0,transform:'translate(-50%,-50%) scale(1.22)'}
-    ],{duration:Math.round(1150/spd),easing:'ease-out',fill:'forwards'}).onfinish=()=>bEl.remove();
-    
-    ringFx(x,y,U.c*1.4*k,'#d97706',420,true);
+    // Contact frame hit-stop: Khi chân voi giáng sập xuống đất tại mục tiêu (~180ms)
+    setTimeout(()=>{
+      // Rung chấn và âm vang địa chấn dậm đất tại mục tiêu
+      shake(6, 350);
+      hitstop(60);
+      ringFx(tx,ty,U.c*1.35*k,'#d97706',450,true);
+      
+      // Khói bụi đất đá và hoa lửa bộc phát tại mục tiêu
+      dustAt(tx,ty,14);
+      spawnP(tx,ty,14*k,{col:'#d97706',sp:95,g:35,life:.6,size:2.8});
+      spawnP(tx,ty,10*k,{col:'#f59e0b',sp:75,g:20,life:.65,size:2.4});
+      
+      // 2 chữ thần Hán-Nôm gọn gàng: 踏 (Đạp) — 陣 (Trận) bộc phát từ vị trí mục tiêu
+      const ch=['踏','陣'];
+      ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-.5)*U.c*.5,ty-U.c*.85,'#f59e0b',Math.round(U.c*.45),[
+        {opacity:0,transform:'translate(-50%,-15%) scale(.6)'},
+        {opacity:1,transform:'translate(-50%,-70%) scale(1.2)',offset:.35},
+        {opacity:0,transform:'translate(-50%,-115%) scale(1.25)'}
+      ],Math.round(900/spd),100),i*90/spd));
+      
+      // 3. LAYER 3: Địa Chấn Thạch Bộc & Sóng Làm Choáng tại vị trí MỤC TIÊU
+      const bW=Math.round(U.c*1.55*Math.min(1.15,k)), bH=Math.round(bW*(408/480));
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-datuong-burst';
+      bEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+bW+'px;height:'+bH+'px;z-index:46;mix-blend-mode:screen;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'da-tuong-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/da-tuong-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+      
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(.35)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.1)',offset:.22},
+        {opacity:0.8,transform:'translate(-50%,-50%) scale(1.16)',offset:.65},
+        {opacity:0,transform:'translate(-50%,-50%) scale(1.22)'}
+      ],{duration:Math.round(1150/spd),easing:'ease-out',fill:'forwards'}).onfinish=()=>bEl.remove();
+    }, Math.round(180/spd));
   }
-  
-  // Khói bụi đất đá và tia lửa đồng cổ
-  dustAt(x,y,14);
-  spawnP(x,y,12*k,{col:'#d97706',sp:90,g:35,life:.6,size:2.8});
-  spawnP(x,y,8*k,{col:'#f59e0b',sp:70,g:20,life:.65,size:2.2});
 };
 VF.hoa=e=>{for(let i=0;i<5;i++)setTimeout(()=>{for(let j=0;j<4;j++)spawnP(Math.random()*U.c*8,U.c*3.5,2,{col:'#ff9ec1',shape:'p',sp:20,vy:60,g:20,life:1.2,size:3,a:1.57,spread:.6});},i*90/U.speed);const [x,y]=px(e.x1,e.y1);ringFx(x,y,U.c*1.1,'#ff9ec1',520,true);};
 VF.hoisinh=e=>{const [x,y]=px(e.x1,e.y1);for(let i=0;i<5;i++)setTimeout(()=>spawnP(Math.random()*U.c*8,U.c*3.5,3,{col:'#fff3c4',shape:'p',sp:25,vy:50,g:25,life:1.3,size:3.5,a:1.57,spread:.6}),i*90/U.speed);ringFx(x,y,U.c*1.4,'#ffd36a',620,true);shape('hoa',x,y-U.c*.4,U.c*1.1,'#fff3c4',[{opacity:0,transform:'scale(.4)'},{opacity:.9,transform:'scale(1)',offset:.4},{opacity:0,transform:'scale(1.3) translateY(-20px)'}],800,1.25);};
