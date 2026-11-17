@@ -522,6 +522,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-lelai-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
 .tiltwrap.tilt .fx-lelai-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-lelai-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(245,158,11,1)) brightness(1.2)}
+.fx-maithucloan-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 16px rgba(234,179,8,.65))}
+.fx-maithucloan-shield{position:absolute;pointer-events:none;transform:translate(-50%,-80%);z-index:45}
+.tiltwrap.tilt .fx-maithucloan-shield{transform:translate(-50%,-80%) scaleY(1.32);transform-origin:50% 100%}
+.fx-maithucloan-shield img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(234,179,8,.9)) drop-shadow(0 0 35px rgba(202,138,4,.6)) brightness(1.15)}
+.fx-maithucloan-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
+.tiltwrap.tilt .fx-maithucloan-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-maithucloan-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(234,179,8,1)) brightness(1.2)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:900;transform:translate(-50%,-50%);text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 2px 4px #000;z-index:100}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -917,7 +924,7 @@ function heroBonds(hid){return BONDS.filter(b=>b.heroes.includes(hid));}
 const HEROES_RAW=[
 ['chudongtu','Chử Đồng Tử','🎣','hongbang','thuatsi',1,{nm:'Ngư Võng Đoạt Nộ',t:'none',v:'luoi',mana:50,steal:{n:2,pct:[.35,.5,.6],slow:5,gain:.5}}],
 ['caolo','Cao Lỗ','🏹','aulac','cungno',1,{nm:'Thần Nỏ Liên Châu',t:'volley',v:'ten',k:[3,4,5],d:85,mana:60}],
-['maithucloan','Mai Thúc Loan','🛡️','khoinghia','hove',1,{nm:'Hắc Đế Hộ Thân',t:'none',v:'khien',sh:260,al:'self',dur:5,mana:50}],
+['maithucloan','Mai Thúc Loan','🛡️','khoinghia','hove',1,{nm:'Hắc Đế Hộ Thân',t:'none',v:'hacde',sh:260,al:'self',dur:5,mana:50}],
 ['yetkieu','Yết Kiêu','🐟','lytran','dukich',1,{nm:'Kình Ngư Phá Hạm',t:'none',v:'lan',mana:50,hide:1.5,emerge:{d:260,shred:[15,25,40],shredT:4}}],
 ['lelai','Lê Lai','🥋','lamson','hove',1,{nm:'Hoán Bào Cứu Chúa',t:'none',v:'hoanbao',mana:60,taunt:{r:2.5,t:3},tarm:[40,70,110],sh:150,al:'self',dur:6}],
 ['nguyenxi','Nguyễn Xí','🎯','lamson','cungno',1,{nm:'Xích Huyết Xuyên Giáp',t:'nuke',v:'xichhuyet',d:280,mana:70}],
@@ -1674,7 +1681,7 @@ const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
 const ARROW_IMG={};
 for(const k of ['arrow-gold','arrow-wood','arrow-wood-bright']){const im=new Image();im.src=FXIMG_BASE+k+'.webp';ARROW_IMG[k]=im;}
-['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst','le-lai-array','le-lai-robe','le-lai-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
+['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst','le-lai-array','le-lai-robe','le-lai-burst','mai-thuc-loan-array','mai-thuc-loan-shield','mai-thuc-loan-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
 function arrowByCost(c){return ARROW_IMG[c<=1?'arrow-wood':c<=3?'arrow-wood-bright':'arrow-gold'];}
 function ico(h){return HIMG[h]?'<img class="himg" draggable="false" src="'+HIMG[h]+'" alt="" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+(HERO[h]?HERO[h].ico:'')+'\'))">':h==='datuong'?'<img class="himg" draggable="false" src="'+DATUONG_IMG+'" alt="Dã Tượng" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode)this.parentNode.appendChild(document.createTextNode(\'🐘\'))">':HERO[h]?HERO[h].ico:'';}
 const arena=$('#arena'),cellsEl=$('#cells'),benchEl=$('#benchL'),benchEl2=$('#benchR'),blEl=$('#bl'),ulEl=$('#ul'),zlEl=$('#zl'),fxl=$('#fxl'),cv=$('#fxc'),ctx=cv.getContext('2d');
@@ -1808,6 +1815,99 @@ const VF={};
 VF.burst=e=>{const [x,y]=px(e.cx,e.cy);ringFx(x,y,e.r*U.c,e.col,520,true);spawnP(x,y,10*SC(e.s),{col:e.col,sp:90,g:50,life:.6});};
 VF.ten=e=>{const a=px(e.x1,e.y1),b=px(e.tx,e.ty);proj(a,b,.2,e.col,3+e.s*.6,()=>{ringFx(b[0],b[1],U.c*.4,e.col,300);spawnP(b[0],b[1],6*SC(e.s),{col:e.col,sp:80,life:.4});});};
 VF.khien=e=>{const [x,y]=px(e.x1,e.y1);ringFx(x,y,U.c*.7*SC(e.s),'#8fc7ff',500,true);spawnP(x,y,8,{col:'#bfe3ff',sp:50,g:-30,life:.6,size:2.5});};
+VF.hacde=e=>{
+  const [x,y]=px(e.x1!=null?e.x1:(e.cx!=null?e.cx:0),e.y1!=null?e.y1:(e.cy!=null?e.cy:0));
+  const k=SC(e.s);
+  const spd=U.speed||1;
+  
+  // Banner hiệu triệu thần uy Hắc Đế Hộ Thân (tướng 1 sao thu nhỏ U.c*0.21, z-index 100 lớp trên cùng)
+  textFx('HẮC ĐẾ HỘ THÂN!',x,y-U.c*1.0,'#facc15',Math.round(U.c*.21),[
+    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
+    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
+    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
+    {opacity:0,transform:'translate(-50%,-15px) scale(1.05)'}
+  ],Math.round(1300/spd),100);
+  
+  // Rung chấn và âm vang hộ thể
+  shake(6, 350);
+  hitstop(50);
+  ringFx(x,y,U.c*1.25*k,'#eab308',450,true);
+  ringFx(x,y,U.c*1.8*k,'#38bdf8',520,false);
+  
+  dustAt(x,y,12);
+  spawnP(x,y,14*k,{col:'#facc15',sp:85,g:-25,life:.65,size:2.8});
+  spawnP(x,y,10*k,{col:'#38bdf8',sp:70,g:15,life:.6,size:2.4});
+  
+  if(FX.big){
+    // 1. LAYER 1: Pháp Trận Hắc Đế Sa Nam (#zl z-index:1 tuyệt đối dưới chân tướng & quái)
+    const aW=Math.round(U.c*1.55*Math.min(1.15,k)), aH=Math.round(aW*(474/512));
+    const aEl=document.createElement('div');
+    aEl.className='fxs fx-maithucloan-array';
+    aEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
+    const aSrc=FX_BASE+'mai-thuc-loan-array.webp';
+    aEl.style.backgroundImage='url("'+aSrc+'")';
+    const _imA=new Image();
+    _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/mai-thuc-loan-array.webp")';};
+    _imA.src=aSrc;
+    zlEl.appendChild(aEl);
+    
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(.35) rotate(-15deg)'},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.15},
+      {opacity:0.9,transform:'translate(-50%,-50%) scale(1) rotate(15deg)',offset:.8},
+      {opacity:0,transform:'translate(-50%,-50%) scale(.95) rotate(25deg)'}
+    ],{duration:Math.round(2300/spd),fill:'forwards'}).onfinish=()=>aEl.remove();
+    
+    // 2. LAYER 2: Hắc Đế Thần Thuẫn Vạn An giáng thế hộ vệ phía trước (fxl z-index:45)
+    const sW=Math.round(U.c*1.55*Math.min(1.15,k)), sH=sW;
+    const sEl=document.createElement('div');
+    sEl.className='fxs fx-maithucloan-shield';
+    sEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+sW+'px;height:'+sH+'px;z-index:45;';
+    const sImg=document.createElement('img');
+    const sSrc=FX_BASE+'mai-thuc-loan-shield.webp';
+    sImg.onerror=()=>{sImg.src='./img/fx/mai-thuc-loan-shield.webp';};
+    sImg.src=sSrc;sImg.draggable=false;
+    sEl.appendChild(sImg);
+    fxl.appendChild(sEl);
+    
+    sEl.animate([
+      {opacity:0.3,transform:'translate(-50%,-130%) scale(.6)'},
+      {opacity:1,transform:'translate(-50%,-80%) scale(1.15)',offset:.22},
+      {opacity:1,transform:'translate(-50%,-78%) scale(1.0)',offset:.65},
+      {opacity:0,transform:'translate(-50%,-82%) scale(1.04)'}
+    ],{duration:Math.round(1350/spd),easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>sEl.remove();
+    
+    // Contact frame hit-stop: Khi Thần Thuẫn tiếp đất và bộc phát hắc lôi hộ thể (~160ms)
+    setTimeout(()=>{
+      // 2 chữ thần Hán-Nôm: 黑 (Hắc) — 帝 (Đế) bộc phát từ vị trí tướng
+      const ch=['黑','帝'];
+      ch.forEach((c,i)=>setTimeout(()=>textFx(c,x+(i-.5)*U.c*.5,y-U.c*.85,'#facc15',Math.round(U.c*.45),[
+        {opacity:0,transform:'translate(-50%,-15%) scale(.6)'},
+        {opacity:1,transform:'translate(-50%,-70%) scale(1.2)',offset:.35},
+        {opacity:0,transform:'translate(-50%,-115%) scale(1.25)'}
+      ],Math.round(900/spd),100),i*90/spd));
+      
+      // 3. LAYER 3: Hắc Lôi Kim Bộc & Sóng Khiên Hộ Mệnh Bùng Nổ (fxl z-index:46, screen)
+      const bW=Math.round(U.c*1.55*Math.min(1.15,k)), bH=bW;
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-maithucloan-burst';
+      bEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+bW+'px;height:'+bH+'px;z-index:46;mix-blend-mode:screen;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'mai-thuc-loan-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/mai-thuc-loan-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+      
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(.35)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.1)',offset:.22},
+        {opacity:0.85,transform:'translate(-50%,-50%) scale(1.16)',offset:.65},
+        {opacity:0,transform:'translate(-50%,-50%) scale(1.22)'}
+      ],{duration:Math.round(1150/spd),easing:'ease-out',fill:'forwards'}).onfinish=()=>bEl.remove();
+    },Math.round(160/spd));
+  }
+};
 VF.hoanbao=VF.gam=e=>{
   const [x,y]=px(e.x1!=null?e.x1:(e.cx!=null?e.cx:0),e.y1!=null?e.y1:(e.cy!=null?e.cy:0));
   const k=SC(e.s);
@@ -4231,7 +4331,7 @@ function startDemo(heroId){
   let allies=[hero];
   if(heroId==='aucơ'){hero.x=1;hero.y=3;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,3,3,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
-  if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'||heroId==='datuong'||heroId==='lelai'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
+  if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'||heroId==='datuong'||heroId==='lelai'||heroId==='maithucloan'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   if(heroId==='anduongvuong'){foes.forEach(f=>{f.ad=120;f.as=0.9;});}
   if(heroId==='thuytinh'||heroId==='lythuongkiet'||heroId==='nguyenxi'||heroId==='buithixuan'||heroId==='nguyentrai'||heroId==='yetkieu'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
   if(heroId==='yetkieu'){foes[1].hp=1500;}
