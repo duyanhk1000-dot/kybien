@@ -119,7 +119,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .arena:not(.battle) .bl{display:none}
 .arena.battle .cells{visibility:hidden}
 #zl,#ul,#fxl,#fxc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-#zl{z-index:0}#ul{z-index:2}#fxc{z-index:6}#fxl{z-index:7}
+#zl{z-index:1}#ul{z-index:10}#fxc{z-index:20}#fxl{z-index:30}
 /* tokens: kích thước theo số sao */
 .tok{position:relative;width:var(--tw,82%);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;line-height:1;transition:width .2s;
   background:radial-gradient(circle at 35% 28%,#6a4e36,#2a1c12 72%);
@@ -480,7 +480,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-lythuongkiet-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:44}
 .tiltwrap.tilt .fx-lythuongkiet-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-lythuongkiet-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 25px rgba(251,191,36,.95)) drop-shadow(0 0 50px rgba(56,189,248,.85)) brightness(1.25)}
-.fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:800;transform:translate(-50%,-50%);text-shadow:0 0 8px currentColor,0 1px 2px #000}
+.fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:900;transform:translate(-50%,-50%);text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 2px 4px #000;z-index:100}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
 @keyframes telp{to{opacity:.4}}
@@ -1711,10 +1711,11 @@ function shape(name,x,y,size,col,kf,dur,ratio){
   d.innerHTML='<div class="in">'+SV[name]+'</div>';fxl.appendChild(d);
   d.firstChild.animate(kf,{duration:dur/U.speed,easing:'ease-out',fill:'forwards'}).onfinish=()=>d.remove();
 }
-function textFx(txt,x,y,col,size,kf,dur){
+function textFx(txt,x,y,col,size,kf,dur,zIdx){
   if(!FX.big)return;
   const d=document.createElement('div');d.className='fxt';d.textContent=txt;
-  d.style.cssText='left:'+x+'px;top:'+y+'px;color:'+col+';font-size:'+size+'px';fxl.appendChild(d);
+  d.style.cssText='left:'+x+'px;top:'+y+'px;color:'+col+';font-size:'+size+'px;z-index:'+(zIdx||100)+';';
+  fxl.appendChild(d);
   d.animate(kf,{duration:dur/U.speed,easing:'ease-out',fill:'forwards'}).onfinish=()=>d.remove();
 }
 function shake(p,d){
@@ -2167,22 +2168,22 @@ VF.chu=e=>{
   hitstop(75);
   
   if(FX.big){
-    // 1. LAYER 1: Pháp Trận Sông Như Nguyệt & Thiên Thư Đồ (nằm ở #zl z-index:0 - dưới lớp tướng và quái)
-    const aW=Math.round(U.c*2.1*Math.min(1.2,k)), aH=Math.round(aW*(308/512));
+    // 1. LAYER 1: Pháp Trận Sông Như Nguyệt & Thiên Thư Đồ (nằm ở #zl z-index:1 dưới #ul z-index:10 - tuyệt đối dưới tướng & quái)
+    const aW=Math.round(U.c*2.0*Math.min(1.2,k)), aH=Math.round(aW*(308/512));
     const aEl=document.createElement('div');
     aEl.className='fxs fx-lythuongkiet-array';
-    aEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+aW+'px;height:'+aH+'px;z-index:0;';
+    aEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
     const aSrc=FX_BASE+'ly-thuong-kiet-array.webp';
     aEl.style.backgroundImage='url("'+aSrc+'")';
     const _imA=new Image();
     _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/ly-thuong-kiet-array.webp")';};
     _imA.src=aSrc;
-    (zlEl||blEl||fxl).appendChild(aEl);
+    zlEl.appendChild(aEl);
     
     aEl.animate([
       {opacity:0,transform:'translate(-50%,-50%) scale(.4) rotate(-10deg)'},
-      {opacity:1,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.15},
-      {opacity:1,transform:'translate(-50%,-50%) scale(1) rotate(4deg)',offset:.8},
+      {opacity:0.9,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.15},
+      {opacity:0.88,transform:'translate(-50%,-50%) scale(1) rotate(4deg)',offset:.8},
       {opacity:0,transform:'translate(-50%,-50%) scale(.95) rotate(8deg)'}
     ],{duration:dur,fill:'forwards'}).onfinish=()=>aEl.remove();
     
@@ -2206,19 +2207,19 @@ VF.chu=e=>{
       {opacity:0,transform:'translate(-50%,-85%) scale(.9)'}
     ],{duration:Math.round(2000/spd),fill:'forwards'}).onfinish=()=>sEl.remove();
     
-    // 4 chữ vàng bay lên từ cuộn chiếu thần: 南 國 山 河
+    // 4 chữ vàng bay lên từ cuộn chiếu thần: 南 國 山 河 (đưa lên lớp trên cùng z-index: 100 đè lên toàn bộ hình ảnh)
     const ch=['南','國','山','河'];
-    ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-1.5)*U.c*.58,ty-U.c*.75,'#fbbf24',U.c*.65,[
+    ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-1.5)*U.c*.58,ty-U.c*.75,'#fbbf24',U.c*.68,[
       {opacity:0,transform:'translate(-50%,-20%) scale(.5)'},
-      {opacity:1,transform:'translate(-50%,-80%) scale(1.2)',offset:.35},
-      {opacity:0,transform:'translate(-50%,-130%) scale(1.3)'}
-    ],Math.round(1100/spd)),i*110/spd));
+      {opacity:1,transform:'translate(-50%,-80%) scale(1.25)',offset:.35},
+      {opacity:0,transform:'translate(-50%,-130%) scale(1.35)'}
+    ],Math.round(1100/spd),100),i*110/spd));
     
-    // 3. LAYER 3: Hào Khí Thần Long Bộc Phá & Sóng Chấn Động Làm Choáng (#fxl, z-index: 44)
-    const bW=Math.round(U.c*2.5*Math.min(1.2,k)), bH=Math.round(bW*(476/479));
+    // 3. LAYER 3: Hào Khí Thần Long Bộc Phá & Sóng Chấn Động Làm Choáng (#fxl, z-index: 44, độ trong suốt nhẹ để nhìn rõ quái)
+    const bW=Math.round(U.c*2.2*Math.min(1.2,k)), bH=Math.round(bW*(476/479));
     const bEl=document.createElement('div');
     bEl.className='fxs fx-lythuongkiet-burst';
-    bEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+bW+'px;height:'+bH+'px;z-index:44;';
+    bEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+bW+'px;height:'+bH+'px;z-index:44;mix-blend-mode:screen;';
     const bImg=document.createElement('img');
     const bSrc=FX_BASE+'ly-thuong-kiet-burst.webp';
     bImg.onerror=()=>{bImg.src='./img/fx/ly-thuong-kiet-burst.webp';};
@@ -2253,13 +2254,13 @@ VF.khiendong=e=>{
   const spd=U.speed||1;
   const dur=Math.round(6000/spd);
   
-  // Banner hiệu triệu thần uy Loa Thành
-  textFx('LOA THÀNH THIẾT BÍCH!',x,y-U.c*1.1,'#f59e0b',U.c*.42,[
+  // Banner hiệu triệu thần uy Loa Thành (thu nhỏ chữ U.c*0.28, z-index 100 lớp trên cùng)
+  textFx('LOA THÀNH THIẾT BÍCH!',x,y-U.c*1.1,'#fbbf24',Math.round(U.c*.28),[
     {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.15)',offset:.25},
+    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
     {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
     {opacity:0,transform:'translate(-50%,-18px) scale(1.05)'}
-  ],Math.round(1400/spd));
+  ],Math.round(1400/spd),100);
   
   // Rung chấn và âm vang địa chấn khi thành ốc dựng lên
   shake(7, 450);
@@ -2269,24 +2270,25 @@ VF.khiendong=e=>{
   }
   
   if(FX.big){
-    // 1. LAYER 1: Pháp Trận Cổ Loa Xoắn Ốc (nằm ở #zl z-index:0 - dưới lớp tướng và quái)
-    const aW=Math.round(U.c*2.0*Math.min(1.2,k)), aH=Math.round(aW*(425/512));
+    // 1. LAYER 1: Pháp Trận Cổ Loa Xoắn Ốc (giảm còn 80% ~ 1.6 ô, hiển thị 3s, nằm ở #zl dưới chân tướng & quái)
+    const aW=Math.round(U.c*1.6*Math.min(1.2,k)), aH=Math.round(aW*(425/512));
     const aEl=document.createElement('div');
     aEl.className='fxs fx-anduongvuong-array';
-    aEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+aW+'px;height:'+aH+'px;z-index:0;';
+    aEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
     const aSrc=FX_BASE+'an-duong-vuong-array.webp';
     aEl.style.backgroundImage='url("'+aSrc+'")';
     const _imA=new Image();
     _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/an-duong-vuong-array.webp")';};
     _imA.src=aSrc;
-    (zlEl||blEl||fxl).appendChild(aEl);
+    zlEl.appendChild(aEl);
     
+    const aDur=Math.round(3000/spd);
     aEl.animate([
       {opacity:0,transform:'translate(-50%,-50%) scale(.35) rotate(-20deg)'},
       {opacity:1,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.15},
       {opacity:1,transform:'translate(-50%,-50%) scale(1) rotate(5deg)',offset:.85},
       {opacity:0,transform:'translate(-50%,-50%) scale(.95) rotate(10deg)'}
-    ],{duration:dur,fill:'forwards'}).onfinish=()=>aEl.remove();
+    ],{duration:aDur,fill:'forwards'}).onfinish=()=>aEl.remove();
     
     // 2. LAYER 2: Tường Thành Cổ Loa Thiết Bích lơ lửng bao quanh tướng (#fxl, z-index: 43)
     const fW=Math.round(U.c*2.5*k), fH=Math.round(fW*(453/480));
@@ -3775,12 +3777,6 @@ function events(B){
         }
         shake(11, 550);
         hitstop(75);
-        textFx('BỘC PHÁ THIẾT BÍCH!',p[0],p[1]-U.c*1.1,'#fbbf24',U.c*.42,[
-          {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-          {opacity:1,transform:'translate(-50%,0) scale(1.2)',offset:.25},
-          {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-          {opacity:0,transform:'translate(-50%,-20px) scale(1.08)'}
-        ],Math.round(1200/(U.speed||1)));
         
         const bStar=(u&&u.star)||3;
         const bk=SC(bStar);
