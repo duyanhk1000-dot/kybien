@@ -508,6 +508,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-datuong-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
 .tiltwrap.tilt .fx-datuong-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-datuong-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(217,119,6,.95)) drop-shadow(0 0 45px rgba(245,158,11,.85)) brightness(1.25)}
+.fx-yetkieu-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;z-index:1;filter:drop-shadow(0 0 14px rgba(6,182,212,.85)) drop-shadow(0 0 28px rgba(14,165,233,.6))}
+.fx-yetkieu-fish{position:absolute;pointer-events:none;transform:translate(-50%,-80%);z-index:45}
+.tiltwrap.tilt .fx-yetkieu-fish{transform:translate(-50%,-80%) scaleY(1.32);transform-origin:50% 100%}
+.fx-yetkieu-fish img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 20px rgba(6,182,212,.95)) drop-shadow(0 0 40px rgba(14,165,233,.8)) brightness(1.2)}
+.fx-yetkieu-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
+.tiltwrap.tilt .fx-yetkieu-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-yetkieu-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(6,182,212,.95)) drop-shadow(0 0 45px rgba(56,189,248,.85)) brightness(1.25)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:900;transform:translate(-50%,-50%);text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 2px 4px #000;z-index:100}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -1660,7 +1667,7 @@ const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
 const ARROW_IMG={};
 for(const k of ['arrow-gold','arrow-wood','arrow-wood-bright']){const im=new Image();im.src=FXIMG_BASE+k+'.webp';ARROW_IMG[k]=im;}
-['da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
+['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
 function arrowByCost(c){return ARROW_IMG[c<=1?'arrow-wood':c<=3?'arrow-wood-bright':'arrow-gold'];}
 function ico(h){return HIMG[h]?'<img class="himg" draggable="false" src="'+HIMG[h]+'" alt="" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+(HERO[h]?HERO[h].ico:'')+'\'))">':h==='datuong'?'<img class="himg" draggable="false" src="'+DATUONG_IMG+'" alt="Dã Tượng" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode)this.parentNode.appendChild(document.createTextNode(\'🐘\'))">':HERO[h]?HERO[h].ico:'';}
 const arena=$('#arena'),cellsEl=$('#cells'),benchEl=$('#benchL'),benchEl2=$('#benchR'),blEl=$('#bl'),ulEl=$('#ul'),zlEl=$('#zl'),fxl=$('#fxl'),cv=$('#fxc'),ctx=cv.getContext('2d');
@@ -2933,8 +2940,135 @@ VF.nui=e=>{
   ],1250);
 };
 VF.ongtrong=e=>{const [x,y]=px(e.x1,e.y1);ringFx(x,y,e.r*U.c,'#d9a05b',520,true);dustAt(x,y,12);shake(4,300);};
-VF.lan=e=>{const [x,y]=px(e.x0,e.y0);for(let i=0;i<3;i++)setTimeout(()=>ringFx(x,y,U.c*(.5+i*.35),'#7fc4ff',500),i*110/U.speed);spawnP(x,y,14,{col:'#bfe3ff',sp:60,g:-60,life:.7,size:3});};
-VF.emerge=e=>{const b=px(e.tx,e.ty),a=px(e.x0,e.y0);spawnP(b[0],b[1],16*SC(e.s),{col:'#bfe3ff',sp:110,g:90,life:.6});ringFx(b[0],b[1],U.c*.9,'#7fc4ff',420,true);slashFx(a,b,'#9fd3ff',5);};
+VF.lan=e=>{
+  const [x,y]=px(e.x0,e.y0);
+  const k=SC(e.s);
+  const spd=U.speed||1;
+  // Banner hiệu triệu thần uy Kình Ngư Phá Hạm (tướng 1 sao thu nhỏ U.c*0.21, z-index 100 lớp trên cùng)
+  textFx('KÌNH NGƯ PHÁ HẠM!',x,y-U.c*1.0,'#38bdf8',Math.round(U.c*.21),[
+    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
+    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
+    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
+    {opacity:0,transform:'translate(-50%,-15px) scale(1.05)'}
+  ],Math.round(1100/spd),100);
+  
+  // Vòng sóng nước và bọt khí lan tỏa khi Yết Kiêu lặn xuống
+  ringFx(x,y,U.c*1.1*k,'#0284c7',420,true);
+  spawnP(x,y,12*k,{col:'#38bdf8',sp:70,g:-25,life:.6,size:2.6});
+  spawnP(x,y,8*k,{col:'#7dd3fc',sp:45,g:10,life:.5,size:2.2});
+  
+  if(FX.big){
+    // LAYER 1: Xoáy Nước Lặn tại vị trí xuất phát (nằm ở #zl z-index:1 dưới chân tướng)
+    const aW=Math.round(U.c*1.35*Math.min(1.15,k)), aH=Math.round(aW*(433/512));
+    const aEl=document.createElement('div');
+    aEl.className='fxs fx-yetkieu-array';
+    aEl.style.cssText='left:'+x+'px;top:'+y+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
+    const aSrc=FX_BASE+'yet-kieu-array.webp';
+    aEl.style.backgroundImage='url("'+aSrc+'")';
+    const _imA=new Image();
+    _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/yet-kieu-array.webp")';};
+    _imA.src=aSrc;
+    zlEl.appendChild(aEl);
+    
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(.3) rotate(-30deg)'},
+      {opacity:0.9,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.2},
+      {opacity:0.8,transform:'translate(-50%,-50%) scale(.95) rotate(90deg)',offset:.7},
+      {opacity:0,transform:'translate(-50%,-50%) scale(.2) rotate(180deg)'}
+    ],{duration:Math.round(1400/spd),fill:'forwards'}).onfinish=()=>aEl.remove();
+  }
+};
+VF.emerge=e=>{
+  const tx0=e.tx!=null?e.tx:(e.cx!=null?e.cx:e.x0);
+  const ty0=e.ty!=null?e.ty:(e.cy!=null?e.cy:e.y0);
+  const [tx,ty]=px(tx0,ty0);
+  const [x1,y1]=px(e.x1!=null?e.x1:tx0,e.y1!=null?e.y1:ty0);
+  const k=SC(e.s);
+  const spd=U.speed||1;
+  
+  ringFx(tx,ty,U.c*1.0,'#38bdf8',350,true);
+  slashFx([x1,y1],[tx,ty],'#38bdf8',4);
+  
+  if(FX.big){
+    // 1. LAYER 1: Vòng Xoáy Thần Hải Nứt Toác tại vị trí MỤC TIÊU (#zl z-index:1 tuyệt đối dưới chân tướng & quái)
+    const aW=Math.round(U.c*1.45*Math.min(1.15,k)), aH=Math.round(aW*(433/512));
+    const aEl=document.createElement('div');
+    aEl.className='fxs fx-yetkieu-array';
+    aEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
+    const aSrc=FX_BASE+'yet-kieu-array.webp';
+    aEl.style.backgroundImage='url("'+aSrc+'")';
+    const _imA=new Image();
+    _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/yet-kieu-array.webp")';};
+    _imA.src=aSrc;
+    zlEl.appendChild(aEl);
+    
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(.4) rotate(-20deg)'},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1.1) rotate(0deg)',offset:.15},
+      {opacity:0.9,transform:'translate(-50%,-50%) scale(1) rotate(60deg)',offset:.75},
+      {opacity:0,transform:'translate(-50%,-50%) scale(.9) rotate(120deg)'}
+    ],{duration:Math.round(2200/spd),fill:'forwards'}).onfinish=()=>aEl.remove();
+    
+    // 2. LAYER 2: Kình Ngư Thần Dũng Phóng Vút Từ Đáy Biển Cắn Xé Thuyền Địch tại vị trí MỤC TIÊU (fxl z-index:45)
+    const fW=Math.round(U.c*1.55*Math.min(1.15,k)), fH=Math.round(fW*(558/480));
+    const fEl=document.createElement('div');
+    fEl.className='fxs fx-yetkieu-fish';
+    fEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+fW+'px;height:'+fH+'px;z-index:45;';
+    const fImg=document.createElement('img');
+    const fSrc=FX_BASE+'yet-kieu-fish.webp';
+    fImg.onerror=()=>{fImg.src='./img/fx/yet-kieu-fish.webp';};
+    fImg.src=fSrc;fImg.draggable=false;
+    fEl.appendChild(fImg);
+    fxl.appendChild(fEl);
+    
+    fEl.animate([
+      {opacity:0.3,transform:'translate(-50%,-20%) scale(.6)'},
+      {opacity:1,transform:'translate(-50%,-75%) scale(1.15)',offset:.22},
+      {opacity:1,transform:'translate(-50%,-70%) scale(1.0)',offset:.65},
+      {opacity:0,transform:'translate(-50%,-80%) scale(1.05)'}
+    ],{duration:Math.round(1250/spd),easing:'cubic-bezier(.15,.9,.25,1)',fill:'forwards'}).onfinish=()=>fEl.remove();
+    
+    // Contact frame hit-stop: Khi Kình Ngư ngoi lên cắn xé mạn thuyền tại mục tiêu (~160ms)
+    setTimeout(()=>{
+      // Rung chấn và âm vang sóng thần xé hạm
+      shake(6, 320);
+      hitstop(50);
+      ringFx(tx,ty,U.c*1.3*k,'#0284c7',420,true);
+      
+      // Bọt biển cuộn trào và tia nước bộc phát
+      dustAt(tx,ty,12);
+      spawnP(tx,ty,14*k,{col:'#38bdf8',sp:95,g:25,life:.6,size:2.8});
+      spawnP(tx,ty,10*k,{col:'#7dd3fc',sp:75,g:15,life:.65,size:2.4});
+      
+      // 2 chữ thần Hán-Nôm gọn gàng: 破 (Phá) — 艦 (Hạm) bộc phát từ vị trí mục tiêu
+      const ch=['破','艦'];
+      ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-.5)*U.c*.5,ty-U.c*.85,'#38bdf8',Math.round(U.c*.45),[
+        {opacity:0,transform:'translate(-50%,-15%) scale(.6)'},
+        {opacity:1,transform:'translate(-50%,-70%) scale(1.2)',offset:.35},
+        {opacity:0,transform:'translate(-50%,-115%) scale(1.25)'}
+      ],Math.round(900/spd),100),i*90/spd));
+      
+      // 3. LAYER 3: Thủy Bộc & Vụn Gỗ Thuyền Chiến Xé Rách Bùng Nổ tại vị trí MỤC TIÊU (fxl z-index:46, screen)
+      const bW=Math.round(U.c*1.45*Math.min(1.15,k)), bH=Math.round(bW*(466/480));
+      const bEl=document.createElement('div');
+      bEl.className='fxs fx-yetkieu-burst';
+      bEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+bW+'px;height:'+bH+'px;z-index:46;mix-blend-mode:screen;';
+      const bImg=document.createElement('img');
+      const bSrc=FX_BASE+'yet-kieu-burst.webp';
+      bImg.onerror=()=>{bImg.src='./img/fx/yet-kieu-burst.webp';};
+      bImg.src=bSrc;bImg.draggable=false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+      
+      bEl.animate([
+        {opacity:0,transform:'translate(-50%,-50%) scale(.35)'},
+        {opacity:1,transform:'translate(-50%,-50%) scale(1.1)',offset:.22},
+        {opacity:0.8,transform:'translate(-50%,-50%) scale(1.15)',offset:.65},
+        {opacity:0,transform:'translate(-50%,-50%) scale(1.2)'}
+      ],{duration:Math.round(1100/spd),easing:'ease-out',fill:'forwards'}).onfinish=()=>bEl.remove();
+    },Math.round(160/spd));
+  }
+};
 VF.rong=e=>{
   const [x,y]=px(e.cx,e.cy),k=SC(e.s);
   if(e.x1!=null&&e.y1!=null){
@@ -4012,7 +4146,8 @@ function startDemo(heroId){
   if(heroId==='thuytinh'||heroId==='lythuongkiet'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
   if(heroId==='nguyenxi'){hero.x=2;hero.y=3;}
   if(heroId==='datuong'){hero.x=3;hero.y=3;const yk=mkBU({h:'yetkieu',s:1},0,3,2,{},{});yk.hp=Math.round(yk.max*.8);allies.push(yk);foes.forEach(f=>f.x=4);}
-  if(heroId==='nguyentrai'||heroId==='buithixuan'||heroId==='nguyenxi'){foes.forEach(f=>f.x=5);}
+  if(heroId==='yetkieu'){hero.x=2;hero.y=3;const dt=mkBU({h:'datuong',s:1},0,3,3,{},{});allies.push(dt);foes.forEach(f=>f.x=5);foes[1].hp=1500;}
+  if(heroId==='nguyentrai'||heroId==='buithixuan'||heroId==='nguyenxi'||heroId==='yetkieu'){foes.forEach(f=>f.x=5);}
   for(const f of foes){f.maxMana=100;f.mana=50;}
   const B=newBattle(allies.concat(foes),true);
   U.B=B;U.els={};U.zel={};
