@@ -1879,14 +1879,6 @@ VF.hacde=e=>{
     
     // Contact frame hit-stop: Khi Thần Thuẫn tiếp đất và bộc phát hắc lôi hộ thể (~160ms)
     setTimeout(()=>{
-      // 2 chữ thần Hán-Nôm: 黑 (Hắc) — 帝 (Đế) bộc phát từ vị trí tướng
-      const ch=['黑','帝'];
-      ch.forEach((c,i)=>setTimeout(()=>textFx(c,x+(i-.5)*U.c*.5,y-U.c*.85,'#facc15',Math.round(U.c*.45),[
-        {opacity:0,transform:'translate(-50%,-15%) scale(.6)'},
-        {opacity:1,transform:'translate(-50%,-70%) scale(1.2)',offset:.35},
-        {opacity:0,transform:'translate(-50%,-115%) scale(1.25)'}
-      ],Math.round(900/spd),100),i*90/spd));
-      
       // 3. LAYER 3: Hắc Lôi Kim Bộc & Sóng Khiên Hộ Mệnh Bùng Nổ (fxl z-index:46, screen)
       const bW=Math.round(U.c*1.55*Math.min(1.15,k)), bH=bW;
       const bEl=document.createElement('div');
@@ -2531,14 +2523,6 @@ VF.but=e=>{
       {opacity:0,transform:'translate(-50%,-85%) scale(.9)'}
     ],{duration:Math.round(2200/spd),fill:'forwards'}).onfinish=()=>sEl.remove();
     
-    // 4 chữ vàng ngọc bay lên từ đầu ngọn thần bút: 仁 (Nhân), 義 (Nghĩa), 謀 (Mưu), 策 (Sách)
-    const ch=['仁','義','謀','策'];
-    ch.forEach((c,i)=>setTimeout(()=>textFx(c,x+(i-1.5)*U.c*.55,y-U.c*.75,'#34d399',Math.round(U.c*.62),[
-      {opacity:0,transform:'translate(-50%,-20%) scale(.5)'},
-      {opacity:1,transform:'translate(-50%,-80%) scale(1.25)',offset:.35},
-      {opacity:0,transform:'translate(-50%,-130%) scale(1.35)'}
-    ],Math.round(1100/spd),100),i*110/spd));
-    
     // 3. LAYER 3: Hào Quang Tâm Công & Mặc Khí Bộc Phá (#fxl, z-index: 44, mix-blend-mode: screen)
     setTimeout(()=>{
       const bW=Math.round(U.c*2.3*Math.min(1.2,k)), bH=Math.round(bW*(487/480));
@@ -2633,14 +2617,6 @@ VF.phitien=e=>{
         {opacity:0,transform:'translate(-50%,-50%) scale(1.05)'}
       ],{duration:Math.round(1500/spd),easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>arEl.remove();
       
-      // 4 chữ vàng đỏ Tây Sơn bộc phát: 西 (Tây), 山 (Sơn), 神 (Thần), 箭 (Tiễn)
-      const ch=['西','山','神','箭'];
-      ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-1.5)*U.c*.55,ty-U.c*.8,'#ef4444',Math.round(U.c*.62),[
-        {opacity:0,transform:'translate(-50%,-20%) scale(.5)'},
-        {opacity:1,transform:'translate(-50%,-80%) scale(1.25)',offset:.35},
-        {opacity:0,transform:'translate(-50%,-130%) scale(1.35)'}
-      ],Math.round(1100/spd),100),i*110/spd));
-      
       // 3. LAYER 3: Hỏa Lôi Phượng Hoàng Bộc Phá & Sóng Xung Kích (#fxl, z-index: 44, mix-blend-mode: screen)
       const bW=Math.round(U.c*2.5*Math.min(1.2,k)), bH=Math.round(bW*(453/480));
       const bEl=document.createElement('div');
@@ -2734,14 +2710,6 @@ VF.xichhuyet=e=>{
         {opacity:1,transform:'translate(-50%,-50%) scale(1)',offset:.65},
         {opacity:0,transform:'translate(-50%,-50%) scale(1.02)'}
       ],{duration:Math.round(1100/spd),easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>arEl.remove();
-      
-      // Chữ thần Hán-Nôm gọn gàng: 2 chữ Phá Giáp 破 甲 (cỡ chữ U.c*0.45 nhỏ gọn thanh thoát hơn cỡ 0.65 của tướng lớn)
-      const ch=['破','甲'];
-      ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-.5)*U.c*.5,ty-U.c*.65,'#ef4444',Math.round(U.c*.45),[
-        {opacity:0,transform:'translate(-50%,-15%) scale(.6)'},
-        {opacity:1,transform:'translate(-50%,-70%) scale(1.2)',offset:.35},
-        {opacity:0,transform:'translate(-50%,-115%) scale(1.25)'}
-      ],Math.round(900/spd),100),i*90/spd));
       
       // 3. LAYER 3: Huyết Khí Phá Giáp Bộc Phát (tướng 1 sao: nổ cục bộ 1.45 ô, vỡ mảnh giáp)
       const bW=Math.round(U.c*1.45*Math.min(1.15,k)), bH=Math.round(bW*(472/480));
@@ -2841,14 +2809,6 @@ VF.cutuong=e=>{
       dustAt(tx,ty,14);
       spawnP(tx,ty,14*k,{col:'#d97706',sp:95,g:35,life:.6,size:2.8});
       spawnP(tx,ty,10*k,{col:'#f59e0b',sp:75,g:20,life:.65,size:2.4});
-      
-      // 2 chữ thần Hán-Nôm gọn gàng: 踏 (Đạp) — 陣 (Trận) bộc phát từ vị trí mục tiêu
-      const ch=['踏','陣'];
-      ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-.5)*U.c*.5,ty-U.c*.85,'#f59e0b',Math.round(U.c*.45),[
-        {opacity:0,transform:'translate(-50%,-15%) scale(.6)'},
-        {opacity:1,transform:'translate(-50%,-70%) scale(1.2)',offset:.35},
-        {opacity:0,transform:'translate(-50%,-115%) scale(1.25)'}
-      ],Math.round(900/spd),100),i*90/spd));
       
       // 3. LAYER 3: Địa Chấn Thạch Bộc & Sóng Làm Choáng tại vị trí MỤC TIÊU
       const bW=Math.round(U.c*1.55*Math.min(1.15,k)), bH=Math.round(bW*(408/480));
@@ -3231,14 +3191,6 @@ VF.emerge=e=>{
       dustAt(tx,ty,12);
       spawnP(tx,ty,14*k,{col:'#38bdf8',sp:95,g:25,life:.6,size:2.8});
       spawnP(tx,ty,10*k,{col:'#7dd3fc',sp:75,g:15,life:.65,size:2.4});
-      
-      // 2 chữ thần Hán-Nôm gọn gàng: 破 (Phá) — 艦 (Hạm) bộc phát từ vị trí mục tiêu
-      const ch=['破','艦'];
-      ch.forEach((c,i)=>setTimeout(()=>textFx(c,tx+(i-.5)*U.c*.5,ty-U.c*.85,'#38bdf8',Math.round(U.c*.45),[
-        {opacity:0,transform:'translate(-50%,-15%) scale(.6)'},
-        {opacity:1,transform:'translate(-50%,-70%) scale(1.2)',offset:.35},
-        {opacity:0,transform:'translate(-50%,-115%) scale(1.25)'}
-      ],Math.round(900/spd),100),i*90/spd));
       
       // 3. LAYER 3: Thủy Bộc & Vụn Gỗ Thuyền Chiến Xé Rách Bùng Nổ tại vị trí MỤC TIÊU (fxl z-index:46, screen)
       const bW=Math.round(U.c*1.45*Math.min(1.15,k)), bH=Math.round(bW*(466/480));
