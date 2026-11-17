@@ -4138,16 +4138,11 @@ function startDemo(heroId){
   const hero=mkBU({h:heroId,s:3},0,2,3,{},{});hero.mana=hero.maxMana;hero.max*=3;hero.hp=hero.max;
   let allies=[hero];
   if(heroId==='aucơ'){hero.x=1;hero.y=3;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,3,3,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
-  if(heroId==='nguyentrai'){hero.x=1;hero.y=3;const leloi=mkBU({h:'leloi',s:2},0,3,3,{},{});leloi.hp=Math.round(leloi.max*.8);allies.push(leloi);}
-  if(heroId==='buithixuan'){hero.x=1;hero.y=3;const tqd=mkBU({h:'tranquangdieu',s:2},0,3,3,{},{});tqd.hp=Math.round(tqd.max*.8);allies.push(tqd);}
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
-  if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
+  if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'||heroId==='datuong'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   if(heroId==='anduongvuong'){foes.forEach(f=>{f.ad=120;f.as=0.9;});}
-  if(heroId==='thuytinh'||heroId==='lythuongkiet'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
-  if(heroId==='nguyenxi'){hero.x=2;hero.y=3;}
-  if(heroId==='datuong'){hero.x=3;hero.y=3;const yk=mkBU({h:'yetkieu',s:1},0,3,2,{},{});yk.hp=Math.round(yk.max*.8);allies.push(yk);foes.forEach(f=>f.x=4);}
-  if(heroId==='yetkieu'){hero.x=2;hero.y=3;const dt=mkBU({h:'datuong',s:1},0,3,3,{},{});allies.push(dt);foes.forEach(f=>f.x=5);foes[1].hp=1500;}
-  if(heroId==='nguyentrai'||heroId==='buithixuan'||heroId==='nguyenxi'||heroId==='yetkieu'){foes.forEach(f=>f.x=5);}
+  if(heroId==='thuytinh'||heroId==='lythuongkiet'||heroId==='nguyenxi'||heroId==='buithixuan'||heroId==='nguyentrai'||heroId==='yetkieu'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
+  if(heroId==='yetkieu'){foes[1].hp=1500;}
   for(const f of foes){f.maxMana=100;f.mana=50;}
   const B=newBattle(allies.concat(foes),true);
   U.B=B;U.els={};U.zel={};
