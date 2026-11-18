@@ -1264,7 +1264,7 @@ function castSkill(B,u){
       for(const f of foesAll)if(Math.hypot(f.x-c.x,f.y-c.y)<=sk.r+.01)hits.push(f);
     }else if(sk.t==='volley'){
       const n=sv(sk.k,s);
-      for(let i=0;i<n&&foes.length;i++){const f=pickOf(foes);hits.push(f);em(B,{k:'shot',id:u.id,tid:f.id,col:u.col});}
+      for(let i=0;i<n&&foes.length;i++){const f=pickOf(foes);hits.push(f);if(sk.v==='ten')em(B,{k:'shot',id:u.id,tid:f.id,col:u.col});}
     }
     const type=sk.ph?'phys':'mag';
     for(const f of hits){
