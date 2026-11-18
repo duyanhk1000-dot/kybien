@@ -536,6 +536,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-caolo-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
 .tiltwrap.tilt .fx-caolo-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-caolo-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(245,158,11,1)) drop-shadow(0 0 35px rgba(16,185,129,.9)) brightness(1.25)}
+.fx-chudongtu-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 16px rgba(6,182,212,.75))}
+.fx-chudongtu-net{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:45}
+.tiltwrap.tilt .fx-chudongtu-net{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-chudongtu-net img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 16px rgba(6,182,212,.95)) drop-shadow(0 0 28px rgba(245,158,11,.85)) brightness(1.2)}
+.fx-chudongtu-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
+.tiltwrap.tilt .fx-chudongtu-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-chudongtu-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 22px rgba(6,182,212,1)) drop-shadow(0 0 35px rgba(168,85,247,.9)) brightness(1.25)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:900;transform:translate(-50%,-50%);text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 2px 4px #000;z-index:100}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -929,7 +936,7 @@ function heroBonds(hid){return BONDS.filter(b=>b.heroes.includes(hid));}
    d,heal,sh: số = nhân SKM (1/1,7/2,8); mảng = giá trị riêng ★1/★2/★3
    v = mã hiệu ứng hình ảnh */
 const HEROES_RAW=[
-['chudongtu','Chử Đồng Tử','🎣','hongbang','thuatsi',1,{nm:'Ngư Võng Đoạt Nộ',t:'none',v:'luoi',mana:50,steal:{n:2,pct:[.35,.5,.6],slow:5,gain:.5}}],
+['chudongtu','Chử Đồng Tử','🎣','hongbang','thuatsi',1,{nm:'Ngư Võng Đoạt Nộ',t:'none',v:'luoi',mana:50,steal:{n:2,pct:.65,dur:4,dmgRed:[.25,.35,.5]}}],
 ['caolo','Cao Lỗ','🏹','aulac','cungno',1,{nm:'Thần Nỏ Liên Châu',t:'volley',v:'lienchau',k:[3,4,5],d:85,mana:60}],
 ['maithucloan','Mai Thúc Loan','🛡️','khoinghia','hove',1,{nm:'Hắc Đế Hộ Thân',t:'none',v:'hacde',sh:260,al:'self',dur:5,mana:50}],
 ['yetkieu','Yết Kiêu','🐟','lytran','dukich',1,{nm:'Kình Ngư Phá Hạm',t:'none',v:'lan',mana:50,hide:1.5,emerge:{d:260,shred:[15,25,40],shredT:4}}],
@@ -967,7 +974,7 @@ const ALN={self:'bản thân',all:'cả đội',low:'đồng minh yếu nhất',
 function skillText(sk,star){
   const f=v=>Math.round(sc(v,star)),g=v=>sv(v,star),a=[],who=ALN[sk.al||'self'],pc=v=>Math.round(g(v)*100);
   if(sk.hide)a.push('Lặn xuống '+sk.hide+' giây (không bị chọn làm mục tiêu), rồi nhô lên đâm kẻ địch yếu máu nhất gây '+f(sk.emerge.d)+' sát thương và giảm '+g(sk.emerge.shred)+' giáp trong '+sk.emerge.shredT+' giây');
-  if(sk.steal)a.push('Quăng lưới vào '+sk.steal.n+' kẻ địch gần nhất, cướp '+pc(sk.steal.pct)+'% nộ (boss tối đa 20%) và làm nạp nộ chậm 50% trong '+sk.steal.slow+' giây; nhận lại một nửa số nộ cướp được');
+  if(sk.steal)a.push('Quăng lưới thần vào '+sk.steal.n+' kẻ địch nhiều nộ nhất, cướp '+Math.round(sk.steal.pct*100)+'% nộ chia đều cho toàn bộ đồng minh trên sân; đồng thời làm giảm '+pc(sk.steal.dmgRed)+'% sát thương gây ra của các mục tiêu đó trong '+sk.steal.dur+' giây');
   if(sk.taunt)a.push('Gầm thét: kẻ địch trong '+sk.taunt.r+' ô buộc đánh mình '+sk.taunt.t+' giây; +'+g(sk.tarm)+' giáp trong '+sk.dur+' giây');
   if(sk.d){
     if(sk.t==='nuke')a.push('Gây '+f(sk.d)+' sát thương lên mục tiêu');
@@ -1146,6 +1153,7 @@ function dealDamage(B,src,dst,amt,type,crit,opts){
   if(!dst.alive)return;
   opts=opts||{};
   if(dst.imm>0&&!opts.pierce)return;
+  if(src&&src.dmgRed&&src.dmgRed.t>0)amt*=Math.max(0.1, 1 - src.dmgRed.pct);
   let d=type==='phys'?amt*100/(100+armorOf(dst)):amt;
   const total=d,hadSh=dst.sh>0;
   if(!opts.ignoreShield&&dst.sh>0){const ab=Math.min(dst.sh,d);dst.sh-=ab;d-=ab;}
@@ -1245,7 +1253,30 @@ function castSkill(B,u){
       if(sk.press&&!f.boss){f.press=Math.max(f.press,sv(sk.press,s));em(B,{k:'press',id:f.id});}
     }
   }
-  em(B,{k:'fx',v:sk.v||'burst',s,col:u.col,x0,y0,x1:u.x,y1:u.y,tx,ty,cx,cy,r:sk.r||1.5,hero:u.h,id:u.id});
+  let stealTargets=null;
+  if(sk.steal){
+    const S=sk.steal;let got=0;
+    const cand=foes.filter(f=>f.alive&&f.maxMana>0).sort((a,b)=>(b.mana-a.mana)||d2(u,a)-d2(u,b)).slice(0,S.n||2);
+    const redPct=sv(S.dmgRed||[.25,.35,.5],s);
+    const dur=S.dur||4;
+    stealTargets=[];
+    for(const f of cand){
+      const pct=f.boss?Math.min(S.pct||.65,.35):(S.pct||.65);
+      const amt=f.mana*pct;f.mana=Math.max(0,f.mana-amt);got+=amt;
+      f.dmgRed={pct:redPct,t:dur};
+      stealTargets.push({id:f.id,x:f.x,y:f.y});
+      em(B,{k:'steal',id:f.id,from:u.id,amt,red:redPct,dur});
+    }
+    const allies=alv(B,u.side);
+    if(allies.length&&got>0){
+      const share=got/allies.length;
+      for(const al of allies){
+        gainMana(al,share);
+        em(B,{k:'manaShare',id:al.id,from:u.id,amt:share});
+      }
+    }
+  }
+  em(B,{k:'fx',v:sk.v||'burst',s,col:u.col,x0,y0,x1:u.x,y1:u.y,tx,ty,cx,cy,r:sk.r||1.5,hero:u.h,id:u.id,targets:stealTargets,side:u.side});
   if(sk.exec){
     for(const f of hits)if(f.alive&&!f.boss&&f.hp<f.max*sk.exec){
       dealDamage(B,u,f,f.hp+1,'true',false,{ignoreShield:true,noMana:true,silent:true,pierce:true,noBurst:true});
@@ -1262,16 +1293,6 @@ function castSkill(B,u){
     addZone(B,{kind:Z.kind,x:c.x,y:c.y,r:Z.r,dur:Z.dur,dps:sc(Z.dps||0,s),d:sc(Z.d||0,s),slow:Z.slow,side:u.side,src:u,delay:Z.delay||0});
   }
   if(sk.sm)spawnSummon(B,u,sv(sk.sm,s),s);
-  if(sk.steal){
-    const S=sk.steal;let got=0;
-    const cand=foes.filter(f=>f.maxMana>0).sort((a,b)=>d2(u,a)-d2(u,b)).slice(0,S.n);
-    for(const f of cand){
-      let pct=sv(S.pct,s);if(f.boss)pct=Math.min(pct,.2);
-      const amt=f.mana*pct;f.mana=Math.max(0,f.mana-amt);got+=amt;f.mslow=Math.max(f.mslow,S.slow);
-      em(B,{k:'steal',id:f.id,from:u.id});
-    }
-    if(u.maxMana)u.mana=Math.min(u.maxMana,u.mana+got*(S.gain||0));
-  }
   if(sk.pull){
     const P=sk.pull,n=sv(P.n,s);
     const cand=foes.filter(f=>!f.boss&&!f.sm).sort((a,b)=>d2(u,b)-d2(u,a)).slice(0,n);
@@ -1361,6 +1382,7 @@ function step(B,dt){
     if(u.imm>0)u.imm-=dt;if(u.hide>0)u.hide-=dt;if(u.press>0)u.press-=dt;if(u.mslow>0)u.mslow-=dt;
     if(u.egg){u.egg.t-=dt;if(u.stun>0)u.stun-=dt;if(u.egg.t<=0)hatchEgg(B,u);continue;}
     if(u.slow){u.slow.t-=dt;if(u.slow.t<=0)u.slow=null;}
+    if(u.dmgRed){u.dmgRed.t-=dt;if(u.dmgRed.t<=0)u.dmgRed=null;}
     if(u.forced){u.forced.t-=dt;if(u.forced.t<=0)u.forced=null;}
     if(u.tarm.length){for(const a of u.tarm)a.t-=dt;u.tarm=u.tarm.filter(a=>a.t>0);}
     if(u.shT>0){u.shT-=dt;if(u.shT<=0){u.sh=0;u.burst=null;}}
@@ -1688,7 +1710,7 @@ const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
 const ARROW_IMG={};
 for(const k of ['arrow-gold','arrow-wood','arrow-wood-bright']){const im=new Image();im.src=FXIMG_BASE+k+'.webp';ARROW_IMG[k]=im;}
-['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst','le-lai-array','le-lai-robe','le-lai-burst','mai-thuc-loan-array','mai-thuc-loan-shield','mai-thuc-loan-burst','cao-lo-array','cao-lo-arrow','cao-lo-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
+['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst','le-lai-array','le-lai-robe','le-lai-burst','mai-thuc-loan-array','mai-thuc-loan-shield','mai-thuc-loan-burst','cao-lo-array','cao-lo-arrow','cao-lo-burst','chu-dong-tu-array','chu-dong-tu-net','chu-dong-tu-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
 function arrowByCost(c){return ARROW_IMG[c<=1?'arrow-wood':c<=3?'arrow-wood-bright':'arrow-gold'];}
 function ico(h){return HIMG[h]?'<img class="himg" draggable="false" src="'+HIMG[h]+'" alt="" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+(HERO[h]?HERO[h].ico:'')+'\'))">':h==='datuong'?'<img class="himg" draggable="false" src="'+DATUONG_IMG+'" alt="Dã Tượng" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode)this.parentNode.appendChild(document.createTextNode(\'🐘\'))">':HERO[h]?HERO[h].ico:'';}
 const arena=$('#arena'),cellsEl=$('#cells'),benchEl=$('#benchL'),benchEl2=$('#benchR'),blEl=$('#bl'),ulEl=$('#ul'),zlEl=$('#zl'),fxl=$('#fxl'),cv=$('#fxc'),ctx=cv.getContext('2d');
@@ -3747,7 +3769,143 @@ VF.coc=e=>{
     {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
   ],1250);
 };
-VF.luoi=e=>{const [x,y]=px(e.x1,e.y1);ringFx(x,y,U.c*.7,'#9fd3a8',360);};
+VF.luoi=e=>{
+  const [x0,y0]=px(e.x1,e.y1);
+  const k=SC(e.s);
+  const spd=U.speed||1;
+  const redPct=e.s===1?0.25:e.s===2?0.35:0.50;
+  
+  // Banner hiệu triệu tướng 1 sao: thu nhỏ chữ U.c*0.21, z-index 100
+  textFx('NGƯ VÕNG ĐOẠT NỘ!',x0,y0-U.c*.95,'#06b6d4',Math.round(U.c*.21),[
+    {opacity:0,transform:'translate(-50%,-8px) scale(.75)'},
+    {opacity:1,transform:'translate(-50%,0) scale(1.08)',offset:.25},
+    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
+    {opacity:0,transform:'translate(-50%,-14px) scale(1.02)'}
+  ],Math.round(1100/spd),100);
+  
+  // Hào quang thủy triều tụ lực tại Chử Đồng Tử
+  ringFx(x0,y0,U.c*.75*k,'#06b6d4',300,true);
+  spawnP(x0,y0,6*k,{col:'#22d3ee',sp:65,g:15,life:.35,size:2.4});
+  
+  if(FX.big){
+    // 1. LAYER 1: Pháp Trận Thủy Đầm Dạ Trạch (#zl z-index:1 dưới chân Chử Đồng Tử)
+    const aW=Math.round(U.c*1.35*Math.min(1.15,k)), aH=Math.round(aW*(420/512));
+    const aEl=document.createElement('div');
+    aEl.className='fxs fx-chudongtu-array';
+    aEl.style.cssText='left:'+x0+'px;top:'+y0+'px;width:'+aW+'px;height:'+aH+'px;z-index:1;';
+    const aSrc=FX_BASE+'chu-dong-tu-array.webp';
+    aEl.style.backgroundImage='url("'+aSrc+'")';
+    const _imA=new Image();
+    _imA.onerror=()=>{aEl.style.backgroundImage='url("./img/fx/chu-dong-tu-array.webp")';};
+    _imA.src=aSrc;
+    zlEl.appendChild(aEl);
+    
+    aEl.animate([
+      {opacity:0,transform:'translate(-50%,-50%) scale(.35) rotate(-15deg)'},
+      {opacity:0.95,transform:'translate(-50%,-50%) scale(1.05) rotate(0deg)',offset:.15},
+      {opacity:0.9,transform:'translate(-50%,-50%) scale(1) rotate(6deg)',offset:.8},
+      {opacity:0,transform:'translate(-50%,-50%) scale(.95) rotate(12deg)'}
+    ],{duration:Math.round(1800/spd),fill:'forwards'}).onfinish=()=>aEl.remove();
+  }
+  
+  // Xác định 2 mục tiêu bị quăng lưới
+  let tList = e.targets;
+  if(!tList || !tList.length){
+    const tx = e.tx != null ? e.tx : e.x1 + 3;
+    const ty = e.ty != null ? e.ty : e.y1;
+    tList = [{x: tx, y: Math.max(0, ty - 1)}, {x: tx, y: Math.min(5, ty + 1)}];
+  }
+  
+  // Quăng lưới thần vào từng mục tiêu
+  tList.forEach((tgt, idx)=>{
+    const [tx, ty] = px(tgt.x, tgt.y);
+    setTimeout(()=>{
+      // Phóng tia tơ năng lượng lam ngọc từ Chử Đồng Tử đến mục tiêu
+      proj([x0, y0], [tx, ty], 0.16/spd, '#06b6d4', 2.8*k, ()=>{
+        shake(4, 220);
+        hitstop(30);
+        
+        if(FX.big){
+          // 2. LAYER 2: Chiếc Lưới Ngư Võng Thần Thoại Chụp Xuống (#fxl z-index:45)
+          const nW=Math.round(U.c*1.3*Math.min(1.15,k)), nH=Math.round(nW*(440/512));
+          const nEl=document.createElement('div');
+          nEl.className='fxs fx-chudongtu-net';
+          nEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+nW+'px;height:'+nH+'px;z-index:45;';
+          const nImg=document.createElement('img');
+          const nSrc=FX_BASE+'chu-dong-tu-net.webp';
+          nImg.onerror=()=>{nImg.src='./img/fx/chu-dong-tu-net.webp';};
+          nImg.src=nSrc;nImg.draggable=false;
+          nEl.appendChild(nImg);
+          fxl.appendChild(nEl);
+          
+          nEl.animate([
+            {opacity:0,transform:'translate(-50%,-120%) scale(.4)'},
+            {opacity:1,transform:'translate(-50%,-50%) scale(1.08)',offset:.2},
+            {opacity:0.95,transform:'translate(-50%,-50%) scale(1)',offset:.75},
+            {opacity:0,transform:'translate(-50%,-50%) scale(.95)'}
+          ],{duration:Math.round(1800/spd),easing:'cubic-bezier(.12,.9,.2,1)',fill:'forwards'}).onfinish=()=>nEl.remove();
+          
+          // 3. LAYER 3: Vòng Bộc Phá Áp Chế Giảm Sát Thương (#fxl z-index:46, screen mode)
+          const bW=Math.round(U.c*1.35*Math.min(1.15,k)), bH=bW;
+          const bEl=document.createElement('div');
+          bEl.className='fxs fx-chudongtu-burst';
+          bEl.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+bW+'px;height:'+bH+'px;z-index:46;mix-blend-mode:screen;';
+          const bImg=document.createElement('img');
+          const bSrc=FX_BASE+'chu-dong-tu-burst.webp';
+          bImg.onerror=()=>{bImg.src='./img/fx/chu-dong-tu-burst.webp';};
+          bImg.src=bSrc;bImg.draggable=false;
+          bEl.appendChild(bImg);
+          fxl.appendChild(bEl);
+          
+          bEl.animate([
+            {opacity:0,transform:'translate(-50%,-50%) scale(.35)'},
+            {opacity:1,transform:'translate(-50%,-50%) scale(1.06)',offset:.22},
+            {opacity:0.8,transform:'translate(-50%,-50%) scale(1.1)',offset:.65},
+            {opacity:0,transform:'translate(-50%,-50%) scale(1.15)'}
+          ],{duration:Math.round(1100/spd),easing:'ease-out',fill:'forwards'}).onfinish=()=>bEl.remove();
+          
+          ringFx(tx,ty,U.c*1.1*k,'#06b6d4',340,true);
+        }
+        
+        // Chữ trạng thái debuff trên đầu kẻ địch: -65% NỘ & -% DMG
+        textFx('-65% NỘ',tx,ty-U.c*1.05,'#38bdf8',Math.round(U.c*.19),[
+          {opacity:0,transform:'translate(-50%,-6px) scale(.8)'},
+          {opacity:1,transform:'translate(-50%,0) scale(1.05)',offset:.25},
+          {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
+          {opacity:0,transform:'translate(-50%,-10px) scale(1)'}
+        ],Math.round(1100/spd),101);
+        
+        textFx('-'+Math.round(redPct*100)+'% DMG',tx,ty-U.c*.75,'#c084fc',Math.round(U.c*.20),[
+          {opacity:0,transform:'translate(-50%,-6px) scale(.8)'},
+          {opacity:1,transform:'translate(-50%,0) scale(1.05)',offset:.25},
+          {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
+          {opacity:0,transform:'translate(-50%,-10px) scale(1)'}
+        ],Math.round(1300/spd),101);
+        
+        dustAt(tx,ty,6);
+        spawnP(tx,ty,6*k,{col:'#06b6d4',sp:60,g:15,life:.4,size:2.2});
+        spawnP(tx,ty,5*k,{col:'#c084fc',sp:50,g:10,life:.4,size:2});
+        
+        // Hút nộ và phóng luồng năng lượng về các đồng minh trên sân
+        const allies = (U.B && U.B.units) ? U.B.units.filter(u=>u.alive&&u.side===e.side) : [{x:e.x1,y:e.y1}];
+        allies.forEach(al=>{
+          const [ax, ay] = px(al.x, al.y);
+          setTimeout(()=>{
+            proj([tx, ty], [ax, ay], 0.22/spd, '#38bdf8', 2.2*k, ()=>{
+              ringFx(ax, ay, U.c*.4*k, '#38bdf8', 250, true);
+              spawnP(ax, ay, 4, {col:'#06b6d4', sp:45, life:.3, size:2});
+              textFx('+NỘ', ax, ay - U.c*.6, '#38bdf8', Math.round(U.c*.17), [
+                {opacity:0, transform:'translate(-50%,0) scale(.8)'},
+                {opacity:1, transform:'translate(-50%,-6px) scale(1)', offset:.3},
+                {opacity:0, transform:'translate(-50%,-14px) scale(.9)'}
+              ], Math.round(800/spd), 90);
+            });
+          }, Math.round(120/spd));
+        });
+      });
+    }, idx * Math.round(100/spd));
+  });
+};
 VF.hich=e=>{
   const [x,y]=px(e.x1,e.y1),k=SC(e.s);
   const spd=U.speed||1;
@@ -4410,9 +4568,10 @@ function startDemo(heroId){
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
   if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'||heroId==='datuong'||heroId==='lelai'||heroId==='maithucloan'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   if(heroId==='anduongvuong'){foes.forEach(f=>{f.ad=120;f.as=0.9;});}
-  if(heroId==='thuytinh'||heroId==='lythuongkiet'||heroId==='nguyenxi'||heroId==='buithixuan'||heroId==='nguyentrai'||heroId==='yetkieu'||heroId==='caolo'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
+  if(heroId==='thuytinh'||heroId==='lythuongkiet'||heroId==='nguyenxi'||heroId==='buithixuan'||heroId==='nguyentrai'||heroId==='yetkieu'||heroId==='caolo'||heroId==='chudongtu'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
   if(heroId==='yetkieu'){foes[1].hp=1500;}
   for(const f of foes){f.maxMana=100;f.mana=50;}
+  if(heroId==='chudongtu'){foes[0].mana=80;foes[1].mana=95;foes[2].mana=20;}
   const B=newBattle(allies.concat(foes),true);
   U.B=B;U.els={};U.zel={};
   ulEl.innerHTML='';zlEl.innerHTML='';fxl.innerHTML='';PT.length=0;PJ.length=0;
