@@ -3867,21 +3867,6 @@ VF.luoi=e=>{
           ringFx(tx,ty,U.c*1.1*k,'#06b6d4',340,true);
         }
         
-        // Chữ trạng thái debuff trên đầu kẻ địch: -65% NỘ & -% DMG
-        textFx('-65% NỘ',tx,ty-U.c*1.05,'#38bdf8',Math.round(U.c*.19),[
-          {opacity:0,transform:'translate(-50%,-6px) scale(.8)'},
-          {opacity:1,transform:'translate(-50%,0) scale(1.05)',offset:.25},
-          {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-          {opacity:0,transform:'translate(-50%,-10px) scale(1)'}
-        ],Math.round(1100/spd),101);
-        
-        textFx('-'+Math.round(redPct*100)+'% DMG',tx,ty-U.c*.75,'#c084fc',Math.round(U.c*.20),[
-          {opacity:0,transform:'translate(-50%,-6px) scale(.8)'},
-          {opacity:1,transform:'translate(-50%,0) scale(1.05)',offset:.25},
-          {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-          {opacity:0,transform:'translate(-50%,-10px) scale(1)'}
-        ],Math.round(1300/spd),101);
-        
         dustAt(tx,ty,6);
         spawnP(tx,ty,6*k,{col:'#06b6d4',sp:60,g:15,life:.4,size:2.2});
         spawnP(tx,ty,5*k,{col:'#c084fc',sp:50,g:10,life:.4,size:2});
