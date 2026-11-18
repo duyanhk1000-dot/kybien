@@ -571,6 +571,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-tranquoctoan-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
 .tiltwrap.tilt .fx-tranquoctoan-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-tranquoctoan-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 24px rgba(249,115,22,1)) drop-shadow(0 0 35px rgba(251,191,36,.9)) brightness(1.25)}
+.fx-phunghung-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 16px rgba(245,158,11,.85))}
+.fx-phunghung-shield{position:absolute;pointer-events:none;z-index:45;transform-origin:50% 50%}
+.tiltwrap.tilt .fx-phunghung-shield{transform-origin:50% 50%}
+.fx-phunghung-shield img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 18px rgba(245,158,11,.95)) drop-shadow(0 0 30px rgba(251,191,36,.85)) brightness(1.2)}
+.fx-phunghung-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
+.tiltwrap.tilt .fx-phunghung-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-phunghung-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 24px rgba(245,158,11,1)) drop-shadow(0 0 35px rgba(251,191,36,.9)) brightness(1.25)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:900;transform:translate(-50%,-50%);text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 2px 4px #000;z-index:100}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -974,7 +981,7 @@ const HEROES_RAW=[
 ['tiendung','Tiên Dung','🌸','hongbang','thuatsi',2,{nm:'Liên Hoa Dũ Thương',t:'none',v:'hoa',heal:120,al:'all',mana:80}],
 ['lyongtrong','Lý Ông Trọng','🗿','aulac','hove',2,{nm:'Đồng Tượng Trấn Ải',t:'aoe',v:'ongtrong',d:120,r:1.5,cen:'self',stun:[.8,1,1.2],sh:200,al:'self',dur:5,mana:70,grow:{ad:[.25,.35,.5],arm:[30,50,80],dur:[5,6,7]}}],
 ['trungnhi','Trưng Nhị','🌺','khoinghia','dukich',2,{nm:'Tuyệt Ảnh Trảm Tướng',t:'dash',v:'chem',d:340,tg:'low',mana:60}],
-['phunghung','Phùng Hưng','🔨','khoinghia','hove',2,{nm:'Phục Hổ Hàng Long',t:'none',v:'khien',sh:200,ad:[.4,.5,.65],al:'self',dur:5,mana:60}],
+['phunghung','Phùng Hưng','🔨','khoinghia','hove',2,{nm:'Bố Cái Hộ Thể',t:'none',v:'bocai',sh:200,ad:[.4,.5,.65],al:'self',dur:5,mana:60}],
 ['tranquoctoan','Trần Quốc Toản','🍊','lytran','dukich',2,{nm:'Phá Nghịch Toái Khí',t:'dash',v:'toaikhi',d:300,stun:[1,1.2,1.5],mana:60}],
 ['phamngulao','Phạm Ngũ Lão','🔱','lytran','cungno',2,{nm:'Đông A Liệt Tiễn',t:'volley',v:'donga',k:[4,5,6],d:100,mana:70}],
 ['tranquangdieu','Trần Quang Diệu','🚩','tayson','cungno',2,{nm:'Xích Hỏa Liệt Tiễn',t:'nuke',v:'xichhoa',d:380,mana:70}],
@@ -1738,7 +1745,7 @@ const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
 const ARROW_IMG={};
 for(const k of ['arrow-gold','arrow-wood','arrow-wood-bright']){const im=new Image();im.src=FXIMG_BASE+k+'.webp';ARROW_IMG[k]=im;}
-['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst','le-lai-array','le-lai-robe','le-lai-burst','mai-thuc-loan-array','mai-thuc-loan-shield','mai-thuc-loan-burst','cao-lo-array','cao-lo-arrow','cao-lo-burst','chu-dong-tu-array','chu-dong-tu-net','chu-dong-tu-burst','ba-trieu-array','ba-trieu-elephant','ba-trieu-burst','tran-quang-dieu-array','tran-quang-dieu-arrow','tran-quang-dieu-burst','pham-ngu-lao-array','pham-ngu-lao-arrow','pham-ngu-lao-burst','tran-quoc-toan-array','tran-quoc-toan-strike','tran-quoc-toan-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
+['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst','le-lai-array','le-lai-robe','le-lai-burst','mai-thuc-loan-array','mai-thuc-loan-shield','mai-thuc-loan-burst','cao-lo-array','cao-lo-arrow','cao-lo-burst','chu-dong-tu-array','chu-dong-tu-net','chu-dong-tu-burst','ba-trieu-array','ba-trieu-elephant','ba-trieu-burst','tran-quang-dieu-array','tran-quang-dieu-arrow','tran-quang-dieu-burst','pham-ngu-lao-array','pham-ngu-lao-arrow','pham-ngu-lao-burst','tran-quoc-toan-array','tran-quoc-toan-strike','tran-quoc-toan-burst','phung-hung-array','phung-hung-shield','phung-hung-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
 function arrowByCost(c){return ARROW_IMG[c<=1?'arrow-wood':c<=3?'arrow-wood-bright':'arrow-gold'];}
 function ico(h){return HIMG[h]?'<img class="himg" draggable="false" src="'+HIMG[h]+'" alt="" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+(HERO[h]?HERO[h].ico:'')+'\'))">':h==='datuong'?'<img class="himg" draggable="false" src="'+DATUONG_IMG+'" alt="Dã Tượng" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode)this.parentNode.appendChild(document.createTextNode(\'🐘\'))">':HERO[h]?HERO[h].ico:'';}
 const arena=$('#arena'),cellsEl=$('#cells'),benchEl=$('#benchL'),benchEl2=$('#benchR'),blEl=$('#bl'),ulEl=$('#ul'),zlEl=$('#zl'),fxl=$('#fxl'),cv=$('#fxc'),ctx=cv.getContext('2d');
@@ -1955,6 +1962,85 @@ VF.hacde=e=>{
         {opacity:0,transform:'translate(-50%,-50%) scale(1.22)'}
       ],{duration:Math.round(1150/spd),easing:'ease-out',fill:'forwards'}).onfinish=()=>bEl.remove();
     },Math.round(160/spd));
+  }
+};
+VF.bocai=e=>{
+  const [x,y]=px(e.x1!=null?e.x1:(e.cx!=null?e.cx:0),e.y1!=null?e.y1:(e.cy!=null?e.cy:0));
+  const k=SC(e.s);
+  const spd=U.speed||1;
+
+  // QUY TẮC BẮT BUỘC: KHÔNG HIỆN CHỮ TÊN SKILL (Tuyệt đối không có banner textFx, không có chữ tên skill Bố Cái Hộ Thể)
+
+  // Rung chấn và âm vang hộ thể
+  shake(6, 320);
+  hitstop(50);
+  ringFx(x, y, U.c * 1.2 * k, '#f59e0b', 420, true);
+  ringFx(x, y, U.c * 1.7 * k, '#fbbf24', 480, false);
+
+  dustAt(x, y, 10);
+  spawnP(x, y, 14 * k, {col: '#f59e0b', sp: 85, g: -20, life: .65, size: 2.8});
+  spawnP(x, y, 10 * k, {col: '#fbbf24', sp: 70, g: 15, life: .5, size: 2.2});
+
+  if(FX.big){
+    // 1. LAYER 1: Pháp Trận Hộ Thân Đường Lâm (#zl z-index:1 dưới chân Phùng Hưng)
+    const aW = Math.round(U.c * 1.55 * Math.min(1.15, k)), aH = Math.round(aW * (320 / 512));
+    const aEl = document.createElement('div');
+    aEl.className = 'fxs fx-phunghung-array';
+    aEl.style.cssText = 'left:' + x + 'px;top:' + y + 'px;width:' + aW + 'px;height:' + aH + 'px;z-index:1;';
+    const aSrc = FX_BASE + 'phung-hung-array.webp';
+    aEl.style.backgroundImage = 'url("' + aSrc + '")';
+    const _imA = new Image();
+    _imA.onerror = () => { aEl.style.backgroundImage = 'url("./img/fx/phung-hung-array.webp")'; };
+    _imA.src = aSrc;
+    zlEl.appendChild(aEl);
+
+    aEl.animate([
+      {opacity: 0, transform: 'translate(-50%,-50%) scale(.35) rotate(-15deg)'},
+      {opacity: 0.95, transform: 'translate(-50%,-50%) scale(1.05) rotate(0deg)', offset: .15},
+      {opacity: 0.9, transform: 'translate(-50%,-50%) scale(1) rotate(12deg)', offset: .8},
+      {opacity: 0, transform: 'translate(-50%,-50%) scale(.95) rotate(20deg)'}
+    ], {duration: Math.round(2200 / spd), fill: 'forwards'}).onfinish = () => aEl.remove();
+
+    // 2. LAYER 2: Kim Cang Hổ Thần Thuẫn giáng thế hộ vệ phía trước (#fxl z-index:45)
+    const sW = Math.round(U.c * 1.55 * Math.min(1.15, k)), sH = sW;
+    const sEl = document.createElement('div');
+    sEl.className = 'fxs fx-phunghung-shield';
+    sEl.style.cssText = 'left:' + x + 'px;top:' + y + 'px;width:' + sW + 'px;height:' + sH + 'px;z-index:45;';
+    const sImg = document.createElement('img');
+    const sSrc = FX_BASE + 'phung-hung-shield.webp';
+    sImg.onerror = () => { sImg.src = './img/fx/phung-hung-shield.webp'; };
+    sImg.src = sSrc; sImg.draggable = false;
+    sEl.appendChild(sImg);
+    fxl.appendChild(sEl);
+
+    sEl.animate([
+      {opacity: 0.3, transform: 'translate(-50%,-130%) scale(.6)'},
+      {opacity: 1, transform: 'translate(-50%,-80%) scale(1.15)', offset: .22},
+      {opacity: 1, transform: 'translate(-50%,-78%) scale(1.0)', offset: .65},
+      {opacity: 0, transform: 'translate(-50%,-82%) scale(1.04)'}
+    ], {duration: Math.round(1400 / spd), easing: 'cubic-bezier(.12,.9,.2,1)', fill: 'forwards'}).onfinish = () => sEl.remove();
+
+    // Contact frame: Khi Thần Thuẫn tiếp đất và bộc phát kim quang hộ thể (~150ms)
+    setTimeout(() => {
+      // 3. LAYER 3: Bộc Phá Hộ Thể & Cuồng Lực Tăng Uy (#fxl z-index:46, screen)
+      const bW = Math.round(U.c * 1.65 * Math.min(1.15, k)), bH = bW;
+      const bEl = document.createElement('div');
+      bEl.className = 'fxs fx-phunghung-burst';
+      bEl.style.cssText = 'left:' + x + 'px;top:' + y + 'px;width:' + bW + 'px;height:' + bH + 'px;z-index:46;mix-blend-mode:screen;';
+      const bImg = document.createElement('img');
+      const bSrc = FX_BASE + 'phung-hung-burst.webp';
+      bImg.onerror = () => { bImg.src = './img/fx/phung-hung-burst.webp'; };
+      bImg.src = bSrc; bImg.draggable = false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+
+      bEl.animate([
+        {opacity: 0, transform: 'translate(-50%,-50%) scale(.35)'},
+        {opacity: 1, transform: 'translate(-50%,-50%) scale(1.1)', offset: .22},
+        {opacity: 0.85, transform: 'translate(-50%,-50%) scale(1.15)', offset: .65},
+        {opacity: 0, transform: 'translate(-50%,-50%) scale(1.2)'}
+      ], {duration: Math.round(1150 / spd), easing: 'ease-out', fill: 'forwards'}).onfinish = () => bEl.remove();
+    }, Math.round(150 / spd));
   }
 };
 VF.hoanbao=VF.gam=e=>{
@@ -4986,7 +5072,7 @@ function startDemo(heroId){
   let allies=[hero];
   if(heroId==='aucơ'){hero.x=1;hero.y=3;hero.demoHold=true;const tk=mkBU({h:'caolo',s:1},0,3,3,{},{});tk.hp=Math.round(tk.max*.7);allies.push(tk);}
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
-  if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'||heroId==='datuong'||heroId==='lelai'||heroId==='maithucloan'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
+  if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'||heroId==='datuong'||heroId==='lelai'||heroId==='maithucloan'||heroId==='phunghung'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   if(heroId==='anduongvuong'){foes.forEach(f=>{f.ad=120;f.as=0.9;});}
   if(heroId==='thuytinh'||heroId==='lythuongkiet'||heroId==='nguyenxi'||heroId==='buithixuan'||heroId==='nguyentrai'||heroId==='yetkieu'||heroId==='caolo'||heroId==='chudongtu'||heroId==='batrieu'||heroId==='tranquangdieu'||heroId==='phamngulao'||heroId==='tranquoctoan'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
   if(heroId==='yetkieu'){foes[1].hp=1500;}
