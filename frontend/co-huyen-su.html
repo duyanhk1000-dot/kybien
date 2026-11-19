@@ -1905,13 +1905,6 @@ VF.hacde=e=>{
   const k=SC(e.s);
   const spd=U.speed||1;
   
-  // Banner hiệu triệu thần uy Hắc Đế Hộ Thân (tướng 1 sao thu nhỏ U.c*0.21, z-index 100 lớp trên cùng)
-  textFx('HẮC ĐẾ HỘ THÂN!',x,y-U.c*1.0,'#facc15',Math.round(U.c*.21),[
-    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-15px) scale(1.05)'}
-  ],Math.round(1300/spd),100);
   
   // Rung chấn và âm vang hộ thể
   shake(6, 350);
@@ -2069,13 +2062,6 @@ VF.hoanbao=VF.gam=e=>{
   const k=SC(e.s);
   const spd=U.speed||1;
   
-  // Banner hiệu triệu thần uy Hoán Bào Cứu Chúa (tướng 1 sao thu nhỏ U.c*0.21, z-index 100 lớp trên cùng, không có chữ Trung Quốc)
-  textFx('HOÁN BÀO CỨU CHÚA!',x,y-U.c*1.0,'#fbbf24',Math.round(U.c*.21),[
-    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-15px) scale(1.05)'}
-  ],Math.round(1300/spd),100);
   
   // Rung chấn và âm vang khiêu khích
   shake(6, 350);
@@ -2350,13 +2336,6 @@ VF.ngua=e=>{
     spawnP(x1,y1,20*k,{col:'#ffd700',sp:150,g:50,life:.9,size:3.5});
     spawnP(x1,y1,16*k,{col:'#ffffff',sp:190,g:-20,life:.7,size:3});
 
-    // Tiếng gầm chiến ý Phù Đổng
-    textFx('PHÙ ĐỔNG!',x1,y1-U.c*2.2*k,'#ff4500',U.c*0.58*k,[
-      {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
-      {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
-      {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
-      {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
-    ],1250);
   },dashDur*0.9);
 };
 VF.tuyetanh=e=>{
@@ -2715,13 +2694,6 @@ VF.guom=e=>{
   spawnP(x,y,20*k,{col:'#22d3ee',sp:150,g:50,life:.9,size:3.5});
   spawnP(x,y,16*k,{col:'#ffffff',sp:190,g:-10,life:.7,size:3});
 
-  // Text hiệu ứng "THUẬN THIÊN!" uy nghiêm
-  textFx('THUẬN THIÊN!',x,y-U.c*2.2*k,'#ffd700',U.c*0.58*k,[
-    {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
-    {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
-    {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
-  ],1250);
 };
 VF.co=e=>{
   const [x,y]=px(e.x1!=null?e.x1:(e.cx!=null?e.cx:0),e.y1!=null?e.y1:(e.cy!=null?e.cy:0));
@@ -2809,13 +2781,6 @@ VF.co=e=>{
   spawnP(flagX,flagY,20*k,{col:'#f59e0b',sp:150,g:40,life:1.0,size:3.5});
   spawnP(flagX,flagY,16*k,{col:'#ffd700',shape:'l',sp:180,g:-40,life:.8,size:3});
 
-  // Text chiến ý thần uy "HÁT MÔN THỆ SƯ!"
-  textFx('HÁT MÔN THỆ SƯ!',x,y-U.c*2.2*k,'#ffd700',U.c*0.55*k,[
-    {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
-    {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
-    {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
-  ],1300);
 };
 VF.chu=e=>{
   // Tọa độ mục tiêu quái: cx, cy hoặc tx, ty
@@ -2919,13 +2884,6 @@ VF.but=e=>{
   const k=SC(e.s);
   const spd=U.speed||1;
   
-  // Banner hiệu triệu mưu lược Lam Sơn (thu nhỏ chữ U.c*0.28, z-index 100 lớp trên cùng)
-  textFx('BÌNH NGÔ MƯU LƯỢC!',x,y-U.c*1.1,'#34d399',Math.round(U.c*.28),[
-    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-18px) scale(1.05)'}
-  ],Math.round(1400/spd),100);
   
   // Rung chấn và âm vang khi khai mở trận đồ mưu lược
   shake(6, 400);
@@ -3009,13 +2967,6 @@ VF.phitien=e=>{
   const k=SC(e.s);
   const spd=U.speed||1;
   
-  // Banner hiệu triệu thần tiễn Tây Sơn (thu nhỏ chữ U.c*0.28, z-index 100 lớp trên cùng)
-  textFx('PHI TIỄN XUYÊN TÂM!',x0,y0-U.c*1.1,'#f97316',Math.round(U.c*.28),[
-    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-18px) scale(1.05)'}
-  ],Math.round(1400/spd),100);
   
   // Hào quang tích tụ tại vị trí Bùi Thị Xuân
   ringFx(x0,y0,U.c*1.1,'#ef4444',400,true);
@@ -3103,13 +3054,6 @@ VF.xichhuyet=e=>{
   const k=SC(e.s);
   const spd=U.speed||1;
   
-  // Banner hiệu triệu tướng 1 sao: thu nhỏ chữ U.c*0.21 (nhỏ hơn hẳn tướng 3-5 sao), z-index 100 lớp trên cùng
-  textFx('XÍCH HUYẾT XUYÊN GIÁP!',x0,y0-U.c*.95,'#ef4444',Math.round(U.c*.21),[
-    {opacity:0,transform:'translate(-50%,-8px) scale(.75)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.08)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-14px) scale(1.02)'}
-  ],Math.round(1100/spd),100);
   
   // Hào quang tích tụ nhỏ gọn tại vị trí Nguyễn Xí (chỉ 0.75 ô)
   ringFx(x0,y0,U.c*.75*k,'#dc2626',320,true);
@@ -3196,13 +3140,6 @@ VF.lienchau=e=>{
   const k=SC(e.s);
   const spd=U.speed||1;
   
-  // Banner hiệu triệu tướng 1 sao: thu nhỏ chữ U.c*0.21, z-index 100
-  textFx('THẦN NỎ LIÊN CHÂU!',x0,y0-U.c*.95,'#10b981',Math.round(U.c*.21),[
-    {opacity:0,transform:'translate(-50%,-8px) scale(.75)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.08)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-14px) scale(1.02)'}
-  ],Math.round(1100/spd),100);
   
   // Hào quang tích tụ nỏ thần tại vị trí Cao Lỗ
   ringFx(x0,y0,U.c*.75*k,'#10b981',300,true);
@@ -3530,13 +3467,6 @@ VF.cutuong=e=>{
   const k=SC(e.s);
   const spd=U.speed||1;
   
-  // Banner hiệu triệu tướng 1 sao: thu nhỏ chữ U.c*0.21 (nhỏ hơn hẳn tướng 3-5 sao), z-index 100 lớp trên cùng tại vị trí Dã Tượng
-  textFx('CỰ TƯỢNG ĐẠP TRẬN!',x0,y0-U.c*1.0,'#f59e0b',Math.round(U.c*.21),[
-    {opacity:0,transform:'translate(-50%,-8px) scale(.75)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.08)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-14px) scale(1.02)'}
-  ],Math.round(1100/spd),100);
   
   // Hào quang hiệu triệu và âm vang tại vị trí Dã Tượng
   ringFx(x0,y0,U.c*.8*k,'#d97706',320,true);
@@ -3722,13 +3652,6 @@ VF.khiendong=e=>{
   const spd=U.speed||1;
   const dur=Math.round(6000/spd);
   
-  // Banner hiệu triệu thần uy Loa Thành (thu nhỏ chữ U.c*0.28, z-index 100 lớp trên cùng)
-  textFx('LOA THÀNH THIẾT BÍCH!',x,y-U.c*1.1,'#fbbf24',Math.round(U.c*.28),[
-    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-18px) scale(1.05)'}
-  ],Math.round(1400/spd),100);
   
   // Rung chấn và âm vang địa chấn khi thành ốc dựng lên
   shake(7, 450);
@@ -3797,13 +3720,6 @@ VF.kim=e=>{
   const spd=U.speed||1;
   const dur=Math.round(5000/spd);
   
-  // Banner hiệu triệu thần uy Thần Kim Quy
-  textFx('THẦN QUY LINH GIÁP!',x,y-U.c*1.1,'#fbbf24',U.c*.42,[
-    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.15)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-18px) scale(1.05)'}
-  ],Math.round(1400/spd));
   
   // Rung chấn và âm vang địa chấn khi Thần Quy nện mai rùa trấn áp
   shake(10, 500);
@@ -3966,13 +3882,6 @@ VF.nui=e=>{
   spawnP(x,y,20*k,{col:'#f59e0b',sp:150,g:80,life:.9,size:3.5});
   spawnP(x,y,16*k,{col:'#ffffff',sp:190,g:40,life:.7,size:3});
 
-  // Text chiến ý thần uy "TẢN VIÊN!" tại vị trí quái bị đè
-  textFx('TẢN VIÊN!',x,y-U.c*2.3*k,'#f59e0b',U.c*0.58*k,[
-    {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
-    {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
-    {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
-  ],1250);
 };
 VF.ongtrong=e=>{
   const [x, y] = px(e.x1, e.y1);
@@ -4069,13 +3978,6 @@ VF.lan=e=>{
   const [x,y]=px(e.x0,e.y0);
   const k=SC(e.s);
   const spd=U.speed||1;
-  // Banner hiệu triệu thần uy Kình Ngư Phá Hạm (tướng 1 sao thu nhỏ U.c*0.21, z-index 100 lớp trên cùng)
-  textFx('KÌNH NGƯ PHÁ HẠM!',x,y-U.c*1.0,'#38bdf8',Math.round(U.c*.21),[
-    {opacity:0,transform:'translate(-50%,-10px) scale(.7)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-15px) scale(1.05)'}
-  ],Math.round(1100/spd),100);
   
   // Vòng sóng nước và bọt khí lan tỏa khi Yết Kiêu lặn xuống
   ringFx(x,y,U.c*1.1*k,'#0284c7',420,true);
@@ -4265,12 +4167,6 @@ VF.lu=e=>{
   // 1. Thủy Tinh xuất chiêu: hào quang thủy ba xanh thẳm & chữ chiến ý thần uy
   ringFx(sx,sy,U.c*1.15*k,'#0284c7',450,true);
   spawnP(sx,sy,14*k,{col:'#22d3ee',sp:110,g:-25,life:.6,size:3.5});
-  textFx('NỘ ĐÀO CUỒNG LAN!',sx,sy-U.c*1.4*k,'#22d3ee',U.c*0.48*k,[
-    {opacity:0,transform:'scale(.5)'},
-    {opacity:1,transform:'scale(1.18)',offset:.28},
-    {opacity:1,transform:'scale(1)',offset:.75},
-    {opacity:0,transform:'scale(1.25)'}
-  ],1200);
 
   if(FX.big){
     // Layer 1: Đầm lầy ngập nước (NẰM Ở zlEl - DƯỚI LỚP HÌNH ẢNH QUÁI)
@@ -4410,13 +4306,6 @@ VF.trungtien=e=>{
     proj([sx,sy],[tx,ty],.32/spd,'#ffd700',2.5);
   }
 
-  // Chữ chiến ý thần uy "TRỨNG TIÊN!"
-  textFx('TRỨNG TIÊN!',tx,ty-U.c*1.6*k,'#fb7185',U.c*0.5*k,[
-    {opacity:0,transform:'scale(.5)'},
-    {opacity:1,transform:'scale(1.2)',offset:.28},
-    {opacity:1,transform:'scale(1)',offset:.75},
-    {opacity:0,transform:'scale(1.25)'}
-  ],1250);
 
   if(FX.big){
     // Layer 1: Pháp Trận Hoa Sen Chim Lạc Đông Sơn (NẰM Ở zlEl - DƯỚI LỚP QUÁI & ĐỒNG MINH)
@@ -4587,13 +4476,6 @@ VF.coc=e=>{
   spawnP(x,y,18*k,{col:'#0284c7',sp:150,g:60,life:.9,size:3.5});
   spawnP(x,y,14*k,{col:'#ffffff',sp:180,g:40,life:.7,size:3});
 
-  // Text chiến ý thần uy "BẠCH ĐẰNG!" tại chân quái
-  textFx('BẠCH ĐẰNG!',x,y-U.c*2.2*k,'#22d3ee',U.c*0.58*k,[
-    {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
-    {opacity:1,transform:'translate(-50%,-80%) scale(1.22)',offset:.3},
-    {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
-  ],1250);
 };
 VF.luoi=e=>{
   const [x0,y0]=px(e.x1,e.y1);
@@ -4601,13 +4483,6 @@ VF.luoi=e=>{
   const spd=U.speed||1;
   const redPct=e.s===1?0.25:e.s===2?0.35:0.50;
   
-  // Banner hiệu triệu tướng 1 sao: thu nhỏ chữ U.c*0.21, z-index 100
-  textFx('NGƯ VÕNG ĐOẠT NỘ!',x0,y0-U.c*.95,'#06b6d4',Math.round(U.c*.21),[
-    {opacity:0,transform:'translate(-50%,-8px) scale(.75)'},
-    {opacity:1,transform:'translate(-50%,0) scale(1.08)',offset:.25},
-    {opacity:1,transform:'translate(-50%,0) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-14px) scale(1.02)'}
-  ],Math.round(1100/spd),100);
   
   // Hào quang thủy triều tụ lực tại Chử Đồng Tử
   ringFx(x0,y0,U.c*.75*k,'#06b6d4',300,true);
@@ -4792,12 +4667,6 @@ VF.hich=e=>{
   spawnP(x,y,20*k,{col:'#ff4500',sp:140,g:60,life:.9,size:3.5});
   spawnP(x,y,16*k,{col:'#ffffff',sp:180,g:-20,life:.8,size:3});
 
-  textFx('SÁT THÁT!',x,y-U.c*2.2*k,'#ff4500',U.c*0.55*k,[
-    {opacity:0,transform:'translate(-50%,-40%) scale(.6)'},
-    {opacity:1,transform:'translate(-50%,-80%) scale(1.2)',offset:.3},
-    {opacity:1,transform:'translate(-50%,-85%) scale(1)',offset:.75},
-    {opacity:0,transform:'translate(-50%,-120%) scale(1.3)'}
-  ],1200);
 
   shake(8*k,480);
   hitstop(80);
