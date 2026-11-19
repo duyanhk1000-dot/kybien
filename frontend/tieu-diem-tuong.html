@@ -56,10 +56,106 @@ header p{margin:6px 0 0;color:var(--ink2)}
 .stars button.on{background:var(--bronze);color:#1a1109}
 .dstats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0;text-align:center;font-size:11px;color:var(--ink2)}
 .dstats b{display:block;color:#fff;font-size:15px}
-.dskill{display:flex;gap:12px;align-items:flex-start;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.dskill{display:flex;gap:14px;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .dskill img{flex:none;width:84px;height:84px;border-radius:12px;object-fit:cover}
 .dskill b{font-family:var(--serif);color:#ffd36a;font-size:16px}
 .dskill p{margin:4px 0 0;color:#d8c9a6;font-size:13px}
+
+/* Ô TƯỚNG CỬ ĐỘNG XUẤT CHIÊU TRÊN BÀN CỜ */
+.dskill-unit{
+  flex:none;width:88px;height:88px;border-radius:14px;
+  background:radial-gradient(circle at 50% 75%,#2a1c12 0%,#100a06 80%);
+  border:1.5px solid var(--gold);
+  box-shadow:0 4px 14px rgba(0,0,0,.6),inset 0 0 10px rgba(0,0,0,.7);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.dskill-unit:hover{
+  border-color:#ffd36a;
+  box-shadow:0 0 16px rgba(214,163,53,.5),inset 0 0 12px rgba(0,0,0,.8);
+}
+.dskill-tile{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 50% 65%,rgba(214,163,53,.16) 0%,transparent 65%),
+    linear-gradient(135deg,rgba(255,255,255,.04) 25%,transparent 25%),
+    linear-gradient(225deg,rgba(255,255,255,.04) 25%,transparent 25%);
+  background-size:100% 100%,16px 16px,16px 16px;
+  pointer-events:none;
+}
+.dskill-ring{
+  position:absolute;bottom:8px;width:60px;height:20px;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(214,163,53,.45) 0%,rgba(214,163,53,.1) 60%,transparent 75%);
+  border:1.5px solid rgba(214,163,53,.7);
+  box-shadow:0 0 8px rgba(214,163,53,.5);
+  animation:dskillRingPulse 2.4s ease-in-out infinite;
+  pointer-events:none;
+}
+.dskill-spr{
+  position:absolute;bottom:7px;width:76px;height:76px;
+  background-image:var(--spr);
+  background-size:600% 100%;
+  background-repeat:no-repeat;
+  background-position:0% 0%;
+  transform-origin:50% 85%;
+  animation:dskillCastPose 2.4s steps(1) infinite,dskillCastMotion 2.4s ease-in-out infinite;
+  pointer-events:none;
+  filter:drop-shadow(0 3px 5px rgba(0,0,0,.6));
+}
+.dskill-mana{
+  position:absolute;bottom:2px;left:8px;right:8px;height:4px;border-radius:2px;
+  background:rgba(0,0,0,.7);border:0.5px solid rgba(214,163,53,.4);overflow:hidden;
+}
+.dskill-mana-fill{
+  display:block;height:100%;
+  background:linear-gradient(90deg,#27ae60,#ffd36a 80%,#fff);
+  animation:dskillManaCycle 2.4s ease-in-out infinite;
+}
+.dskill-stars{
+  position:absolute;top:3px;left:0;right:0;text-align:center;font-size:10.5px;line-height:1;
+  pointer-events:none;z-index:2;letter-spacing:-1px;
+}
+.dskill-stars.s1{color:#ffd36a;text-shadow:0 0 3px rgba(255,211,106,.8),0 1px 2px #000}
+.dskill-stars.s2{color:#ffe082;text-shadow:0 0 5px rgba(255,211,106,1),0 1px 2px #000}
+.dskill-stars.s3{color:#f0faff;text-shadow:0 0 5px #7fd5ff,0 0 9px rgba(120,210,255,.9),0 1px 2px #000}
+
+/* HIỆU ỨNG TƯỚNG 2 VÀ 3 SAO */
+.dskill-unit[data-star="2"] .dskill-ring{border-color:#ffe082;box-shadow:0 0 10px rgba(255,224,130,.85)}
+.dskill-unit[data-star="3"] .dskill-ring{
+  border-color:#7fd5ff;
+  background:radial-gradient(ellipse at center,rgba(127,213,255,.5) 0%,transparent 75%);
+  box-shadow:0 0 14px #7fd5ff,0 0 22px rgba(120,210,255,.7);
+}
+.dskill-unit[data-star="3"] .dskill-spr{filter:drop-shadow(0 0 5px #7fd5ff) drop-shadow(0 4px 6px rgba(0,0,0,.6))}
+
+/* ANIMATION CHU KỲ XUẤT CHIÊU TRÊN BÀN CỜ */
+@keyframes dskillCastPose{
+  0%,35%{background-position:0% 0%}      /* Đứng thủ trên bàn cờ (Idle) */
+  38%,58%{background-position:60% 0%}    /* Tụ khí nộ / Giương cung / Vung vũ khí (Windup) */
+  60%,82%{background-position:80% 0%}    /* Xuất chiêu / Phóng tên / Tung đòn (Cast / Fire) */
+  85%,100%{background-position:0% 0%}   /* Thu chiêu trở về thế thủ */
+}
+@keyframes dskillCastMotion{
+  0%,35%{transform:translateY(0) scale(1);filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+  18%{transform:translateY(-2px) scale(1.02)}
+  38%,58%{transform:translateY(-3px) scale(1.06);filter:drop-shadow(0 0 6px rgba(255,211,106,.75)) brightness(1.15)}
+  60%{transform:translateY(-1px) scale(1.18);filter:drop-shadow(0 0 14px rgba(255,215,0,.95)) brightness(1.35)}
+  82%{transform:translateY(0) scale(1.05);filter:drop-shadow(0 0 8px rgba(255,211,106,.6)) brightness(1.1)}
+  85%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+}
+@keyframes dskillRingPulse{
+  0%,35%{transform:scale(1);opacity:.6;border-color:rgba(214,163,53,.6)}
+  38%,58%{transform:scale(1.15);opacity:.9;border-color:rgba(255,215,0,.9);box-shadow:0 0 12px rgba(255,215,0,.8)}
+  60%,82%{transform:scale(1.25);opacity:1;border-color:#fff;box-shadow:0 0 16px rgba(255,215,0,1)}
+  85%,100%{transform:scale(1);opacity:.6;border-color:rgba(214,163,53,.6)}
+}
+@keyframes dskillManaCycle{
+  0%{width:25%}
+  35%{width:92%}
+  38%,82%{width:100%;box-shadow:0 0 6px #ffd36a}
+  85%,100%{width:0%}
+}
 .hist{margin-top:12px;border:1.5px solid var(--gold);outline:1px solid rgba(214,163,53,.35);outline-offset:3px;border-radius:4px;background:rgba(214,163,53,.06);padding:10px 12px;color:#e8d9b0;font-size:13px;font-style:italic}
 .hist b{color:var(--gold);display:block;margin-bottom:4px;font-family:var(--serif);font-size:14px;font-style:normal;letter-spacing:.5px}
 .hist b::before{content:'\2756\ '}
@@ -228,6 +324,41 @@ const HIMG_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/fronten
 const COIN_IMG='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/fx/coin-gold.webp';
 const HIMG={'thuytinh':HIMG_BASE+'thuy-tinh-tok.webp','aucơ':HIMG_BASE+'au-co-tok.webp','chudongtu':HIMG_BASE+'chu-dong-tu-tok.webp','laclongquan':HIMG_BASE+'lac-long-quan-tok.webp','sontinh':HIMG_BASE+'son-tinh-tok.webp','tiendung':HIMG_BASE+'tien-dung-tok.webp','thanhgiong':HIMG_BASE+'thanh-giong-tok.webp', 'kimquy':HIMG_BASE+'kim-quy-tok.webp','lyongtrong':HIMG_BASE+'ly-ong-trong-tok.webp','anduongvuong':HIMG_BASE+'an-duong-vuong-tok.webp','caolo':HIMG_BASE+'cao-lo-tok.webp', 'phunghung':HIMG_BASE+'phung-hung-tok.webp','trungnhi':HIMG_BASE+'trung-nhi-tok.webp','trungtrac':HIMG_BASE+'trung-trac-tok.webp','batrieu':HIMG_BASE+'ba-trieu-tok.webp','maithucloan':HIMG_BASE+'mai-thuc-loan-tok.webp','ngoquyen':HIMG_BASE+'ngo-quyen-tok.webp', 'datuong':HIMG_BASE+'da-tuong-tok.webp','lythuongkiet':HIMG_BASE+'ly-thuong-kiet-tok.webp','phamngulao':HIMG_BASE+'pham-ngu-lao-tok.webp','tranhungdao':HIMG_BASE+'tran-hung-dao-tok.webp','tranquoctoan':HIMG_BASE+'tran-quoc-toan-tok.webp','yetkieu':HIMG_BASE+'yet-kieu-tok.webp','nguyenxi':HIMG_BASE+'nguyen-xi-tok.webp','lelai':HIMG_BASE+'le-lai-tok.webp','leloi':HIMG_BASE+'le-loi-tok.webp','nguyentrai':HIMG_BASE+'nguyen-trai-tok.webp','tranquangdieu':HIMG_BASE+'tran-quang-dieu-tok.webp','buithixuan':HIMG_BASE+'bui-thi-xuan-tok.webp','nguyenhue':HIMG_BASE+'nguyen-hue-tok.webp'};
 const HIMG_P={'thuytinh':HIMG_BASE+'thuy-tinh.webp','aucơ':HIMG_BASE+'au-co.webp','chudongtu':HIMG_BASE+'chu-dong-tu.webp','laclongquan':HIMG_BASE+'lac-long-quan.webp','sontinh':HIMG_BASE+'son-tinh.webp','tiendung':HIMG_BASE+'tien-dung.webp','thanhgiong':HIMG_BASE+'thanh-giong.webp', 'kimquy':HIMG_BASE+'kim-quy.webp','lyongtrong':HIMG_BASE+'ly-ong-trong.webp','anduongvuong':HIMG_BASE+'an-duong-vuong.webp','caolo':HIMG_BASE+'cao-lo.webp', 'phunghung':HIMG_BASE+'phung-hung.webp','trungnhi':HIMG_BASE+'trung-nhi.webp','trungtrac':HIMG_BASE+'trung-trac.webp','batrieu':HIMG_BASE+'ba-trieu.webp','maithucloan':HIMG_BASE+'mai-thuc-loan.webp','ngoquyen':HIMG_BASE+'ngo-quyen.webp', 'datuong':HIMG_BASE+'da-tuong.webp','lythuongkiet':HIMG_BASE+'ly-thuong-kiet.webp','phamngulao':HIMG_BASE+'pham-ngu-lao.webp','tranhungdao':HIMG_BASE+'tran-hung-dao.webp','tranquoctoan':HIMG_BASE+'tran-quoc-toan.webp','yetkieu':HIMG_BASE+'yet-kieu.webp','nguyenxi':HIMG_BASE+'nguyen-xi.webp','lelai':HIMG_BASE+'le-lai.webp','leloi':HIMG_BASE+'le-loi.webp','nguyentrai':HIMG_BASE+'nguyen-trai.webp','tranquangdieu':HIMG_BASE+'tran-quang-dieu.webp','buithixuan':HIMG_BASE+'bui-thi-xuan.webp','nguyenhue':HIMG_BASE+'nguyen-hue.webp'};
+const HERO_SPRITES={
+  'thanhgiong':HIMG_BASE+'thanh-giong-sheet-128.webp',
+  'caolo':HIMG_BASE+'cao-lo-sheet-128.webp',
+  'thuytinh':HIMG_BASE+'thuy-tinh-sheet-128.webp',
+  'chudongtu':HIMG_BASE+'chu-dong-tu-sheet-128.webp',
+  'tiendung':HIMG_BASE+'tien-dung-sheet-128.webp',
+  'laclongquan':HIMG_BASE+'lac-long-quan-sheet-128.webp',
+  'aucơ':HIMG_BASE+'au-co-sheet-128.webp',
+  'sontinh':HIMG_BASE+'son-tinh-sheet-128.webp',
+  'yetkieu':HIMG_BASE+'yet-kieu-sheet-128.webp',
+  'nguyenxi':HIMG_BASE+'nguyen-xi-sheet-128.webp',
+  'datuong':HIMG_BASE+'da-tuong-sheet-128.webp',
+  'batrieu':HIMG_BASE+'ba-trieu-sheet-128.webp',
+  'lelai':HIMG_BASE+'le-lai-sheet-128.webp',
+  'buithixuan':HIMG_BASE+'bui-thi-xuan-sheet-128.webp',
+  'anduongvuong':HIMG_BASE+'an-duong-vuong-sheet-128.webp',
+  'kimquy':HIMG_BASE+'kim-quy-sheet-128.webp',
+  'leloi':HIMG_BASE+'le-loi-sheet-128.webp',
+  'lyongtrong':HIMG_BASE+'ly-ong-trong-sheet-128.webp',
+  'lythuongkiet':HIMG_BASE+'ly-thuong-kiet-sheet-128.webp',
+  'maithucloan':HIMG_BASE+'mai-thuc-loan-sheet-128.webp',
+  'ngoquyen':HIMG_BASE+'ngo-quyen-sheet-128.webp',
+  'nguyenhue':HIMG_BASE+'nguyen-hue-sheet-128.webp',
+  'nguyentrai':HIMG_BASE+'nguyen-trai-sheet-128.webp',
+  'phamngulao':HIMG_BASE+'pham-ngu-lao-sheet-128.webp',
+  'phunghung':HIMG_BASE+'phung-hung-sheet-128.webp',
+  'tranhungdao':HIMG_BASE+'tran-hung-dao-sheet-128.webp',
+  'tranquangdieu':HIMG_BASE+'tran-quang-dieu-sheet-128.webp',
+  'tranquoctoan':HIMG_BASE+'tran-quoc-toan-sheet-128.webp',
+  'trungnhi':HIMG_BASE+'trung-nhi-sheet-128.webp',
+  'trungtrac':HIMG_BASE+'trung-trac-sheet-128.webp'
+};
+function heroSprite(id){
+  return HERO_SPRITES[id]||(HIMG_BASE+id.replace('ơ','o')+'-sheet-128.webp');
+}
 const HISTORY={"chudongtu": "Một trong Tứ bất tử của tín ngưỡng dân gian Việt Nam. Chàng trai nghèo gặp công chúa Tiên Dung, nên duyên vợ chồng rồi cùng nhau tu hành đắc đạo.", "caolo": "Tướng tài của An Dương Vương, người chế ra nỏ thần Liên Châu \u2014 nỏ bắn một lần nhiều mũi tên \u2014 giúp Âu Lạc chống quân Triệu Đà.", "maithucloan": "Lãnh tụ cuộc khởi nghĩa Hoan Châu (713\u2013722) chống nhà Đường, xưng Mai Hắc Đế. Ông là một trong những người đầu tiên dựng cờ chống Bắc thuộc.", "yetkieu": "Tướng nhà Trần, giỏi lặn, lập công lớn trong kháng chiến chống Nguyên \u2013 Mông khi lặn xuống nước đục thủng thuyền giặc. Ông được Trần Hưng Đạo khen là trung thần nghĩa sĩ.", "lelai": "Tướng thân tín của Lê Lợi. Trong trận Chí Linh, ông đóng giả Lê Lợi để dụ quân Minh, liều mình cứu chúa.", "nguyenxi": "Khai quốc công thần nhà Lê sơ, danh tướng của nghĩa quân Lam Sơn, có công lớn trong các trận đánh đuổi quân Minh, sau làm Thái sư.", "datuong": "Gia nô trung thành của Trần Hưng Đạo, cùng Yết Kiêu lập công trong kháng chiến chống Nguyên. Ông là biểu tượng của lòng trung nghĩa.", "tiendung": "Công chúa con vua Hùng, vợ Chử Đồng Tử, một trong Tứ bất tử. Chuyện tình của nàng với chàng trai nghèo là một trong những truyền thuyết đẹp nhất.", "lyongtrong": "Tướng thời Hùng Vương, tương truyền cao lớn phi thường, được cử sang trấn giữ biên cương. Ông được thờ ở làng Chèm, Hà Nội.", "trungnhi": "Em gái Trưng Trắc, cùng chị phất cờ khởi nghĩa năm 40 chống nhà Hán, đánh đuổi Thái thú Tô Định, xưng vương ở Mê Linh.", "phunghung": "Lãnh tụ khởi nghĩa Đường Lâm (766\u2013791) chống nhà Đường, được nhân dân tôn là Bố Cái Đại Vương \u2014 cha mẹ của dân.", "tranquoctoan": "Thiếu niên anh hùng thời Trần, mới 16 tuổi đã xin vua cho ra trận đánh Nguyên, lập công ở trận Hàm Tử. Câu chuyện bóp nát quả cam thể hiện lòng yêu nước của ông.", "phamngulao": "Danh tướng nhà Trần, xuất thân nông dân, giỏi cả văn lẫn võ, có công lớn trong hai cuộc kháng chiến chống Nguyên (1285, 1288).", "tranquangdieu": "Danh tướng Tây Sơn, chồng Bùi Thị Xuân, có công lớn trong chiến thắng Rạch Gầm \u2013 Xoài Mút (1785) và chiến dịch Bắc tiến.", "batrieu": "Nữ anh hùng khởi nghĩa năm 248 chống nhà Ngô, nổi tiếng với lời thề cưỡi gió mạnh, đạp sóng dữ, đánh đuổi quân Ngô để giành lại giang sơn.", "thuytinh": "Thần nước trong truyền thuyết Sơn Tinh \u2013 Thủy Tinh, đối thủ của Sơn Tinh trong cuộc cầu hôn Mỵ Nương. Hằng năm ông dâng nước đánh Sơn Tinh, gây ra lũ lụt.", "aucơ": "Tiên nữ, vợ Lạc Long Quân, sinh ra bọc trăm trứng nở thành trăm người con \u2014 tổ mẫu của dân tộc Việt. Truyền thuyết con Rồng cháu Tiên bắt nguồn từ nàng và Lạc Long Quân.", "anduongvuong": "Vua nước Âu Lạc, người xây thành Cổ Loa và được thần Kim Quy tặng nỏ thần. Ông chống Triệu Đà nhưng cuối cùng mất nước vì kế ly gián.", "kimquy": "Rùa thần giúp An Dương Vương xây thành Cổ Loa và trao móng vuốt làm lẫy nỏ thần. Thần còn mách bảo vua kẻ phản bội là Mỵ Châu.", "lythuongkiet": "Danh tướng nhà Lý, tác giả Nam quốc sơn hà \u2014 bản tuyên ngôn độc lập đầu tiên của dân tộc \u2014 và người chỉ huy cuộc kháng chiến chống Tống (1075\u20131077).", "nguyentrai": "Nhà văn hóa, quân sư của Lê Lợi, tác giả Bình Ngô đại cáo \u2014 bản tuyên ngôn độc lập thứ hai. Ông hiến kế giúp nghĩa quân Lam Sơn thắng lợi.", "buithixuan": "Nữ tướng Tây Sơn, vợ Trần Quang Diệu, nổi tiếng với tài cưỡi ngựa bắn cung, được gọi là nữ tướng áo đỏ.", "sontinh": "Thần núi Tản Viên, một trong Tứ bất tử, người thắng Thủy Tinh trong cuộc cầu hôn Mỵ Nương nhờ dâng lễ vật trước. Ông là biểu tượng của sức mạnh núi rừng.", "thanhgiong": "Một trong Tứ bất tử, cậu bé làng Gióng ba tuổi chưa biết nói; khi giặc Ân xâm lược, ông vươn vai thành tráng sĩ, cưỡi ngựa sắt, dùng roi sắt đánh tan giặc rồi bay về trời.", "leloi": "Lãnh tụ khởi nghĩa Lam Sơn (1418\u20131427), đánh đuổi quân Minh, lập ra nhà Lê sơ. Truyền thuyết gươm thần Hồ Gươm gắn với ông.", "trungtrac": "Chị cả Hai Bà Trưng, lãnh tụ cuộc khởi nghĩa năm 40 chống nhà Hán, đánh đuổi Thái thú Tô Định, xưng vương ở Mê Linh, mở đầu truyền thống nữ anh hùng Việt.", "ngoquyen": "Anh hùng dân tộc, người đánh tan quân Nam Hán trên sông Bạch Đằng năm 938 bằng kế cắm cọc gỗ, chấm dứt hơn 1000 năm Bắc thuộc, mở ra kỷ nguyên độc lập.", "laclongquan": "Vị vua rồng, chồng Âu Cơ, cha của trăm người con, tổ phụ của dân tộc Việt. Ông dạy dân trồng trọt, diệt trừ yêu quái.", "tranhungdao": "Quốc công tiết chế, thống lĩnh quân dân Đại Việt ba lần đánh bại quân Nguyên \u2013 Mông (1258, 1285, 1288), tác giả Hịch tướng sĩ. Ông được tôn là Đức Thánh Trần.", "nguyenhue": "Vua Quang Trung, lãnh tụ Tây Sơn, đánh bại quân Xiêm ở Rạch Gầm (1785) và quân Thanh ở Ngọc Hồi \u2013 Đống Đa (1789), thống nhất đất nước. Ông nổi tiếng với lối hành quân thần tốc."};
 function ico(h){return HIMG[h]?'<img src="'+HIMG[h]+'" alt="">':h==='datuong'?'<img src="'+DATUONG_IMG+'" alt="Dã Tượng">':HERO[h].ico;}
 function skillIcon(sk){
@@ -292,7 +423,15 @@ function openDetail(id,star){
   +'<div class="stars">'+[1,2,3].map(n=>'<button data-star="'+n+'" class="'+(n===state.star?'on':'')+'">'+'★'.repeat(n)+'</button>').join('')+'</div></div></div>'
   +'<div class="hist"><b>Lịch sử</b>'+HISTORY[id]+'</div>'
   +'<div class="dstats"><span>Máu<b>'+st.hp+'</b></span><span>S.Thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
-  +'<div class="dskill"><img src="'+(HIMG_P[h.id]||skillIcon(h.sk))+'" alt=""><div><b>'+h.sk.nm+'</b> (cần '+h.sk.mana+' nộ)<p>'+skillText(h.sk,state.star)+'</p></div></div>'
+  +'<div class="dskill">'
+  +'<div class="dskill-unit" data-star="'+state.star+'" style="--spr:url(\''+heroSprite(h.id)+'\')" title="Tướng '+h.name+' cử động và xuất chiêu trên bàn cờ (bấm để diễn lại)">'
+  +'<div class="dskill-tile"></div>'
+  +'<div class="dskill-ring"></div>'
+  +'<div class="dskill-spr"></div>'
+  +'<div class="dskill-mana"><span class="dskill-mana-fill"></span></div>'
+  +'<span class="dskill-stars s'+state.star+'">'+'★'.repeat(state.star)+'</span>'
+  +'</div>'
+  +'<div><b>'+h.sk.nm+'</b> (cần '+h.sk.mana+' nộ)<p>'+skillText(h.sk,state.star)+'</p></div></div>'
   +'<a class="watch" href="https://kybien.blogspot.com/p/co-huyen-su.html?demo='+id+'" target="_blank" rel="noopener">\u25b6 Xem chiêu trên bàn cờ (chậm \u00d70.2)</a>'
 
   +[h.o,h.c].map(t=>{
@@ -305,6 +444,15 @@ function openDetail(id,star){
   const closeDlg=()=>{ov.className='ov';};
   xBtn.addEventListener('click',closeDlg);
   xBtn.addEventListener('touchend',e=>{e.preventDefault();closeDlg();},{passive:false});
+  const dUnit=ov.querySelector('.dskill-unit');
+  if(dUnit){
+    dUnit.addEventListener('click',()=>{
+      const spr=dUnit.querySelector('.dskill-spr'),ring=dUnit.querySelector('.dskill-ring'),mana=dUnit.querySelector('.dskill-mana-fill');
+      if(spr){spr.style.animation='none';void spr.offsetWidth;spr.style.animation='';}
+      if(ring){ring.style.animation='none';void ring.offsetWidth;ring.style.animation='';}
+      if(mana){mana.style.animation='none';void mana.offsetWidth;mana.style.animation='';}
+    });
+  }
 }
 $('#grid').addEventListener('click',e=>{const c=e.target.closest('[data-h]');if(c)openDetail(c.dataset.h,1);});
 $('#grid').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset&&e.target.dataset.h){e.preventDefault();openDetail(e.target.dataset.h,1);}});
