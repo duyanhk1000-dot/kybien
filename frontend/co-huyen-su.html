@@ -934,8 +934,8 @@ body.demo .skill-panel{display:block;grid-column:2;grid-row:1}
 const W=8,HH=7,TICK=0.05,MOVE_CD=0.45;
 const HPC=[560,720,900,1150,1500],ADC=[48,60,76,100,135],SKM=[1,1.7,2.8];
 const COSTCOL=['#8e8777','#2e9c80','#3f72d1','#9a4fc4','#d9a22b'];
-const ODDS=[null,[100,0,0,0,0],[100,0,0,0,0],[75,25,0,0,0],[55,30,15,0,0],[45,33,20,2,0],[30,40,25,5,0],[19,30,40,10,1],[18,25,36,18,3],[10,20,25,35,10]];
-const XPN={2:2,3:6,4:10,5:20,6:36,7:56,8:80};
+const ODDS=[null,[100,0,0,0,0],[100,0,0,0,0],[75,25,0,0,0],[55,30,15,0,0],[45,33,20,2,0],[25,40,30,5,0],[17,30,35,15,3],[16,25,32,22,5],[10,15,25,35,15]];
+const XPN={2:2,3:6,4:10,5:20,6:36,7:56,8:64};
 const PVE_ROUNDS=[1,2,3,8,15,22];
 const PVE_RW={1:{cost:1},2:{cost:1},3:{cost:2},8:{cost:3,relic:1},15:{cost:4,relic:1},22:{cost:5,relic:1}};
 const rnd=n=>Math.floor(Math.random()*n);
@@ -1577,7 +1577,7 @@ function autoArrange(P){
 }
 
 /* --- ván đấu --- */
-const lossDamage=(r,s)=>Math.round((2+Math.floor(r*.6)+s*2)*(r>28?1.5:1));
+const lossDamage=(r,s)=>Math.round((2+Math.floor(r*.6)-(r>15?1:0)+s*2)*(r>28?1.5:1));
 const isPve=r=>PVE_ROUNDS.includes(r);
 function incomeOf(p,r){
   const base=r<=2?2:r===3?3:r===4?4:5,s=Math.abs(p.streak);
