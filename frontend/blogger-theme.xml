@@ -105,7 +105,7 @@
       border-bottom: 2px solid #f1c40f;
     }
     .nav-container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -328,7 +328,7 @@
 
     /* ===== MAIN LAYOUT ===== */
     .main-wrapper {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 20px auto 40px auto;
       padding: 0 15px;
     }
@@ -432,6 +432,14 @@
     .single-page-view {
       background: transparent;
       width: 100%;
+    }
+    .single-post-body iframe {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-height: 850px;
+      border: none;
+      display: block;
+      background: transparent;
     }
     .single-post-title {
       font-family: 'Noto Serif TC', serif;
