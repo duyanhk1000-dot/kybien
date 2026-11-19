@@ -578,6 +578,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fx-phunghung-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
 .tiltwrap.tilt .fx-phunghung-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
 .fx-phunghung-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 24px rgba(245,158,11,1)) drop-shadow(0 0 35px rgba(251,191,36,.9)) brightness(1.25)}
+.fx-trungnhi-array{position:absolute;pointer-events:none;transform:translate(-50%,-50%);background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 0 16px rgba(244,63,94,.85))}
+.fx-trungnhi-strike{position:absolute;pointer-events:none;z-index:45;transform-origin:50% 50%}
+.tiltwrap.tilt .fx-trungnhi-strike{transform-origin:50% 50%}
+.fx-trungnhi-strike img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 16px rgba(244,63,94,.95)) drop-shadow(0 0 28px rgba(251,113,133,.85)) brightness(1.2)}
+.fx-trungnhi-burst{position:absolute;pointer-events:none;transform:translate(-50%,-50%);z-index:46;mix-blend-mode:screen}
+.tiltwrap.tilt .fx-trungnhi-burst{transform:translate(-50%,-50%) scaleY(1.32);transform-origin:50% 50%}
+.fx-trungnhi-burst img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 24px rgba(244,63,94,1)) drop-shadow(0 0 35px rgba(251,113,133,.9)) brightness(1.25)}
 .fxt{position:absolute;pointer-events:none;font-family:var(--serif);font-weight:900;transform:translate(-50%,-50%);text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 2px 4px #000;z-index:100}
 .zone{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .4s}
 .zone.tel{border:2px dashed rgba(255,255,255,.7);animation:telp .5s infinite alternate}
@@ -980,7 +987,7 @@ const HEROES_RAW=[
 ['datuong','Dã Tượng','🐘','lytran','chienbinh',1,{nm:'Cự Tượng Đạp Trận',t:'aoe',v:'cutuong',d:140,r:1.5,cen:'tgt',stun:[1,1.2,1.5],mana:60}],
 ['tiendung','Tiên Dung','🌸','hongbang','thuatsi',2,{nm:'Liên Hoa Dũ Thương',t:'none',v:'hoa',heal:120,al:'all',mana:80}],
 ['lyongtrong','Lý Ông Trọng','🗿','aulac','hove',2,{nm:'Đồng Tượng Trấn Ải',t:'aoe',v:'ongtrong',d:120,r:1.5,cen:'self',stun:[.8,1,1.2],sh:200,al:'self',dur:5,mana:70,grow:{ad:[.25,.35,.5],arm:[30,50,80],dur:[5,6,7]}}],
-['trungnhi','Trưng Nhị','🌺','khoinghia','dukich',2,{nm:'Tuyệt Ảnh Trảm Tướng',t:'dash',v:'chem',d:340,tg:'low',mana:60}],
+['trungnhi','Trưng Nhị','🌺','khoinghia','dukich',2,{nm:'Tuyệt Ảnh Trảm Tướng',t:'dash',v:'tuyetanh',d:340,tg:'low',mana:60}],
 ['phunghung','Phùng Hưng','🔨','khoinghia','hove',2,{nm:'Bố Cái Hộ Thể',t:'none',v:'bocai',sh:200,ad:[.4,.5,.65],al:'self',dur:5,mana:60}],
 ['tranquoctoan','Trần Quốc Toản','🍊','lytran','dukich',2,{nm:'Phá Nghịch Toái Khí',t:'dash',v:'toaikhi',d:300,stun:[1,1.2,1.5],mana:60}],
 ['phamngulao','Phạm Ngũ Lão','🔱','lytran','cungno',2,{nm:'Đông A Liệt Tiễn',t:'volley',v:'donga',k:[4,5,6],d:100,mana:70}],
@@ -1745,7 +1752,7 @@ const COIN_IMG=FXIMG_BASE+'coin-gold.webp';
 const EGG_IMG=FXIMG_BASE+'egg-dragon.webp';
 const ARROW_IMG={};
 for(const k of ['arrow-gold','arrow-wood','arrow-wood-bright']){const im=new Image();im.src=FXIMG_BASE+k+'.webp';ARROW_IMG[k]=im;}
-['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst','le-lai-array','le-lai-robe','le-lai-burst','mai-thuc-loan-array','mai-thuc-loan-shield','mai-thuc-loan-burst','cao-lo-array','cao-lo-arrow','cao-lo-burst','chu-dong-tu-array','chu-dong-tu-net','chu-dong-tu-burst','ba-trieu-array','ba-trieu-elephant','ba-trieu-burst','tran-quang-dieu-array','tran-quang-dieu-arrow','tran-quang-dieu-burst','pham-ngu-lao-array','pham-ngu-lao-arrow','pham-ngu-lao-burst','tran-quoc-toan-array','tran-quoc-toan-strike','tran-quoc-toan-burst','phung-hung-array','phung-hung-shield','phung-hung-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
+['yet-kieu-array','yet-kieu-fish','yet-kieu-burst','da-tuong-array','da-tuong-elephant','da-tuong-burst','nguyen-xi-array','nguyen-xi-arrow','nguyen-xi-burst','bui-thi-xuan-array','bui-thi-xuan-arrow','bui-thi-xuan-burst','le-lai-array','le-lai-robe','le-lai-burst','mai-thuc-loan-array','mai-thuc-loan-shield','mai-thuc-loan-burst','cao-lo-array','cao-lo-arrow','cao-lo-burst','chu-dong-tu-array','chu-dong-tu-net','chu-dong-tu-burst','ba-trieu-array','ba-trieu-elephant','ba-trieu-burst','tran-quang-dieu-array','tran-quang-dieu-arrow','tran-quang-dieu-burst','pham-ngu-lao-array','pham-ngu-lao-arrow','pham-ngu-lao-burst','tran-quoc-toan-array','tran-quoc-toan-strike','tran-quoc-toan-burst','phung-hung-array','phung-hung-shield','phung-hung-burst','trung-nhi-array','trung-nhi-strike','trung-nhi-burst'].forEach(k=>{const im=new Image();im.src=FXIMG_BASE+k+'.webp';});
 function arrowByCost(c){return ARROW_IMG[c<=1?'arrow-wood':c<=3?'arrow-wood-bright':'arrow-gold'];}
 function ico(h){return HIMG[h]?'<img class="himg" draggable="false" src="'+HIMG[h]+'" alt="" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+(HERO[h]?HERO[h].ico:'')+'\'))">':h==='datuong'?'<img class="himg" draggable="false" src="'+DATUONG_IMG+'" alt="Dã Tượng" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode)this.parentNode.appendChild(document.createTextNode(\'🐘\'))">':HERO[h]?HERO[h].ico:'';}
 const arena=$('#arena'),cellsEl=$('#cells'),benchEl=$('#benchL'),benchEl2=$('#benchR'),blEl=$('#bl'),ulEl=$('#ul'),zlEl=$('#zl'),fxl=$('#fxl'),cv=$('#fxc'),ctx=cv.getContext('2d');
@@ -2338,7 +2345,101 @@ VF.ngua=e=>{
     ],1250);
   },dashDur*0.9);
 };
-VF.chem=e=>{const a=px(e.x1,e.y1),b=px(e.tx,e.ty);slashFx(a,b,e.col,5);spawnP(b[0],b[1],8*SC(e.s),{col:'#fff',shape:'l',sp:140,life:.3});};
+VF.tuyetanh=e=>{
+  const [x0, y0] = px(e.x0 != null ? e.x0 : e.x1, e.y0 != null ? e.y0 : e.y1);
+  const [tx, ty] = px(e.tx != null ? e.tx : (e.cx != null ? e.cx : e.x1), e.ty != null ? e.ty : (e.cy != null ? e.cy : e.y1));
+  const dx = tx - x0, dy = ty - y0;
+  const dist = Math.hypot(dx, dy) || 1;
+  const ang = Math.atan2(dy, dx);
+  const k = SC(e.s);
+  const spd = U.speed || 1;
+  const dashDur = Math.max(150, Math.min(270, dist * 0.35)) / spd;
+
+  // QUY TẮC BẮT BUỘC: KHÔNG HIỆN DÒNG CHỮ SKILL (Tuyệt đối không có banner textFx, không có chữ tên skill Tuyệt Ảnh Trảm Tướng)
+
+  // Điểm xuất phát: Khởi động tuyệt ảnh, hào quang cánh hoa hồng ngọc bộc phát
+  ringFx(x0, y0, U.c * 0.8 * k, '#f43f5e', 280, true);
+  spawnP(x0, y0, 8 * k, {col: '#f43f5e', sp: 70, g: 15, life: .38, size: 2.5});
+  spawnP(x0, y0, 6 * k, {col: '#fb7185', sp: 55, g: 10, life: .32, size: 2.0});
+
+  if(FX.big){
+    // 1. LAYER 1: Pháp Trận Mê Linh Tuyệt Ảnh (#zl, z-index: 1 dưới chân mục tiêu)
+    const aW = Math.round(U.c * 1.5 * Math.min(1.2, k)), aH = Math.round(aW * (320 / 512));
+    const aEl = document.createElement('div');
+    aEl.className = 'fxs fx-trungnhi-array';
+    aEl.style.cssText = 'left:' + tx + 'px;top:' + ty + 'px;width:' + aW + 'px;height:' + aH + 'px;z-index:1;';
+    const aSrc = FX_BASE + 'trung-nhi-array.webp';
+    aEl.style.backgroundImage = 'url("' + aSrc + '")';
+    const _imA = new Image();
+    _imA.onerror = () => { aEl.style.backgroundImage = 'url("./img/fx/trung-nhi-array.webp")'; };
+    _imA.src = aSrc;
+    zlEl.appendChild(aEl);
+
+    aEl.animate([
+      {opacity: 0, transform: 'translate(-50%,-50%) scale(.4) rotate(-15deg)'},
+      {opacity: 0.95, transform: 'translate(-50%,-50%) scale(1.05) rotate(0deg)', offset: .15},
+      {opacity: 0.9, transform: 'translate(-50%,-50%) scale(1) rotate(6deg)', offset: .8},
+      {opacity: 0, transform: 'translate(-50%,-50%) scale(.95) rotate(12deg)'}
+    ], {duration: Math.round(1800 / spd), fill: 'forwards'}).onfinish = () => aEl.remove();
+
+    // 2. LAYER 2: Song Đao Tuyệt Ảnh Thập Tự Trảm Lướt Tới Mục Tiêu (#fxl, z-index: 45)
+    const sW = Math.round(U.c * 1.65 * Math.min(1.2, k)), sH = sW;
+    const sEl = document.createElement('div');
+    sEl.className = 'fxs fx-trungnhi-strike';
+    sEl.style.cssText = 'left:' + x0 + 'px;top:' + y0 + 'px;width:' + sW + 'px;height:' + sH + 'px;z-index:45;';
+    const sImg = document.createElement('img');
+    const sSrc = FX_BASE + 'trung-nhi-strike.webp';
+    sImg.onerror = () => { sImg.src = './img/fx/trung-nhi-strike.webp'; };
+    sImg.src = sSrc; sImg.draggable = false;
+    sEl.appendChild(sImg);
+    fxl.appendChild(sEl);
+
+    // Lao lướt nhanh như cắt từ vị trí ban đầu xuyên qua mục tiêu
+    sEl.animate([
+      {left: x0 + 'px', top: y0 + 'px', transform: 'translate(-50%,-50%) scale(.45) rotate(' + (ang * 180 / Math.PI - 30) + 'deg)', opacity: 0},
+      {left: (x0 + dx * 0.45) + 'px', top: (y0 + dy * 0.45) + 'px', transform: 'translate(-50%,-50%) scale(1.1) rotate(' + (ang * 180 / Math.PI) + 'deg)', opacity: 1, offset: .3},
+      {left: tx + 'px', top: ty + 'px', transform: 'translate(-50%,-50%) scale(1.18) rotate(' + (ang * 180 / Math.PI + 12) + 'deg)', opacity: 0.95, offset: .75},
+      {left: (tx + Math.cos(ang) * 15) + 'px', top: (ty + Math.sin(ang) * 15) + 'px', transform: 'translate(-50%,-50%) scale(1.25) rotate(' + (ang * 180 / Math.PI + 20) + 'deg)', opacity: 0}
+    ], {duration: dashDur + Math.round(180 / spd), easing: 'cubic-bezier(.15,.85,.25,1)', fill: 'forwards'}).onfinish = () => sEl.remove();
+  }
+
+  // Va chạm mục tiêu (Contact Frame & Hit-stop)
+  setTimeout(() => {
+    shake(6, 300);
+    hitstop(50);
+
+    ringFx(tx, ty, U.c * 1.3 * k, '#f43f5e', 360, true);
+    ringFx(tx, ty, U.c * 1.7 * k, '#fb7185', 420, false);
+
+    if(FX.big){
+      // 3. LAYER 3: Bộc Phá Hồng Ngọc Mê Linh & Tàn Diệp (#fxl, z-index: 46, screen mode)
+      const bW = Math.round(U.c * 1.65 * Math.min(1.2, k)), bH = bW;
+      const bEl = document.createElement('div');
+      bEl.className = 'fxs fx-trungnhi-burst';
+      bEl.style.cssText = 'left:' + tx + 'px;top:' + ty + 'px;width:' + bW + 'px;height:' + bH + 'px;z-index:46;mix-blend-mode:screen;';
+      const bImg = document.createElement('img');
+      const bSrc = FX_BASE + 'trung-nhi-burst.webp';
+      bImg.onerror = () => { bImg.src = './img/fx/trung-nhi-burst.webp'; };
+      bImg.src = bSrc; bImg.draggable = false;
+      bEl.appendChild(bImg);
+      fxl.appendChild(bEl);
+
+      bEl.animate([
+        {opacity: 0, transform: 'translate(-50%,-50%) scale(.35)'},
+        {opacity: 1, transform: 'translate(-50%,-50%) scale(1.1)', offset: .2},
+        {opacity: 0.85, transform: 'translate(-50%,-50%) scale(1.15)', offset: .65},
+        {opacity: 0, transform: 'translate(-50%,-50%) scale(1.2)'}
+      ], {duration: Math.round(1100 / spd), easing: 'ease-out', fill: 'forwards'}).onfinish = () => bEl.remove();
+    }
+
+    // Bụi đất và tia kiếm khí hồng ngọc bộc phát
+    dustAt(tx, ty, 8);
+    spawnP(tx, ty, 15 * k, {col: '#f43f5e', sp: 95, g: 20, life: .55, size: 2.8});
+    spawnP(tx, ty, 12 * k, {col: '#fb7185', sp: 80, g: 15, life: .48, size: 2.2});
+    spawnP(tx, ty, 8 * k, {col: '#fbbf24', sp: 65, g: -10, life: .4, size: 1.8});
+  }, dashDur);
+};
+VF.chem=VF.tuyetanh;
 VF.toaikhi=e=>{
   const [x0, y0] = px(e.x0 != null ? e.x0 : e.x1, e.y0 != null ? e.y0 : e.y1);
   const [tx, ty] = px(e.tx != null ? e.tx : (e.cx != null ? e.cx : e.x1), e.ty != null ? e.ty : (e.cy != null ? e.cy : e.y1));
@@ -5074,8 +5175,8 @@ function startDemo(heroId){
   const foes=[mon('Mộc Quái','🌳',3000,50,20,1,.7,5,2),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,3),mon('Mộc Quái','🌳',3000,50,20,1,.7,5,4)];
   if(heroId==='sontinh'||heroId==='trungtrac'||heroId==='anduongvuong'||heroId==='kimquy'||heroId==='datuong'||heroId==='lelai'||heroId==='maithucloan'||heroId==='phunghung'){hero.x=3;hero.y=3;foes.forEach(f=>f.x=4);}
   if(heroId==='anduongvuong'){foes.forEach(f=>{f.ad=120;f.as=0.9;});}
-  if(heroId==='thuytinh'||heroId==='lythuongkiet'||heroId==='nguyenxi'||heroId==='buithixuan'||heroId==='nguyentrai'||heroId==='yetkieu'||heroId==='caolo'||heroId==='chudongtu'||heroId==='batrieu'||heroId==='tranquangdieu'||heroId==='phamngulao'||heroId==='tranquoctoan'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
-  if(heroId==='yetkieu'){foes[1].hp=1500;}
+  if(heroId==='thuytinh'||heroId==='lythuongkiet'||heroId==='nguyenxi'||heroId==='buithixuan'||heroId==='nguyentrai'||heroId==='yetkieu'||heroId==='caolo'||heroId==='chudongtu'||heroId==='batrieu'||heroId==='tranquangdieu'||heroId==='phamngulao'||heroId==='tranquoctoan'||heroId==='trungnhi'){hero.x=2;hero.y=3;foes.forEach(f=>f.x=5);}
+  if(heroId==='yetkieu'||heroId==='trungnhi'){foes[1].hp=1500;}
   for(const f of foes){f.maxMana=100;f.mana=50;}
   if(heroId==='chudongtu'){foes[0].mana=80;foes[1].mana=95;foes[2].mana=20;}
   if(heroId==='batrieu'){hero.x=1;hero.y=3;foes[0].x=5;foes[0].y=2;foes[1].x=5;foes[1].y=3;foes[2].x=6;foes[2].y=4;}
