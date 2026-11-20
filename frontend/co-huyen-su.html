@@ -69,7 +69,17 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .traits-bar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:30px;padding:2px 0}
 .traits-bar .tr .ti{width:28px;height:28px;font-size:14px}
 .tr.on{opacity:1;border-color:var(--tc);box-shadow:inset 0 0 0 1px var(--tc)}
-.tr .ti{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#2a1c12;font-size:13px;box-shadow:0 0 0 2px var(--tc)}
+.tr .ti{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#2a1c12;font-size:13px;box-shadow:0 0 0 2px var(--tc);overflow:hidden;padding:0}
+img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;pointer-events:none;-webkit-user-drag:none}
+.tr .ti img.trico{width:100%;height:100%;border-radius:50%;display:block}
+.tok .cg{overflow:hidden}
+.tok .cg img.trico{width:100%;height:100%;border-radius:50%;display:block}
+.card .tt span{overflow:hidden}
+.card .tt span img.trico{width:100%;height:100%;border-radius:50%;display:block}
+.bi-ico{overflow:hidden}
+.bi-ico img.trico{width:100%;height:100%;border-radius:50%;display:block}
+.tag img.trico{width:1.25em;height:1.25em;display:inline-block;vertical-align:-0.24em;margin-right:3px}
+.peek .hd .tk img.trico{width:36px;height:36px;border-radius:50%;display:block}
 .tr b{font-family:var(--serif);font-weight:800;white-space:nowrap}
 .tr .tn{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
 .tr .tn u{text-decoration:none;color:var(--ink2)}.tr .tn u.a{color:var(--bronze);font-weight:800}
@@ -1770,6 +1780,28 @@ const HIMG={'thuytinh':HIMG_BASE+'thuy-tinh-tok.webp','aucơ':HIMG_BASE+'au-co-t
 if(HIMG['aucơ']&&!HIMG['auco'])HIMG['auco']=HIMG['aucơ'];
 const HIMG_P={};for(const k in HIMG)HIMG_P[k]=HIMG[k].replace('-tok.webp','.webp');
 function portrait(h){return HIMG_P[h]?'<img class="pimg" draggable="false" src="'+HIMG_P[h]+'" alt="" onerror="this.onerror=null;if(\''+(HIMG[h]||'')+'\'){this.src=\''+(HIMG[h]||'')+'\';this.onerror=function(){this.style.display=\'none\';};}else{this.style.display=\'none\';}">':ico(h);}
+const TRAIT_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/';
+const TRAIT_IMG={
+  hongbang: TRAIT_BASE+'hongbang.webp',
+  aulac: TRAIT_BASE+'aulac.webp',
+  khoinghia: TRAIT_BASE+'khoinghia.webp',
+  lytran: TRAIT_BASE+'lytran.webp',
+  lamson: TRAIT_BASE+'lamson.webp',
+  tayson: TRAIT_BASE+'tayson.webp',
+  chienbinh: TRAIT_BASE+'chienbinh.webp',
+  hove: TRAIT_BASE+'hove.webp',
+  cungno: TRAIT_BASE+'cungno.webp',
+  thuatsi: TRAIT_BASE+'thuatsi.webp',
+  dukich: TRAIT_BASE+'dukich.webp'
+};
+function trIco(k){
+  const img=TRAIT_IMG[k];
+  const em=(TR[k]&&TR[k].emoji)||(CS[k]&&CS[k].emoji)||(TR[k]&&TR[k].ico)||'';
+  return img ? '<img class="trico trico-'+k+'" draggable="false" src="'+img+'" alt="" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'))">' : em;
+}
+for(const k in TR){TR[k].emoji=TR[k].emoji||TR[k].ico;TR[k].ico=trIco(k);}
+for(const k in CS){CS[k].emoji=CS[k].emoji||CS[k].ico;CS[k].ico=trIco(k);}
+Object.values(TRAIT_IMG).forEach(src=>{const im=new Image();im.src=src;});
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
 const MON_IMG={'Hồ Quái':MON_BASE+'ho-quai.webp?v=2','Mộc Quái':MON_BASE+'moc-quai.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai.webp?v=3','Hồ Tinh':MON_BASE+'ho-tinh.webp?v=2','Ngư Tinh':MON_BASE+'ngu-tinh.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh.webp?v=2'};
 const MON_SPRITES={'Ngư Tinh':MON_BASE+'ngu-tinh-sheet-128.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai-sheet-128.webp?v=3','Mộc Quái':MON_BASE+'moc-quai-sheet-128.webp?v=2','Hồ Quái':MON_BASE+'ho-quai-sheet-128.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh-sheet-128.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh-sheet-128.webp?v=2'};
