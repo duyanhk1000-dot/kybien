@@ -976,7 +976,7 @@ const BONDS=[
   {id:'trungtrac_trungnhi',name:'Mê Linh Đồng Khởi',ico:'🌺',heroes:['trungtrac','trungnhi'],scope:'members',desc:'Hai Bà Trưng phất cờ khởi nghĩa Mê Linh đền nợ nước trả thù nhà. Cả 2 tăng 25% Tốc đánh và 25 Nộ khởi đầu.',fx:{as:.25,mana:25}},
   {id:'sontinh_thuytinh',name:'Sơn Thần Thủy Quái',ico:'⛰️',heroes:['sontinh','thuytinh'],scope:'members',desc:'Kỳ phùng địch thủ huyền sử núi Tản Viên và biển sâu. Cả 2 tăng 25% Sức mạnh kỹ năng, Thủy Tinh thêm 15% Hút máu, Sơn Tinh thêm 30 Giáp.',fx:{spell:.25,armor:30,ls:.15}},
   {id:'chudongtu_tiendung',name:'Dạ Trạch Kỳ Duyên',ico:'🌸',heroes:['chudongtu','tiendung'],scope:'members',desc:'Mối duyên kỳ ngộ bãi cát Dạ Trạch, lập nên đầm Nhất Dạ cứu thế. Cả 2 tăng 20% Hút máu và 15% Máu tối đa.',fx:{ls:.2,hp:.15}},
-  {id:'laclongquan_auco',name:'Bách Noãn Khai Thiên',ico:'🐉',heroes:['laclongquan','auco'],scope:'team',desc:'Quốc Tổ Lạc Long Quân và Quốc Mẫu Âu Cơ sinh bọc trăm trứng Rồng Tiên. Toàn đội tăng 8% Máu tối đa, Lạc Long Quân vào trận có sẵn 40 Nộ.',fx:{hp:.08,mana:40}},
+  {id:'laclongquan_auco',name:'Bách Noãn Khai Thiên',ico:'🐉',heroes:['laclongquan','aucơ'],scope:'team',desc:'Quốc Tổ Lạc Long Quân và Quốc Mẫu Âu Cơ sinh bọc trăm trứng Rồng Tiên. Toàn đội tăng 12% Máu tối đa và 15 Giáp; Lạc Long Quân nhận sẵn 40 Nộ và 20% Sức mạnh kỹ năng; Âu Cơ tăng 25% Máu và 25 Giáp.',fx:{hp:.12,armor:15},teamFx:{hp:.12,armor:15},heroFx:{laclongquan:{mana:40,spell:.2},'aucơ':{hp:.25,armor:25},'auco':{hp:.25,armor:25}}},
   {id:'tranhungdao_giatuong',name:'Vương Gia Gia Tướng',ico:'🎖️',heroes:['tranhungdao','yetkieu','datuong'],scope:'members',desc:'Hưng Đạo Đại Vương cùng đôi gia tướng cận vệ vào sinh ra tử. Cả 3 nhận thêm 20% Máu, 25 Giáp và 15% Sát thương.',fx:{hp:.2,armor:25,ad:.15}},
   {id:'tranquangdieu_buithixuan',name:'Uyên Ương Trận Tuyến',ico:'⚔️',heroes:['tranquangdieu','buithixuan'],scope:'members',desc:'Cặp vợ chồng Đô đốc tiết liệt lừng danh Tây Sơn vào sinh ra tử. Cả 2 tăng 18% Sát thương, 20% Tốc đánh và 10% Hút máu.',fx:{ad:.18,as:.2,ls:.1}},
   {id:'anduongvuong_kimquy',name:'Loa Thành Thần Quy',ico:'🏯',heroes:['anduongvuong','kimquy'],scope:'members',desc:'Thần Kim Quy hiện lên giúp An Dương Vương xây thành Cổ Loa trừ yêu quái. An Dương Vương tăng 25% Máu và 30 Giáp; Kim Quy nhận 30 Nộ khởi đầu.',fx:{hp:.25,armor:30,mana:30}},
@@ -985,8 +985,8 @@ const BONDS=[
   {id:'leloi_kimquy',name:'Thuận Thiên Hoàn Kiếm',ico:'🗡️',heroes:['leloi','kimquy'],scope:'members',desc:'Huyền tích Hồ Gươm: Thần Kim Quy trao gươm Thuận Thiên giúp Lê Lợi cứu quốc rồi nhận lại gươm thiêng. Lê Lợi tăng 20% Sát thương và 15% Hút máu; Kim Quy tăng 25% Máu tối đa.',fx:{ad:.2,ls:.15,hp:.25}},
   {id:'caolo_kimquy',name:'Kim Trảo Thần Nỗ',ico:'🏹',heroes:['caolo','kimquy'],scope:'members',desc:'Thần Kim Quy rút móng trao tặng, Cao Lỗ dựa vào móng thần chế tạo nỏ Liên Châu hộ quốc. Cao Lỗ tăng 25% Tốc đánh và 20% Sát thương; Kim Quy tăng 20 Giáp.',fx:{as:.25,ad:.2,armor:20}}
 ];
-function activeBonds(list){if(!list||!list.length)return [];const heroIds=new Set(list.map(u=>u.h));return BONDS.filter(b=>b.heroes.every(h=>heroIds.has(h)));}
-function heroBonds(hid){return BONDS.filter(b=>b.heroes.includes(hid));}
+function activeBonds(list){if(!list||!list.length)return [];const heroIds=new Set(list.map(u=>u.h));if(heroIds.has('aucơ'))heroIds.add('auco');if(heroIds.has('auco'))heroIds.add('aucơ');return BONDS.filter(b=>b.heroes.every(h=>heroIds.has(h)));}
+function heroBonds(hid){const alt=hid==='aucơ'?'auco':(hid==='auco'?'aucơ':hid);return BONDS.filter(b=>b.heroes.includes(hid)||b.heroes.includes(alt));}
 
 /* ===== 30 tướng và kỹ năng =====
    d,heal,sh: số = nhân SKM (1/1,7/2,8); mảng = giá trị riêng ★1/★2/★3
@@ -1025,6 +1025,7 @@ const HEROES_RAW=[
 ];
 const HERO={},BYCOST=[[],[],[],[],[],[]];
 for(const [id,name,ico,o,c,cost,sk] of HEROES_RAW){HERO[id]={id,name,ico,o,c,cost,sk};BYCOST[cost].push(id);}
+if(HERO['aucơ'])HERO['auco']=HERO['aucơ'];
 HERO['rongcon']={id:'rongcon',name:'Kim Long',ico:'',o:'hongbang',c:'thuatsi',cost:1,sk:{nm:'Long Hỏa',t:'none',mana:0}};
 const ALN={self:'bản thân',all:'cả đội',low:'đồng minh yếu nhất',near:'đồng minh xung quanh'};
 function skillText(sk,star){
@@ -1097,7 +1098,17 @@ function mkBU(u,side,x,y,counts,rfx,bonds){
   const add=fx=>{if(!fx)return;for(const k in fx)f[k]=(f[k]||0)+fx[k];};
   for(const t in counts){const i=tierOf(t,counts[t]);if(i<0)continue;const T=TR[t];if(T.scope==='team'||H.o===t||H.c===t)add(T.tiers[i].fx);}
   add(rfx);
-  if(bonds){for(const b of bonds){if(b.scope==='team'||b.heroes.includes(u.h))add(b.fx);}}
+  if(bonds){
+    for(const b of bonds){
+      const isMember=b.heroes.includes(u.h)||(u.h==='aucơ'&&b.heroes.includes('auco'))||(u.h==='auco'&&b.heroes.includes('aucơ'));
+      if(b.teamFx) add(b.teamFx);
+      if(isMember&&b.heroFx){
+        const hfx=b.heroFx[u.h]||(u.h==='aucơ'?b.heroFx['auco']:(u.h==='auco'?b.heroFx['aucơ']:null));
+        if(hfx) add(hfx);
+      }
+      if(b.fx&&!b.teamFx&&!b.heroFx){if(b.scope==='team'||isMember) add(b.fx);}
+    }
+  }
   hp=Math.round(hp*(1+f.hp));ad*=1+f.ad;
   return bareUnit({id:UID++,side,x,y,h:u.h,star:s,name:H.name,ico:H.ico,cost:H.cost,cls:H.c,org:H.o,col:TR[H.o].col,max:hp,hp,ad,armor:cs.armor+f.armor,as:cs.as*(1+f.as),range:cs.range,crit:f.crit,spell:f.spell,ls:f.ls,sk:H.sk,maxMana:H.sk.mana,mana:Math.min(f.mana,Math.floor(H.sk.mana*.6))});
 }
@@ -1756,6 +1767,7 @@ const HERO_SPRITES={
   'trungtrac': SPR_BASE+'trung-trac-sheet-128.webp'
 };/* THU NGHIEM: sheet nhung base64 (49KB); khi duyet xong chuyen sang file ngoai frontend/img/hero/thanh-giong-sheet-128.webp qua jsDelivr */
 const HIMG={'thuytinh':HIMG_BASE+'thuy-tinh-tok.webp','aucơ':HIMG_BASE+'au-co-tok.webp','chudongtu':HIMG_BASE+'chu-dong-tu-tok.webp','laclongquan':HIMG_BASE+'lac-long-quan-tok.webp','sontinh':HIMG_BASE+'son-tinh-tok.webp','tiendung':HIMG_BASE+'tien-dung-tok.webp','thanhgiong':HIMG_BASE+'thanh-giong-tok.webp', 'kimquy':HIMG_BASE+'kim-quy-tok.webp','lyongtrong':HIMG_BASE+'ly-ong-trong-tok.webp','anduongvuong':HIMG_BASE+'an-duong-vuong-tok.webp','caolo':HIMG_BASE+'cao-lo-tok.webp', 'phunghung':HIMG_BASE+'phung-hung-tok.webp','trungnhi':HIMG_BASE+'trung-nhi-tok.webp','trungtrac':HIMG_BASE+'trung-trac-tok.webp','batrieu':HIMG_BASE+'ba-trieu-tok.webp','maithucloan':HIMG_BASE+'mai-thuc-loan-tok.webp','ngoquyen':HIMG_BASE+'ngo-quyen-tok.webp', 'datuong':HIMG_BASE+'da-tuong-tok.webp','lythuongkiet':HIMG_BASE+'ly-thuong-kiet-tok.webp','phamngulao':HIMG_BASE+'pham-ngu-lao-tok.webp','tranhungdao':HIMG_BASE+'tran-hung-dao-tok.webp','tranquoctoan':HIMG_BASE+'tran-quoc-toan-tok.webp','yetkieu':HIMG_BASE+'yet-kieu-tok.webp','nguyenxi':HIMG_BASE+'nguyen-xi-tok.webp','lelai':HIMG_BASE+'le-lai-tok.webp','leloi':HIMG_BASE+'le-loi-tok.webp','nguyentrai':HIMG_BASE+'nguyen-trai-tok.webp','tranquangdieu':HIMG_BASE+'tran-quang-dieu-tok.webp','buithixuan':HIMG_BASE+'bui-thi-xuan-tok.webp','nguyenhue':HIMG_BASE+'nguyen-hue-tok.webp'};
+if(HIMG['aucơ']&&!HIMG['auco'])HIMG['auco']=HIMG['aucơ'];
 const HIMG_P={};for(const k in HIMG)HIMG_P[k]=HIMG[k].replace('-tok.webp','.webp');
 function portrait(h){return HIMG_P[h]?'<img class="pimg" draggable="false" src="'+HIMG_P[h]+'" alt="" onerror="this.onerror=null;if(\''+(HIMG[h]||'')+'\'){this.src=\''+(HIMG[h]||'')+'\';this.onerror=function(){this.style.display=\'none\';};}else{this.style.display=\'none\';}">':ico(h);}
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
@@ -4823,7 +4835,7 @@ function renderPeek(){
     const H=HERO[pk.h],st=heroStats(pk.h,pk.s),sk=H.sk;
     const sel=pk.k?me()[pk.k][pk.i]:null;
     const hb=heroBonds(pk.h);
-    const bondsHTML=hb.length?'<div class="skl" style="margin-top:4px;color:#ffcad4"><b>Nhân Duyên:</b> '+hb.map(b=>'<span style="color:#ffd36a">'+b.ico+' '+b.name+'</span> ('+b.heroes.filter(x=>x!==pk.h).map(x=>HERO[x]?HERO[x].name:x).join(', ')+')').join('; ')+'</div>':'';
+    const bondsHTML=hb.length?'<div class="skl" style="margin-top:4px;color:#ffcad4"><b>Nhân Duyên:</b> '+hb.map(b=>'<span style="color:#ffd36a">'+b.ico+' '+b.name+'</span> ('+b.heroes.filter(x=>x!==pk.h&&(x!=='auco'||pk.h!=='aucơ')&&(x!=='aucơ'||pk.h!=='auco')).map(x=>HERO[x]?HERO[x].name:(x==='auco'?'Âu Cơ':x)).join(', ')+')').join('; ')+'</div>':'';
     h='<div class="hd"><div class="tk" style="--c:46px;font-size:24px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" style="--tc:'+TR[H.o].col+'">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'"><img class="coin" src="'+COIN_IMG+'" alt=""> '+H.cost+'</span><span class="tag">Kho còn '+poolCount(G,pk.h)+'</span></div></div></div>'
      +'<div class="tags" style="margin:5px 0 0">'+[1,2,3].map(n=>'<span class="tag pst'+(n===pk.s?' on':'')+'" data-pstar="'+n+'">Xem '+'\u2605'.repeat(n)+'</span>').join('')+'</div>'
      +'<div class="stats"><span>Máu<b>'+st.hp+'</b></span><span>Sát thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
@@ -4832,9 +4844,10 @@ function renderPeek(){
      +'<div class="acts">'+(sel?'<button class="sell" data-sell="1">Bán +'+sellValue(sel)+' vàng</button>':'')+'<button data-closepeek="1">Đóng</button></div>';
   }else if(pk.type==='bond'){
     const B=pk.bond;
-    const heads=B.heroes.map(hid=>ico(hid)+' '+(HERO[hid]?HERO[hid].name:hid)).join(' \u00b7 ');
+    const heads=B.heroes.map(hid=>ico(hid)+' '+(HERO[hid]?HERO[hid].name:(hid==='auco'?'Âu Cơ':hid))).join(' \u00b7 ');
+    const effectDesc = B.teamFx ? ('Toàn đội: '+fxText(B.teamFx)+(B.heroFx?' · Lạc Long Quân: +40 nộ, +20% SKM · Âu Cơ: +25% máu, +25 giáp':'')) : ((B.scope==='team'?'Cả đội: ':'Các tướng trong bộ: ')+fxText(B.fx));
     h='<div class="hd"><div class="tk" style="font-size:26px;width:auto">'+B.ico+'</div><div style="flex:1"><h4>'+B.name+' <span style="font-weight:500;font-size:12px;color:#ff8fa3">Nhân Duyên Kích Hoạt</span></h4></div></div><div style="margin:4px 0">'+B.desc+'</div>'
-     +'<div class="tiers"><div class="a">'+(B.scope==='team'?'Cả đội':'Các tướng trong bộ')+': '+fxText(B.fx)+'</div></div><div class="heads" style="font-size:12px;color:#ffd36a;margin-top:6px">'+heads+'</div><div class="acts"><button data-closepeek="1">Đóng</button></div>';
+     +'<div class="tiers"><div class="a">'+effectDesc+'</div></div><div class="heads" style="font-size:12px;color:#ffd36a;margin-top:6px">'+heads+'</div><div class="acts"><button data-closepeek="1">Đóng</button></div>';
   }else{
     const T=TR[pk.t],counts=traitCounts(boardList(me())),n=counts[pk.t]||0,ti=tierOf(pk.t,n);
     const heads=Object.values(HERO).filter(x=>x.o===pk.t||x.c===pk.t).sort((a,b)=>a.cost-b.cost).map(x=>ico(x.id)).join(' ');
