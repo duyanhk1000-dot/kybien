@@ -78,8 +78,8 @@ img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:bloc
 .card .tt span img.trico{width:100%;height:100%;border-radius:50%;display:block}
 .bi-ico{overflow:hidden}
 .bi-ico img.trico{width:100%;height:100%;border-radius:50%;display:block}
-.tag img.trico{width:1.25em;height:1.25em;display:inline-block;vertical-align:-0.24em;margin-right:3px}
-.peek .hd .tk img.trico{width:36px;height:36px;border-radius:50%;display:block}
+.tag img.trico, .skl img.trico{width:1.25em;height:1.25em;display:inline-block;vertical-align:-0.24em;margin-right:3px}
+.peek .hd .tk img.trico{width:36px;height:36px;border-radius:50%;display:block;box-shadow:0 2px 6px rgba(0,0,0,.45)}
 .tr b{font-family:var(--serif);font-weight:800;white-space:nowrap}
 .tr .tn{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
 .tr .tn u{text-decoration:none;color:var(--ink2)}.tr .tn u.a{color:var(--bronze);font-weight:800}
@@ -252,6 +252,7 @@ img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:bloc
 /* Huy hiệu Nhân Duyên trong thanh Tộc / Hệ */
 .tr.tr-bond{border-radius:12px;background:linear-gradient(135deg,rgba(90,20,35,.9),rgba(35,12,20,.95));box-shadow:0 0 8px rgba(255,94,126,.5),inset 0 1px 2px rgba(255,180,200,.4);border-color:#ff8fa3!important}
 .tr.tr-bond .ti{filter:drop-shadow(0 0 3px #ff5e7e)}
+.tr.tr-bond .ti img.trico{width:100%;height:100%;border-radius:50%;display:block;box-shadow:inset 0 0 4px rgba(255,143,163,.4)}
 
 /* ============================================================
    LỰA CHỌN 1: ĐĨA HÀO QUANG DƯỚI CHÂN TƯỚNG SPRITE (CHUẨN TFT)
@@ -1797,11 +1798,34 @@ const TRAIT_IMG={
 function trIco(k){
   const img=TRAIT_IMG[k];
   const em=(TR[k]&&TR[k].emoji)||(CS[k]&&CS[k].emoji)||(TR[k]&&TR[k].ico)||'';
-  return img ? '<img class="trico trico-'+k+'" draggable="false" src="'+img+'" alt="" onerror="this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'))">' : em;
+  return img ? '<img class="trico trico-'+k+'" draggable="false" src="'+img+'" alt="" onerror="if(!this._fb){this._fb=1;this.src=\'./img/trait/'+k+'.webp\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">' : em;
 }
 for(const k in TR){TR[k].emoji=TR[k].emoji||TR[k].ico;TR[k].ico=trIco(k);}
 for(const k in CS){CS[k].emoji=CS[k].emoji||CS[k].ico;CS[k].ico=trIco(k);}
 Object.values(TRAIT_IMG).forEach(src=>{const im=new Image();im.src=src;});
+const BOND_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/bond/';
+const BOND_IMG={
+  laclongquan_auco: BOND_BASE+'laclongquan_auco.webp',
+  leloi_lelai: BOND_BASE+'leloi_lelai.webp',
+  trungtrac_trungnhi: BOND_BASE+'trungtrac_trungnhi.webp',
+  sontinh_thuytinh: BOND_BASE+'sontinh_thuytinh.webp',
+  chudongtu_tiendung: BOND_BASE+'chudongtu_tiendung.webp',
+  tranhungdao_giatuong: BOND_BASE+'tranhungdao_giatuong.webp',
+  tranquangdieu_buithixuan: BOND_BASE+'tranquangdieu_buithixuan.webp',
+  anduongvuong_kimquy: BOND_BASE+'anduongvuong_kimquy.webp',
+  tranhungdao_phamngulao: BOND_BASE+'tranhungdao_phamngulao.webp',
+  yetkieu_datuong: BOND_BASE+'yetkieu_datuong.webp',
+  leloi_kimquy: BOND_BASE+'leloi_kimquy.webp',
+  caolo_kimquy: BOND_BASE+'caolo_kimquy.webp'
+};
+function bondIco(id){
+  const img=BOND_IMG[id];
+  const b=BONDS.find(x=>x.id===id);
+  const em=(b&&b.emoji)||(b&&b.ico)||'';
+  return img ? '<img class="trico trico-bond trico-bond-'+id+'" draggable="false" src="'+img+'" alt="" onerror="if(!this._fb){this._fb=1;this.src=\'./img/bond/'+id+'.webp\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">' : em;
+}
+for(const b of BONDS){b.emoji=b.emoji||b.ico;b.ico=bondIco(b.id);}
+Object.values(BOND_IMG).forEach(src=>{const im=new Image();im.src=src;});
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
 const MON_IMG={'Hồ Quái':MON_BASE+'ho-quai.webp?v=2','Mộc Quái':MON_BASE+'moc-quai.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai.webp?v=3','Hồ Tinh':MON_BASE+'ho-tinh.webp?v=2','Ngư Tinh':MON_BASE+'ngu-tinh.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh.webp?v=2'};
 const MON_SPRITES={'Ngư Tinh':MON_BASE+'ngu-tinh-sheet-128.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai-sheet-128.webp?v=3','Mộc Quái':MON_BASE+'moc-quai-sheet-128.webp?v=2','Hồ Quái':MON_BASE+'ho-quai-sheet-128.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh-sheet-128.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh-sheet-128.webp?v=2'};
