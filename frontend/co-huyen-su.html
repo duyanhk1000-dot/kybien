@@ -87,12 +87,13 @@ img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:bloc
 .tr .tn u{text-decoration:none;color:var(--ink2)}.tr .tn u.a{color:var(--bronze);font-weight:800}
 @media(min-width:980px){.tr{border-radius:12px;padding:6px 10px 6px 6px;font-size:13px}.tr .ti{width:30px;height:30px}}
 .pl{flex:none;display:flex;align-items:center;gap:5px;padding:3px 8px 3px 3px;border-radius:999px;background:var(--panel);border:1.5px solid var(--line);font-size:12px;position:relative}
-.pl .av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#2a1c12;font-size:14px}
+.pl .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#2a1c12;font-size:14px;overflow:hidden;border:1px solid var(--gold);box-shadow:0 0 5px rgba(241,196,15,.35);flex:none}
+.pl .av img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 .pl .hp{font-weight:700;font-variant-numeric:tabular-nums}
 .pl .nm{display:none}.pl .bar{display:none}
 .pl.me{border-color:var(--gold)}.pl.opp{border-color:var(--cinn);box-shadow:0 0 0 2px rgba(179,40,29,.3)}
 .pl.dead{opacity:.45;filter:grayscale(1)}
-@media(min-width:980px){.pl{border-radius:12px;padding:6px 10px 6px 6px;font-size:13px;gap:8px}.pl .av{width:30px;height:30px}.pl .nm{display:block;flex:1;font-weight:600}.pl .bar{display:block;width:60px;height:6px;border-radius:3px;background:var(--panel2);overflow:hidden}.pl .bar i{display:block;height:100%;background:var(--jade)}}
+@media(min-width:980px){.pl{border-radius:12px;padding:6px 10px 6px 6px;font-size:13px;gap:8px}.pl .av{width:32px;height:32px}.pl .nm{display:block;flex:1;font-weight:600}.pl .bar{display:block;width:60px;height:6px;border-radius:3px;background:var(--panel2);overflow:hidden}.pl .bar i{display:block;height:100%;background:var(--jade)}}
 /* arena */
 .arena{position:relative;width:calc(var(--c)*8);height:calc(var(--c)*7);border-radius:14px;overflow:hidden;background:#1c130d;box-shadow:0 0 0 2px #8a6528,0 0 0 5px #1b130d,0 12px 36px rgba(0,0,0,.45);touch-action:manipulation}
 .tiles{position:absolute;inset:0;display:grid;grid-template:repeat(7,1fr)/repeat(8,1fr)}
@@ -102,7 +103,9 @@ img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:bloc
 .tile{box-shadow:inset 0 0 0 1px rgba(214,163,53,.06)}
 .drum{position:absolute;left:50%;top:50%;width:calc(var(--c)*4.4);height:calc(var(--c)*4.4);transform:translate(-50%,-50%);opacity:.38;pointer-events:none}
 .mid{position:absolute;left:calc(var(--c)*4 - 1px);top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,#d6a335 20%,#d6a335 80%,transparent);box-shadow:0 0 8px rgba(214,163,53,.7)}
-.ribbon{position:absolute;right:8px;top:calc(var(--c)*2.1);transform:translateY(-50%);background:#2a1a12;border:1.5px solid #d6a335;color:#f3e8cf;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:600;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;z-index:4}
+.ribbon{position:absolute;right:8px;top:calc(var(--c)*2.1);transform:translateY(-50%);background:#2a1a12;border:1.5px solid #d6a335;color:#f3e8cf;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:600;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;z-index:4;display:inline-flex;align-items:center;gap:6px;}
+.rib-av{width:22px;height:22px;border-radius:50%;overflow:hidden;display:inline-block;vertical-align:middle;flex:none;box-shadow:0 0 6px rgba(241,196,15,.4);border:1px solid var(--gold)}
+.rib-av img.trico{width:100%;height:100%;object-fit:cover;display:block}
 .ribbon.battle-hide,.boardwrap.battle .ribbon,.boardrow.battle .ribbon,.arena.battle ~ .ribbon,.boardwrap:has(.arena.battle) .ribbon,.boardrow:has(.arena.battle) .ribbon,.ribbon.hide{display:none!important}
 .arena.battle .hint{display:none}
 .hint{position:absolute;left:12%;right:12%;top:calc(var(--c)*6);transform:translateY(-50%);text-align:center;color:#c9b58a;font-size:12px;line-height:1.5;pointer-events:none;opacity:.6;z-index:1}
@@ -716,18 +719,27 @@ img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:bloc
 .how{margin:10px 0 0;padding-left:18px;color:var(--ink2);line-height:1.6;font-size:13px}
 .how li{margin:3px 0}
 .relics{display:grid;gap:8px;margin-top:10px}
-.relic{display:flex;gap:12px;align-items:center;text-align:left;border:1.5px solid var(--bronze);border-radius:12px;background:var(--panel2);padding:10px}
-.relic .ri{font-size:30px;width:44px;text-align:center}
+.relic{display:flex;gap:12px;align-items:center;text-align:left;border:1.5px solid var(--bronze);border-radius:12px;background:var(--panel2);padding:10px;cursor:pointer;transition:all .2s ease}
+.relic .ri{width:48px;height:48px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:50%;box-shadow:0 0 10px rgba(241,196,15,0.35);overflow:hidden;border:1.5px solid var(--gold)}
+.relic .ri img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 .relic b{font-family:var(--serif);font-size:16px}.relic span{display:block;color:var(--ink2);font-size:12.5px}
-.relic:hover{background:var(--panel)}
+.relic:hover{background:var(--panel);border-color:var(--gold);transform:translateX(3px);box-shadow:0 4px 14px rgba(241,196,15,0.25)}
 .drumbg{position:absolute;right:-40px;top:-40px;width:200px;height:200px;opacity:.14;pointer-events:none}
 #toast{position:fixed;left:50%;top:58px;transform:translateX(-50%);z-index:10000;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
 #toast div{background:#2a1a12;color:#ffe9b0;border:1px solid #d6a335;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;animation:tst 2.4s forwards;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 @keyframes tst{0%{opacity:0;transform:translateY(-8px)}10%,80%{opacity:1;transform:none}100%{opacity:0}}
 .himg{width:1em;height:1em;object-fit:cover;border-radius:50%;display:inline-block;vertical-align:middle}
-.avp{display:inline-flex;gap:4px;flex-wrap:wrap}
-.avp button{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--bronze);background:var(--panel2);font-size:20px;line-height:1;padding:0}
-.avp button.on{background:var(--btn);box-shadow:0 0 0 2px var(--gold)}
+.avp{display:inline-flex;gap:6px;flex-wrap:wrap}
+.avp button{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--bronze);background:var(--panel2);font-size:20px;line-height:1;padding:0;overflow:hidden;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center}
+.avp button:hover{border-color:var(--gold);transform:scale(1.12);box-shadow:0 0 10px rgba(241,196,15,0.5)}
+.avp button.on{background:var(--btn);border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 14px rgba(241,196,15,0.6);transform:scale(1.08)}
+.avp button img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+
+/* HUD Relics Tray */
+.relics-hud{display:none;align-items:center;gap:6px;padding:3px 8px;background:rgba(20,12,8,0.78);border:1px solid #8a6528;border-radius:20px;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,0.5);margin:0 4px}
+.relic-chip{width:28px;height:28px;border-radius:50%;overflow:hidden;border:1.5px solid var(--gold);box-shadow:0 0 6px rgba(241,196,15,0.4);transition:transform .2s ease,box-shadow .2s ease;cursor:pointer;flex:none}
+.relic-chip:hover{transform:scale(1.25);box-shadow:0 0 14px rgba(241,196,15,0.85);z-index:5}
+.relic-chip img.trico{width:100%;height:100%;object-fit:cover;display:block}
 .dlg .note{font-size:12.5px;color:var(--ink2);border-left:3px solid var(--gold);padding-left:10px;margin:10px 0}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
 
@@ -1476,10 +1488,10 @@ body.has-peek .slot .pu,
 <body>
 <div id="app">
   <header class="chs-top-bar" id="chsTopBar">
-    <button class="chs-top-btn" id="btnBackToCamp" onclick="window.location.href='quan-doanh.html'" title="Quay về Quân Doanh">« 🏯 Quân Doanh</button>
-    <div class="chs-brand"><i class="chs-brand-seal">⚔️</i> <span>CỜ HUYỀN SỬ</span></div>
+    <button class="chs-top-btn" id="btnBackToCamp" onclick="goToCamp()" title="Quay về Quân Doanh">« 🏯 Quân Doanh</button>
+    <div class="chs-brand"><span class="chs-brand-seal" style="width:24px;height:24px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:50%;overflow:hidden;border:1.5px solid #ffd36a;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/chienbinh.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='./img/trait/chienbinh.webp'"></span> <span>CỜ HUYỀN SỬ</span></div>
     <div class="chs-top-chip dv" id="bcDvChip" title="Danh Vọng kiếm được">🪙 <b id="bcDvVal">0</b> DV</div>
-    <button class="chs-top-btn" id="btnBondsInGame" onclick="window.open('https://kybien.blogspot.com/p/tieu-diem-tuong.html', '_blank')"><span style="font-size:14px">🎴</span> 12 Nhân Duyên</button>
+    <button class="chs-top-btn" id="btnBondsInGame" onclick="window.open('https://kybien.blogspot.com/p/tieu-diem-tuong.html', '_blank')"><span style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:5px;border-radius:50%;overflow:hidden;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/bond/laclongquan_auco.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='./img/bond/laclongquan_auco.webp'"></span> 12 Nhân Duyên</button>
   </header>
   <div class="demobar" id="demobar"></div>
     <div class="game" id="game">
@@ -1499,7 +1511,7 @@ body.has-peek .slot .pu,
           <div class="banner" id="banner"></div>
         </div>
         </div>
-        <div class="bhud" id="bhud"><div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div><div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div><div class="bhud-actions"><button class="btn-reinforce" id="btnDeployReinforce" style="display:none;" title="Điều các thẻ tướng đã chuẩn bị trong Quân Lương ra hàng chờ!">🎺 ĐIỀU TƯỚNG</button><button class="btn-quick" id="quickPick" title="Tự động xếp tướng mạnh nhất lên bàn">⚡ Chọn nhanh</button><button class="go" id="ready">Chiến!</button></div></div>
+        <div class="bhud" id="bhud"><div class="rbox"><b id="rd">Vòng 1</b><small id="ph"></small></div><div class="tbar"><i id="tfill"></i><span id="ttxt"></span></div><div class="relics-hud" id="relicsHud" title="Bảo vật thần binh đã sở hữu"></div><div class="bhud-actions"><button class="btn-reinforce" id="btnDeployReinforce" style="display:none;" title="Điều các thẻ tướng đã chuẩn bị trong Quân Lương ra hàng chờ!">🎺 ĐIỀU TƯỚNG</button><button class="btn-quick" id="quickPick" title="Tự động xếp tướng mạnh nhất lên bàn">⚡ Chọn nhanh</button><button class="go" id="ready">Chiến!</button></div></div>
         <div class="peek" id="peek"></div>
         <div class="ribbon" id="ribbon"></div>
         </div>
@@ -1539,8 +1551,8 @@ body.has-peek .slot .pu,
       <div class="qc-res-line" id="qcResLine"></div>
     </div>
     <div class="qc-tabs">
-      <button class="qc-tab on" id="qcTabDmg" data-mode="dmg"><span class="qc-tab-ico">⚔️</span> Sát thương</button>
-      <button class="qc-tab" id="qcTabTkn" data-mode="tkn"><span class="qc-tab-ico">🛡️</span> Chống đỡ</button>
+      <button class="qc-tab on" id="qcTabDmg" data-mode="dmg"><span class="qc-tab-ico" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:4px;border-radius:50%;overflow:hidden;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/chienbinh.webp" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./img/trait/chienbinh.webp'"></span> Sát thương</button>
+      <button class="qc-tab" id="qcTabTkn" data-mode="tkn"><span class="qc-tab-ico" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:4px;border-radius:50%;overflow:hidden;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/hove.webp" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='./img/trait/hove.webp'"></span> Chống đỡ</button>
     </div>
     <div class="qc-cols">
       <div class="qc-col qc-col-ally">
@@ -2249,11 +2261,11 @@ const BOT_NAMES = [
   'Quốc Bảo 98', 'Xích Long Kỵ', 'Trực Chỉ Kinh Kỳ', 'Bất Bại Kỳ Vương',
   'Tiểu Kỳ Đồng', 'Thương Khung Biến', 'Lôi Thần Trấn', 'Minh Nguyệt Dạ'
 ];
-const AV8=['🐲','🐯','🐃','🦚','🐍','🦅','🐘','🦌'];
+const AV8=['rong','ho','trau','phuong','ran','daibang','voi','huou'];
 function newGame(cfg){
   cfg=cfg||{};
   const G={players:[],round:0,matches:[],diff:cfg.diff||1,auto:!!cfg.auto,over:false,winner:null,inc:null,pool:poolInit()};
-  const myAv=cfg.av||'🐲',rest=AV8.filter(a=>a!==myAv);
+  const myAv=cfg.av||'rong',rest=AV8.filter(a=>a!==myAv);
   const me=newPlayer('Bạn',!cfg.auto,0,myAv);G.players.push(me);G.me=me;
   const pickedNames = shuffle([...BOT_NAMES]).slice(0, 7);
   for(let i=0;i<7;i++){
@@ -2473,6 +2485,77 @@ function bondIco(id){
 }
 for(const b of BONDS){b.emoji=b.emoji||b.ico;b.ico=bondIco(b.id);}
 Object.values(BOND_IMG).forEach(src=>{const im=new Image();im.src=src;});
+
+/* --- BẢO VẬT (RELIC MEDALLIONS) --- */
+const RELIC_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/relic/';
+const RELIC_IMG={
+  trongdong: RELIC_BASE+'trongdong.webp',
+  guomthan: RELIC_BASE+'guomthan.webp',
+  nothan: RELIC_BASE+'nothan.webp',
+  non: RELIC_BASE+'non.webp',
+  giap: RELIC_BASE+'giap.webp',
+  banh: RELIC_BASE+'banh.webp',
+  hogom: RELIC_BASE+'hogom.webp',
+  trau: RELIC_BASE+'trau.webp',
+  ngoc: RELIC_BASE+'ngoc.webp'
+};
+function relicIco(id){
+  const img=RELIC_IMG[id];
+  const r=RELICS.find(x=>x.id===id);
+  const em=(r&&r.emoji)||(r&&r.ico)||'👑';
+  return img ? '<img class="trico trico-relic trico-relic-'+id+'" draggable="false" src="'+img+'" alt="" onerror="if(!this._fb){this._fb=1;this.src=\'./img/relic/'+id+'.webp\';}else if(this._fb===1){this._fb=2;this.src=\'./img/relic/'+id+'.png\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">' : em;
+}
+for(const r of RELICS){r.emoji=r.emoji||r.ico;r.ico=relicIco(r.id);}
+Object.values(RELIC_IMG).forEach(src=>{const im=new Image();im.src=src;});
+
+/* --- BIỂU TƯỢNG KỲ THỦ (AVATAR MEDALLIONS) --- */
+const AVATAR_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/avatar/';
+const AV_KEY_MAP={
+  '🐲':'rong','rong':'rong',
+  '🐯':'ho','ho':'ho',
+  '🐃':'trau','trau':'trau',
+  '🦚':'phuong','phuong':'phuong',
+  '🐍':'ran','ran':'ran',
+  '🦅':'daibang','daibang':'daibang',
+  '🐘':'voi','voi':'voi',
+  '🦌':'huou','huou':'huou',
+  '👹':'quai','quai':'quai',
+  '👻':'bong','bong':'bong',
+  '🤖':'may','may':'may'
+};
+const AVATAR_NAME={
+  rong:'Rồng Thần',
+  ho:'Bạch Hổ',
+  trau:'Kim Ngưu',
+  phuong:'Chim Lạc',
+  ran:'Huyền Xà',
+  daibang:'Đại Bàng',
+  voi:'Chiến Tượng',
+  huou:'Linh Hươu',
+  quai:'Dã Quái',
+  bong:'Bóng Ma',
+  may:'Máy Đấu'
+};
+const AVATAR_IMG={
+  rong: AVATAR_BASE+'rong.webp',
+  ho: AVATAR_BASE+'ho.webp',
+  trau: AVATAR_BASE+'trau.webp',
+  phuong: AVATAR_BASE+'phuong.webp',
+  ran: AVATAR_BASE+'ran.webp',
+  daibang: AVATAR_BASE+'daibang.webp',
+  voi: AVATAR_BASE+'voi.webp',
+  huou: AVATAR_BASE+'huou.webp',
+  quai: AVATAR_BASE+'quai.webp',
+  bong: AVATAR_BASE+'bong.webp',
+  may: AVATAR_BASE+'may.webp'
+};
+function avatarIco(key){
+  const k=AV_KEY_MAP[key]||key;
+  const img=AVATAR_IMG[k];
+  const em=key;
+  return img ? '<img class="trico trico-av trico-av-'+k+'" draggable="false" src="'+img+'" alt="" onerror="if(!this._fb){this._fb=1;this.src=\'./img/avatar/'+k+'.webp\';}else if(this._fb===1){this._fb=2;this.src=\'./img/avatar/'+k+'.png\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">' : em;
+}
+Object.values(AVATAR_IMG).forEach(src=>{const im=new Image();im.src=src;});
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
 const MON_IMG={'Hồ Quái':MON_BASE+'ho-quai.webp?v=2','Mộc Quái':MON_BASE+'moc-quai.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai.webp?v=3','Hồ Tinh':MON_BASE+'ho-tinh.webp?v=2','Ngư Tinh':MON_BASE+'ngu-tinh.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh.webp?v=2'};
 const MON_SPRITES={'Ngư Tinh':MON_BASE+'ngu-tinh-sheet-128.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai-sheet-128.webp?v=3','Mộc Quái':MON_BASE+'moc-quai-sheet-128.webp?v=2','Hồ Quái':MON_BASE+'ho-quai-sheet-128.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh-sheet-128.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh-sheet-128.webp?v=2'};
@@ -5440,9 +5523,19 @@ const shortName=n=>{const p=n.split(' ');return p.length>2?p.slice(-2).join(' ')
 
 /* ---------- vẽ giao diện chuẩn bị ---------- */
 function me(){return G.me;}
+function renderRelics(){
+  const el=$('#relicsHud');if(!el)return;
+  const P=me();if(!P||!P.relics||!P.relics.length){el.innerHTML='';el.style.display='none';return;}
+  el.style.display='flex';
+  el.innerHTML=P.relics.map(id=>{
+    const r=RELICS.find(x=>x.id===id);
+    if(!r)return '';
+    return '<div class="relic-chip" data-r="'+id+'" title="'+r.name+': '+r.desc+'">'+r.ico+'</div>';
+  }).join('');
+}
 function renderAll(){
   if(!G)return;
-  renderTop();renderBoard();renderBench();renderShop();renderTraits();renderPlayers();renderPeek();
+  renderTop();renderBoard();renderBench();renderShop();renderTraits();renderPlayers();renderPeek();renderRelics();
 }
 function phaseText(){return U.phase==='prep'?(isPve(G.round)?'Chuẩn bị \u00b7 quái vật':'Chuẩn bị'):U.phase==='battle'?'Giao tranh':'Kết quả';}
 function renderTop(){
@@ -5452,14 +5545,15 @@ function renderTop(){
   const qp=$('#quickPick');if(qp)qp.disabled=U.phase!=='prep';
   const prep=U.phase==='prep';
   const rb=$('#ribbon');
-  if(rb){rb.textContent=prep?oppLabel():'';rb.style.display=prep?'':'none';rb.classList.toggle('battle-hide',!prep);}
+  if(rb){rb.innerHTML=prep?oppLabel():'';rb.style.display=prep?'':'none';rb.classList.toggle('battle-hide',!prep);}
   $('#hint').textContent=(prep&&!U.peek)?(G.round===1?'Kéo tướng từ hàng chờ lên bàn. Chạm vào tướng để xem kỹ năng và bán. Tướng càng nhiều sao càng to.':'Kéo để đổi chỗ. Hàng trước chịu đòn, hàng sau bắn.'):'';
+  renderRelics();
 }
 function oppLabel(){
   const m=G.matches.find(x=>x.a.human);if(!m)return '';
-  if(m.pve)return '\u2620 '+pveName(G.round);
-  if(m.ghost)return '⚔ Bóng đội hình của '+m.b.name;
-  return '⚔ '+m.b.name+' \u00b7 '+m.b.hp+' máu';
+  if(m.pve)return '<span class="rib-av">'+avatarIco('quai')+'</span> '+pveName(G.round);
+  if(m.ghost)return '<span class="rib-av">'+avatarIco('bong')+'</span> Bóng đội hình của '+m.b.name;
+  return '<span class="rib-av">'+avatarIco(m.b.av)+'</span> '+m.b.name+' \u00b7 '+m.b.hp+' máu';
 }
 function renderBoard(){
   const P=me();
@@ -5528,7 +5622,7 @@ function renderTraits(){
 function renderPlayers(){
   const m=G.matches.find(x=>x.a.human),opp=m&&!m.pve&&!m.ghost?m.b:null;
   const list=G.players.slice().sort((a,b)=>(b.alive-a.alive)||(b.hp-a.hp));
-  $('#plist').innerHTML=list.map(p=>'<div class="pl'+(p.human?' me':'')+(p===opp?' opp':'')+(p.alive?'':' dead')+'"><span class="av">'+p.av+'</span><span class="nm">'+p.name+'</span><span class="bar"><i style="width:'+Math.max(0,p.hp)+'%"></i></span><span class="hp">'+(p.alive?Math.max(0,p.hp):'#'+p.place)+'</span></div>').join('');
+  $('#plist').innerHTML=list.map(p=>'<div class="pl'+(p.human?' me':'')+(p===opp?' opp':'')+(p.alive?'':' dead')+'"><span class="av">'+avatarIco(p.av)+'</span><span class="nm">'+p.name+'</span><span class="bar"><i style="width:'+Math.max(0,p.hp)+'%"></i></span><span class="hp">'+(p.alive?Math.max(0,p.hp):'#'+p.place)+'</span></div>').join('');
 }
 function renderPeek(){
   const el=$('#peek'),pk=U.peek;
@@ -5837,11 +5931,11 @@ function recordBattleStats(B){
     };
   };
   const lm=U.lm;
-  let foeName='Phe địch',foeAv='⚔️';
+  let foeName='Phe địch',foeAv='may';
   if(lm){
-    if(lm.pve){foeName='Quái vật';foeAv='👹';}
-    else if(lm.ghost){foeName='Bóng '+(lm.b?lm.b.name:'Đối thủ');foeAv=(lm.b&&lm.b.av)||'👻';}
-    else if(lm.b){foeName=lm.b.name;foeAv=lm.b.av||'🤖';}
+    if(lm.pve){foeName='Quái vật';foeAv='quai';}
+    else if(lm.ghost){foeName='Bóng '+(lm.b?lm.b.name:'Đối thủ');foeAv=(lm.b&&lm.b.av)||'bong';}
+    else if(lm.b){foeName=lm.b.name;foeAv=lm.b.av||'may';}
   }
   G.lastBattleStats={
     allies:B.units.filter(u=>u.side===0).map(mapU),
@@ -5849,7 +5943,7 @@ function recordBattleStats(B){
     winner:B.winner,
     round:G.round,
     allyName:(me()&&me().name)||'Bạn',
-    allyAv:(me()&&me().av)||'🐲',
+    allyAv:(me()&&me().av)||'rong',
     foeName,foeAv
   };
 }
@@ -5875,8 +5969,8 @@ function renderQC(){
   if(line)line.textContent=res.line||'';
 
   const nmAlly=$('#qcNameAlly'),nmFoe=$('#qcNameFoe');
-  if(nmAlly)nmAlly.textContent=(data&&data.allyName)||'Bạn';
-  if(nmFoe)nmFoe.textContent=(data&&data.foeName)||'Phe địch';
+  if(nmAlly)nmAlly.innerHTML='<span style="width:22px;height:22px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;">'+avatarIco(data&&data.allyAv)+'</span>'+((data&&data.allyName)||'Bạn');
+  if(nmFoe)nmFoe.innerHTML='<span style="width:22px;height:22px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;">'+avatarIco(data&&data.foeAv)+'</span>'+((data&&data.foeName)||'Phe địch');
 
   if(!data||(!data.allies.length&&!data.enemies.length)){
     elAlly.innerHTML='<div class="qc-empty">Chưa có dữ liệu chiến trận.</div>';
@@ -5910,7 +6004,7 @@ function renderQC(){
       }else if(u.name&&MON_IMG[u.name]){
         imgHtml='<img class="pimg" draggable="false" src="'+MON_IMG[u.name]+'" alt="">';
       }else{
-        imgHtml='<span class="qc-ico-txt">'+(u.ico||'👹')+'</span>';
+        imgHtml='<span class="qc-ico-txt" style="width:30px;height:30px;display:inline-block;border-radius:50%;overflow:hidden;">'+avatarIco('quai')+'</span>';
       }
 
       let traitsHtml='';
@@ -5922,7 +6016,7 @@ function renderQC(){
         const cNm=TR[H.c]?TR[H.c].name:(CS[H.c]?CS[H.c].name:'');
         traitsHtml='<span class="qc-trait" title="'+oNm+'">'+oIco+'</span><span class="qc-trait" title="'+cNm+'">'+cIco+'</span>';
       }else if(u.mon){
-        traitsHtml='<span class="qc-trait" title="Quái vật">👹</span><span class="qc-trait" title="'+(u.boss?'Thủ lĩnh':'Dã quái')+'">'+(u.boss?'👑':'🌲')+'</span>';
+        traitsHtml='<span class="qc-trait" title="Quái vật" style="width:16px;height:16px;display:inline-block;vertical-align:middle;border-radius:50%;overflow:hidden;">'+avatarIco('quai')+'</span><span class="qc-trait" title="'+(u.boss?'Thủ lĩnh':'Dã quái')+'">'+(u.boss?'👑':'🌲')+'</span>';
       }
 
       const mvpBadge=isMvp?'<span class="qc-mvp">MVP</span>':'';
@@ -6406,10 +6500,10 @@ function showEnd(){
     return;
   }
   const ov=$('#ov');
-  const rank=G.players.slice().sort((a,b)=>(a.place||99)-(b.place||99)).map(p=>'<div style="display:flex;gap:8px;padding:2px 0"><b style="width:26px">#'+(p.place||'?')+'</b><span>'+p.av+' '+p.name+'</span></div>').join('');
+  const rank=G.players.slice().sort((a,b)=>(a.place||99)-(b.place||99)).map(p=>'<div style="display:flex;gap:8px;padding:3px 0;align-items:center"><b style="width:26px">#'+(p.place||'?')+'</b><span style="width:24px;height:24px;display:inline-block;vertical-align:middle;flex:none;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;">'+avatarIco(p.av)+'</span><span style="flex:1">'+p.name+'</span></div>').join('');
   ov.innerHTML='<div class="dlg"><h1 style="font-size:34px">'+(won?'Thiên hạ thái bình':'Bạn đã bại trận')+'</h1><p>'+(won?'Bạn là người đứng cuối cùng sau '+G.round+' vòng.':'Bạn về hạng '+P.place+' trên 8 người, ở vòng '+G.round+'.')+'</p><div style="margin:8px 0;color:var(--ink)">'+rank+'</div><div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap"><button class="btn" id="qcViewFinal">📊 Xem thống kê ván cuối</button><button class="go big-go" id="again">Chơi lại</button></div></div>';
   ov.className='ov show';ov.onclick=null;
-  $('#again').onclick=()=>{ov.className='ov';showStart();};
+  $('#again').onclick=()=>{ov.className='ov';showStartBot();};
   const _qcf=$('#qcViewFinal');if(_qcf)_qcf.onclick=()=>openQCModal();
 }
 /* ---------- màn hình đầu và hướng dẫn ---------- */
@@ -6420,17 +6514,17 @@ function showHelp(){
   ov.className='ov show';$('#closehelp').onclick=()=>ov.className='ov';ov.onclick=null;
 }
 function showStartBot(){
-  let selAv=store.get('chs_av')||'🐲';
+  let selAv=store.get('chs_av')||'rong';
   const ov=$('#ov');
   ov.innerHTML='<div class="dlg"><svg class="drumbg" viewBox="-100 -100 200 200">'+$('#drum').innerHTML.replace(/#d6a335/g,'#b3281d')+'</svg>'
    +'<h1 style="font-size:26px;color:#ffd36a;">🤖 LUYỆN TẬP (ĐẤU VỚI BOT)</h1>'
    +'<p style="margin-top:6px;font-size:13px;color:var(--ink2);">Thao luyện binh pháp và thử nghiệm phối hợp đội hình cùng 7 đối thủ máy. Tùy chỉnh độ khó và thời gian để tìm hiểu chiến thuật.</p>'
    +'<div class="row"><label>Độ khó máy</label><div class="seg" id="sd"><button data-v="0.6">Dễ</button><button data-v="1" class="on">Thường</button><button data-v="1.5">Khó</button></div></div>'
    +'<div class="row"><label>Thời gian chọn tướng</label><div class="seg" id="st"><button data-v="40" class="on">40 giây</button><button data-v="0">Không giới hạn</button></div></div>'
-   +'<div class="row"><label>Biểu tượng kỳ thủ</label><div class="avp" id="sav">'+AV8.map(a=>'<button data-a="'+a+'" class="'+(a===selAv?'on':'')+'">'+a+'</button>').join('')+'</div></div>'
+   +'<div class="row"><label>Biểu tượng kỳ thủ</label><div class="avp" id="sav">'+AV8.map(a=>'<button data-a="'+a+'" class="'+(a===selAv?'on':'')+'" title="'+(AVATAR_NAME[a]||a)+'">'+avatarIco(a)+'</button>').join('')+'</div></div>'
    +'<div style="display:flex;gap:10px;margin-top:14px;">'
    +'<button class="go big-go" id="playBotStart" style="flex:2;">⚔️ Vào Trận Luyện Tập</button>'
-   +'<button class="go" id="btnBotBackCamp" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;" onclick="window.location.href=\'quan-doanh.html\'">« 🏯 Quân Doanh</button>'
+   +'<button class="go" id="btnBotBackCamp" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;" onclick="goToCamp()">« 🏯 Quân Doanh</button>'
    +'</div>'
    +'<p style="text-align:center;margin:10px 0 0"><a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank" rel="noopener">★ Tiêu điểm tướng — xem chiêu thức từng tướng</a></p>'+HOW+'</div>';
 
@@ -6582,16 +6676,36 @@ const params = new URLSearchParams(location.search);
 const dm = params.get('demo');
 const rawMode = params.get('mode');
 
+window.goToCamp = function() {
+  let isBlogspot = location.hostname.includes('blogspot.com');
+  if (!isBlogspot) {
+    try {
+      if (window.top && window.top.location && window.top.location.hostname.includes('blogspot.com')) {
+        isBlogspot = true;
+      }
+    } catch(e) {}
+  }
+  let targetUrl = isBlogspot ? 'https://kybien.blogspot.com/p/quan-doanh.html' : 'quan-doanh.html';
+  const tk = localStorage.getItem('kybien_jwt_token');
+  const u = localStorage.getItem('kybien_username');
+  if (tk) targetUrl += (targetUrl.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(tk);
+  if (u && u !== 'Kỳ Thủ Đại Việt') targetUrl += '&u=' + encodeURIComponent(u);
+  try {
+    if (window.top && window.top !== window && isBlogspot) {
+      window.top.location.href = targetUrl;
+      return;
+    }
+  } catch(e) {}
+  window.location.href = targetUrl;
+};
+
 // SƠ ĐỒ SITE-MAP:
 // Trang chủ kybien.blogspot >>> Sảnh các loại cờ >>> Chọn Cờ Huyền Sử:
 // 1. Nếu đã đăng nhập -> chuyển ngay vào trang Quân Doanh
 // 2. Nếu không đăng nhập -> vào ngay trang đấu với Bot (mode=bot)
 if (!dm && !rawMode) {
   if (isUserLoggedIn()) {
-    const targetQd = (location.hostname.includes('blogspot.com'))
-      ? 'https://kybien.blogspot.com/p/quan-doanh.html'
-      : 'quan-doanh.html';
-    window.location.replace(targetQd);
+    goToCamp();
   }
 }
 
@@ -6788,7 +6902,7 @@ const CHS_ONLINE = {
     U.noTimer = false;
     U.diff = 1;
 
-    const selAv = store.get('chs_av') || '🐲';
+    const selAv = store.get('chs_av') || 'rong';
     G = newGame({ diff: 1, av: selAv });
     G.isPvp = false;
     G.pvpDeck = [...(this.state.deck || [])];
@@ -6816,7 +6930,7 @@ const CHS_ONLINE = {
     U.noTimer = false;
     U.diff = 1;
 
-    const myAv = store.get('chs_av') || '🐲';
+    const myAv = store.get('chs_av') || 'rong';
     G = newGame({ diff: 1, av: myAv });
     G.isPvp = true;
     G.pvpDeck = [...this.state.deck];
@@ -6952,7 +7066,7 @@ CHS_ONLINE.init(matchMode);
       Dùng <b>Danh Vọng</b> vừa nhận được vào <b>Chiêu Hiền Các</b> tại Quân Doanh để chiêu mộ hiền tài và trang bị quân lương!
     </p>
     <div class="pvp-end-actions" style="display:flex;gap:10px;">
-      <button class="chs-top-btn" id="pvpEndBackToCamp" onclick="window.location.href='quan-doanh.html'" style="flex:1;background:linear-gradient(180deg,#d6a335,#8a6528);color:#140c06;font-size:14px;padding:10px 16px;border-radius:10px;">
+      <button class="chs-top-btn" id="pvpEndBackToCamp" onclick="goToCamp()" style="flex:1;background:linear-gradient(180deg,#d6a335,#8a6528);color:#140c06;font-size:14px;padding:10px 16px;border-radius:10px;">
         🏛️ Trở Về Quân Doanh
       </button>
       <button class="chs-top-btn" id="pvpEndAgain" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;font-size:14px;padding:10px 16px;border-radius:10px;">

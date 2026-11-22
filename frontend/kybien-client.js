@@ -274,7 +274,17 @@
     broadcastAuth: function () {
       try {
         const token = this.getToken();
-        const user = this.cachedUser;
+        let user = this.cachedUser;
+        if (!user) {
+          try {
+            const uStr = localStorage.getItem('kybien_user');
+            if (uStr) user = JSON.parse(uStr);
+          } catch (e) {}
+        }
+        if (!user) {
+          const uName = localStorage.getItem('kybien_username');
+          if (uName) user = { username: uName };
+        }
         document.querySelectorAll('iframe').forEach((ifr) => {
           try {
             ifr.contentWindow.postMessage({
@@ -637,10 +647,22 @@
     if (e.data && e.data.type === 'KYBIEN_REQUEST_AUTH') {
       try {
         if (e.source) {
+          const token = window.KybienAuth ? window.KybienAuth.getToken() : localStorage.getItem('kybien_jwt_token');
+          let user = window.KybienAuth ? window.KybienAuth.cachedUser : null;
+          if (!user) {
+            try {
+              const uStr = localStorage.getItem('kybien_user');
+              if (uStr) user = JSON.parse(uStr);
+            } catch (err) {}
+          }
+          if (!user) {
+            const uName = localStorage.getItem('kybien_username');
+            if (uName) user = { username: uName };
+          }
           e.source.postMessage({
             type: 'KYBIEN_AUTH_SYNC',
-            token: window.KybienAuth ? window.KybienAuth.getToken() : localStorage.getItem('kybien_jwt_token'),
-            user: window.KybienAuth ? window.KybienAuth.cachedUser : null
+            token: token,
+            user: user
           }, '*');
         }
       } catch (err) {}

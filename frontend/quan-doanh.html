@@ -1275,18 +1275,35 @@ const CHS_QUANDOANH = {
       if (urlUser) localStorage.setItem('kybien_username', urlUser);
     } catch(e) {}
 
-    window.addEventListener('message', (e) => {
+    window.addEventListener('message', async (e) => {
       if (e.data && e.data.type === 'KYBIEN_AUTH_SYNC') {
+        let hasNew = false;
         if (e.data.token) {
-          try { localStorage.setItem('kybien_jwt_token', e.data.token); } catch(err) {}
+          try { localStorage.setItem('kybien_jwt_token', e.data.token); hasNew = true; } catch(err) {}
         }
         if (e.data.user && e.data.user.username) {
           try {
             localStorage.setItem('kybien_username', e.data.user.username);
             localStorage.setItem('kybien_user', JSON.stringify(e.data.user));
+            hasNew = true;
           } catch(err) {}
         }
-        this.updateAuthUI();
+        if (e.data.token && (!e.data.user || !e.data.user.username)) {
+          try {
+            const res = await fetch('https://kybien-server.onrender.com/api/auth/me', {
+              headers: { Authorization: `Bearer ${e.data.token}` }
+            });
+            if (res.ok) {
+              const uData = await res.json();
+              if (uData && uData.username) {
+                localStorage.setItem('kybien_username', uData.username);
+                localStorage.setItem('kybien_user', JSON.stringify(uData));
+                hasNew = true;
+              }
+            }
+          } catch(err) {}
+        }
+        if (hasNew) this.updateAuthUI();
       }
     });
 
@@ -1728,10 +1745,47 @@ const CHS_QUANDOANH = {
     container.innerHTML = html || '<p style="color:var(--ink2);padding:14px;">Chưa có thẻ tướng nào trong kho để trang bị.</p>';
   },
 
+  /* Điều hướng vào trận thông minh & truyền Auth qua tham số URL */
+  navigateToGame(mode) {
+    let isBlogspot = location.hostname.includes('blogspot.com');
+    if (!isBlogspot) {
+      try {
+        if (window.top && window.top.location && window.top.location.hostname.includes('blogspot.com')) {
+          isBlogspot = true;
+        }
+      } catch(e) {}
+    }
+
+    let targetUrl = '';
+    if (isBlogspot) {
+      targetUrl = 'https://kybien.blogspot.com/p/co-huyen-su.html?mode=' + encodeURIComponent(mode);
+    } else {
+      targetUrl = 'co-huyen-su.html?mode=' + encodeURIComponent(mode);
+    }
+
+    const auth = this.getAuth();
+    if (auth) {
+      if (auth.token) {
+        targetUrl += (targetUrl.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(auth.token);
+      }
+      if (auth.username && auth.username !== 'Kỳ Thủ Đại Việt') {
+        targetUrl += '&u=' + encodeURIComponent(auth.username);
+      }
+    }
+
+    try {
+      if (window.top && window.top !== window && isBlogspot) {
+        window.top.location.href = targetUrl;
+        return;
+      }
+    } catch(e) {}
+    window.location.href = targetUrl;
+  },
+
   /* Chế độ chơi */
   startBotGame() {
     this.saveState();
-    window.location.href = 'co-huyen-su.html?mode=bot';
+    this.navigateToGame('bot');
   },
 
   startPvpMatch() {
@@ -1762,7 +1816,7 @@ const CHS_QUANDOANH = {
         this.queueTimer = null;
         toast('⏱️ Đã qua 40 giây! Tự động bù Bot thông minh và xuất trận!');
         setTimeout(() => {
-          window.location.href = 'co-huyen-su.html?mode=pvp';
+          this.navigateToGame('pvp');
         }, 1200);
       }
     }, 1000);
