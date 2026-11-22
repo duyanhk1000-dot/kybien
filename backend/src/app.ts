@@ -20,6 +20,7 @@ import xianxiaGuildRoutes from './routes/xianxia/xianxiaGuildRoutes.js';
 import xianxiaPartyRoutes from './routes/xianxia/xianxiaPartyRoutes.js';
 import xianxiaDungeonRoutes from './routes/xianxia/xianxiaDungeonRoutes.js';
 import xianxiaWorldBossRoutes from './routes/xianxia/xianxiaWorldBossRoutes.js';
+import coHuyenSuRoutes from './routes/coHuyenSuRoutes.js';
 import { xianxiaChatService } from './services/xianxia/xianxiaChatService.js';
 import { onlineTracker } from './services/onlineTracker.js';
 import { prisma } from './utils/prisma.js';
@@ -166,6 +167,7 @@ app.use('/api/xianxia/guilds', xianxiaGuildRoutes);
 app.use('/api/xianxia/party', xianxiaPartyRoutes);
 app.use('/api/xianxia/dungeons', xianxiaDungeonRoutes);
 app.use('/api/xianxia/world-boss', xianxiaWorldBossRoutes);
+app.use('/api/chs', coHuyenSuRoutes);
 
 // Global Error Handler
 app.use((err: any, req: Request, res: Response, next: any) => {

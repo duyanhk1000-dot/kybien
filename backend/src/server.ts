@@ -6,6 +6,7 @@ import { setupGameSocket } from './socket/gameSocket.js';
 import { setupXianxiaChatSocket } from './socket/xianxiaChatSocket.js';
 import { setupXianxiaDungeonSocket } from './socket/xianxiaDungeonSocket.js';
 import { setupXianxiaWorldBossSocket } from './socket/xianxiaWorldBossSocket.js';
+import { setupCoHuyenSuSocket } from './socket/coHuyenSuSocket.js';
 
 const server = http.createServer(app);
 
@@ -33,6 +34,9 @@ setupXianxiaDungeonSocket(io);
 
 // Setup Xianxia Realtime World Boss (M4.4A Tiên Lộ)
 setupXianxiaWorldBossSocket(io);
+
+// Setup Cờ Huyền Sử Auto-Chess 8-Player PvP Matchmaking & Socket (M5.0)
+setupCoHuyenSuSocket(io);
 
 server.listen(config.port, () => {
   console.log(`===================================================`);
