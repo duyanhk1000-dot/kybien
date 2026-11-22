@@ -63,16 +63,16 @@ export const RATION_POINTS: Record<number, number> = {
 
 export const MAX_RATION_POINTS = 10; // Tổng quân lương tối đa = 10
 
-// Thưởng Hưng Bảo theo thứ hạng
+// Thưởng Danh Vọng (trước là Hưng Bảo) theo thứ hạng
 export const RANK_REWARDS: Record<number, { hb: number; elo: number }> = {
-  1: { hb: 30, elo: 35 },
-  2: { hb: 22, elo: 25 },
-  3: { hb: 16, elo: 15 },
-  4: { hb: 12, elo: 5 },
-  5: { hb: 8, elo: -5 },
-  6: { hb: 6, elo: -15 },
-  7: { hb: 4, elo: -25 },
-  8: { hb: 3, elo: -35 },
+  1: { hb: 50, elo: 35 },
+  2: { hb: 35, elo: 25 },
+  3: { hb: 25, elo: 15 },
+  4: { hb: 15, elo: 5 },
+  5: { hb: 10, elo: -5 },
+  6: { hb: 8, elo: -15 },
+  7: { hb: 6, elo: -25 },
+  8: { hb: 4, elo: -35 },
 };
 
 // ==========================================
@@ -381,8 +381,10 @@ export const coHuyenSuService = {
     return {
       rankPlace,
       rewardHb: reward.hb,
+      rewardDv: reward.hb,
       eloChange: reward.elo,
       currentHungBao: u.hungBao,
+      currentDanhVong: u.hungBao,
     };
   },
 };

@@ -385,6 +385,7 @@ async function handlePlayerElimination(io: Server, room: PvPRoom, player: any) {
       sock.emit('chs:eliminated', {
         rankPlace: place,
         rewardHb: rewardInfo.rewardHb,
+        rewardDv: (rewardInfo as any).rewardDv || rewardInfo.rewardHb,
         eloChange: rewardInfo.eloChange,
       });
     }
@@ -406,6 +407,7 @@ async function handleMatchEnded(io: Server, room: PvPRoom, winner?: any) {
           sock.emit('chs:match_victory', {
             rankPlace: 1,
             rewardHb: rew.rewardHb,
+            rewardDv: (rew as any).rewardDv || rew.rewardHb,
             eloChange: rew.eloChange,
           });
         }
