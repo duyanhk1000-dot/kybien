@@ -682,7 +682,9 @@ img.trico{width:100%;height:100%;object-fit:cover;border-radius:50%;display:bloc
 .btn small{font-weight:600;color:var(--ink2)}
 .btn:disabled{opacity:.45;cursor:default}
 .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-.card{position:relative;border:2px solid var(--rc);border-radius:10px;background:linear-gradient(180deg,#3e2d1e,#1d140d);color:#f3e8cf;padding:0;display:flex;flex-direction:column;align-items:stretch;overflow:hidden}
+.card{position:relative;border:2px solid var(--rc);border-radius:10px;background:linear-gradient(180deg,#3e2d1e,#1d140d);color:#f3e8cf;padding:0;display:flex;flex-direction:column;align-items:stretch;overflow:hidden;cursor:pointer;user-select:none;transition:transform .12s ease,box-shadow .12s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.card:active{transform:translateY(0)}
 .card .em{position:relative;width:100%;aspect-ratio:8/9;display:grid;place-items:center;background:radial-gradient(circle at 50% 32%,#5a4632,#241a10 78%);font-size:52px;line-height:1}
 .card .em .pimg{width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block}
 .card .em .himg{width:104px;height:104px}
@@ -5659,12 +5661,23 @@ document.addEventListener('click',e=>{
 // ==========================================
 // ACTION WRAPPERS (SERVER-AUTHORITATIVE IN PVP)
 // ==========================================
+function isServerAuthActive() {
+  return typeof CHS_ONLINE !== 'undefined' && 
+         CHS_ONLINE.isServerAuthoritative === true && 
+         !!CHS_ONLINE.roomId && 
+         CHS_ONLINE.socket && 
+         CHS_ONLINE.socket.connected;
+}
+
 function authBuyUnit(i) {
-  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+  if (isServerAuthActive()) {
     CHS_ONLINE.socket.emit('chs:buy_unit', { slotIndex: i });
     return;
   }
-  const P = me(), h = P.shop[i]; if (!h) return;
+  const P = me();
+  if (!P || !P.shop) return;
+  const h = P.shop[i];
+  if (!h) return;
   if (P.gold < HERO[h].cost) { toast('Không đủ vàng'); return; }
   if (!canAdd(P, h)) { toast('Hàng chờ đã đầy'); return; }
   if (poolCount(G, h) <= 0) { toast('Đã hết bản sao của ' + HERO[h].name); P.shop[i] = null; renderAll(); return; }
@@ -5672,7 +5685,7 @@ function authBuyUnit(i) {
 }
 
 function authSellUnit(kind, idx) {
-  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+  if (isServerAuthActive()) {
     CHS_ONLINE.socket.emit('chs:sell_unit', { kind, index: idx });
     U.sel = null; U.peek = null;
     return;
@@ -5683,7 +5696,7 @@ function authSellUnit(kind, idx) {
 }
 
 function authMoveUnit(from, to) {
-  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+  if (isServerAuthActive()) {
     CHS_ONLINE.socket.emit('chs:move_unit', { from, to });
     U.sel = null; U.peek = null;
     return true;
@@ -5695,7 +5708,7 @@ function authMoveUnit(from, to) {
 }
 
 function authBuyXp() {
-  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+  if (isServerAuthActive()) {
     CHS_ONLINE.socket.emit('chs:buy_xp');
     return;
   }
@@ -5703,7 +5716,7 @@ function authBuyXp() {
 }
 
 function authReroll() {
-  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+  if (isServerAuthActive()) {
     CHS_ONLINE.socket.emit('chs:reroll_shop');
     return;
   }
@@ -6473,12 +6486,17 @@ function isUserLoggedIn() {
   try {
     const tk = localStorage.getItem('kybien_jwt_token');
     if (tk && typeof tk === 'string' && tk.trim().length > 10) return true;
+    const u = localStorage.getItem('kybien_username');
+    if (u && typeof u === 'string' && u.trim().length > 0 && u !== 'Kỳ Thủ Đại Việt') return true;
+    const usr = localStorage.getItem('kybien_user');
+    if (usr && usr.includes('username')) return true;
   } catch (e) {}
 
   if (window.KybienAuth) {
     try {
       const tk = window.KybienAuth.getToken ? window.KybienAuth.getToken() : null;
       if (tk && typeof tk === 'string' && tk.trim().length > 10) return true;
+      if (window.KybienAuth.cachedUser && window.KybienAuth.cachedUser.username) return true;
     } catch (e) {}
   }
 
@@ -6487,13 +6505,37 @@ function isUserLoggedIn() {
       if (window.parent.localStorage) {
         const ptk = window.parent.localStorage.getItem('kybien_jwt_token');
         if (ptk && typeof ptk === 'string' && ptk.trim().length > 10) return true;
+        const pu = window.parent.localStorage.getItem('kybien_username');
+        if (pu && typeof pu === 'string' && pu.trim().length > 0 && pu !== 'Kỳ Thủ Đại Việt') return true;
       }
-      if (window.parent.KybienAuth && window.parent.KybienAuth.getToken) {
-        const ptk = window.parent.KybienAuth.getToken();
-        if (ptk && typeof ptk === 'string' && ptk.trim().length > 10) return true;
+      if (window.parent.KybienAuth) {
+        if (window.parent.KybienAuth.getToken) {
+          const ptk = window.parent.KybienAuth.getToken();
+          if (ptk && typeof ptk === 'string' && ptk.trim().length > 10) return true;
+        }
+        if (window.parent.KybienAuth.cachedUser && window.parent.KybienAuth.cachedUser.username) return true;
       }
     } catch (e) {}
   }
+
+  if (window.top && window.top !== window && window.top !== window.parent) {
+    try {
+      if (window.top.localStorage) {
+        const ttk = window.top.localStorage.getItem('kybien_jwt_token');
+        if (ttk && typeof ttk === 'string' && ttk.trim().length > 10) return true;
+        const tu = window.top.localStorage.getItem('kybien_username');
+        if (tu && typeof tu === 'string' && tu.trim().length > 0 && tu !== 'Kỳ Thủ Đại Việt') return true;
+      }
+      if (window.top.KybienAuth) {
+        if (window.top.KybienAuth.getToken) {
+          const ttk = window.top.KybienAuth.getToken();
+          if (ttk && typeof ttk === 'string' && ttk.trim().length > 10) return true;
+        }
+        if (window.top.KybienAuth.cachedUser && window.top.KybienAuth.cachedUser.username) return true;
+      }
+    } catch (e) {}
+  }
+
   return false;
 }
 
@@ -6565,6 +6607,7 @@ if (dm && HERO[dm]) {
 const CHS_ONLINE = {
   socket: null,
   isPvpActive: false,
+  isServerAuthoritative: false,
   roomId: null,
   reinforcementsDeployed: false,
 
@@ -6663,6 +6706,7 @@ const CHS_ONLINE = {
       });
 
       this.socket.on('chs:sync_player_state', (data) => {
+        if (!this.isServerAuthoritative || !this.roomId) return;
         const P = me();
         if (!P) return;
         P.gold = data.gold;
@@ -6676,10 +6720,12 @@ const CHS_ONLINE = {
       });
 
       this.socket.on('chs:combat_start', () => {
+        if (!this.isServerAuthoritative || !this.roomId) return;
         if (U.phase === 'prep') readyGo(true);
       });
 
       this.socket.on('chs:round_start', (data) => {
+        if (!this.isServerAuthoritative || !this.roomId) return;
         if (G) {
           G.round = data.round;
           if (U.phase !== 'prep') beginRound();
@@ -6688,6 +6734,7 @@ const CHS_ONLINE = {
       });
 
       this.socket.on('chs:timer_tick', (data) => {
+        if (!this.isServerAuthoritative || !this.roomId) return;
         if (U.phase === 'prep') {
           U.timer = data.timer;
           const _tt = $('#ttxt'), _tf = $('#tfill');
@@ -6697,14 +6744,17 @@ const CHS_ONLINE = {
       });
 
       this.socket.on('chs:reinforcements_ready', () => {
+        if (!this.isServerAuthoritative || !this.roomId) return;
         this.showReinforceButton();
       });
 
       this.socket.on('chs:eliminated', (data) => {
+        if (!this.isServerAuthoritative || !this.roomId) return;
         this.onMatchEnd(data.rankPlace, data.rewardDv || data.rewardHb);
       });
 
       this.socket.on('chs:match_victory', (data) => {
+        if (!this.isServerAuthoritative || !this.roomId) return;
         this.onMatchEnd(1, data.rewardDv || data.rewardHb);
       });
     } catch (e) {}
@@ -6712,6 +6762,8 @@ const CHS_ONLINE = {
 
   startOfflineGame() {
     this.isPvpActive = false;
+    this.isServerAuthoritative = false;
+    this.roomId = null;
     this.reinforcementsDeployed = false;
     const b = $('#btnDeployReinforce');
     if (b) b.style.display = 'none';
@@ -6722,6 +6774,8 @@ const CHS_ONLINE = {
 
   startOfflineDirect() {
     this.isPvpActive = false;
+    this.isServerAuthoritative = false;
+    this.roomId = null;
     this.reinforcementsDeployed = false;
     const b = $('#btnDeployReinforce');
     if (b) b.style.display = 'none';
@@ -6747,6 +6801,8 @@ const CHS_ONLINE = {
 
   startLocalMatchWithBots() {
     this.isPvpActive = true;
+    this.isServerAuthoritative = false;
+    this.roomId = null;
     this.reinforcementsDeployed = false;
     const b = $('#btnDeployReinforce');
     if (b) b.style.display = 'none';

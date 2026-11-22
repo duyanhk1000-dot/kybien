@@ -1227,7 +1227,7 @@ const CHS_QUANDOANH = {
           username = window.parent.localStorage.getItem('kybien_username');
         }
         if (window.parent.KybienAuth) {
-          if (!token) token = window.parent.KybienAuth.getToken();
+          if (!token && window.parent.KybienAuth.getToken) token = window.parent.KybienAuth.getToken();
           if (window.parent.KybienAuth.cachedUser) {
             user = window.parent.KybienAuth.cachedUser;
             if (!username && user.username) username = user.username;
@@ -1236,7 +1236,29 @@ const CHS_QUANDOANH = {
       } catch(e) {}
     }
 
-    const isLoggedIn = !!(token && typeof token === 'string' && token.trim().length > 10);
+    if (window.top && window.top !== window && window.top !== window.parent) {
+      try {
+        if (!token && window.top.localStorage) {
+          token = window.top.localStorage.getItem('kybien_jwt_token');
+        }
+        if (!username && window.top.localStorage) {
+          username = window.top.localStorage.getItem('kybien_username');
+        }
+        if (window.top.KybienAuth) {
+          if (!token && window.top.KybienAuth.getToken) token = window.top.KybienAuth.getToken();
+          if (window.top.KybienAuth.cachedUser) {
+            user = window.top.KybienAuth.cachedUser;
+            if (!username && user.username) username = user.username;
+          }
+        }
+      } catch(e) {}
+    }
+
+    const isLoggedIn = !!(
+      (token && typeof token === 'string' && token.trim().length > 10) ||
+      (username && typeof username === 'string' && username.trim().length > 0 && username !== 'Kỳ Thủ Đại Việt') ||
+      (user && user.username && user.username !== 'Kỳ Thủ Đại Việt')
+    );
     return {
       isLoggedIn,
       token,
@@ -1272,8 +1294,12 @@ const CHS_QUANDOANH = {
       if (window.parent && window.parent !== window) {
         try { window.parent.postMessage({ type: 'KYBIEN_REQUEST_AUTH' }, '*'); } catch(err) {}
       }
+      if (window.top && window.top !== window && window.top !== window.parent) {
+        try { window.top.postMessage({ type: 'KYBIEN_REQUEST_AUTH' }, '*'); } catch(err) {}
+      }
     };
     reqAuth();
+    setTimeout(reqAuth, 100);
     setTimeout(reqAuth, 350);
     setTimeout(reqAuth, 1000);
     setTimeout(reqAuth, 2500);
