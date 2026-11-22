@@ -47,6 +47,36 @@ const BOT_NAMES = [
 const BOT_AVATARS = ['🐲', '🦅', '🐅', '🐘', '🐎', '⚔️', '🏹', '🛡️'];
 
 // ==========================================
+// BẢO VỆ CHỐNG GIAN LẬN: VALIDATE QUÂN LƯƠNG
+// ==========================================
+function validateAndSanitizeDeck(rawDeck: any): Array<{ heroId: string; star: number }> {
+  if (!Array.isArray(rawDeck)) return [{ heroId: 'caolo', star: 1 }];
+
+  const sanitized: Array<{ heroId: string; star: number }> = [];
+  let totalPts = 0;
+  const ptsMap: Record<number, number> = { 1: 3, 2: 5, 3: 7 };
+
+  for (const item of rawDeck) {
+    if (!item || typeof item.heroId !== 'string' || !HERO[item.heroId]) continue;
+    const star = Math.min(3, Math.max(1, Math.floor(Number(item.star) || 1)));
+    const cost = ptsMap[star] || 3;
+
+    if (totalPts + cost <= 10) {
+      totalPts += cost;
+      sanitized.push({ heroId: item.heroId, star });
+    }
+  }
+
+  return sanitized.length > 0 ? sanitized : [{ heroId: 'caolo', star: 1 }];
+}
+
+function sanitizeString(str: any, maxLen: number, fallback: string): string {
+  if (typeof str !== 'string') return fallback;
+  const clean = str.replace(/[<>\\"'`]/g, '').trim();
+  return clean.slice(0, maxLen) || fallback;
+}
+
+// ==========================================
 // TẠO PHÒNG ĐẤU 8 NGƯỜI CHƠI (SERVER-AUTHORITATIVE)
 // ==========================================
 function createPvPRoom(io: Server, realPlayers: QueuedPlayer[], botsNeeded: number) {
@@ -99,7 +129,6 @@ function createPvPRoom(io: Server, realPlayers: QueuedPlayer[], botsNeeded: numb
   for (const p of G.players) {
     p.board.fill(null);
     p.bench.fill(null);
-    // Cho 1 tướng 1 sao ngẫu nhiên vào hàng chờ
     const h1Pool = ['caolo', 'chudongtu', 'maithucloan', 'yetkieu', 'lelai', 'nguyenxi'];
     const h1 = h1Pool[Math.floor(Math.random() * h1Pool.length)];
     if (addUnit(p, mkUnitObj(h1, 1))) {
@@ -218,7 +247,7 @@ function startServerCombatPhase(io: Server, room: PvPRoom) {
   // 4. Server chạy mô phỏng giao tranh (simMatch) cho từng cặp đấu
   const matchResults: Map<any, any> = new Map();
   for (const m of G.matches) {
-    simMatch(G, m); // Tính toán và lưu m.res = { win0, surv, B }
+    simMatch(G, m, true);
     matchResults.set(m.a, m);
     if (m.b) matchResults.set(m.b, m);
   }
@@ -253,7 +282,6 @@ function startServerCombatPhase(io: Server, room: PvPRoom) {
 
   // 6. Sau khi phát lại giao tranh xong (18 giây), Server áp dụng kết quả
   setTimeout(() => {
-    // Server gọi applyRound: trừ máu người thua, cộng chuỗi thắng/thua, loại người chết
     applyRound(G);
 
     // Kiểm tra những người chơi bị loại
@@ -267,13 +295,12 @@ function startServerCombatPhase(io: Server, room: PvPRoom) {
     // Đồng bộ lại HP & trạng thái sống còn của 8 người
     broadcastPlayersSummary(io, room);
 
-    // Kiểm tra điều kiện kết thúc trận đấu (chỉ còn 1 người sống hoặc hết 70 vòng)
+    // Kiểm tra điều kiện kết thúc trận đấu
     const alivePlayers = G.players.filter((p: any) => p.alive);
     if (alivePlayers.length <= 1 || G.over) {
       const winner = alivePlayers[0] || G.winner;
       handleMatchEnded(io, room, winner);
     } else {
-      // Tiếp tục sang vòng tiếp theo
       startServerRound(io, room);
     }
   }, 18000);
@@ -397,7 +424,6 @@ async function handleMatchEnded(io: Server, room: PvPRoom, winner?: any) {
     })).sort((a: any, b: any) => a.rankPlace - b.rankPlace),
   });
 
-  // Dọn dẹp phòng
   for (const [sockId] of room.realPlayerSockets.entries()) {
     socketToRoomId.delete(sockId);
   }
@@ -432,30 +458,36 @@ export function setupCoHuyenSuSocket(io: Server): void {
 
   io.on('connection', (socket: Socket) => {
     // 1. Vào hàng chờ PvP
-    socket.on('chs:join_queue', (data: { userId?: number; name?: string; avatar?: string; deck?: Array<{ heroId: string; star: number }> }) => {
-      const existingIdx = queue.findIndex(q => q.socketId === socket.id);
-      if (existingIdx >= 0) queue.splice(existingIdx, 1);
+    socket.on('chs:join_queue', (data: any) => {
+      try {
+        const existingIdx = queue.findIndex(q => q.socketId === socket.id);
+        if (existingIdx >= 0) queue.splice(existingIdx, 1);
 
-      const userId = data.userId || (socket.data.user?.id) || Math.floor(1000 + Math.random() * 9000);
-      const name = data.name || (socket.data.user?.username) || `Kỳ Thủ #${userId}`;
-      const avatar = data.avatar || '🐲';
-      const deck = data.deck || [{ heroId: 'caolo', star: 1 }];
+        const userId = Number(data?.userId) || (socket.data?.user?.id) || Math.floor(1000 + Math.random() * 9000);
+        const name = sanitizeString(data?.name || socket.data?.user?.username, 20, `Kỳ Thủ #${userId}`);
+        const avatar = sanitizeString(data?.avatar, 4, '🐲');
 
-      queue.push({
-        socketId: socket.id,
-        userId,
-        name,
-        avatar,
-        deck,
-        queuedAt: Date.now(),
-      });
+        // CHỐNG HACK: Xác thực Quân Lương tối đa 10 điểm
+        const deck = validateAndSanitizeDeck(data?.deck);
 
-      socket.emit('chs:queue_joined', {
-        timeoutSeconds: 40,
-        currentInQueue: queue.length,
-      });
+        queue.push({
+          socketId: socket.id,
+          userId,
+          name,
+          avatar,
+          deck,
+          queuedAt: Date.now(),
+        });
 
-      console.log(`[CHS Queue] ${name} vào hàng chờ. Tổng: ${queue.length}/8.`);
+        socket.emit('chs:queue_joined', {
+          timeoutSeconds: 40,
+          currentInQueue: queue.length,
+        });
+
+        console.log(`[CHS Queue] ${name} vào hàng chờ. Deck: ${deck.length} tướng. Tổng: ${queue.length}/8.`);
+      } catch (err) {
+        console.error('[CHS Socket] Lỗi chs:join_queue:', err);
+      }
     });
 
     // 2. Hủy tìm trận
@@ -467,145 +499,190 @@ export function setupCoHuyenSuSocket(io: Server): void {
       }
     });
 
-    // 3. Mua tướng từ cửa hàng (SERVER THỰC THI & CHỐNG HACK TIỀN)
-    socket.on('chs:buy_unit', (data: { slotIndex: number }) => {
-      const roomId = socketToRoomId.get(socket.id);
-      if (!roomId) return;
-      const room = rooms.get(roomId);
-      if (!room || room.phase !== 'prep') return;
+    // 3. Mua tướng từ cửa hàng (SERVER THỰC THI & CHỐNG HACK TIỀN / OVERFLOW)
+    socket.on('chs:buy_unit', (data: any) => {
+      try {
+        if (!data || typeof data.slotIndex !== 'number' || data.slotIndex < 0 || data.slotIndex >= 5) {
+          return socket.emit('chs:toast', { message: 'Yêu cầu không hợp lệ!' });
+        }
 
-      const player = room.realPlayerSockets.get(socket.id);
-      if (!player || !player.alive) return;
+        const roomId = socketToRoomId.get(socket.id);
+        if (!roomId) return;
+        const room = rooms.get(roomId);
+        if (!room || room.phase !== 'prep') return;
 
-      const success = buyUnit(room.G, player, data.slotIndex);
-      if (success) {
-        sendAuthoritativePlayerSync(socket, room.G, player);
-      } else {
-        socket.emit('chs:toast', { message: 'Không đủ vàng hoặc hàng chờ đã đầy!' });
+        const player = room.realPlayerSockets.get(socket.id);
+        if (!player || !player.alive) return;
+
+        const success = buyUnit(room.G, player, data.slotIndex);
+        if (success) {
+          sendAuthoritativePlayerSync(socket, room.G, player);
+        } else {
+          socket.emit('chs:toast', { message: 'Không đủ vàng hoặc hàng chờ đã đầy!' });
+        }
+      } catch (err) {
+        console.error('[CHS Socket] Lỗi chs:buy_unit:', err);
       }
     });
 
     // 4. Bán tướng (SERVER TÍNH TIỀN & TRẢ VÀO KHO POOL)
-    socket.on('chs:sell_unit', (data: { kind: 'board' | 'bench'; index: number }) => {
-      const roomId = socketToRoomId.get(socket.id);
-      if (!roomId) return;
-      const room = rooms.get(roomId);
-      if (!room || room.phase !== 'prep') return;
+    socket.on('chs:sell_unit', (data: any) => {
+      try {
+        if (!data || (data.kind !== 'board' && data.kind !== 'bench')) return;
+        const maxIdx = data.kind === 'board' ? 32 : 8;
+        if (typeof data.index !== 'number' || data.index < 0 || data.index >= maxIdx) return;
 
-      const player = room.realPlayerSockets.get(socket.id);
-      if (!player || !player.alive) return;
+        const roomId = socketToRoomId.get(socket.id);
+        if (!roomId) return;
+        const room = rooms.get(roomId);
+        if (!room || room.phase !== 'prep') return;
 
-      const earnedGold = sellUnit(room.G, player, data.kind, data.index);
-      if (earnedGold > 0) {
-        sendAuthoritativePlayerSync(socket, room.G, player);
+        const player = room.realPlayerSockets.get(socket.id);
+        if (!player || !player.alive) return;
+
+        const earnedGold = sellUnit(room.G, player, data.kind, data.index);
+        if (earnedGold > 0) {
+          sendAuthoritativePlayerSync(socket, room.G, player);
+        }
+      } catch (err) {
+        console.error('[CHS Socket] Lỗi chs:sell_unit:', err);
       }
     });
 
     // 5. Di chuyển / xếp cờ (SERVER KIỂM TRA SỐ LƯỢNG TƯỚNG TỐI ĐA = LEVEL)
-    socket.on('chs:move_unit', (data: { from: { kind: 'board' | 'bench'; index: number }; to: { kind: 'board' | 'bench'; index: number } }) => {
-      const roomId = socketToRoomId.get(socket.id);
-      if (!roomId) return;
-      const room = rooms.get(roomId);
-      if (!room || room.phase !== 'prep') return;
+    socket.on('chs:move_unit', (data: any) => {
+      try {
+        if (!data || !data.from || !data.to) return;
+        if (data.from.kind !== 'board' && data.from.kind !== 'bench') return;
+        if (data.to.kind !== 'board' && data.to.kind !== 'bench') return;
 
-      const player = room.realPlayerSockets.get(socket.id);
-      if (!player || !player.alive) return;
+        const maxFrom = data.from.kind === 'board' ? 32 : 8;
+        const maxTo = data.to.kind === 'board' ? 32 : 8;
+        if (typeof data.from.index !== 'number' || typeof data.to.index !== 'number') return;
+        if (data.from.index < 0 || data.from.index >= maxFrom || data.to.index < 0 || data.to.index >= maxTo) return;
 
-      // Nếu kéo từ bench lên board: kiểm tra giới hạn cấp độ
-      if (data.from.kind === 'bench' && data.to.kind === 'board') {
-        const destUnit = player.board[data.to.index];
-        const currentBoardUnits = boardCount(player);
-        if (!destUnit && currentBoardUnits >= player.lvl) {
-          socket.emit('chs:toast', { message: `Cấp độ ${player.lvl} chỉ được đặt tối đa ${player.lvl} tướng trên bàn!` });
-          sendAuthoritativePlayerSync(socket, room.G, player);
-          return;
+        const roomId = socketToRoomId.get(socket.id);
+        if (!roomId) return;
+        const room = rooms.get(roomId);
+        if (!room || room.phase !== 'prep') return;
+
+        const player = room.realPlayerSockets.get(socket.id);
+        if (!player || !player.alive) return;
+
+        // Nếu kéo từ bench lên board: kiểm tra giới hạn cấp độ
+        if (data.from.kind === 'bench' && data.to.kind === 'board') {
+          const destUnit = player.board[data.to.index];
+          const currentBoardUnits = boardCount(player);
+          if (!destUnit && currentBoardUnits >= player.lvl) {
+            socket.emit('chs:toast', { message: `Cấp độ ${player.lvl} chỉ được đặt tối đa ${player.lvl} tướng trên bàn!` });
+            sendAuthoritativePlayerSync(socket, room.G, player);
+            return;
+          }
         }
-      }
 
-      moveUnit(player, data.from, data.to);
-      sendAuthoritativePlayerSync(socket, room.G, player);
+        moveUnit(player, data.from, data.to);
+        sendAuthoritativePlayerSync(socket, room.G, player);
+      } catch (err) {
+        console.error('[CHS Socket] Lỗi chs:move_unit:', err);
+      }
     });
 
     // 6. Mua kinh nghiệm (SERVER TRỪ 4 VÀNG & CỘNG 4 XP)
     socket.on('chs:buy_xp', () => {
-      const roomId = socketToRoomId.get(socket.id);
-      if (!roomId) return;
-      const room = rooms.get(roomId);
-      if (!room || room.phase !== 'prep') return;
+      try {
+        const roomId = socketToRoomId.get(socket.id);
+        if (!roomId) return;
+        const room = rooms.get(roomId);
+        if (!room || room.phase !== 'prep') return;
 
-      const player = room.realPlayerSockets.get(socket.id);
-      if (!player || !player.alive) return;
+        const player = room.realPlayerSockets.get(socket.id);
+        if (!player || !player.alive) return;
 
-      const success = buyXp(player);
-      if (success) {
-        sendAuthoritativePlayerSync(socket, room.G, player);
-      } else {
-        socket.emit('chs:toast', { message: 'Không đủ 4 vàng hoặc đã đạt cấp tối đa!' });
+        const success = buyXp(player);
+        if (success) {
+          sendAuthoritativePlayerSync(socket, room.G, player);
+        } else {
+          socket.emit('chs:toast', { message: 'Không đủ 4 vàng hoặc đã đạt cấp tối đa!' });
+        }
+      } catch (err) {
+        console.error('[CHS Socket] Lỗi chs:buy_xp:', err);
       }
     });
 
     // 7. Làm mới cửa hàng (SERVER TRỪ 2 VÀNG & ROLL THEO TỈ LỆ LEVEL CỦA SERVER)
     socket.on('chs:reroll_shop', () => {
-      const roomId = socketToRoomId.get(socket.id);
-      if (!roomId) return;
-      const room = rooms.get(roomId);
-      if (!room || room.phase !== 'prep') return;
+      try {
+        const roomId = socketToRoomId.get(socket.id);
+        if (!roomId) return;
+        const room = rooms.get(roomId);
+        if (!room || room.phase !== 'prep') return;
 
-      const player = room.realPlayerSockets.get(socket.id);
-      if (!player || !player.alive) return;
+        const player = room.realPlayerSockets.get(socket.id);
+        if (!player || !player.alive) return;
 
-      const success = reroll(room.G, player);
-      if (success) {
-        sendAuthoritativePlayerSync(socket, room.G, player);
-      } else {
-        socket.emit('chs:toast', { message: 'Không đủ 2 vàng để làm mới cửa hàng!' });
+        const success = reroll(room.G, player);
+        if (success) {
+          sendAuthoritativePlayerSync(socket, room.G, player);
+        } else {
+          socket.emit('chs:toast', { message: 'Không đủ 2 vàng để làm mới cửa hàng!' });
+        }
+      } catch (err) {
+        console.error('[CHS Socket] Lỗi chs:reroll_shop:', err);
       }
     });
 
     // 8. Điều tướng Viện Binh tại Vòng 4+
     socket.on('chs:deploy_reinforcements', () => {
-      const roomId = socketToRoomId.get(socket.id);
-      if (!roomId) return;
-      const room = rooms.get(roomId);
-      if (!room) return;
+      try {
+        const roomId = socketToRoomId.get(socket.id);
+        if (!roomId) return;
+        const room = rooms.get(roomId);
+        if (!room) return;
 
-      const player = room.realPlayerSockets.get(socket.id);
-      if (!player || !player.alive) return;
+        const player = room.realPlayerSockets.get(socket.id);
+        if (!player || !player.alive) return;
 
-      if (room.round < 4) {
-        socket.emit('chs:toast', { message: 'Viện binh đang hành quân! Tối thiểu Vòng 4 mới đến nơi.' });
-        return;
+        if (room.round < 4) {
+          socket.emit('chs:toast', { message: 'Viện binh đang hành quân! Tối thiểu Vòng 4 mới đến nơi.' });
+          return;
+        }
+
+        if (player.reinforcementsDeployed) {
+          socket.emit('chs:toast', { message: 'Bạn đã điều viện binh trong trận này rồi!' });
+          return;
+        }
+
+        deployPlayerReinforcements(room.G, player);
+        sendAuthoritativePlayerSync(socket, room.G, player);
+
+        io.to(room.id).emit('chs:room_event', {
+          message: `${player.name} đã triệu hồi Viện Binh xuất trận!`,
+        });
+      } catch (err) {
+        console.error('[CHS Socket] Lỗi chs:deploy_reinforcements:', err);
       }
-
-      if (player.reinforcementsDeployed) {
-        socket.emit('chs:toast', { message: 'Bạn đã điều viện binh trong trận này rồi!' });
-        return;
-      }
-
-      deployPlayerReinforcements(room.G, player);
-      sendAuthoritativePlayerSync(socket, room.G, player);
-
-      io.to(room.id).emit('chs:room_event', {
-        message: `${player.name} đã triệu hồi Viện Binh xuất trận!`,
-      });
     });
 
     // 9. Ngắt kết nối
     socket.on('disconnect', () => {
-      const qIdx = queue.findIndex(q => q.socketId === socket.id);
-      if (qIdx >= 0) queue.splice(qIdx, 1);
+      try {
+        const qIdx = queue.findIndex(q => q.socketId === socket.id);
+        if (qIdx >= 0) queue.splice(qIdx, 1);
 
-      const roomId = socketToRoomId.get(socket.id);
-      if (roomId) {
-        const room = rooms.get(roomId);
-        if (room) {
-          const player = room.realPlayerSockets.get(socket.id);
-          if (player && player.alive) {
-            player.hp = 0;
-            player.alive = false;
+        const roomId = socketToRoomId.get(socket.id);
+        if (roomId) {
+          const room = rooms.get(roomId);
+          if (room) {
+            const player = room.realPlayerSockets.get(socket.id);
+            if (player && player.alive) {
+              player.hp = 0;
+              player.alive = false;
+            }
           }
+          socketToRoomId.delete(socket.id);
         }
-        socketToRoomId.delete(socket.id);
+      } catch (err) {
+        console.error('[CHS Socket] Lỗi disconnect:', err);
       }
     });
   });

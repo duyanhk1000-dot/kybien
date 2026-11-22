@@ -866,41 +866,272 @@ body.demo .skill-panel{display:block;grid-column:2;grid-row:1}
    CỜ HUYỀN SỬ: GIAO DIỆN ONLINE PVP 8 NGƯỜI & CHIÊU HIỀN CÁC
    ======================================================== */
 
-/* Fix Peek Layer & Prevent Bench Slots Overlap */
+/* ========================================================
+   CỜ HUYỀN SỬ: BẢNG THÔNG TIN LỚP TRÊN CÙNG & PHÓNG TO ICON
+   ======================================================== */
+
+/* Đảm bảo tuyệt đối bảng thông tin là lớp trên cùng, không bị bench/slot đè lên */
+.boardwrap.has-peek,
+#boardwrap.has-peek,
+.boardrow.has-peek .boardwrap,
+.boardrow:has(.peek.show) .boardwrap,
+body.has-peek .boardwrap {
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
 body.has-peek .benchL,
 body.has-peek .benchR,
 .boardrow.has-peek .benchL,
 .boardrow.has-peek .benchR,
 .boardrow:has(.peek.show) .benchL,
-.boardrow:has(.peek.show) .benchR {
-  z-index: 1 !important;
+.boardrow:has(.peek.show) .benchR,
+.benchL.has-peek,
+.benchR.has-peek {
+  z-index: 0 !important;
   pointer-events: none !important;
 }
-.boardwrap.has-peek,
-#boardwrap.has-peek,
-.boardrow.has-peek .boardwrap,
-.boardrow:has(.peek.show) .boardwrap {
-  z-index: 1000 !important;
+
+body.has-peek .slot,
+body.has-peek .slot .pu,
+.boardrow.has-peek .slot,
+.boardrow.has-peek .slot .pu,
+.boardrow:has(.peek.show) .slot,
+.boardrow:has(.peek.show) .slot .pu,
+.benchL.has-peek .slot,
+.benchR.has-peek .slot,
+.benchL.has-peek .pu,
+.benchR.has-peek .pu {
+  z-index: 0 !important;
+  pointer-events: none !important;
 }
+
+/* Bảng thông tin Peek (Tooltip / Modal) là lớp trên cùng tuyệt đối */
 .peek, #peek {
-  z-index: 2000 !important;
+  position: absolute !important;
+  left: 8px !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  max-height: calc(var(--c) * 4.2) !important;
+  overflow-y: auto !important;
+  background: #18100a !important; /* Màu nền đặc 100% không để lộ chi tiết phía dưới */
+  border: 2px solid #e5b342 !important;
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
+  color: #f5edd8 !important;
+  z-index: 100000 !important;
+  font-size: 13.5px !important;
+  line-height: 1.5 !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.98), 0 0 0 1px rgba(229,179,66,0.6), inset 0 1px 2px rgba(255,225,120,0.3) !important;
 }
-.peek .heads .himg {
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 50% !important;
-  border: 2px solid #d6a335 !important;
-  box-shadow: 0 3px 8px rgba(0,0,0,.75) !important;
+.peek.show {
+  display: block !important;
+}
+
+/* Phóng to toàn diện các icon trong bảng thông tin */
+/* 1. Icon đại diện lớn ở header (Tộc/Hệ, Nhân Duyên, Tướng) */
+.peek .hd {
+  display: flex !important;
+  gap: 14px !important;
+  align-items: center !important;
+}
+.peek .hd .tk {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  flex: none !important;
+  position: relative !important;
 }
 .peek .hd .tk .tok {
-  width: 60px !important;
-  height: 60px !important;
+  width: 68px !important;
+  height: 68px !important;
 }
 .peek .hd .tk img.trico {
-  width: 54px !important;
-  height: 54px !important;
+  width: 64px !important;
+  height: 64px !important;
   border-radius: 50% !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,.85), 0 0 0 2px #d6a335 !important;
+  border: 2.5px solid #e5b342 !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.9), 0 0 12px rgba(229,179,66,.5) !important;
+  display: block !important;
+}
+.peek h4 {
+  margin: 0 !important;
+  font-family: var(--serif) !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+/* 2. Icon tộc/hệ và xu trong các thẻ tag */
+.peek .tags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-top: 6px !important;
+}
+.peek .tag {
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  background: #2b1b11 !important;
+  border: 1.5px solid var(--tc, #a17832) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  color: #f7eed9 !important;
+  cursor: pointer;
+  transition: transform .15s ease, background-color .15s ease;
+}
+.peek .tag:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+}
+.peek .tag img.trico {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,.6) !important;
+  border: 1.5px solid rgba(229,179,66,.6) !important;
+}
+.peek .tag img.coin {
+  width: 18px !important;
+  height: 18px !important;
+  vertical-align: middle !important;
+}
+
+/* 3. Icon Nhân Duyên và Kỹ năng */
+.peek .skl {
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  margin-top: 6px !important;
+}
+.peek .skl img.trico {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  vertical-align: -0.28em !important;
+  margin-right: 6px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.7), 0 0 0 1.5px #e5b342 !important;
+}
+
+/* 4. Danh sách tướng trong Tộc/Hệ & Nhân Duyên (Heads) */
+.peek .heads {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  align-items: center !important;
+  margin-top: 12px !important;
+  padding-top: 10px !important;
+  border-top: 1px dashed rgba(229,179,66,.4) !important;
+}
+.peek-hero-token {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: transform .18s ease, filter .18s ease !important;
+  cursor: pointer !important;
+}
+.peek-hero-token:hover {
+  transform: scale(1.15) !important;
+  filter: brightness(1.2) !important;
+}
+.peek .heads .himg {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  border: 2.5px solid #e5b342 !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,.85), 0 0 8px rgba(229,179,66,.35) !important;
+  display: block !important;
+}
+.peek-hero-cost {
+  position: absolute !important;
+  right: -4px !important;
+  bottom: -4px !important;
+  background: #190f09 !important;
+  border: 2px solid !important;
+  border-radius: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,.95) !important;
+  line-height: 1 !important;
+}
+.peek-hero-pill {
+  background: rgba(45,29,18,.95) !important;
+  padding: 4px 14px 4px 6px !important;
+  border-radius: 999px !important;
+  border: 1.5px solid #e5b342 !important;
+  gap: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+.peek-hero-pill .himg {
+  width: 44px !important;
+  height: 44px !important;
+  border: 2px solid #e5b342 !important;
+  border-radius: 50% !important;
+}
+.peek-hero-pill b {
+  font-size: 13.5px !important;
+  color: #ffd36a !important;
+  font-weight: 800 !important;
+}
+
+/* Thẻ xem 12 Nhân Duyên */
+.peek-bond-card {
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background-color .18s ease !important;
+}
+.peek-bond-card:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  border-color: #ffd36a !important;
+  background: #382414 !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.85), 0 0 10px rgba(214,163,53,0.3) !important;
+}
+.peek-bond-card img.trico {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  border: 1.5px solid #d6a335 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.7) !important;
+}
+
+/* 5. Nút đóng và thao tác */
+.peek .acts {
+  display: flex !important;
+  gap: 10px !important;
+  margin-top: 10px !important;
+  justify-content: flex-end !important;
+}
+.peek .acts button {
+  border-radius: 8px !important;
+  border: 1.5px solid #e5b342 !important;
+  background: linear-gradient(180deg, #3d2818, #24160c) !important;
+  color: #f7eed9 !important;
+  padding: 6px 18px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 3px 8px rgba(0,0,0,.5) !important;
+  cursor: pointer !important;
+  transition: all .15s ease !important;
+}
+.peek .acts button:hover {
+  background: linear-gradient(180deg, #533822, #301d10) !important;
+  color: #fff !important;
+  border-color: #ffe082 !important;
+  box-shadow: 0 4px 12px rgba(229,179,66,.4) !important;
 }
 
 /* Thanh Header Điều Hướng Top Bar */
@@ -1547,6 +1778,7 @@ body.has-peek .benchR,
     <div class="chs-top-chip elo" id="eloChip" title="Điểm xếp hạng Elo PvP">⭐ <b id="eloVal">1000</b> Elo</div>
     <button class="chs-top-btn" id="btnShop"><span style="font-size:14px">🏛️</span> Chiêu Hiền Các</button>
     <button class="chs-top-btn" id="btnDeck"><span style="font-size:14px">📜</span> Quân Lương (<b id="deckVal">0</b>/10)</button>
+    <button class="chs-top-btn" id="btnBonds"><span style="font-size:14px">🎴</span> 12 Nhân Duyên</button>
     <button class="chs-top-btn pvp-match-btn" id="btnPvpQueue">⚔️ Ghép PvP 8 Người</button>
   </header>
   <div class="demobar" id="demobar"></div>
@@ -5585,25 +5817,30 @@ function renderPlayers(){
 function renderPeek(){
   const el=$('#peek'),pk=U.peek;
   const bw=$('#boardwrap'),br=$('#boardrow');
-  if(!pk||U.phase!=='prep'){
+  const bL=$('#benchL'),bR=$('#benchR');
+  if(!pk){
     el.className='peek';
     el.innerHTML='';
     if(bw)bw.classList.remove('has-peek');
     if(br)br.classList.remove('has-peek');
+    if(bL)bL.classList.remove('has-peek');
+    if(bR)bR.classList.remove('has-peek');
     document.body.classList.remove('has-peek');
     return;
   }
   if(bw)bw.classList.add('has-peek');
   if(br)br.classList.add('has-peek');
+  if(bL)bL.classList.add('has-peek');
+  if(bR)bR.classList.add('has-peek');
   document.body.classList.add('has-peek');
   let h='';
   if(pk.type==='hero'){
     const H=HERO[pk.h],st=heroStats(pk.h,pk.s),sk=H.sk;
-    const sel=pk.k?me()[pk.k][pk.i]:null;
+    const sel=(pk.k&&U.phase==='prep')?me()[pk.k][pk.i]:null;
     const hb=heroBonds(pk.h);
-    const bondsHTML=hb.length?'<div class="skl" style="margin-top:5px;color:#ffcad4"><b>Nhân Duyên:</b> '+hb.map(b=>'<span style="color:#ffd36a">'+b.ico+' '+b.name+'</span> ('+b.heroes.filter(x=>x!==pk.h&&(x!=='auco'||pk.h!=='aucơ')&&(x!=='aucơ'||pk.h!=='auco')).map(x=>HERO[x]?HERO[x].name:(x==='auco'?'Âu Cơ':x)).join(', ')+')').join('; ')+'</div>':'';
-    h='<div class="hd"><div class="tk" style="--c:58px;font-size:30px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" style="--tc:'+TR[H.o].col+'">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'"><img class="coin" src="'+COIN_IMG+'" alt=""> '+H.cost+' vàng</span><span class="tag">Kho còn '+poolCount(G,pk.h)+'</span></div></div></div>'
-     +'<div class="tags" style="margin:6px 0 0">'+[1,2,3].map(n=>'<span class="tag pst'+(n===pk.s?' on':'')+'" data-pstar="'+n+'">Xem '+'\u2605'.repeat(n)+'</span>').join('')+'</div>'
+    const bondsHTML=hb.length?'<div class="skl" style="margin-top:8px;color:#ffcad4"><b>Nhân Duyên:</b> '+hb.map(b=>'<span style="color:#ffd36a;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-right:6px" data-peek-bond="'+b.id+'" title="Chạm xem chi tiết Nhân Duyên">'+b.ico+' <u>'+b.name+'</u></span> ('+b.heroes.filter(x=>x!==pk.h&&(x!=='auco'||pk.h!=='aucơ')&&(x!=='aucơ'||pk.h!=='auco')).map(x=>HERO[x]?HERO[x].name:(x==='auco'?'Âu Cơ':x)).join(', ')+')').join('; ')+'</div>':'';
+    h='<div class="hd"><div class="tk" style="--c:68px;font-size:36px">'+tokHTML(pk.h,pk.s)+'</div><div style="flex:1"><h4>'+H.name+' '+'\u2605'.repeat(pk.s)+'</h4><div class="tags"><span class="tag" data-peek-trait="'+H.o+'" style="--tc:'+TR[H.o].col+'" title="Chạm xem Tộc">'+TR[H.o].ico+' '+TR[H.o].name+'</span><span class="tag" data-peek-trait="'+H.c+'" title="Chạm xem Hệ">'+CS[H.c].ico+' '+CS[H.c].name+'</span><span class="tag" style="--tc:'+COSTCOL[H.cost-1]+'"><img class="coin" src="'+COIN_IMG+'" alt=""> '+H.cost+' vàng</span><span class="tag">Kho còn '+poolCount(G,pk.h)+'</span></div></div></div>'
+     +'<div class="tags" style="margin:8px 0 2px">'+[1,2,3].map(n=>'<span class="tag pst'+(n===pk.s?' on':'')+'" data-pstar="'+n+'">Xem '+'\u2605'.repeat(n)+'</span>').join('')+'</div>'
      +'<div class="stats"><span>Máu<b>'+st.hp+'</b></span><span>Sát thương<b>'+st.ad+'</b></span><span>Giáp<b>'+st.armor+'</b></span><span>Tầm đánh<b>'+st.range+' ô</b></span><span>Tốc đánh<b>'+st.as.toFixed(2)+'</b></span></div>'
      +'<div class="skl"><b>'+sk.nm+'</b> (cần '+sk.mana+' nộ): '+skillText(sk,pk.s)+(H.c==='dukich'?' Đầu trận nhảy ra sau lưng địch.':'')+'</div>'
      +bondsHTML
@@ -5621,8 +5858,19 @@ function renderPeek(){
         +'</span>';
     }).join(' ');
     const effectDesc = B.teamFx ? ('Toàn đội: '+fxText(B.teamFx)+(B.heroFx?' · Lạc Long Quân: +40 nộ, +20% SKM · Âu Cơ: +25% máu, +25 giáp':'')) : ((B.scope==='team'?'Cả đội: ':'Các tướng trong bộ: ')+fxText(B.fx));
-    h='<div class="hd"><div class="tk">'+B.ico+'</div><div style="flex:1"><h4>'+B.name+' <span style="font-weight:600;font-size:12px;color:#ff8fa3">Nhân Duyên Kích Hoạt</span></h4></div></div><div style="margin:5px 0">'+B.desc+'</div>'
-     +'<div class="tiers"><div class="a">'+effectDesc+'</div></div><div class="heads">'+heads+'</div><div class="acts"><button data-closepeek="1">Đóng</button></div>';
+    h='<div class="hd"><div class="tk">'+B.ico+'</div><div style="flex:1"><h4>'+B.name+' <span style="font-weight:700;font-size:13px;color:#ff8fa3">Nhân Duyên Kích Hoạt</span></h4></div></div><div style="margin:8px 0;font-size:13.5px;color:#dfd2b5">'+B.desc+'</div>'
+     +'<div class="tiers"><div class="a" style="font-size:14px;color:#ffd36a;font-weight:700">'+effectDesc+'</div></div><div class="heads">'+heads+'</div><div class="acts"><button data-closepeek="1">Đóng</button></div>';
+  }else if(pk.type==='all_bonds'){
+    const cards=BONDS.map(b=>{
+      const heroNames=b.heroes.map(hid=>HERO[hid]?HERO[hid].name:(hid==='auco'?'Âu Cơ':hid)).join(' + ');
+      return '<div class="peek-bond-card" data-peek-bond="'+b.id+'" style="display:flex;align-items:center;gap:12px;background:#24160c;border:1.5px solid #d6a335;border-radius:12px;padding:8px 12px;cursor:pointer;transition:transform .15s ease,border-color .15s ease">'
+        +'<div style="width:48px;height:48px;flex:none">'+b.ico+'</div>'
+        +'<div style="flex:1"><b style="font-size:14px;color:#ffd36a;font-family:var(--serif);display:block">'+b.name+'</b><span style="font-size:12px;color:#ffcad4;display:block">'+heroNames+'</span><span style="font-size:11.5px;color:#bcae91;display:block;margin-top:2px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden">'+b.desc+'</span></div>'
+        +'</div>';
+    }).join('');
+    h='<div class="hd"><div class="tk" style="font-size:32px">🎴</div><div style="flex:1"><h4>12 Nhân Duyên Huyền Sử <span style="font-size:12px;color:#ffd36a;font-weight:600">Chạm từng duyên để xem chi tiết</span></h4></div></div>'
+     +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-top:10px;max-height:calc(var(--c)*3);overflow-y:auto">'+cards+'</div>'
+     +'<div class="acts"><button data-closepeek="1">Đóng</button></div>';
   }else{
     const T=TR[pk.t],counts=traitCounts(boardList(me())),n=counts[pk.t]||0,ti=tierOf(pk.t,n);
     const heads=Object.values(HERO).filter(x=>x.o===pk.t||x.c===pk.t).sort((a,b)=>a.cost-b.cost).map(x=>
@@ -5631,8 +5879,8 @@ function renderPeek(){
       +'<span class="peek-hero-cost" style="color:'+COSTCOL[x.cost-1]+';border-color:'+COSTCOL[x.cost-1]+'">'+x.cost+'</span>'
       +'</span>'
     ).join('');
-    h='<div class="hd"><div class="tk">'+T.ico+'</div><div style="flex:1"><h4>'+T.name+' <span style="font-weight:600;font-size:12px;color:#d6a335">'+T.kind+' \u00b7 đang c\u00f3 '+n+'</span></h4></div></div><div style="margin:5px 0">'+T.desc+'</div>'
-     +'<div class="tiers">'+T.tiers.map((x,i)=>'<div class="'+(i===ti?'a':'')+'">'+x.n+' tướng: '+fxText(x.fx)+(T.scope==='team'?' (cả đội)':'')+'</div>').join('')+'</div><div class="heads">'+heads+'</div><div class="acts"><button data-closepeek="1">Đóng</button></div>';
+    h='<div class="hd"><div class="tk">'+T.ico+'</div><div style="flex:1"><h4>'+T.name+' <span style="font-weight:700;font-size:13px;color:#d6a335">'+T.kind+' \u00b7 đang c\u00f3 '+n+'</span></h4></div></div><div style="margin:8px 0;font-size:13.5px;color:#dfd2b5">'+T.desc+'</div>'
+     +'<div class="tiers">'+T.tiers.map((x,i)=>'<div class="'+(i===ti?'a':'')+'" style="font-size:13.5px;padding:3px 0">'+x.n+' tướng: '+fxText(x.fx)+(T.scope==='team'?' (cả đội)':'')+'</div>').join('')+'</div><div class="heads">'+heads+'</div><div class="acts"><button data-closepeek="1">Đóng</button></div>';
   }
   el.innerHTML=h;el.className='peek show';
 }
@@ -5798,7 +6046,6 @@ function syncBench(){const w=$('#tiltwrap'),bw=$('#boardwrap'),bL=$('#benchL'),a
 }
 $('#viewBtn').onclick=()=>{VIEW_TILT=!VIEW_TILT;applyView();};
 $('#traits').addEventListener('click',e=>{
-  if(U.phase!=='prep')return;
   const bd=e.target.closest('[data-bond]');
   if(bd){
     const B=BONDS.find(x=>x.id===bd.dataset.bond);
@@ -5808,6 +6055,15 @@ $('#traits').addEventListener('click',e=>{
   if(t){U.sel=null;U.peek={type:'trait',t:t.dataset.trait};renderAll();}
 });
 $('#peek').addEventListener('click',e=>{
+  const pb=e.target.closest('[data-peek-bond]');
+  if(pb){
+    const B=BONDS.find(x=>x.id===pb.dataset.peekBond);
+    if(B){U.sel=null;U.peek={type:'bond',bond:B};renderAll();return;}
+  }
+  const pt=e.target.closest('[data-peek-trait]');
+  if(pt){
+    U.sel=null;U.peek={type:'trait',t:pt.dataset.peekTrait};renderAll();return;
+  }
   const ph=e.target.closest('[data-peek-hero]');
   if(ph){U.peek={type:'hero',h:ph.dataset.peekHero,s:1};renderAll();return;}
   if(e.target.closest('[data-closepeek]')){U.peek=null;U.sel=null;renderAll();}
@@ -7257,6 +7513,15 @@ const CHS_ONLINE = {
       btnDeck.onclick = () => {
         $('#qlModal').classList.add('show');
         this.renderDeckUI();
+      };
+    }
+
+    const btnBonds = $('#btnBonds');
+    if (btnBonds) {
+      btnBonds.onclick = () => {
+        U.sel = null;
+        U.peek = { type: 'all_bonds' };
+        renderAll();
       };
     }
 

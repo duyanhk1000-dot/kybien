@@ -709,7 +709,7 @@ function makeMatches(G){
   return ms;
 }
 function matchUnits(G,m){return [boardToUnits(m.a,0),m.pve?pveUnits(G.round):boardToUnits(m.b,1)];}
-function simMatch(G,m){const [ua,ub]=matchUnits(G,m);const B=runBattle(newBattle(ua.concat(ub),false));return {win0:B.winner===0,surv:B.surv,draw:B.winner===null};}
+function simMatch(G,m,withEvents=false){const [ua,ub]=matchUnits(G,m);const B=runBattle(newBattle(ua.concat(ub),withEvents));const res={win0:B.winner===0,surv:B.surv,draw:B.winner===null,B};m.res=res;return res;}
 function giveReward(G,p,r){
   const rw=PVE_RW[r];if(!rw)return null;
   const avail=BYCOST[rw.cost].filter(h=>poolCount(G,h)>0);
