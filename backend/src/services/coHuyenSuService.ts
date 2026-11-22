@@ -132,7 +132,7 @@ export function generateShopSlots(userId: number): ShopSlot[] {
   const now = new Date();
   const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
   const weekNumber = Math.floor(dayOfYear / 7);
-  const threeDayPeriod = Math.floor(dayOfYear / 3);
+  const fiveDayPeriod = Math.floor(dayOfYear / 5);
 
   const u = getMemoryUser(userId);
   const todayKey = getTodayKey();
@@ -140,7 +140,7 @@ export function generateShopSlots(userId: number): ShopSlot[] {
 
   const slots: ShopSlot[] = [];
 
-  // Ô 1 - Ô 4: Tướng 1-2 đồng (xoay tua mỗi ngày theo dayOfYear)
+  // Ô 1 - Ô 4: Tướng 1-2 đồng (xoay tua 1 ngày 1 lần theo dayOfYear)
   for (let i = 0; i < 4; i++) {
     const heroId = POOL_1_2[(dayOfYear + i * 3) % POOL_1_2.length];
     const cfg = CHS_HEROES[heroId];
@@ -157,9 +157,9 @@ export function generateShopSlots(userId: number): ShopSlot[] {
     });
   }
 
-  // Ô 5 - Ô 7: Tướng 3-4 đồng (xoay tua 3 ngày 1 lần theo threeDayPeriod)
+  // Ô 5 - Ô 7: Tướng 3-4 đồng (xoay tua 5 ngày 1 lần theo fiveDayPeriod)
   for (let i = 0; i < 3; i++) {
-    const heroId = POOL_3_4[(threeDayPeriod + i * 2) % POOL_3_4.length];
+    const heroId = POOL_3_4[(fiveDayPeriod + i * 2) % POOL_3_4.length];
     const cfg = CHS_HEROES[heroId];
     const bought = userPurchases[i + 5] || 0;
     slots.push({
@@ -168,7 +168,7 @@ export function generateShopSlots(userId: number): ShopSlot[] {
       name: cfg.name,
       cost: cfg.cost,
       priceHb: cfg.shardPrice,
-      rotationDays: 3,
+      rotationDays: 5,
       maxPerDay: 3,
       remainingToday: Math.max(0, 3 - bought),
     });

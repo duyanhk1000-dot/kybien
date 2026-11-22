@@ -2088,7 +2088,7 @@ body.has-peek .slot .pu,
           <div class="qd-banner-icon">🏛️</div>
           <div class="qd-banner-content">
             <b>Quy tắc Chiêu Hiền Các:</b>
-            Cửa hàng xoay tua 8 ô cố định: <b>4 slot đầu</b> bán tướng 1-2 đồng (đổi hàng ngày), <b>3 slot kế tiếp</b> bán tướng 3-4 đồng (đổi 3 ngày/lần), và <b>1 slot cuối</b> bán tướng 5 đồng (đổi hàng tuần).
+            Cửa hàng xoay tua 8 ô cố định: <b>4 slot đầu</b> bán tướng 1-2 đồng (đổi 1 ngày/lần), <b>3 slot kế tiếp</b> bán tướng 3-4 đồng (đổi 5 ngày/lần), và <b>1 slot cuối</b> bán tướng 5 đồng (đổi 7 ngày/lần).
             Mỗi tướng chỉ bán tối đa <b>3 mảnh mỗi ngày</b> để giữ tính cân bằng. Tiêu <b>Danh Vọng</b> kiếm được sau các trận đấu để thâu nạp hiền tài!
           </div>
         </div>
@@ -7364,19 +7364,22 @@ const CHS_ONLINE = {
     }
   },
 
-  // Tính 8 ô Shop xoay tua Chiêu Hiền Các
+  // Tính 8 ô Shop xoay tua Chiêu Hiền Các (1 ngày - 5 ngày - 7 ngày)
   getShopSlots() {
     const now = new Date();
     const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
     const weekNumber = Math.floor(dayOfYear / 7);
-    const threeDayPeriod = Math.floor(dayOfYear / 3);
+    const fiveDayPeriod = Math.floor(dayOfYear / 5);
+
+    const daysLeft5 = 5 - (dayOfYear % 5);
+    const daysLeft7 = 7 - (dayOfYear % 7);
 
     const todayKey = this.getTodayKey();
     const todayPurchases = (this.state.dailyPurchases && this.state.dailyPurchases[todayKey]) || {};
 
     const slots = [];
 
-    // Ô 1 - Ô 4: Tướng 1-2 đồng (đổi hàng ngày)
+    // Ô 1 - Ô 4: Tướng 1-2 đồng (đổi 1 ngày/lần - hàng ngày)
     for (let i = 0; i < 4; i++) {
       const heroId = this.POOL_1_2[(dayOfYear + i * 3) % this.POOL_1_2.length];
       const H = HERO[heroId];
@@ -7389,16 +7392,16 @@ const CHS_ONLINE = {
         cost,
         priceDv: this.SHARD_COST_DV[cost] || 4,
         rotationDays: 1,
-        label: 'Đổi hàng ngày',
+        label: 'Đổi 1 ngày (hàng ngày)',
         maxPerDay: 3,
         remainingToday: Math.max(0, 3 - bought),
         boughtToday: bought,
       });
     }
 
-    // Ô 5 - Ô 7: Tướng 3-4 đồng (đổi 3 ngày/lần)
+    // Ô 5 - Ô 7: Tướng 3-4 đồng (đổi 5 ngày/lần)
     for (let i = 0; i < 3; i++) {
-      const heroId = this.POOL_3_4[(threeDayPeriod + i * 2) % this.POOL_3_4.length];
+      const heroId = this.POOL_3_4[(fiveDayPeriod + i * 2) % this.POOL_3_4.length];
       const H = HERO[heroId];
       const cost = H ? H.cost : 3;
       const bought = todayPurchases[i + 5] || 0;
@@ -7408,15 +7411,15 @@ const CHS_ONLINE = {
         name: H ? H.name : heroId,
         cost,
         priceDv: this.SHARD_COST_DV[cost] || 15,
-        rotationDays: 3,
-        label: 'Đổi 3 ngày/lần',
+        rotationDays: 5,
+        label: `Đổi 5 ngày (còn ${daysLeft5} ngày)`,
         maxPerDay: 3,
         remainingToday: Math.max(0, 3 - bought),
         boughtToday: bought,
       });
     }
 
-    // Ô 8: Tướng 5 đồng (đổi hàng tuần)
+    // Ô 8: Tướng 5 đồng (đổi 7 ngày/lần - hàng tuần)
     const heroId5 = this.POOL_5[weekNumber % this.POOL_5.length];
     const H5 = HERO[heroId5];
     const cost5 = 5;
@@ -7428,7 +7431,7 @@ const CHS_ONLINE = {
       cost: cost5,
       priceDv: this.SHARD_COST_DV[cost5] || 60,
       rotationDays: 7,
-      label: 'Đổi hàng tuần',
+      label: `Đổi 7 ngày (còn ${daysLeft7} ngày)`,
       maxPerDay: 3,
       remainingToday: Math.max(0, 3 - bought5),
       boughtToday: bought5,
