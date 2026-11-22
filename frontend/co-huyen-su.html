@@ -1134,537 +1134,8 @@ body.has-peek .slot .pu,
   box-shadow: 0 4px 12px rgba(229,179,66,.4) !important;
 }
 
-/* ========================================================
-   CỜ HUYỀN SỬ: GIAO DIỆN 2 TRANG (QUÂN DOANH & BÀN CỜ)
-   ======================================================== */
+/* --- BÀN CỜ CHIẾN TRẬN --- */
 
-/* --- TRANG 1: QUÂN DOANH (TỔNG HÀNH DINH) --- */
-.qd-page {
-  display: block;
-  min-height: 100dvh;
-  background: radial-gradient(1100px 520px at 50% -8%, rgba(214,163,53,.18), transparent 65%), #140d07;
-  color: #f5eedb;
-  overflow-y: auto;
-  font-family: var(--sans);
-}
-.qd-container {
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: 16px 14px 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* Header Quân Doanh */
-.qd-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  background: linear-gradient(180deg, #2a1b11, #160e08);
-  border: 1.5px solid #d6a335;
-  border-radius: 16px;
-  padding: 14px 18px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.7), inset 0 1px 2px rgba(255,225,120,.2);
-  flex-wrap: wrap;
-}
-.qd-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.qd-brand-seal {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, #b3281d, #75140c);
-  border: 1.5px solid #ffd36a;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
-  color: #ffe9b0;
-  box-shadow: 0 4px 12px rgba(0,0,0,.6);
-  font-style: normal;
-}
-.qd-brand-title {
-  font-family: var(--serif);
-  font-size: 22px;
-  font-weight: 800;
-  color: #ffd36a;
-  letter-spacing: 0.5px;
-}
-.qd-brand-sub {
-  font-size: 12px;
-  color: #bca988;
-  margin-top: 2px;
-}
-.qd-header-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-.qd-profile-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #1e130b;
-  border: 1px solid #6b4923;
-  border-radius: 12px;
-  padding: 6px 12px;
-}
-.qd-profile-av {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #2f1d10;
-  border: 1.5px solid #d6a335;
-  display: grid;
-  place-items: center;
-  font-size: 20px;
-}
-.qd-profile-name {
-  font-weight: 700;
-  font-size: 13.5px;
-  color: #fff;
-}
-.qd-profile-auth {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-}
-.auth-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 4px;
-}
-.auth-badge.logged {
-  background: rgba(35,115,95,.4);
-  color: #7fe0c4;
-  border: 1px solid #23735f;
-}
-.auth-badge.guest {
-  background: rgba(224,80,63,.25);
-  color: #ff9d94;
-  border: 1px solid #a8382c;
-}
-.qd-login-btn {
-  background: #2a1b11;
-  border: 1px solid #d6a335;
-  color: #ffd36a;
-  border-radius: 6px;
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.qd-login-btn:hover {
-  background: #442a17;
-  color: #fff;
-}
-.qd-stats-row {
-  display: flex;
-  gap: 8px;
-}
-.qd-stat-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #1c1108;
-  border: 1.5px solid #8a6528;
-  border-radius: 10px;
-  padding: 6px 12px;
-}
-.qd-stat-chip.elo { border-color: #3f72d1; }
-.qd-stat-chip.dv { border-color: #d6a335; }
-.qd-chip-ico { font-size: 18px; }
-.qd-stat-chip small {
-  display: block;
-  font-size: 10px;
-  color: #bca988;
-  text-transform: uppercase;
-}
-.qd-stat-chip b {
-  font-size: 15px;
-  color: #ffd36a;
-}
-.qd-stat-chip.elo b { color: #8cb5ff; }
-
-/* Nút Lệnh Chiến Trận Lớn */
-.qd-actions-bar {
-  display: grid;
-  grid-template-columns: 1.4fr 1.2fr 0.9fr;
-  gap: 12px;
-}
-@media (max-width: 800px) {
-  .qd-actions-bar {
-    grid-template-columns: 1fr;
-  }
-}
-.qd-play-btn {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  border-radius: 14px;
-  cursor: pointer;
-  text-align: left;
-  transition: all .2s ease;
-  position: relative;
-  overflow: hidden;
-}
-.qd-play-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-}
-.qd-play-btn.pvp {
-  background: linear-gradient(135deg, #b3281d, #681109);
-  border: 2px solid #e0503f;
-  box-shadow: 0 6px 20px rgba(179,40,29,.45);
-}
-.qd-play-btn.bot {
-  background: linear-gradient(135deg, #1d6e5a, #0e3f33);
-  border: 2px solid #4cb094;
-  box-shadow: 0 6px 20px rgba(29,110,90,.35);
-}
-.qd-play-btn.bonds {
-  background: linear-gradient(135deg, #7c5115, #442a08);
-  border: 2px solid #d6a335;
-  box-shadow: 0 6px 20px rgba(124,81,21,.35);
-}
-.qd-play-ico {
-  font-size: 32px;
-  flex: none;
-}
-.qd-play-text b {
-  display: block;
-  font-family: var(--serif);
-  font-size: 17px;
-  color: #fff;
-}
-.qd-play-text small {
-  display: block;
-  font-size: 12px;
-  color: rgba(255,255,255,.8);
-  margin-top: 3px;
-}
-
-/* Thanh Điều Hướng 3 Phân Khu Quân Doanh */
-.qd-nav {
-  display: flex;
-  gap: 8px;
-  background: #1a1009;
-  border: 1px solid #4d3319;
-  border-radius: 12px;
-  padding: 6px;
-  overflow-x: auto;
-}
-.qd-nav-tab {
-  flex: 1;
-  min-width: 180px;
-  background: none;
-  border: 1px solid transparent;
-  color: #bca988;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 13.5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all .15s ease;
-}
-.qd-nav-tab:hover {
-  background: #2b1b10;
-  color: #fff;
-}
-.qd-nav-tab.on {
-  background: linear-gradient(180deg, #382415, #22140a);
-  color: #ffd36a;
-  border-color: #d6a335;
-  box-shadow: 0 2px 8px rgba(0,0,0,.5);
-}
-
-/* Nội dung Phân Khu */
-.qd-section {
-  display: block;
-  background: linear-gradient(180deg, #24160d, #140d07);
-  border: 1.5px solid #8a6528;
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 8px 30px rgba(0,0,0,.6);
-}
-.qd-sec-banner {
-  display: flex;
-  gap: 12px;
-  background: rgba(38,25,16,.8);
-  border: 1px solid #6b4923;
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  align-items: flex-start;
-}
-.qd-banner-icon {
-  font-size: 24px;
-  flex: none;
-}
-.qd-banner-content {
-  font-size: 13px;
-  line-height: 1.5;
-  color: #e5d7bd;
-}
-
-/* Lưới Chiêu Hiền Các 8 Ô */
-.chc-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 12px;
-}
-.chc-slot {
-  position: relative;
-  background: linear-gradient(180deg, #2d1d11, #180f08);
-  border: 1.5px solid var(--rc, #8a6528);
-  border-radius: 14px;
-  padding: 14px 10px 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.5);
-  transition: transform .15s ease;
-}
-.chc-slot:hover {
-  transform: translateY(-2px);
-  border-color: #ffd36a;
-}
-.chc-slot-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: #140c06;
-  border: 1px solid #5a3d1f;
-  color: #bca988;
-}
-.chc-slot-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 2px solid var(--rc, #d6a335);
-  margin-top: 14px;
-  overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0,0,0,.7);
-}
-.chc-slot-name {
-  font-family: var(--serif);
-  font-weight: 800;
-  font-size: 15px;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-.chc-slot-cost {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 700;
-  color: #ffd36a;
-  font-size: 12.5px;
-}
-.chc-slot-limit {
-  font-size: 11.5px;
-  color: #b9a98a;
-}
-.chc-slot-limit.full {
-  color: #e0503f;
-  font-weight: 700;
-}
-.chc-buy-btn {
-  width: 100%;
-  margin-top: auto;
-  border: 1px solid #d6a335;
-  background: linear-gradient(180deg, #422c1b, #25170d);
-  color: #ffd36a;
-  border-radius: 8px;
-  padding: 7px 4px;
-  font-weight: 700;
-  font-size: 12.5px;
-  cursor: pointer;
-  transition: all .15s ease;
-}
-.chc-buy-btn:hover:not(:disabled) {
-  background: linear-gradient(180deg, #5a3e27, #332013);
-  color: #fff;
-  border-color: #fff;
-}
-.chc-buy-btn:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
-
-/* Kho Thẻ & Ghép Sao */
-.chc-card-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: #24160d;
-  border: 1px solid #5a3d1f;
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-}
-.chc-card-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 160px;
-}
-.chc-card-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-  flex-wrap: wrap;
-}
-.chc-action-btn {
-  border: 1px solid #d6a335;
-  background: linear-gradient(180deg, #3d2919, #22160d);
-  color: #ffd36a;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all .15s ease;
-}
-.chc-action-btn:hover:not(:disabled) {
-  background: linear-gradient(180deg, #573a24, #2f1e12);
-  color: #fff;
-}
-.chc-action-btn:disabled {
-  opacity: .4;
-  cursor: not-allowed;
-}
-
-/* Hành Trang Quân Lương (10 Điểm) */
-.ql-meter-box {
-  background: #180f09;
-  border: 1.5px solid #6b4923;
-  border-radius: 14px;
-  padding: 14px 18px;
-  margin-bottom: 16px;
-}
-.ql-meter-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 8px;
-  font-weight: 700;
-  font-size: 14px;
-}
-.ql-bar {
-  height: 16px;
-  background: #24160c;
-  border: 1px solid #8a6528;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-}
-.ql-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #23735f, #d6a335);
-  transition: width .25s ease;
-}
-.ql-bar-fill.over {
-  background: linear-gradient(90deg, #e0503f, #ff7a6b);
-}
-.ql-desc {
-  font-size: 12.5px;
-  color: #bca988;
-  margin-top: 8px;
-  line-height: 1.45;
-}
-.ql-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
-}
-.ql-card {
-  position: relative;
-  background: linear-gradient(180deg, #2b1c11, #1a110a);
-  border: 1.5px solid #5a3d1f;
-  border-radius: 14px;
-  padding: 12px 8px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all .15s ease;
-}
-.ql-card:hover {
-  border-color: #d6a335;
-  transform: translateY(-2px);
-}
-.ql-card.equipped {
-  border-color: #4cb094;
-  box-shadow: 0 0 12px rgba(76,176,148,.45);
-  background: linear-gradient(180deg, #1c3329, #13221c);
-}
-.ql-card-pts {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  font-size: 10.5px;
-  font-weight: 800;
-  background: #150d07;
-  border: 1px solid #8a6528;
-  padding: 1px 6px;
-  border-radius: 6px;
-  color: #ffd36a;
-}
-.ql-card-av {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 2px solid;
-  overflow: hidden;
-}
-.ql-card-stars {
-  color: #ffd36a;
-  font-size: 13px;
-}
-.ql-card-status {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 6px;
-  background: #2a1c12;
-  color: #b9a98a;
-}
-.ql-card.equipped .ql-card-status {
-  background: #23735f;
-  color: #fff;
-}
-
-/* --- TRANG 2: BÀN CỜ CHIẾN TRẬN --- */
-.bc-page {
-  display: none;
-  min-height: 100dvh;
-  flex-direction: column;
-}
 .chs-top-bar {
   display: flex;
   align-items: center;
@@ -2002,149 +1473,13 @@ body.has-peek .slot .pu,
 </head>
 <body>
 <div id="app">
-  <!-- ================= TRANG 1: QUÂN DOANH (TỔNG HÀNH DINH) ================= -->
-  <div id="viewQuanDoanh" class="qd-page">
-    <div class="qd-container">
-      <!-- Header Quân Doanh -->
-      <header class="qd-header">
-        <div class="qd-brand">
-          <i class="qd-brand-seal">🏯</i>
-          <div>
-            <div class="qd-brand-title">QUÂN DOANH · CỜ HUYỀN SỬ</div>
-            <div class="qd-brand-sub">Tổng hành dinh Kỳ Thủ — Chiêu mộ danh tướng & Thao luyện quân binh</div>
-          </div>
-        </div>
-
-        <div class="qd-header-right">
-          <!-- Thông tin kỳ thủ -->
-          <div class="qd-profile-card">
-            <div class="qd-profile-av" id="qdAvatar">🐲</div>
-            <div class="qd-profile-info">
-              <div class="qd-profile-name" id="qdPlayerName">Kỳ Thủ Đại Việt</div>
-              <div class="qd-profile-auth" id="qdAuthStatus">
-                <span class="auth-badge guest" id="qdAuthBadge">⚪ Khách (Chưa đăng nhập)</span>
-                <button class="qd-login-btn" id="qdBtnLogin">🔑 Đăng Nhập</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Chỉ số tài nguyên -->
-          <div class="qd-stats-row">
-            <div class="qd-stat-chip elo" title="Điểm xếp hạng Elo PvP">
-              <span class="qd-chip-ico">⭐</span>
-              <div><small>Xếp Hạng</small><b id="qdEloVal">1000</b> Elo</div>
-            </div>
-            <div class="qd-stat-chip dv" title="Danh Vọng kiếm được từ thi đấu — Dùng tại Chiêu Hiền Các">
-              <span class="qd-chip-ico">🪙</span>
-              <div><small>Danh Vọng</small><b id="qdDanhVongVal">120</b> DV</div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!-- Nút Lệnh Chiến Trận Lớn -->
-      <div class="qd-actions-bar">
-        <button class="qd-play-btn pvp" id="qdBtnPvp">
-          <span class="qd-play-ico">⚔️</span>
-          <div class="qd-play-text">
-            <b>Ghép Trận PvP 8 Người</b>
-            <small>Đấu trực tuyến 8 người · Tích lũy Danh Vọng & Leo hạng</small>
-          </div>
-        </button>
-
-        <button class="qd-play-btn bot" id="qdBtnBot">
-          <span class="qd-play-ico">🤖</span>
-          <div class="qd-play-text">
-            <b>Luyện Tập (Đấu Máy)</b>
-            <small>Vào trận ngay lập tức với 7 đối thủ máy thông minh</small>
-          </div>
-        </button>
-
-        <button class="qd-play-btn bonds" id="qdBtnBonds">
-          <span class="qd-play-ico">🎴</span>
-          <div class="qd-play-text">
-            <b>12 Nhân Duyên</b>
-            <small>Xem thần thông tương ngộ lịch sử Việt</small>
-          </div>
-        </button>
-      </div>
-
-      <!-- Thanh Điều Hướng 3 Phân Khu Quân Doanh -->
-      <div class="qd-nav">
-        <button class="qd-nav-tab on" id="qdTabChc" data-target="qdSecChc">
-          <span>🏛️</span> Chiêu Hiền Các (Cửa Hàng Mảnh)
-        </button>
-        <button class="qd-nav-tab" id="qdTabCards" data-target="qdSecCards">
-          <span>⭐</span> Kho Thẻ & Ghép Sao
-        </button>
-        <button class="qd-nav-tab" id="qdTabQl" data-target="qdSecQl">
-          <span>📜</span> Hành Trang Quân Lương (<b id="qdDeckPtsTxt">0</b>/10đ)
-        </button>
-      </div>
-
-      <!-- Phân Khu 1: Chiêu Hiền Các -->
-      <div class="qd-section" id="qdSecChc">
-        <div class="qd-sec-banner">
-          <div class="qd-banner-icon">🏛️</div>
-          <div class="qd-banner-content">
-            <b>Quy tắc Chiêu Hiền Các:</b>
-            Cửa hàng xoay tua 8 ô cố định: <b>4 slot đầu</b> bán tướng 1-2 đồng (đổi 1 ngày/lần), <b>3 slot kế tiếp</b> bán tướng 3-4 đồng (đổi 5 ngày/lần), và <b>1 slot cuối</b> bán tướng 5 đồng (đổi 7 ngày/lần).
-            Mỗi tướng chỉ bán tối đa <b>3 mảnh mỗi ngày</b> để giữ tính cân bằng. Tiêu <b>Danh Vọng</b> kiếm được sau các trận đấu để thâu nạp hiền tài!
-          </div>
-        </div>
-        <div class="chc-grid" id="chcShopGrid"></div>
-      </div>
-
-      <!-- Phân Khu 2: Kho Thẻ & Ghép Sao -->
-      <div class="qd-section" id="qdSecCards" style="display:none;">
-        <div class="qd-sec-banner">
-          <div class="qd-banner-icon">⭐</div>
-          <div class="qd-banner-content">
-            <b>Quy tắc Ghép & Nâng Cấp Sao:</b>
-            Tích đủ mảnh tướng để rèn thành Thẻ 1★ (Tướng 1đ: 5 mảnh, 2đ: 6 mảnh, 3đ: 7 mảnh, 4đ: 8 mảnh, 5đ: 10 mảnh).
-            Khi sở hữu đủ <b>3 Thẻ 1★</b>, có thể hợp nhất thành <b>1 Thẻ 2★</b>. Đủ <b>3 Thẻ 2★</b> hợp thành <b>1 Thẻ 3★ tối thượng</b>!
-          </div>
-        </div>
-        <div id="chcCardsList"></div>
-      </div>
-
-      <!-- Phân Khu 3: Hành Trang Quân Lương -->
-      <div class="qd-section" id="qdSecQl" style="display:none;">
-        <div class="ql-meter-box">
-          <div class="ql-meter-header">
-            <span>Quân Lương Đã Chuẩn Bị:</span>
-            <span><b id="qlUsedPts" style="font-size:18px;color:#ffd36a">0</b> / 10 Điểm</span>
-          </div>
-          <div class="ql-bar">
-            <div class="ql-bar-fill" id="qlBarFill" style="width:0%"></div>
-          </div>
-          <div class="ql-desc">
-            Mỗi vị tướng mang theo sẽ tốn quân lương tương ứng cấp sao: <b>1★ = 3 điểm</b>, <b>2★ = 5 điểm</b>, <b>3★ = 7 điểm</b>. Tổng tối đa <b>10 điểm</b> (Ví dụ: 1 tướng 3★ + 1 tướng 1★ = 10đ, hoặc 2 tướng 2★ = 10đ).
-            Khi vào trận chiến, tướng mang theo chưa xuất hiện ngay mà <b>sau 4 vòng (bắt đầu Vòng 4)</b> viện binh sẽ tới tiền tuyến để bạn bấm <b>🎺 ĐIỀU TƯỚNG</b> tham chiến!
-          </div>
-        </div>
-        <div style="font-weight:700;font-size:14px;margin:12px 0 8px;color:#ffd36a">
-          Danh sách Thẻ Tướng Sở Hữu (Chạm vào thẻ để Chọn Mang Vào hoặc Bỏ Ra):
-        </div>
-        <div class="ql-grid" id="qlCardsGrid"></div>
-      </div>
-
-      <footer class="pagefoot" style="margin-top:20px;">
-        <a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank">★ Tiêu điểm tướng</a> · <a href="https://kybien.blogspot.com/" target="_blank">« Sảnh Game Kỳ Biến</a>
-      </footer>
-    </div>
-  </div>
-
-  <!-- ================= TRANG 2: BÀN CỜ CHIẾN TRẬN (IN-GAME BOARD) ================= -->
-  <div id="viewBanCo" class="bc-page" style="display:none;">
-    <header class="chs-top-bar" id="chsTopBar">
-      <button class="chs-top-btn" id="btnBackToCamp" title="Quay về Quân Doanh">« 🏯 Quân Doanh</button>
-      <div class="chs-brand"><i class="chs-brand-seal">⚔️</i> <span>CỜ HUYỀN SỬ</span></div>
-      <div class="chs-top-chip dv" id="bcDvChip">🪙 <b id="bcDvVal">0</b> DV</div>
-      <div class="chs-top-chip elo" id="bcEloChip">⭐ <b id="bcEloVal">1000</b> Elo</div>
-      <button class="chs-top-btn" id="btnBondsInGame"><span style="font-size:14px">🎴</span> 12 Nhân Duyên</button>
-    </header>
-    <div class="demobar" id="demobar"></div>
+  <header class="chs-top-bar" id="chsTopBar">
+    <button class="chs-top-btn" id="btnBackToCamp" onclick="window.location.href='quan-doanh.html'" title="Quay về Quân Doanh">« 🏯 Quân Doanh</button>
+    <div class="chs-brand"><i class="chs-brand-seal">⚔️</i> <span>CỜ HUYỀN SỬ</span></div>
+    <div class="chs-top-chip dv" id="bcDvChip" title="Danh Vọng kiếm được">🪙 <b id="bcDvVal">0</b> DV</div>
+    <button class="chs-top-btn" id="btnBondsInGame" onclick="window.open('https://kybien.blogspot.com/p/tieu-diem-tuong.html', '_blank')"><span style="font-size:14px">🎴</span> 12 Nhân Duyên</button>
+  </header>
+  <div class="demobar" id="demobar"></div>
     <div class="game" id="game">
       <main class="stage" id="stage">
         <div class="boardrow" id="boardrow">
@@ -2185,7 +1520,6 @@ body.has-peek .slot .pu,
       </main>
       <aside class="skill-panel" id="skillpanel"></aside>
       <aside class="side right"><div class="sh">Người chơi</div><div class="box" id="plist"></div></aside>
-    </div>
     <footer class="pagefoot"><a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank">★ Tiêu điểm tướng</a> · <a href="https://kybien.blogspot.com/" target="_blank">« Sảnh Game</a></footer>
   </div>
 </div>
@@ -7107,25 +6441,12 @@ function getHeroAvatar(h){
   return '';
 }
 
-function switchView(viewName){
-  const qd=$('#viewQuanDoanh'), bc=$('#viewBanCo');
-  if(viewName==='quandoanh'){
-    if(qd)qd.style.display='block';
-    if(bc)bc.style.display='none';
-    if(typeof CHS_ONLINE!=='undefined') CHS_ONLINE.renderQuanDoanhUI();
-  }else if(viewName==='banco'){
-    if(qd)qd.style.display='none';
-    if(bc)bc.style.display='flex';
-    fit();
-  }
-}
+const params = new URLSearchParams(location.search);
+const dm = params.get('demo');
+const matchMode = params.get('mode') || 'bot';
 
-const dm=new URLSearchParams(location.search).get('demo');
-if(dm&&HERO[dm]){
-  switchView('banco');
+if (dm && HERO[dm]) {
   startDemo(dm);
-}else{
-  switchView('quandoanh');
 }
 
 /* ========================================================
@@ -7136,116 +6457,75 @@ const CHS_ONLINE = {
   isPvpActive: false,
   roomId: null,
   reinforcementsDeployed: false,
-  queueTimer: null,
-  queueElapsed: 0,
-  maxQueueSec: 40,
-  currentInQueue: 1,
 
-  // Backend URL
   API_URL: (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
     ? 'http://localhost:5000'
     : 'https://kybien-backend.onrender.com',
 
-  // Nhóm tướng xoay tua (khớp 100% với Backend)
-  POOL_1_2: ['chudongtu', 'caolo', 'maithucloan', 'yetkieu', 'lelai', 'nguyenxi', 'datuong', 'tiendung', 'lyongtrong', 'trungnhi', 'phunghung', 'tranquoctoan', 'phamngulao'],
-  POOL_3_4: ['batrieu', 'thuytinh', 'kimquy', 'lythuongkiet', 'anduongvuong', 'leloi', 'nguyentrai', 'buithixuan', 'tranquangdieu', 'tranhungdao'],
-  POOL_5: ['thanhgiong', 'sontinh', 'laclongquan', 'auco', 'ngoquyen', 'nguyenhue'],
-
-  // Bảng giá Danh Vọng (DV) & Mảnh cần thiết
-  SHARD_COST_DV: { 1: 4, 2: 8, 3: 15, 4: 30, 5: 60 },
-  SHARDS_FOR_CARD: { 1: 5, 2: 6, 3: 7, 4: 8, 5: 10 },
-  QUAN_LUONG_PTS: { 1: 3, 2: 5, 3: 7 }, // 1★=3đ, 2★=5đ, 3★=7đ
-  MAX_QUAN_LUONG: 10,
-
-  // Bảng thưởng thứ hạng trận đấu (Danh Vọng)
   RANK_REWARDS: {
-    1: { dv: 50, elo: 35, title: 'QUÁN QUÂN — THIÊN HẠ THÁI BÌNH!' },
-    2: { dv: 35, elo: 25, title: 'Á QUÂN — ANH HÙNG XUẤT THẾ!' },
-    3: { dv: 25, elo: 15, title: 'HẠNG BA — DANH VANG BỐN BỂ!' },
-    4: { dv: 15, elo: 5,  title: 'HẠNG BỐN — CHIẾN ĐỘI TINH ANH!' },
-    5: { dv: 10, elo: -5, title: 'HẠNG NĂM — DỪNG BƯỚC ANH HÀO' },
-    6: { dv: 8,  elo: -15,title: 'HẠNG SÁU — BẠI TRẬN RÚT QUÂN' },
-    7: { dv: 6,  elo: -25,title: 'HẠNG BẢY — THẤT TRẬN TIỀN TUYẾN' },
-    8: { dv: 4,  elo: -35,title: 'HẠNG TÁM — ĐẠI BẠI TIỀN TRẬN' },
+    1: { dv: 50, title: 'QUÁN QUÂN — THIÊN HẠ THÁI BÌNH!' },
+    2: { dv: 35, title: 'Á QUÂN — ANH HÙNG XUẤT THẾ!' },
+    3: { dv: 25, title: 'HẠNG BA — DANH VANG BỐN BỂ!' },
+    4: { dv: 15, title: 'HẠNG BỐN — CHIẾN ĐỘI TINH ANH!' },
+    5: { dv: 10, title: 'HẠNG NĂM — DỪNG BƯỚC ANH HÀO' },
+    6: { dv: 8,  title: 'HẠNG SÁU — BẠI TRẬN RÚT QUÂN' },
+    7: { dv: 6,  title: 'HẠNG BẢY — THẤT TRẬN TIỀN TUYẾN' },
+    8: { dv: 4,  title: 'HẠNG TÁM — ĐẠI BẠI TIỀN TRẬN' },
   },
 
-  // State
   state: {
     userId: null,
-    danhVong: 120, // Tặng 120 Danh Vọng khởi đầu
-    elo: 1000,
-    shards: { caolo: 5, chudongtu: 4 },
-    cards: [
-      { id: 'init-c1', heroId: 'caolo', star: 1 }
-    ],
-    deck: [
-      { heroId: 'caolo', star: 1 }
-    ],
-    dailyPurchases: {}, // dateKey -> { slotIndex: count }
+    danhVong: 0,
+    deck: [{ heroId: 'caolo', star: 1 }]
   },
 
-  init() {
+  init(mode) {
     this.loadState();
+    this.updateDvChip();
     this.bindDomEvents();
-    this.renderQuanDoanhUI();
     this.initSocket();
-  },
 
-  isLoggedIn() {
-    try {
-      const token = localStorage.getItem('kybien_jwt_token') || (window.KybienAuth && window.KybienAuth.getToken());
-      return !!(token && typeof token === 'string' && token.trim().length > 10);
-    } catch {
-      return false;
+    if (mode === 'pvp') {
+      this.startLocalMatchWithBots();
+    } else {
+      this.startOfflineGame();
     }
-  },
-
-  getUsername() {
-    try {
-      const u = localStorage.getItem('kybien_username');
-      if (u) return u;
-      const userStr = localStorage.getItem('kybien_user');
-      if (userStr) {
-        const parsed = JSON.parse(userStr);
-        if (parsed.username) return parsed.username;
-      }
-      return 'Thành viên Kỳ Biến';
-    } catch {
-      return 'Thành viên Kỳ Biến';
-    }
-  },
-
-  getTodayKey() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   },
 
   loadState() {
     try {
-      const saved = localStorage.getItem('chs_quandoanh_state') || localStorage.getItem('chs_pvp_state');
+      const saved = localStorage.getItem('chs_quandoanh_state');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.hungBao !== undefined && parsed.danhVong === undefined) {
-          parsed.danhVong = parsed.hungBao;
-        }
-        this.state = Object.assign(this.state, parsed);
+        if (parsed.danhVong !== undefined) this.state.danhVong = parsed.danhVong;
+        if (parsed.deck && parsed.deck.length > 0) this.state.deck = parsed.deck;
       }
-      if (!this.state.userId) {
-        this.state.userId = Math.floor(1000 + Math.random() * 9000);
-      }
-      if (!this.state.deck || this.state.deck.length === 0) {
-        this.state.deck = [{ heroId: 'caolo', star: 1 }];
+      const sDeck = localStorage.getItem('chs_quandoanh_deck');
+      if (sDeck) {
+        const pd = JSON.parse(sDeck);
+        if (Array.isArray(pd) && pd.length > 0) this.state.deck = pd;
       }
     } catch (e) {
-      console.warn('Lỗi đọc local state CHS:', e);
+      console.warn('Lỗi nạp state:', e);
+    }
+    if (!this.state.deck || this.state.deck.length === 0) {
+      this.state.deck = [{ heroId: 'caolo', star: 1 }];
     }
   },
 
   saveState() {
     try {
-      localStorage.setItem('chs_quandoanh_state', JSON.stringify(this.state));
+      const saved = localStorage.getItem('chs_quandoanh_state');
+      const obj = saved ? JSON.parse(saved) : {};
+      obj.danhVong = this.state.danhVong;
+      localStorage.setItem('chs_quandoanh_state', JSON.stringify(obj));
     } catch (e) {}
-    this.renderTopChips();
+    this.updateDvChip();
+  },
+
+  updateDvChip() {
+    const el = $('#bcDvVal');
+    if (el) el.textContent = this.state.danhVong || 0;
   },
 
   initSocket() {
@@ -7254,14 +6534,9 @@ const CHS_ONLINE = {
       this.socket = io(this.API_URL, {
         transports: ['websocket', 'polling'],
         timeout: 5000,
-        reconnectionAttempts: 3
+        reconnectionAttempts: 2
       });
 
-      this.socket.on('connect', () => {
-        console.log('[CHS Socket] Kết nối máy chủ thành công!', this.socket.id);
-      });
-
-      // 1. Đồng bộ dữ liệu người chơi Authoritative từ Server (Chống Hack Tiền, XP, Cấp, Tướng)
       this.socket.on('chs:sync_player_state', (data) => {
         const P = me();
         if (!P) return;
@@ -7269,42 +6544,26 @@ const CHS_ONLINE = {
         P.lvl = data.lvl;
         P.xp = data.xp;
         P.hp = data.hp;
-        P.streak = data.streak;
-        P.lastWin = data.lastWin;
         P.board = data.board;
         P.bench = data.bench;
         P.shop = data.shop;
-        if (data.round && G) G.round = data.round;
         renderAll();
       });
 
-      // 2. Nhận kết quả và sự kiện chiến đấu do Server điều phối (Chống Hack Sát Thương)
-      this.socket.on('chs:combat_start', (data) => {
-        console.log('[CHS Combat Auth] Bắt đầu trận chiến do Server điều phối:', data);
-        if (U.phase === 'prep') {
-          readyGo(true);
-        }
-        if (data.opponent && !data.isPve) {
-          toast('⚔️ Giao tranh với: ' + data.opponent.name);
-        } else if (data.isPve) {
-          toast('👹 Giao tranh Dã Quái Tiền Tuyến!');
-        }
+      this.socket.on('chs:combat_start', () => {
+        if (U.phase === 'prep') readyGo(true);
       });
 
-      // 3. Bắt đầu vòng đấu mới từ Server
       this.socket.on('chs:round_start', (data) => {
-        if (this.isPvpActive && G) {
+        if (G) {
           G.round = data.round;
-          if (U.phase !== 'prep') {
-            beginRound();
-          }
+          if (U.phase !== 'prep') beginRound();
           U.timer = data.timer || 40;
         }
       });
 
-      // 4. Đồng bộ thời gian chuẩn bị
       this.socket.on('chs:timer_tick', (data) => {
-        if (this.isPvpActive && U.phase === 'prep') {
+        if (U.phase === 'prep') {
           U.timer = data.timer;
           const _tt = $('#ttxt'), _tf = $('#tfill');
           if (_tt) _tt.textContent = Math.max(0, Math.ceil(U.timer)) + ' giây';
@@ -7312,261 +6571,26 @@ const CHS_ONLINE = {
         }
       });
 
-      this.socket.on('chs:queue_status', (data) => {
-        if (data.elapsed !== undefined) this.queueElapsed = data.elapsed;
-        if (data.currentInQueue !== undefined) this.currentInQueue = data.currentInQueue;
-        this.updateQueueModalUI();
-      });
-
-      this.socket.on('chs:match_found', (data) => {
-        console.log('[CHS Socket] Ghép trận thành công:', data);
-        this.startMatchFromRoom(data);
-      });
-
-      this.socket.on('chs:players_sync', (data) => {
-        if (!data || !data.players || !G) return;
-        for (const sp of data.players) {
-          const lp = G.players.find(p => p.id === sp.id || p.name === sp.name);
-          if (lp) {
-            lp.hp = sp.hp;
-            lp.alive = sp.alive;
-            if (sp.rankPlace) lp.place = sp.rankPlace;
-          }
-        }
-        renderPlayers();
-      });
-
-      this.socket.on('chs:reinforcements_ready', (data) => {
-        toast('🎺 Viện Binh Hành Quân Đã Tới Tiền Tuyến! Bấm ĐIỀU TƯỚNG để xuất kích.');
+      this.socket.on('chs:reinforcements_ready', () => {
         this.showReinforceButton();
       });
 
-      this.socket.on('chs:reinforcements_deployed', (data) => {
-        toast('⚔️ Đã triệu hồi viện binh vào hàng chờ!');
-        this.reinforcementsDeployed = true;
-        const b = $('#btnDeployReinforce');
-        if (b) b.style.display = 'none';
-      });
-
       this.socket.on('chs:eliminated', (data) => {
-        this.onMatchEnd(data.rankPlace, data.rewardDv || data.rewardHb, data.eloChange);
+        this.onMatchEnd(data.rankPlace, data.rewardDv || data.rewardHb);
       });
 
       this.socket.on('chs:match_victory', (data) => {
-        this.onMatchEnd(1, data.rewardDv || data.rewardHb, data.eloChange);
+        this.onMatchEnd(1, data.rewardDv || data.rewardHb);
       });
-
-      this.socket.on('chs:toast', (data) => {
-        if (data.message) toast(data.message);
-      });
-    } catch (err) {
-      console.warn('[CHS Socket] Không thể kết nối Socket server, sẽ dùng chế độ offline/giả lập:', err);
-    }
-  },
-
-  // Tính 8 ô Shop xoay tua Chiêu Hiền Các (1 ngày - 5 ngày - 7 ngày)
-  getShopSlots() {
-    const now = new Date();
-    const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
-    const weekNumber = Math.floor(dayOfYear / 7);
-    const fiveDayPeriod = Math.floor(dayOfYear / 5);
-
-    const daysLeft5 = 5 - (dayOfYear % 5);
-    const daysLeft7 = 7 - (dayOfYear % 7);
-
-    const todayKey = this.getTodayKey();
-    const todayPurchases = (this.state.dailyPurchases && this.state.dailyPurchases[todayKey]) || {};
-
-    const slots = [];
-
-    // Ô 1 - Ô 4: Tướng 1-2 đồng (đổi 1 ngày/lần - hàng ngày)
-    for (let i = 0; i < 4; i++) {
-      const heroId = this.POOL_1_2[(dayOfYear + i * 3) % this.POOL_1_2.length];
-      const H = HERO[heroId];
-      const cost = H ? H.cost : 1;
-      const bought = todayPurchases[i + 1] || 0;
-      slots.push({
-        slotIndex: i + 1,
-        heroId,
-        name: H ? H.name : heroId,
-        cost,
-        priceDv: this.SHARD_COST_DV[cost] || 4,
-        rotationDays: 1,
-        label: 'Đổi 1 ngày (hàng ngày)',
-        maxPerDay: 3,
-        remainingToday: Math.max(0, 3 - bought),
-        boughtToday: bought,
-      });
-    }
-
-    // Ô 5 - Ô 7: Tướng 3-4 đồng (đổi 5 ngày/lần)
-    for (let i = 0; i < 3; i++) {
-      const heroId = this.POOL_3_4[(fiveDayPeriod + i * 2) % this.POOL_3_4.length];
-      const H = HERO[heroId];
-      const cost = H ? H.cost : 3;
-      const bought = todayPurchases[i + 5] || 0;
-      slots.push({
-        slotIndex: i + 5,
-        heroId,
-        name: H ? H.name : heroId,
-        cost,
-        priceDv: this.SHARD_COST_DV[cost] || 15,
-        rotationDays: 5,
-        label: `Đổi 5 ngày (còn ${daysLeft5} ngày)`,
-        maxPerDay: 3,
-        remainingToday: Math.max(0, 3 - bought),
-        boughtToday: bought,
-      });
-    }
-
-    // Ô 8: Tướng 5 đồng (đổi 7 ngày/lần - hàng tuần)
-    const heroId5 = this.POOL_5[weekNumber % this.POOL_5.length];
-    const H5 = HERO[heroId5];
-    const cost5 = 5;
-    const bought5 = todayPurchases[8] || 0;
-    slots.push({
-      slotIndex: 8,
-      heroId: heroId5,
-      name: H5 ? H5.name : heroId5,
-      cost: cost5,
-      priceDv: this.SHARD_COST_DV[cost5] || 60,
-      rotationDays: 7,
-      label: `Đổi 7 ngày (còn ${daysLeft7} ngày)`,
-      maxPerDay: 3,
-      remainingToday: Math.max(0, 3 - bought5),
-      boughtToday: bought5,
-    });
-
-    return slots;
-  },
-
-  buyShard(slotIndex) {
-    const slots = this.getShopSlots();
-    const slot = slots.find(s => s.slotIndex === slotIndex);
-    if (!slot) return toast('Ô mua không tồn tại!');
-
-    if (slot.remainingToday <= 0) {
-      return toast('Bạn đã mua hết 3 mảnh tướng này trong ngày hôm nay!');
-    }
-
-    if (this.state.danhVong < slot.priceDv) {
-      return toast(`Không đủ Danh Vọng! Cần ${slot.priceDv} DV để mua 1 mảnh.`);
-    }
-
-    this.state.danhVong -= slot.priceDv;
-    this.state.shards[slot.heroId] = (this.state.shards[slot.heroId] || 0) + 1;
-
-    const todayKey = this.getTodayKey();
-    if (!this.state.dailyPurchases[todayKey]) this.state.dailyPurchases[todayKey] = {};
-    this.state.dailyPurchases[todayKey][slotIndex] = (this.state.dailyPurchases[todayKey][slotIndex] || 0) + 1;
-
-    this.saveState();
-    this.renderShopUI();
-    toast(`Mua thành công 1 mảnh ${slot.name}! (-${slot.priceDv} Danh Vọng)`);
-  },
-
-  fuseCard(heroId) {
-    const H = HERO[heroId];
-    if (!H) return;
-    const cost = H.cost;
-    const req = this.SHARDS_FOR_CARD[cost] || 5;
-    const curr = this.state.shards[heroId] || 0;
-
-    if (curr < req) {
-      return toast(`Chưa đủ mảnh! Cần ${req} mảnh ${H.name} để ghép Thẻ 1★ (Hiện có: ${curr}).`);
-    }
-
-    this.state.shards[heroId] -= req;
-    this.state.cards.push({
-      id: `card-${Date.now()}-${Math.random().toString(36).slice(2,5)}`,
-      heroId,
-      star: 1
-    });
-
-    this.saveState();
-    this.renderCardsUI();
-    this.renderDeckUI();
-    toast(`🎉 Chúc mừng! Ghép thành công Thẻ Tướng ${H.name} ★1!`);
-  },
-
-  mergeCards(heroId, targetStar) {
-    const H = HERO[heroId];
-    if (!H) return;
-    const sourceStar = targetStar - 1;
-    const matching = this.state.cards.filter(c => c.heroId === heroId && c.star === sourceStar);
-
-    if (matching.length < 3) {
-      return toast(`Cần đủ 3 Thẻ ${H.name} ${'★'.repeat(sourceStar)} để hợp thành 1 Thẻ ${'★'.repeat(targetStar)}!`);
-    }
-
-    let removed = 0;
-    this.state.cards = this.state.cards.filter(c => {
-      if (c.heroId === heroId && c.star === sourceStar && removed < 3) {
-        removed++;
-        return false;
-      }
-      return true;
-    });
-
-    this.state.cards.push({
-      id: `card-${Date.now()}-${Math.random().toString(36).slice(2,5)}`,
-      heroId,
-      star: targetStar
-    });
-
-    this.cleanDeckInvalidCards();
-    this.saveState();
-    this.renderCardsUI();
-    this.renderDeckUI();
-    toast(`👑 Vinh quang! Hợp thành công Thẻ Tướng ${H.name} ${'★'.repeat(targetStar)}!`);
-  },
-
-  getDeckTotalPts() {
-    return this.state.deck.reduce((sum, item) => sum + (this.QUAN_LUONG_PTS[item.star] || 3), 0);
-  },
-
-  cleanDeckInvalidCards() {
-    const available = [...this.state.cards];
-    const newDeck = [];
-    for (const d of this.state.deck) {
-      const idx = available.findIndex(c => c.heroId === d.heroId && c.star === d.star);
-      if (idx >= 0) {
-        newDeck.push(d);
-        available.splice(idx, 1);
-      }
-    }
-    this.state.deck = newDeck;
-  },
-
-  toggleDeckCard(heroId, star) {
-    const H = HERO[heroId];
-    if (!H) return;
-    const cardPts = this.QUAN_LUONG_PTS[star] || 3;
-
-    const existingIdx = this.state.deck.findIndex(d => d.heroId === heroId && d.star === star);
-    if (existingIdx >= 0) {
-      this.state.deck.splice(existingIdx, 1);
-      this.saveState();
-      this.renderDeckUI();
-      toast(`Đã bỏ ${H.name} ${'★'.repeat(star)} khỏi Quân Lương.`);
-      return;
-    }
-
-    const currentTotal = this.getDeckTotalPts();
-    if (currentTotal + cardPts > this.MAX_QUAN_LUONG) {
-      return toast(`⚠️ Vượt quá 10 điểm Quân Lương! Hiện tại: ${currentTotal}/10, thêm thẻ này tốn ${cardPts}đ. (Tối đa: 1 thẻ 3★ + 1 thẻ 1★ = 10đ, hoặc 2 thẻ 2★ = 10đ).`);
-    }
-
-    this.state.deck.push({ heroId, star });
-    this.saveState();
-    this.renderDeckUI();
-    toast(`Đã thêm ${H.name} ${'★'.repeat(star)} vào Quân Lương (${currentTotal + cardPts}/10đ).`);
+    } catch (e) {}
   },
 
   startOfflineGame() {
-    switchView('banco');
     this.isPvpActive = false;
     this.reinforcementsDeployed = false;
+    const b = $('#btnDeployReinforce');
+    if (b) b.style.display = 'none';
+
     const selAv = store.get('chs_av') || '🐲';
     G = newGame({ diff: 1, av: selAv });
     G.pvpDeck = [...this.state.deck];
@@ -7576,77 +6600,11 @@ const CHS_ONLINE = {
     toast('🤖 Vào trận Luyện Tập! Vòng 1-3 dã quái. Bắt đầu Vòng 4 viện binh Quân Lương sẽ sẵn sàng!');
   },
 
-  startPvpQueue() {
-    if (!this.isLoggedIn()) {
-      const m = $('#modalLoginRequired');
-      if (m) m.classList.add('show');
-      return;
-    }
-    this.openQueueModal();
-  },
-
-  openQueueModal() {
-    this.queueElapsed = 0;
-    this.currentInQueue = 1;
-    const qm = $('#queueModal');
-    if (qm) qm.classList.add('show');
-    this.updateQueueModalUI();
-
-    if (this.socket && this.socket.connected) {
-      this.socket.emit('chs:join_queue', {
-        userId: this.state.userId,
-        name: this.getUsername(),
-        avatar: store.get('chs_av') || '🐲',
-        deck: this.state.deck,
-      });
-    }
-
-    if (this.queueTimer) clearInterval(this.queueTimer);
-    this.queueTimer = setInterval(() => {
-      this.queueElapsed++;
-      if (this.queueElapsed % 8 === 0 && this.currentInQueue < 6) {
-        this.currentInQueue += Math.floor(1 + Math.random() * 2);
-      }
-      this.updateQueueModalUI();
-
-      if (this.queueElapsed >= this.maxQueueSec) {
-        clearInterval(this.queueTimer);
-        this.queueTimer = null;
-        toast('⏱️ Đã qua 40 giây! Tự động bù Bot thông minh và khởi tranh trận đấu!');
-        setTimeout(() => {
-          this.startLocalMatchWithBots();
-        }, 1200);
-      }
-    }, 1000);
-  },
-
-  cancelQueue() {
-    if (this.queueTimer) {
-      clearInterval(this.queueTimer);
-      this.queueTimer = null;
-    }
-    const qm = $('#queueModal');
-    if (qm) qm.classList.remove('show');
-    if (this.socket && this.socket.connected) {
-      this.socket.emit('chs:cancel_queue');
-    }
-    toast('Đã hủy tìm kiếm trận đấu.');
-  },
-
-  updateQueueModalUI() {
-    const tEl = $('#queueTimerTxt');
-    const cEl = $('#queueCountTxt');
-    if (tEl) tEl.textContent = `${this.queueElapsed}s / ${this.maxQueueSec}s`;
-    if (cEl) cEl.textContent = `Đã tìm thấy: ${Math.min(8, this.currentInQueue)} / 8 người chơi`;
-  },
-
   startLocalMatchWithBots() {
-    const qm = $('#queueModal');
-    if (qm) qm.classList.remove('show');
-    switchView('banco');
-
     this.isPvpActive = true;
     this.reinforcementsDeployed = false;
+    const b = $('#btnDeployReinforce');
+    if (b) b.style.display = 'none';
 
     const myAv = store.get('chs_av') || '🐲';
     G = newGame({ diff: 1, av: myAv });
@@ -7662,48 +6620,13 @@ const CHS_ONLINE = {
 
     renderAll();
     beginRound();
-    toast('⚔️ Trận đấu Online 8 Người bắt đầu! Vòng 1-3 dã quái. Vòng 4 bắt đầu PvP và điều viện binh!');
-  },
-
-  startMatchFromRoom(roomData) {
-    const qm = $('#queueModal');
-    if (qm) qm.classList.remove('show');
-    if (this.queueTimer) {
-      clearInterval(this.queueTimer);
-      this.queueTimer = null;
-    }
-    switchView('banco');
-
-    this.isPvpActive = true;
-    this.roomId = roomData.roomId;
-    this.reinforcementsDeployed = false;
-
-    const myAv = store.get('chs_av') || '🐲';
-    G = newGame({ diff: 1, av: myAv });
-    G.isPvp = true;
-    G.pvpDeck = [...this.state.deck];
-    G.reinforcementsDeployed = false;
-
-    if (roomData.players && roomData.players.length === 8) {
-      for (let i = 0; i < 8; i++) {
-        if (G.players[i]) {
-          G.players[i].name = roomData.players[i].name;
-          G.players[i].av = roomData.players[i].avatar;
-          G.players[i].id = roomData.players[i].id;
-          G.players[i].isBot = roomData.players[i].isBot;
-        }
-      }
-    }
-
-    renderAll();
-    beginRound();
-    toast('⚔️ Đã tìm đủ 8 kỳ thủ! Trận đấu chính thức bắt đầu!');
+    toast('⚔️ Trận đấu PvP 8 Người bắt đầu! Vòng 1-3 dã quái. Vòng 4 bắt đầu PvP và điều viện binh!');
   },
 
   onRoundStart(round) {
     if (round === 4) {
       this.showReinforceButton();
-      toast('🎺 Vòng 4: Viện Binh Hành Quân Đã Tới! Chạm ĐIỀU TƯỚNG để xuất kích các thẻ từ Quân Lương vào hàng chờ!');
+      toast('🎺 Vòng 4: Viện Binh Quân Doanh Đã Tới! Chạm ĐIỀU TƯỚNG để xuất kích thẻ tướng vào hàng chờ!');
     }
   },
 
@@ -7757,438 +6680,69 @@ const CHS_ONLINE = {
     }
   },
 
-  onMatchEnd(rankPlace, serverDv, serverElo) {
+  onMatchEnd(rankPlace, serverDv) {
     this.isPvpActive = false;
     const r = Math.min(8, Math.max(1, rankPlace || 8));
     const reward = this.RANK_REWARDS[r] || this.RANK_REWARDS[8];
-
     const dvGain = serverDv !== undefined ? serverDv : reward.dv;
-    const eloGain = serverElo !== undefined ? serverElo : reward.elo;
 
-    this.state.danhVong += dvGain;
-    this.state.elo = Math.max(0, this.state.elo + eloGain);
+    this.state.danhVong = (this.state.danhVong || 0) + dvGain;
     this.saveState();
 
     const em = $('#pvpEndModal');
     if (em) {
-      const rk = $('#pvpEndRank'), tt = $('#pvpEndTitle'), rw = $('#pvpRewardDv'), el = $('#pvpRewardElo');
+      const rk = $('#pvpEndRank'), tt = $('#pvpEndTitle'), rw = $('#pvpRewardDv');
       if (rk) rk.textContent = `HẠNG #${r}`;
       if (tt) tt.textContent = reward.title;
       if (rw) rw.textContent = `+${dvGain} DV`;
-      if (el) el.textContent = (eloGain >= 0 ? `+${eloGain}` : `${eloGain}`) + ' Elo';
       em.classList.add('show');
     }
   },
 
-  renderTopChips() {
-    const qdDv = $('#qdDanhVongVal'), bcDv = $('#bcDvVal');
-    const qdElo = $('#qdEloVal'), bcElo = $('#bcEloVal');
-    const deckTxt = $('#qdDeckPtsTxt');
-    const pts = this.getDeckTotalPts();
-
-    if (qdDv) qdDv.textContent = this.state.danhVong;
-    if (bcDv) bcDv.textContent = this.state.danhVong;
-    if (qdElo) qdElo.textContent = this.state.elo;
-    if (bcElo) bcElo.textContent = this.state.elo;
-    if (deckTxt) deckTxt.textContent = pts;
-
-    this.updateAuthUI();
-  },
-
-  updateAuthUI() {
-    const badge = $('#qdAuthBadge'), btnLogin = $('#qdBtnLogin'), nameEl = $('#qdPlayerName');
-    if (this.isLoggedIn()) {
-      const username = this.getUsername();
-      if (nameEl) nameEl.textContent = username;
-      if (badge) {
-        badge.textContent = '🟢 ' + username;
-        badge.className = 'auth-badge logged';
-      }
-      if (btnLogin) btnLogin.style.display = 'none';
-    } else {
-      if (nameEl) nameEl.textContent = 'Kỳ Thủ Đại Việt';
-      if (badge) {
-        badge.textContent = '⚪ Khách (Chưa đăng nhập)';
-        badge.className = 'auth-badge guest';
-      }
-      if (btnLogin) btnLogin.style.display = 'inline-block';
-    }
-  },
-
-  renderQuanDoanhUI() {
-    this.renderTopChips();
-    this.renderShopUI();
-    this.renderCardsUI();
-    this.renderDeckUI();
-  },
-
-  renderShopUI() {
-    const container = $('#chcShopGrid');
-    if (!container) return;
-
-    const slots = this.getShopSlots();
-    let html = '';
-
-    for (const slot of slots) {
-      const H = HERO[slot.heroId];
-      const avatarSrc = getHeroAvatar(slot.heroId);
-      const originName = H && TR[H.o] ? TR[H.o].name : '';
-      const className = H && CS[H.c] ? CS[H.c].name : '';
-      const isFull = slot.remainingToday <= 0;
-
-      html += `
-        <div class="chc-slot" style="--rc:${costCol(slot.heroId)}">
-          <div class="chc-slot-badge">${slot.label}</div>
-          <div class="chc-slot-avatar">
-            <img src="${avatarSrc}" alt="${slot.name}" style="width:100%;height:100%;object-fit:cover;">
-          </div>
-          <div class="chc-slot-name">${slot.name}</div>
-          <div style="font-size:11.5px;color:#d8c9a6">${originName} · ${className}</div>
-          <div class="chc-slot-cost">🪙 <b>${slot.priceDv}</b> DV / mảnh</div>
-          <div class="chc-slot-limit ${isFull ? 'full' : ''}">
-            ${isFull ? 'Hôm nay đã mua đủ 3/3' : `Hôm nay còn mua: <b>${slot.remainingToday}/3</b>`}
-          </div>
-          <button class="chc-buy-btn" data-buy-slot="${slot.slotIndex}" ${isFull ? 'disabled' : ''}>
-            ${isFull ? 'Đã Hết Lượt' : 'Mua 1 Mảnh'}
-          </button>
-        </div>
-      `;
-    }
-
-    container.innerHTML = html;
-  },
-
-  renderCardsUI() {
-    const container = $('#chcCardsList');
-    if (!container) return;
-
-    const allHeroes = Object.keys(HERO).sort((a,b) => HERO[a].cost - HERO[b].cost);
-    let html = '';
-
-    for (const hid of allHeroes) {
-      const H = HERO[hid];
-      const cost = H.cost;
-      const reqShards = this.SHARDS_FOR_CARD[cost] || 5;
-      const userShards = this.state.shards[hid] || 0;
-
-      const s1Cards = this.state.cards.filter(c => c.heroId === hid && c.star === 1).length;
-      const s2Cards = this.state.cards.filter(c => c.heroId === hid && c.star === 2).length;
-      const s3Cards = this.state.cards.filter(c => c.heroId === hid && c.star === 3).length;
-
-      if (userShards === 0 && s1Cards === 0 && s2Cards === 0 && s3Cards === 0) continue;
-
-      const avatarSrc = getHeroAvatar(hid);
-      const canFuse1 = userShards >= reqShards;
-      const canMerge2 = s1Cards >= 3;
-      const canMerge3 = s2Cards >= 3;
-
-      html += `
-        <div class="chc-card-row" style="border-left:4px solid ${costCol(hid)}">
-          <div class="chc-card-info">
-            <img src="${avatarSrc}" alt="${H.name}" style="width:42px;height:42px;border-radius:50%;border:1.5px solid ${costCol(hid)};object-fit:cover;">
-            <div>
-              <b style="color:#ffd36a;font-family:var(--serif)">${H.name}</b>
-              <div style="font-size:11px;color:#bca988">${H.cost} đồng · ${TR[H.o].name}</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:12px;font-size:12px">
-            <div>Mảnh: <b>${userShards}/${reqShards}</b></div>
-            <div>Thẻ 1★: <b style="color:#ffe082">${s1Cards}</b></div>
-            <div>Thẻ 2★: <b style="color:#ffb74d">${s2Cards}</b></div>
-            <div>Thẻ 3★: <b style="color:#7fd5ff">${s3Cards}</b></div>
-          </div>
-          <div class="chc-card-actions">
-            <button class="chc-action-btn" data-fuse="${hid}" ${canFuse1 ? '' : 'disabled'}>
-              Ghép 1★ (-${reqShards} mảnh)
-            </button>
-            <button class="chc-action-btn" data-merge="${hid}" data-star="2" ${canMerge2 ? '' : 'disabled'}>
-              Hợp 2★ (3 Thẻ 1★)
-            </button>
-            <button class="chc-action-btn" data-merge="${hid}" data-star="3" ${canMerge3 ? '' : 'disabled'}>
-              Hợp 3★ (3 Thẻ 2★)
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    if (!html) {
-      html = '<div style="text-align:center;padding:24px;color:#b9a98a">Chưa có mảnh hoặc thẻ tướng nào! Hãy ghé Chiêu Hiền Các để bắt đầu chiêu mộ danh tướng.</div>';
-    }
-
-    container.innerHTML = html;
-  },
-
-  renderDeckUI() {
-    const usedPts = this.getDeckTotalPts();
-    const fillEl = $('#qlBarFill');
-    const usedTxt = $('#qlUsedPts');
-    if (usedTxt) usedTxt.textContent = usedPts;
-    if (fillEl) {
-      fillEl.style.width = `${Math.min(100, (usedPts / this.MAX_QUAN_LUONG) * 100)}%`;
-      fillEl.classList.toggle('over', usedPts > this.MAX_QUAN_LUONG);
-    }
-
-    const grid = $('#qlCardsGrid');
-    if (!grid) return;
-
-    if (this.state.cards.length === 0) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:#b9a98a">Bạn chưa có thẻ tướng nào! Hãy tích lũy mảnh tại Chiêu Hiền Các để ghép thẻ.</div>';
-      return;
-    }
-
-    let html = '';
-    for (const card of this.state.cards) {
-      const H = HERO[card.heroId];
-      if (!H) continue;
-      const pts = this.QUAN_LUONG_PTS[card.star] || 3;
-      const isEquipped = this.state.deck.some(d => d.heroId === card.heroId && d.star === card.star);
-      const avatarSrc = getHeroAvatar(card.heroId);
-
-      html += `
-        <div class="ql-card ${isEquipped ? 'equipped' : ''}" data-deck-hero="${card.heroId}" data-deck-star="${card.star}">
-          <div class="ql-card-pts">${pts} Điểm</div>
-          <div class="ql-card-av" style="border-color:${costCol(card.heroId)}">
-            <img src="${avatarSrc}" alt="${H.name}" style="width:100%;height:100%;object-fit:cover;">
-          </div>
-          <b style="font-family:var(--serif);font-size:13px;color:#fff">${H.name}</b>
-          <div class="ql-card-stars">${'★'.repeat(card.star)}</div>
-          <div class="ql-card-status">${isEquipped ? '✓ Đang Mang' : '+ Mang Vào'}</div>
-        </div>
-      `;
-    }
-
-    grid.innerHTML = html;
-  },
-
-  renderBondsModal() {
-    const list = $('#modalBondsList');
-    if (!list) return;
-    let html = '';
-    for (const b of BONDS) {
-      const heroNames = b.heroes.map(h => HERO[h] ? HERO[h].name : h).join(' + ');
-      html += `
-        <div class="bonds-item">
-          <div class="bonds-item-medallion">${b.ico}</div>
-          <div class="bonds-item-meta" style="flex:1">
-            <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <b>${b.name}</b>
-              <span style="font-size:11.5px;color:#ffd36a">${b.scope === 'team' ? 'Toàn Đội' : 'Các Tướng Duyên'}</span>
-            </div>
-            <div class="bonds-item-heroes">
-              <span style="font-size:12px;color:#e8d7b8">Tướng kích hoạt: <b>${heroNames}</b></span>
-            </div>
-            <div class="bonds-item-desc">${b.desc}</div>
-          </div>
-        </div>
-      `;
-    }
-    list.innerHTML = html;
-    $('#modalBonds').classList.add('show');
-  },
-
   bindDomEvents() {
-    // 1. Nút Lệnh Quân Doanh
-    const btnPvp = $('#qdBtnPvp');
-    if (btnPvp) btnPvp.onclick = () => this.startPvpQueue();
-
-    const btnBot = $('#qdBtnBot');
-    if (btnBot) btnBot.onclick = () => this.startOfflineGame();
-
-    const btnBonds = $('#qdBtnBonds');
-    if (btnBonds) btnBonds.onclick = () => this.renderBondsModal();
-
-    const btnBondsInGame = $('#btnBondsInGame');
-    if (btnBondsInGame) btnBondsInGame.onclick = () => this.renderBondsModal();
-
-    const bondsClose = $('#modalBondsClose');
-    if (bondsClose) bondsClose.onclick = () => $('#modalBonds').classList.remove('show');
-
-    // 2. Quay lại Quân Doanh từ Bàn cờ
-    const btnBackCamp = $('#btnBackToCamp');
-    if (btnBackCamp) btnBackCamp.onclick = () => switchView('quandoanh');
-
-    // 3. Tabs trong Quân Doanh
-    const tabs = document.querySelectorAll('.qd-nav-tab');
-    tabs.forEach(tab => {
-      tab.onclick = () => {
-        tabs.forEach(t => t.classList.remove('on'));
-        tab.classList.add('on');
-        const target = tab.dataset.target;
-        ['qdSecChc', 'qdSecCards', 'qdSecQl'].forEach(secId => {
-          const sec = $(`#${secId}`);
-          if (sec) sec.style.display = (secId === target) ? 'block' : 'none';
-        });
-        if (target === 'qdSecChc') this.renderShopUI();
-        else if (target === 'qdSecCards') this.renderCardsUI();
-        else if (target === 'qdSecQl') this.renderDeckUI();
-      };
-    });
-
-    // 4. Mua mảnh Chiêu Hiền Các
-    const shopGrid = $('#chcShopGrid');
-    if (shopGrid) {
-      shopGrid.onclick = (e) => {
-        const btn = e.target.closest('[data-buy-slot]');
-        if (btn) this.buyShard(+btn.dataset.buySlot);
-      };
-    }
-
-    // 5. Ghép & Hợp sao Thẻ
-    const cardsList = $('#chcCardsList');
-    if (cardsList) {
-      cardsList.onclick = (e) => {
-        const fBtn = e.target.closest('[data-fuse]');
-        if (fBtn) return this.fuseCard(fBtn.dataset.fuse);
-        const mBtn = e.target.closest('[data-merge]');
-        if (mBtn) return this.mergeCards(mBtn.dataset.merge, +mBtn.dataset.star);
-      };
-    }
-
-    // 6. Chọn mang thẻ trong Quân Lương
-    const deckGrid = $('#qlCardsGrid');
-    if (deckGrid) {
-      deckGrid.onclick = (e) => {
-        const cardEl = e.target.closest('[data-deck-hero]');
-        if (cardEl) {
-          this.toggleDeckCard(cardEl.dataset.deckHero, +cardEl.dataset.deckStar);
-        }
-      };
-    }
-
-    // 7. Nút Điều Tướng (Viện Binh Vòng 4)
     const btnReinf = $('#btnDeployReinforce');
     if (btnReinf) btnReinf.onclick = () => this.deployReinforcements();
 
-    // 8. Hàng chờ ghép trận
-    const qCancel = $('#queueCancelBtn');
-    if (qCancel) qCancel.onclick = () => this.cancelQueue();
-
-    // 9. Login Modal
-    const btnLogin = $('#qdBtnLogin');
-    if (btnLogin) {
-      btnLogin.onclick = () => {
-        const m = $('#modalLoginRequired');
-        if (m) m.classList.add('show');
-      };
-    }
-    const authClose = $('#authReqBtnClose');
-    if (authClose) authClose.onclick = () => $('#modalLoginRequired').classList.remove('show');
-    const authBot = $('#authReqBtnBot');
-    if (authBot) {
-      authBot.onclick = () => {
-        $('#modalLoginRequired').classList.remove('show');
-        this.startOfflineGame();
-      };
-    }
-    const authLogin = $('#authReqBtnLogin');
-    if (authLogin) {
-      authLogin.onclick = () => {
-        window.open('https://kybien.blogspot.com/', '_blank');
-      };
-    }
-
-    // 10. PvP End Modal Buttons
-    const pvpBackCamp = $('#pvpEndBackToCamp');
-    if (pvpBackCamp) {
-      pvpBackCamp.onclick = () => {
-        $('#pvpEndModal').classList.remove('show');
-        switchView('quandoanh');
-      };
-    }
     const pvpAgain = $('#pvpEndAgain');
     if (pvpAgain) {
       pvpAgain.onclick = () => {
         $('#pvpEndModal').classList.remove('show');
-        this.startPvpQueue();
+        if (this.isPvpActive) this.startLocalMatchWithBots();
+        else this.startOfflineGame();
       };
     }
   }
 };
-
 // Khởi chạy hệ thống CHS_ONLINE khi trang nạp xong
-CHS_ONLINE.init();
+CHS_ONLINE.init(matchMode);
 
 /*UI_END*/
 })();
 </script>
 
-<!-- ================= MODALS HỆ THỐNG CỜ HUYỀN SỬ ================= -->
-<!-- 1. Modal Yêu Cầu Đăng Nhập Blogspot khi bấm PvP -->
-<div class="auth-req-modal" id="modalLoginRequired">
-  <div class="auth-req-box">
-    <div class="auth-req-ico">🛡️</div>
-    <div class="auth-req-title">YÊU CẦU ĐĂNG NHẬP THÀNH VIÊN</div>
-    <div class="auth-req-desc">
-      <p style="margin:0 0 8px"><b>Kỳ Thủ thân mến!</b> Chế độ <b>Ghép Đấu PvP 8 Người Trực Tuyến</b> yêu cầu bạn đăng nhập tài khoản trên Kỳ Biến (<b>kybien.blogspot.com</b>) để:</p>
-      <ul style="margin:0 0 10px;padding-left:20px;font-size:12.5px;color:#f0e2ca">
-        <li>Lưu điểm xếp hạng (Elo) & Tích lũy Danh Vọng sau mỗi trận đấu.</li>
-        <li>Bảo vệ kho tướng, mảnh tướng và quân lương của bạn trên máy chủ.</li>
-        <li>Chống gian lận và xác thực bảng vàng danh vọng.</li>
-      </ul>
-      <p style="margin:0;color:#ffd36a">Khách chưa đăng nhập vẫn có thể trải nghiệm đầy đủ chiến thuật tại chế độ <b>Luyện Tập (Đấu Máy)</b>!</p>
-    </div>
-    <div class="auth-req-acts">
-      <button class="auth-req-btn bot" id="authReqBtnBot">🤖 Luyện Tập (Đấu Máy Ngay)</button>
-      <button class="auth-req-btn login" id="authReqBtnLogin">🔑 Đăng Nhập / Tạo Tài Khoản</button>
-      <button class="auth-req-btn cancel" id="authReqBtnClose">Đóng</button>
-    </div>
-  </div>
-</div>
-
-<!-- 2. Hàng Chờ PvP Modal (40s Matchmaking với Tự Thêm Bot) -->
-<div class="queue-modal" id="queueModal">
-  <div class="queue-box">
-    <div class="queue-spinner"></div>
-    <div style="font-family:var(--serif);font-size:22px;font-weight:800;color:#fff">ĐANG TÌM TRẬN PVP 8 NGƯỜI</div>
-    <div class="queue-timer" id="queueTimerTxt">0s / 40s</div>
-    <div class="queue-count" id="queueCountTxt">Đã tìm thấy: 1 / 8 người chơi</div>
-    <div class="queue-note">
-      ⏱️ Sau 40 giây nếu chưa đủ 8 người chơi thực tế, hệ thống sẽ tự động ghép Bot thông minh để vào trận ngay lập tức!
-    </div>
-    <button class="queue-cancel-btn" id="queueCancelBtn">Hủy Tìm Kiếm</button>
-  </div>
-</div>
-
-<!-- 3. Modal Kết Thúc Trận (Thưởng Danh Vọng & Elo) -->
+<!-- Modal Kết Thúc Trận (Thưởng Danh Vọng) -->
 <div class="pvp-end-modal" id="pvpEndModal">
   <div class="pvp-end-box">
     <div class="pvp-end-rank" id="pvpEndRank">HẠNG #1</div>
     <div class="pvp-end-title" id="pvpEndTitle">THIÊN HẠ THÁI BÌNH!</div>
     <div class="pvp-end-rewards">
-      <div class="pvp-end-reward-card">
-        <div class="pvp-end-reward-val" id="pvpRewardDv">+50 DV</div>
-        <div class="pvp-end-reward-lbl">🪙 Danh Vọng Nhận Được</div>
-      </div>
-      <div class="pvp-end-reward-card">
-        <div class="pvp-end-reward-val" id="pvpRewardElo" style="color:#8cb5ff">+35 Elo</div>
-        <div class="pvp-end-reward-lbl">⭐ Điểm Xếp Hạng</div>
+      <div class="pvp-end-reward-card" style="width:100%;max-width:280px;margin:0 auto;">
+        <div class="pvp-end-reward-val" id="pvpRewardDv" style="font-size:32px;">+50 DV</div>
+        <div class="pvp-end-reward-lbl">🪙 Danh Vọng Chiến Trận</div>
       </div>
     </div>
-    <div style="font-size:13px;color:#d8c9a8;margin:12px 0 18px">
-      Dùng <b>Danh Vọng</b> vừa nhận được vào <b>Chiêu Hiền Các</b> tại Quân Doanh để sắm mảnh tướng và nâng cấp đội hình!
-    </div>
-    <div class="pvp-end-acts">
-      <button class="chs-top-btn" id="pvpEndBackToCamp" style="background:linear-gradient(180deg,#d6a335,#8a6528);color:#140c06;font-size:14px;padding:8px 18px">
+    <p style="font-size:13px;color:#d8c9a8;margin:12px 0 18px">
+      Dùng <b>Danh Vọng</b> vừa nhận được vào <b>Chiêu Hiền Các</b> tại Quân Doanh để chiêu mộ hiền tài và trang bị quân lương!
+    </p>
+    <div class="pvp-end-actions" style="display:flex;gap:10px;">
+      <button class="chs-top-btn" id="pvpEndBackToCamp" onclick="window.location.href='quan-doanh.html'" style="flex:1;background:linear-gradient(180deg,#d6a335,#8a6528);color:#140c06;font-size:14px;padding:10px 16px;border-radius:10px;">
         🏛️ Trở Về Quân Doanh
       </button>
-      <button class="chs-top-btn pvp-match-btn" id="pvpEndAgain">
-        ⚔️ Đấu Trận Mới
+      <button class="chs-top-btn" id="pvpEndAgain" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;font-size:14px;padding:10px 16px;border-radius:10px;">
+        🔄 Chơi Lại
       </button>
     </div>
   </div>
 </div>
-
-<!-- 4. Modal 12 Nhân Duyên Huyền Sử -->
-<div class="bonds-full-modal" id="modalBonds">
-  <div class="bonds-full-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #8a6528;padding-bottom:10px">
-      <div style="font-family:var(--serif);font-size:20px;font-weight:800;color:#ffd36a">🎴 12 NHÂN DUYÊN HUYỀN SỬ</div>
-      <button class="chc-close" id="modalBondsClose">✕</button>
-    </div>
-    <div class="bonds-full-list" id="modalBondsList"></div>
-  </div>
-</div>
-
 </body>
 </html>

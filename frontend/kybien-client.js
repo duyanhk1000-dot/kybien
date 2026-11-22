@@ -264,8 +264,27 @@
 
     clearToken: function () {
       localStorage.removeItem('kybien_jwt_token');
+      localStorage.removeItem('kybien_username');
+      localStorage.removeItem('kybien_user');
       this.cachedUser = null;
       this.renderGuestUI();
+      this.broadcastAuth();
+    },
+
+    broadcastAuth: function () {
+      try {
+        const token = this.getToken();
+        const user = this.cachedUser;
+        document.querySelectorAll('iframe').forEach((ifr) => {
+          try {
+            ifr.contentWindow.postMessage({
+              type: 'KYBIEN_AUTH_SYNC',
+              token: token,
+              user: user
+            }, '*');
+          } catch (e) {}
+        });
+      } catch (e) {}
     },
 
     logout: function () {
@@ -569,8 +588,15 @@
         if (res.ok) {
           const user = await res.json();
           this.cachedUser = user;
+          try {
+            if (user && user.username) {
+              localStorage.setItem('kybien_username', user.username);
+              localStorage.setItem('kybien_user', JSON.stringify(user));
+            }
+          } catch (e) {}
           this.renderUserUI(user);
           if (typeof window.checkAuthUI === 'function') window.checkAuthUI();
+          this.broadcastAuth();
         } else if (res.status === 401 || res.status === 403) {
           console.warn('[Kỷ Biến Auth] Token không hợp lệ hoặc đã hết hạn (401/403).');
           this.clearToken();
@@ -604,6 +630,21 @@
 
   window.addEventListener('pageshow', () => {
     window.KybienAuth.fetchProfile();
+  });
+
+  // Cross-frame authentication sync cho các mini-game (Cờ Huyền Sử, Sàn Đấu, v.v.)
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'KYBIEN_REQUEST_AUTH') {
+      try {
+        if (e.source) {
+          e.source.postMessage({
+            type: 'KYBIEN_AUTH_SYNC',
+            token: window.KybienAuth ? window.KybienAuth.getToken() : localStorage.getItem('kybien_jwt_token'),
+            user: window.KybienAuth ? window.KybienAuth.cachedUser : null
+          }, '*');
+        }
+      } catch (err) {}
+    }
   });
 
   // Window global viewer controller cho các bài đăng Blogger (Interactive Xiangqi Board)
