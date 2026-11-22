@@ -673,14 +673,31 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 <div class="modal-overlay" id="modalLoginRequired">
   <div class="modal-box">
     <div style="font-size:36px;">🛡️</div>
-    <h2 style="font-family:var(--serif);color:#ffd36a;">YÊU CẦU ĐĂNG NHẬP THÀNH VIÊN</h2>
+    <h2 style="font-family:var(--serif);color:#ffd36a;">ĐĂNG NHẬP THÀNH VIÊN KỲ BIẾN</h2>
     <p style="font-size:13.5px;color:var(--ink2);line-height:1.5;">
-      Chế độ <b>Ghép Đấu PvP 8 Người</b> yêu cầu bạn đăng nhập tài khoản trên <b>kybien.blogspot.com</b> để tích lũy Danh Vọng và chống gian lận.<br>
-      Khách chưa đăng nhập vẫn có thể chơi đầy đủ chiến thuật ở chế độ <b>Luyện Tập (Đấu Máy)</b>!
+      Chế độ <b>Ghép Đấu PvP 8 Người</b> yêu cầu đăng nhập tài khoản <b>Kỳ Biến</b> để tích lũy Danh Vọng và bảng vàng xếp hạng.
     </p>
-    <div class="modal-actions">
+
+    <!-- Khung đăng nhập trực tiếp -->
+    <div style="display:flex;flex-direction:column;gap:10px;text-align:left;background:rgba(0,0,0,0.3);padding:14px;border-radius:10px;border:1px solid var(--line);">
+      <div>
+        <label style="font-size:12px;color:var(--ink2);display:block;margin-bottom:4px;">Tên kỳ thủ / Email</label>
+        <input type="text" id="modalAuthU" placeholder="Nhập tên tài khoản" style="width:100%;box-sizing:border-box;background:#140c07;border:1px solid var(--line);color:#fff;padding:8px 10px;border-radius:6px;font-size:13.5px;outline:none;">
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--ink2);display:block;margin-bottom:4px;">Mật khẩu</label>
+        <input type="password" id="modalAuthP" placeholder="Nhập mật khẩu" style="width:100%;box-sizing:border-box;background:#140c07;border:1px solid var(--line);color:#fff;padding:8px 10px;border-radius:6px;font-size:13.5px;outline:none;">
+      </div>
+      <div id="modalAuthErr" style="color:#ff8577;font-size:12px;display:none;"></div>
+      <button class="modal-btn primary" id="btnModalDoLogin" style="margin-top:4px;">🔑 Đăng Nhập Ngay</button>
+    </div>
+
+    <div style="font-size:12px;color:var(--ink2);">
+      Chưa có tài khoản? <a href="https://kybien.blogspot.com/" target="_blank" style="color:#ffd36a;text-decoration:underline;">Mở trang chủ Blogspot</a>
+    </div>
+
+    <div class="modal-actions" style="margin-top:6px;">
       <button class="modal-btn bot" id="btnLoginReqBot">🤖 Luyện Tập (Đấu Máy Ngay)</button>
-      <button class="modal-btn primary" id="btnLoginReqLogin">🔑 Đăng Nhập Blogspot</button>
       <button class="modal-btn secondary" id="btnLoginReqClose">Đóng</button>
     </div>
   </div>
@@ -755,8 +772,57 @@ function toast(msg) {
   setTimeout(() => d.remove(), 2600);
 }
 
+/* ========================================================
+   QUẢN LÝ TÀI NGUYÊN HÌNH ẢNH TƯỚNG (CDN & FALLBACK)
+   ======================================================== */
+const HERO_IMG_FILE = {
+  thuytinh: 'thuy-tinh',
+  auco: 'au-co',
+  chudongtu: 'chu-dong-tu',
+  laclongquan: 'lac-long-quan',
+  sontinh: 'son-tinh',
+  tiendung: 'tien-dung',
+  thanhgiong: 'thanh-giong',
+  kimquy: 'kim-quy',
+  lyongtrong: 'ly-ong-trong',
+  anduongvuong: 'an-duong-vuong',
+  caolo: 'cao-lo',
+  phunghung: 'phung-hung',
+  trungnhi: 'trung-nhi',
+  trungtrac: 'trung-trac',
+  batrieu: 'ba-trieu',
+  maithucloan: 'mai-thuc-loan',
+  ngoquyen: 'ngo-quyen',
+  datuong: 'da-tuong',
+  lythuongkiet: 'ly-thuong-kiet',
+  phamngulao: 'pham-ngu-lao',
+  tranhungdao: 'tran-hung-dao',
+  tranquoctoan: 'tran-quoc-toan',
+  yetkieu: 'yet-kieu',
+  nguyenxi: 'nguyen-xi',
+  lelai: 'le-lai',
+  leloi: 'le-loi',
+  nguyentrai: 'nguyen-trai',
+  tranquangdieu: 'tran-quang-dieu',
+  buithixuan: 'bui-thi-xuan',
+  nguyenhue: 'nguyen-hue'
+};
+
+const CDN_HERO_BASE = 'https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/hero/';
+
 function getAvatarUrl(h) {
-  return `./img/hero/${h}.webp`;
+  const file = HERO_IMG_FILE[h] || h;
+  return `${CDN_HERO_BASE}${file}.webp`;
+}
+
+function getAvatarTokUrl(h) {
+  const file = HERO_IMG_FILE[h] || h;
+  return `${CDN_HERO_BASE}${file}-tok.webp`;
+}
+
+function getLocalAvatarUrl(h) {
+  const file = HERO_IMG_FILE[h] || h;
+  return `./img/hero/${file}.webp`;
 }
 
 /* ========================================================
@@ -873,6 +939,14 @@ const CHS_QUANDOANH = {
   },
 
   initAuthSync() {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const urlTok = sp.get('token') || sp.get('jwt');
+      const urlUser = sp.get('u') || sp.get('username') || sp.get('user');
+      if (urlTok) localStorage.setItem('kybien_jwt_token', urlTok);
+      if (urlUser) localStorage.setItem('kybien_username', urlUser);
+    } catch(e) {}
+
     window.addEventListener('message', (e) => {
       if (e.data && e.data.type === 'KYBIEN_AUTH_SYNC') {
         if (e.data.token) {
@@ -888,11 +962,76 @@ const CHS_QUANDOANH = {
       }
     });
 
-    if (window.parent && window.parent !== window) {
-      try { window.parent.postMessage({ type: 'KYBIEN_REQUEST_AUTH' }, '*'); } catch(err) {}
-    }
+    const reqAuth = () => {
+      if (window.parent && window.parent !== window) {
+        try { window.parent.postMessage({ type: 'KYBIEN_REQUEST_AUTH' }, '*'); } catch(err) {}
+      }
+    };
+    reqAuth();
+    setTimeout(reqAuth, 350);
+    setTimeout(reqAuth, 1000);
+    setTimeout(reqAuth, 2500);
 
     window.checkAuthUI = () => this.updateAuthUI();
+  },
+
+  async doDirectLogin() {
+    const uEl = document.getElementById('modalAuthU');
+    const pEl = document.getElementById('modalAuthP');
+    const errEl = document.getElementById('modalAuthErr');
+    const btn = document.getElementById('btnModalDoLogin');
+    if (!uEl || !pEl) return;
+    const u = uEl.value.trim();
+    const p = pEl.value;
+    if (!u || !p) {
+      if (errEl) { errEl.textContent = 'Vui lòng nhập tên tài khoản và mật khẩu!'; errEl.style.display = 'block'; }
+      return;
+    }
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Đang đăng nhập...'; }
+    if (errEl) errEl.style.display = 'none';
+
+    try {
+      const res = await fetch('https://kybien-server.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usernameOrEmail: u, password: p })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('kybien_jwt_token', data.token);
+        if (data.user && data.user.username) {
+          localStorage.setItem('kybien_username', data.user.username);
+          localStorage.setItem('kybien_user', JSON.stringify(data.user));
+        } else {
+          localStorage.setItem('kybien_username', u);
+        }
+        if (window.parent && window.parent !== window) {
+          try {
+            window.parent.postMessage({
+              type: 'KYBIEN_AUTH_SYNC',
+              token: data.token,
+              user: data.user || { username: u }
+            }, '*');
+          } catch(e) {}
+        }
+        this.updateAuthUI();
+        const m = document.getElementById('modalLoginRequired');
+        if (m) m.classList.remove('show');
+        toast(`🎉 Chào mừng kỳ thủ ${u} xuất trận!`);
+      } else {
+        if (errEl) {
+          errEl.textContent = data.error || 'Sai tên đăng nhập hoặc mật khẩu!';
+          errEl.style.display = 'block';
+        }
+      }
+    } catch(err) {
+      if (errEl) {
+        errEl.textContent = 'Không thể kết nối máy chủ Kỳ Biến! Vui lòng thử lại.';
+        errEl.style.display = 'block';
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '🔑 Đăng Nhập Ngay'; }
+    }
   },
 
   updateAuthUI() {
@@ -1034,6 +1173,8 @@ const CHS_QUANDOANH = {
     for (const slot of slots) {
       const H = HERO_DATA[slot.heroId];
       const avatarSrc = getAvatarUrl(slot.heroId);
+      const tokSrc = getAvatarTokUrl(slot.heroId);
+      const locSrc = getLocalAvatarUrl(slot.heroId);
       const isFull = slot.remainingToday <= 0;
       const rc = COST_COLORS[(slot.cost || 1) - 1];
 
@@ -1041,8 +1182,9 @@ const CHS_QUANDOANH = {
         <div class="chc-slot" style="--rc:${rc}">
           <div class="chc-slot-badge">${slot.label}</div>
           <div class="chc-slot-top">
-            <div class="chc-slot-avatar">
-              <img src="${avatarSrc}" alt="${slot.name}">
+            <div class="chc-slot-avatar" style="border-color:${rc};">
+              <img src="${avatarSrc}" alt="${slot.name}" loading="lazy"
+                   onerror="if(!this.dataset.fb){this.dataset.fb='1';this.src='${tokSrc}';}else if(this.dataset.fb==='1'){this.dataset.fb='2';this.src='${locSrc}';}else{this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-size:22px;color:#ffd36a;font-weight:bold;\\'>${(slot.name||'T')[0]}</span>';}">
             </div>
             <div class="chc-slot-info">
               <b>${slot.name}</b>
@@ -1129,6 +1271,8 @@ const CHS_QUANDOANH = {
       if (shards === 0 && s1 === 0 && s2 === 0 && s3 === 0) continue;
 
       const avatarSrc = getAvatarUrl(hid);
+      const tokSrc = getAvatarTokUrl(hid);
+      const locSrc = getLocalAvatarUrl(hid);
       const canFuse = shards >= req;
       const canMerge2 = s1 >= 3;
       const canMerge3 = s2 >= 3;
@@ -1138,7 +1282,10 @@ const CHS_QUANDOANH = {
       html += `
         <div class="card-item" style="--rc:${rc}">
           <div class="card-item-top">
-            <div class="card-avatar"><img src="${avatarSrc}" alt="${H.name}"></div>
+            <div class="card-avatar" style="border-color:${rc};">
+              <img src="${avatarSrc}" alt="${H.name}" loading="lazy"
+                   onerror="if(!this.dataset.fb){this.dataset.fb='1';this.src='${tokSrc}';}else if(this.dataset.fb==='1'){this.dataset.fb='2';this.src='${locSrc}';}else{this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-size:20px;color:#ffd36a;font-weight:bold;\\'>${(H.name||'T')[0]}</span>';}">
+            </div>
             <div class="card-info">
               <b>${H.name}</b>
               <small>Mảnh: <b>${shards}/${req}</b> · Sở hữu: [★1: ${s1}] [★2: ${s2}] [★3: ${s3}]</small>
@@ -1225,11 +1372,16 @@ const CHS_QUANDOANH = {
       const cardPts = this.QUAN_LUONG_PTS[card.star] || 3;
       const isEquipped = this.state.deck.some(d => d.heroId === card.heroId && d.star === card.star);
       const avatarSrc = getAvatarUrl(card.heroId);
+      const tokSrc = getAvatarTokUrl(card.heroId);
+      const locSrc = getLocalAvatarUrl(card.heroId);
 
       html += `
         <div class="ql-card-item ${isEquipped ? 'equipped' : ''}" data-deck-hero="${card.heroId}" data-deck-star="${card.star}">
           <div style="display:flex;align-items:center;gap:10px;">
-            <img src="${avatarSrc}" alt="${H.name}" style="width:42px;height:42px;border-radius:8px;object-fit:cover;">
+            <div style="width:44px;height:44px;border-radius:10px;overflow:hidden;flex:none;border:1.5px solid var(--gold);background:#19110a;display:flex;align-items:center;justify-content:center;">
+              <img src="${avatarSrc}" alt="${H.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;"
+                   onerror="if(!this.dataset.fb){this.dataset.fb='1';this.src='${tokSrc}';}else if(this.dataset.fb==='1'){this.dataset.fb='2';this.src='${locSrc}';}else{this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-size:18px;color:#ffd36a;font-weight:bold;\\'>${(H.name||'T')[0]}</span>';}">
+            </div>
             <div>
               <b style="color:#fff;">${H.name} <span style="color:#ffd36a;">${'★'.repeat(card.star)}</span></b>
               <small style="display:block;color:var(--ink2);">Tiêu tốn: <b>${cardPts} Điểm</b></small>
@@ -1380,6 +1532,16 @@ const CHS_QUANDOANH = {
     const btnLLogin = document.getElementById('btnLoginReqLogin');
     if (btnLLogin) {
       btnLLogin.onclick = () => window.open('https://kybien.blogspot.com/', '_blank');
+    }
+
+    const btnDoLogin = document.getElementById('btnModalDoLogin');
+    if (btnDoLogin) btnDoLogin.onclick = () => this.doDirectLogin();
+
+    const pInput = document.getElementById('modalAuthP');
+    if (pInput) {
+      pInput.onkeydown = (e) => {
+        if (e.key === 'Enter') this.doDirectLogin();
+      };
     }
 
     // Queue cancel
