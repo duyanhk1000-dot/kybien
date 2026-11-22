@@ -561,7 +561,7 @@
       </a>
 
       <!-- CỜ HUYỀN SỬ -->
-      <a class="game-card" href="https://kybien.blogspot.com/p/co-huyen-su.html" data-cat="dau-may">
+      <a class="game-card" id="card-co-huyen-su" href="https://kybien.blogspot.com/p/co-huyen-su.html" data-cat="dau-may">
         <div class="game-thumb thumb-huyensu">
           <span class="game-badge badge-new">MỚI</span>
           <div class="mini-pieces">
@@ -572,10 +572,10 @@
         </div>
         <div class="game-body">
           <h3>Cờ Huyền Sử</h3>
-          <p>Auto chess 30 thần tướng Việt — mua tướng, kích tộc/hệ, đấu 7 máy tới vòng cuối.</p>
+          <p>Auto chess 30 thần tướng Việt — Quân Doanh quản lý danh tướng, Đấu PvP 8 người & Luyện tập đấu máy.</p>
           <div class="game-meta">
-            <span>1 người · Đấu 7 máy</span>
-            <span class="game-cta">Chơi ngay ›</span>
+            <span>PvP 8 người · Đấu máy</span>
+            <span class="game-cta">Tiến vào ›</span>
           </div>
         </div>
       </a>
@@ -671,6 +671,32 @@
           .catch(showOffline);
       } catch (e) {
         showOffline();
+      }
+      /* ===== Điều hướng thông minh Cờ Huyền Sử (Map-site) ===== */
+      var chsCard = document.getElementById('card-co-huyen-su');
+      if (chsCard) {
+        chsCard.addEventListener('click', function(e) {
+          var isLogged = false;
+          try {
+            var tk = localStorage.getItem('kybien_jwt_token');
+            if (tk && typeof tk === 'string' && tk.trim().length > 10) isLogged = true;
+          } catch(err) {}
+          if (window.KybienAuth && window.KybienAuth.getToken && window.KybienAuth.getToken()) {
+            isLogged = true;
+          }
+
+          var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+          var targetUrl = '';
+          if (isLogged) {
+            // Đã đăng nhập -> vào thẳng Quân Doanh
+            targetUrl = isLocal ? 'quan-doanh.html' : 'https://kybien.blogspot.com/p/quan-doanh.html';
+          } else {
+            // Chưa đăng nhập -> vào ngay trang đấu với bot
+            targetUrl = isLocal ? 'co-huyen-su.html?mode=bot' : 'https://kybien.blogspot.com/p/co-huyen-su.html?mode=bot';
+          }
+          e.preventDefault();
+          window.location.href = targetUrl;
+        });
       }
     })();
   </script>

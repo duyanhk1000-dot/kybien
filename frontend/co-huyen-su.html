@@ -6453,14 +6453,48 @@ function showStartBot(){
   }
 }
 
+function isUserLoggedIn() {
+  try {
+    const tk = localStorage.getItem('kybien_jwt_token');
+    if (tk && typeof tk === 'string' && tk.trim().length > 10) return true;
+  } catch (e) {}
+
+  if (window.KybienAuth) {
+    try {
+      const tk = window.KybienAuth.getToken ? window.KybienAuth.getToken() : null;
+      if (tk && typeof tk === 'string' && tk.trim().length > 10) return true;
+    } catch (e) {}
+  }
+
+  if (window.parent && window.parent !== window) {
+    try {
+      if (window.parent.localStorage) {
+        const ptk = window.parent.localStorage.getItem('kybien_jwt_token');
+        if (ptk && typeof ptk === 'string' && ptk.trim().length > 10) return true;
+      }
+      if (window.parent.KybienAuth && window.parent.KybienAuth.getToken) {
+        const ptk = window.parent.KybienAuth.getToken();
+        if (ptk && typeof ptk === 'string' && ptk.trim().length > 10) return true;
+      }
+    } catch (e) {}
+  }
+  return false;
+}
+
 function showStart(){
-  if (matchMode === 'pvp' || (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive)) {
+  if (isUserLoggedIn()) {
+    // Đã đăng nhập: Ẩn bảng thông tin game đầu ván đấu
     const ov = $('#ov');
     if (ov) ov.className = 'ov';
     U.prepTime = 40;
     U.noTimer = false;
-    if (typeof CHS_ONLINE !== 'undefined') CHS_ONLINE.startLocalMatchWithBots();
+    if (matchMode === 'pvp' || (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive)) {
+      if (typeof CHS_ONLINE !== 'undefined') CHS_ONLINE.startLocalMatchWithBots();
+    } else {
+      if (typeof CHS_ONLINE !== 'undefined') CHS_ONLINE.startOfflineDirect();
+    }
   } else {
+    // Chưa đăng nhập (khách): Mới hiện bảng chọn thời gian, độ khó & luật chơi
     showStartBot();
   }
 }
@@ -6488,7 +6522,22 @@ function getHeroAvatar(h){
 
 const params = new URLSearchParams(location.search);
 const dm = params.get('demo');
-const matchMode = params.get('mode') || 'bot';
+const rawMode = params.get('mode');
+
+// SƠ ĐỒ SITE-MAP:
+// Trang chủ kybien.blogspot >>> Sảnh các loại cờ >>> Chọn Cờ Huyền Sử:
+// 1. Nếu đã đăng nhập -> chuyển ngay vào trang Quân Doanh
+// 2. Nếu không đăng nhập -> vào ngay trang đấu với Bot (mode=bot)
+if (!dm && !rawMode) {
+  if (isUserLoggedIn()) {
+    const targetQd = (location.hostname.includes('blogspot.com'))
+      ? 'https://kybien.blogspot.com/p/quan-doanh.html'
+      : 'quan-doanh.html';
+    window.location.replace(targetQd);
+  }
+}
+
+const matchMode = rawMode || 'bot';
 
 if (dm && HERO[dm]) {
   startDemo(dm);
@@ -6530,6 +6579,8 @@ const CHS_ONLINE = {
     this.bindDomEvents();
     this.initSocket();
 
+    const loggedIn = isUserLoggedIn();
+
     if (mode === 'pvp') {
       // ĐẤU PVP: Tuyệt đối KHÔNG hiện bảng chọn avatar, độ khó, thời gian. Mặc định cố định 40s!
       const ov = $('#ov');
@@ -6539,8 +6590,14 @@ const CHS_ONLINE = {
       U.diff = 1;
       this.startLocalMatchWithBots();
     } else {
-      // TẬP LUYỆN (ĐẤU VỚI BOT): Hiện bảng chọn thời gian chọn tướng, độ khó và avatar
-      this.startOfflineGame();
+      // ĐẤU VỚI BOT:
+      if (loggedIn) {
+        // NẾU ĐÃ ĐĂNG NHẬP: Ẩn đi bảng thông tin game đầu ván đấu, vào trận ngay!
+        this.startOfflineDirect();
+      } else {
+        // NẾU CHƯA ĐĂNG NHẬP (KHÁCH): Hiện bảng thông tin game & cách chơi đầu ván đấu
+        this.startOfflineGame();
+      }
     }
   },
 
@@ -6643,8 +6700,33 @@ const CHS_ONLINE = {
     const b = $('#btnDeployReinforce');
     if (b) b.style.display = 'none';
 
-    // Mở bảng chọn thời gian chọn tướng, độ khó và avatar cho chế độ Luyện Tập với Bot
+    // Khách chưa đăng nhập: Mở bảng chọn thời gian, độ khó và hướng dẫn cách chơi
     showStartBot();
+  },
+
+  startOfflineDirect() {
+    this.isPvpActive = false;
+    this.reinforcementsDeployed = false;
+    const b = $('#btnDeployReinforce');
+    if (b) b.style.display = 'none';
+
+    // ĐÃ ĐĂNG NHẬP: Ẩn đi bảng thông tin game đầu ván đấu
+    const ov = $('#ov');
+    if (ov) ov.className = 'ov';
+
+    U.prepTime = 40;
+    U.noTimer = false;
+    U.diff = 1;
+
+    const selAv = store.get('chs_av') || '🐲';
+    G = newGame({ diff: 1, av: selAv });
+    G.isPvp = false;
+    G.pvpDeck = [...(this.state.deck || [])];
+    G.reinforcementsDeployed = false;
+
+    renderAll();
+    beginRound();
+    toast('🤖 Đã vào trận Luyện Tập (40s)! Viện binh Quân Lương sẵn sàng từ Vòng 4.');
   },
 
   startLocalMatchWithBots() {
@@ -6766,7 +6848,11 @@ const CHS_ONLINE = {
         if (this.isPvpActive || matchMode === 'pvp') {
           this.startLocalMatchWithBots();
         } else {
-          showStartBot();
+          if (isUserLoggedIn()) {
+            this.startOfflineDirect();
+          } else {
+            showStartBot();
+          }
         }
       };
     }
