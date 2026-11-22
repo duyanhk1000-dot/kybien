@@ -6390,33 +6390,78 @@ function showHelp(){
   ov.innerHTML='<div class="dlg"><h2>Cách chơi</h2>'+HOW+'<button class="go big-go" id="closehelp">Đã hiểu</button></div>';
   ov.className='ov show';$('#closehelp').onclick=()=>ov.className='ov';ov.onclick=null;
 }
-function showStart(){
+function showStartBot(){
   let selAv=store.get('chs_av')||'🐲';
   const ov=$('#ov');
-  ov.innerHTML='<div class="dlg"><svg class="drumbg" viewBox="-100 -100 200 200">'+$('#drum').innerHTML.replace(/#d6a335/g,'#b3281d')+'</svg><h1>Cờ Huyền Sử</h1><p style="margin-top:6px">Cờ nhân phẩm với thần tướng nước Việt. Bạn đấu với 7 đối thủ máy, người cuối cùng còn trụ là người thắng.</p><p class="note">Game lấy cảm hứng từ huyền sử và lịch sử Việt Nam. Sức mạnh của các tướng trong game chỉ để chơi cho vui, không phải xếp hạng thật, và không có ý so sánh, hạ thấp hay giễu cợt các vị tiền nhân.</p>'
+  ov.innerHTML='<div class="dlg"><svg class="drumbg" viewBox="-100 -100 200 200">'+$('#drum').innerHTML.replace(/#d6a335/g,'#b3281d')+'</svg>'
+   +'<h1 style="font-size:26px;color:#ffd36a;">🤖 LUYỆN TẬP (ĐẤU VỚI BOT)</h1>'
+   +'<p style="margin-top:6px;font-size:13px;color:var(--ink2);">Thao luyện binh pháp và thử nghiệm phối hợp đội hình cùng 7 đối thủ máy. Tùy chỉnh độ khó và thời gian để tìm hiểu chiến thuật.</p>'
    +'<div class="row"><label>Độ khó máy</label><div class="seg" id="sd"><button data-v="0.6">Dễ</button><button data-v="1" class="on">Thường</button><button data-v="1.5">Khó</button></div></div>'
-   +'<div class="row"><label>Đồng hồ chuẩn bị</label><div class="seg" id="st"><button data-v="40" class="on">40 giây</button><button data-v="0">Không giới hạn</button></div></div>'
-   +'<div class="row"><label>Biểu tượng</label><div class="avp" id="sav">'+AV8.map(a=>'<button data-a="'+a+'" class="'+(a===selAv?'on':'')+'">'+a+'</button>').join('')+'</div></div>'
-   +'<button class="go big-go" id="play">🤖 Luyện Tập (Đấu Máy)</button>'
-   +'<button class="go big-go pvp-match-btn" id="playPvpModal" style="margin-top:8px;background:linear-gradient(180deg,#b3281d,#75140c);border:2px solid #e0503f;color:#ffe9b0">⚔️ Ghép Trận PvP 8 Người (Hưng Bảo)</button>'
-   +'<p style="text-align:center;margin:10px 0 0"><a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank" rel="noopener">\u2605 Ti\u00eau \u0111i\u1ec3m t\u01b0\u1edbng \u2014 xem chi\u00eau t\u1eebng t\u01b0\u1edbng</a></p>'+HOW+'</div>';
-  ov.className='ov show';ov.onclick=null;
-  const seg=(id)=>{$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$(id).children].forEach(x=>x.classList.remove('on'));b.classList.add('on');};};
-  seg('#sd');seg('#st');
-  $('#sav').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;selAv=b.dataset.a;store.set('chs_av',selAv);[...$('#sav').children].forEach(x=>x.classList.toggle('on',x===b));};
-  $('#play').onclick=()=>{
-    const dv=+$('#sd .on').dataset.v,tv=+$('#st .on').dataset.v;
-    U.diff=dv;U.noTimer=!tv;U.prepTime=tv||40;
-    const dk=dv>=1.5?2:dv>=1?1:0.6;
-    G=newGame({diff:dk,av:selAv});G.diff=dk;
-    ov.className='ov';beginRound();
-  };
-  const pvpBtn = $('#playPvpModal');
-  if(pvpBtn){
-    pvpBtn.onclick = () => {
-      ov.className = 'ov';
-      if(typeof CHS_ONLINE!=='undefined') CHS_ONLINE.openQueueModal();
+   +'<div class="row"><label>Thời gian chọn tướng</label><div class="seg" id="st"><button data-v="40" class="on">40 giây</button><button data-v="0">Không giới hạn</button></div></div>'
+   +'<div class="row"><label>Biểu tượng kỳ thủ</label><div class="avp" id="sav">'+AV8.map(a=>'<button data-a="'+a+'" class="'+(a===selAv?'on':'')+'">'+a+'</button>').join('')+'</div></div>'
+   +'<div style="display:flex;gap:10px;margin-top:14px;">'
+   +'<button class="go big-go" id="playBotStart" style="flex:2;">⚔️ Vào Trận Luyện Tập</button>'
+   +'<button class="go" id="btnBotBackCamp" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;" onclick="window.location.href=\'quan-doanh.html\'">« 🏯 Quân Doanh</button>'
+   +'</div>'
+   +'<p style="text-align:center;margin:10px 0 0"><a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank" rel="noopener">★ Tiêu điểm tướng — xem chiêu thức từng tướng</a></p>'+HOW+'</div>';
+
+  ov.className='ov show';
+  ov.onclick=null;
+
+  const seg=(id)=>{
+    const el=$(id);
+    if(!el)return;
+    el.onclick=e=>{
+      const b=e.target.closest('button');
+      if(!b)return;
+      [...el.children].forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
     };
+  };
+  seg('#sd');seg('#st');
+
+  const savEl=$('#sav');
+  if(savEl){
+    savEl.onclick=e=>{
+      const b=e.target.closest('[data-a]');
+      if(!b)return;
+      selAv=b.dataset.a;
+      store.set('chs_av',selAv);
+      [...savEl.children].forEach(x=>x.classList.toggle('on',x===b));
+    };
+  }
+
+  const pBtn=$('#playBotStart');
+  if(pBtn){
+    pBtn.onclick=()=>{
+      const dv=+($('#sd .on')?$('#sd .on').dataset.v:1);
+      const tv=+($('#st .on')?$('#st .on').dataset.v:40);
+      U.diff=dv;
+      U.noTimer=!tv;
+      U.prepTime=tv||40;
+      const dk=dv>=1.5?2:dv>=1?1:0.6;
+      G=newGame({diff:dk,av:selAv});
+      G.diff=dk;
+      G.isPvp=false;
+      G.pvpDeck=[...((typeof CHS_ONLINE!=='undefined'&&CHS_ONLINE.state.deck)||[])];
+      G.reinforcementsDeployed=false;
+      ov.className='ov';
+      renderAll();
+      beginRound();
+      toast(`🤖 Vào trận Luyện Tập (Độ khó: ${dv>=1.5?'Khó':dv>=1?'Thường':'Dễ'} · ${U.noTimer?'Không giới hạn giờ':'40s'})`);
+    };
+  }
+}
+
+function showStart(){
+  if (matchMode === 'pvp' || (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive)) {
+    const ov = $('#ov');
+    if (ov) ov.className = 'ov';
+    U.prepTime = 40;
+    U.noTimer = false;
+    if (typeof CHS_ONLINE !== 'undefined') CHS_ONLINE.startLocalMatchWithBots();
+  } else {
+    showStartBot();
   }
 }
 setInterval(()=>{
@@ -6486,8 +6531,15 @@ const CHS_ONLINE = {
     this.initSocket();
 
     if (mode === 'pvp') {
+      // ĐẤU PVP: Tuyệt đối KHÔNG hiện bảng chọn avatar, độ khó, thời gian. Mặc định cố định 40s!
+      const ov = $('#ov');
+      if (ov) ov.className = 'ov';
+      U.prepTime = 40;
+      U.noTimer = false;
+      U.diff = 1;
       this.startLocalMatchWithBots();
     } else {
+      // TẬP LUYỆN (ĐẤU VỚI BOT): Hiện bảng chọn thời gian chọn tướng, độ khó và avatar
       this.startOfflineGame();
     }
   },
@@ -6591,13 +6643,8 @@ const CHS_ONLINE = {
     const b = $('#btnDeployReinforce');
     if (b) b.style.display = 'none';
 
-    const selAv = store.get('chs_av') || '🐲';
-    G = newGame({ diff: 1, av: selAv });
-    G.pvpDeck = [...this.state.deck];
-    G.reinforcementsDeployed = false;
-    renderAll();
-    beginRound();
-    toast('🤖 Vào trận Luyện Tập! Vòng 1-3 dã quái. Bắt đầu Vòng 4 viện binh Quân Lương sẽ sẵn sàng!');
+    // Mở bảng chọn thời gian chọn tướng, độ khó và avatar cho chế độ Luyện Tập với Bot
+    showStartBot();
   },
 
   startLocalMatchWithBots() {
@@ -6605,6 +6652,15 @@ const CHS_ONLINE = {
     this.reinforcementsDeployed = false;
     const b = $('#btnDeployReinforce');
     if (b) b.style.display = 'none';
+
+    // ĐẤU PVP: Tắt overlay triệt để (không hiện bảng chọn)
+    const ov = $('#ov');
+    if (ov) ov.className = 'ov';
+
+    // CỐ ĐỊNH PVP: 40s đồng hồ chuẩn bị, không có tùy chỉnh
+    U.prepTime = 40;
+    U.noTimer = false;
+    U.diff = 1;
 
     const myAv = store.get('chs_av') || '🐲';
     G = newGame({ diff: 1, av: myAv });
@@ -6620,7 +6676,7 @@ const CHS_ONLINE = {
 
     renderAll();
     beginRound();
-    toast('⚔️ Trận đấu PvP 8 Người bắt đầu! Vòng 1-3 dã quái. Vòng 4 bắt đầu PvP và điều viện binh!');
+    toast('⚔️ Trận đấu PvP 8 Người bắt đầu! Thời gian chọn tướng mặc định 40 giây.');
   },
 
   onRoundStart(round) {
@@ -6707,8 +6763,11 @@ const CHS_ONLINE = {
     if (pvpAgain) {
       pvpAgain.onclick = () => {
         $('#pvpEndModal').classList.remove('show');
-        if (this.isPvpActive) this.startLocalMatchWithBots();
-        else this.startOfflineGame();
+        if (this.isPvpActive || matchMode === 'pvp') {
+          this.startLocalMatchWithBots();
+        } else {
+          showStartBot();
+        }
       };
     }
   }
