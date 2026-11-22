@@ -40,9 +40,16 @@ const socketToRoomId = new Map<string, string>();
 const QUEUE_TIMEOUT_MS = 40000; // 40 giây timeout để tự động thêm Bot
 
 const BOT_NAMES = [
-  'Đinh Tiên Hoàng', 'Trần Thủ Độ', 'Lê Thánh Tông', 'Lý Thái Tổ',
-  'Hoàng Diệu', 'Nguyễn Tri Phương', 'Lý Thường Kiệt', 'Bùi Thị Xuân',
-  'Nguyễn Chích', 'Phan Đình Phùng', 'Trần Khánh Dư', 'Võ Nguyên Giáp'
+  'Kỳ Hiệp Bắc Hà', 'Độc Cô Cầu Bại', 'Bạch Y Thư Sinh', 'Thần Long 99',
+  'Nam Sơn Tiên Sinh', 'Phong Vân Tái Khởi', 'Bắc Hải Kỳ Vương', 'Tiểu Long Nữ',
+  'Hào Kiệt Xứ Đoài', 'Kỳ Thánh An Nam', 'Vô Cực Kiếm', 'Hàn Băng Quyết',
+  'Túy Kỳ Tiên', 'Bảo Bảo 2k', 'Hoàng Nam Chess', 'Minh Trí Hà Thành',
+  'Long Vương 9x', 'Chiến Thần Bàn Cờ', 'Tuấn Anh Pro', 'Việt Anh Kỳ Hữu',
+  'Đại Hiệp Quân Doanh', 'Vạn Kiếm Quy Tông', 'Thanh Phong Khách', 'Thiên Hạ Vô Song',
+  'Hùng Bá Thiên Hạ', 'Sơn Nam Hiệp', 'Vô Danh Khách', 'Thần Cờ Đất Bắc',
+  'Phong Ba Lãng Tử', 'Anh Ba Miền Tây', 'Tây Đô Bá Vương', 'Hải Đăng Kỳ Thủ',
+  'Quốc Bảo 98', 'Xích Long Kỵ', 'Trực Chỉ Kinh Kỳ', 'Bất Bại Kỳ Vương',
+  'Tiểu Kỳ Đồng', 'Thương Khung Biến', 'Lôi Thần Trấn', 'Minh Nguyệt Dạ'
 ];
 const BOT_AVATARS = ['🐲', '🦅', '🐅', '🐘', '🐎', '⚔️', '🏹', '🛡️'];
 
@@ -114,7 +121,7 @@ function createPvPRoom(io: Server, realPlayers: QueuedPlayer[], botsNeeded: numb
   // 3. Nạp Bot vào các slot còn lại cho đủ 8 người
   const shuffledBotNames = [...BOT_NAMES].sort(() => 0.5 - Math.random());
   for (let b = 0; b < botsNeeded; b++) {
-    const botName = `${shuffledBotNames[b % shuffledBotNames.length]} (Bot)`;
+    const botName = shuffledBotNames[b % shuffledBotNames.length] || `Kỳ Thủ ${playerIdx}`;
     const botAv = BOT_AVATARS[Math.floor(Math.random() * BOT_AVATARS.length)];
     const bp = newPlayer(botName, false, playerIdx, botAv);
     bp.isBot = true;

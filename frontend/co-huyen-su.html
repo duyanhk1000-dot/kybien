@@ -2235,14 +2235,30 @@ function incomeOf(p,r){
   const sb=s<2?0:s<4?1:s<5?2:3;
   return {base,interest:Math.min(5,Math.floor(p.gold/10)),streak:sb,win:p.lastWin&&p.streak>0?1:0};
 }
-const BOT_NAMES=['Quan Lang','Mị Nương','Lạc Hầu','Lạc Tướng','Bồ Chính','Phụ Đạo','Hùng Vương'];
+const BOT_NAMES = [
+  'Kỳ Hiệp Bắc Hà', 'Độc Cô Cầu Bại', 'Bạch Y Thư Sinh', 'Thần Long 99',
+  'Nam Sơn Tiên Sinh', 'Phong Vân Tái Khởi', 'Bắc Hải Kỳ Vương', 'Tiểu Long Nữ',
+  'Hào Kiệt Xứ Đoài', 'Kỳ Thánh An Nam', 'Vô Cực Kiếm', 'Hàn Băng Quyết',
+  'Túy Kỳ Tiên', 'Bảo Bảo 2k', 'Hoàng Nam Chess', 'Minh Trí Hà Thành',
+  'Long Vương 9x', 'Chiến Thần Bàn Cờ', 'Tuấn Anh Pro', 'Việt Anh Kỳ Hữu',
+  'Đại Hiệp Quân Doanh', 'Vạn Kiếm Quy Tông', 'Thanh Phong Khách', 'Thiên Hạ Vô Song',
+  'Hùng Bá Thiên Hạ', 'Sơn Nam Hiệp', 'Vô Danh Khách', 'Thần Cờ Đất Bắc',
+  'Phong Ba Lãng Tử', 'Anh Ba Miền Tây', 'Tây Đô Bá Vương', 'Hải Đăng Kỳ Thủ',
+  'Quốc Bảo 98', 'Xích Long Kỵ', 'Trực Chỉ Kinh Kỳ', 'Bất Bại Kỳ Vương',
+  'Tiểu Kỳ Đồng', 'Thương Khung Biến', 'Lôi Thần Trấn', 'Minh Nguyệt Dạ'
+];
 const AV8=['🐲','🐯','🐃','🦚','🐍','🦅','🐘','🦌'];
 function newGame(cfg){
   cfg=cfg||{};
   const G={players:[],round:0,matches:[],diff:cfg.diff||1,auto:!!cfg.auto,over:false,winner:null,inc:null,pool:poolInit()};
   const myAv=cfg.av||'🐲',rest=AV8.filter(a=>a!==myAv);
   const me=newPlayer('Bạn',!cfg.auto,0,myAv);G.players.push(me);G.me=me;
-  for(let i=0;i<7;i++){const b=newPlayer(BOT_NAMES[i],false,i+1,rest[i]);b.fav=[pickOf(['hongbang','aulac','khoinghia','lytran','lamson','tayson']),pickOf(['chienbinh','hove','cungno','thuatsi','dukich'])];G.players.push(b);}
+  const pickedNames = shuffle([...BOT_NAMES]).slice(0, 7);
+  for(let i=0;i<7;i++){
+    const b=newPlayer(pickedNames[i]||('Kỳ Thủ '+(i+1)),false,i+1,rest[i%rest.length]);
+    b.fav=[pickOf(['hongbang','aulac','khoinghia','lytran','lamson','tayson']),pickOf(['chienbinh','hove','cungno','thuatsi','dukich'])];
+    G.players.push(b);
+  }
   for(const p of G.players){
     const avail=BYCOST[1].filter(h=>poolCount(G,h)>0);
     const h=avail.length?pickOf(avail):pickOf(BYCOST[1]);
@@ -6750,9 +6766,9 @@ const CHS_ONLINE = {
     G.pvpDeck = [...this.state.deck];
     G.reinforcementsDeployed = false;
 
-    const botNames = ['Đinh Tiên Hoàng', 'Trần Thủ Độ', 'Lê Thánh Tông', 'Lý Thái Tổ', 'Hoàng Diệu', 'Nguyễn Tri Phương', 'Lý Thường Kiệt'];
+    const pickedNames = shuffle([...BOT_NAMES]).slice(0, 7);
     for (let i = 1; i < G.players.length; i++) {
-      G.players[i].name = `${botNames[i - 1] || 'Kỳ Thủ'} (Bot)`;
+      G.players[i].name = pickedNames[i - 1] || `Kỳ Thủ ${i}`;
       G.players[i].isBot = true;
     }
 
