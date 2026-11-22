@@ -465,6 +465,160 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   background: linear-gradient(135deg, rgba(29,110,90,.25), rgba(18,13,9,.9));
 }
 
+/* Khối Giới Thiệu & Tiêu Điểm Tướng Nổi Bật */
+.qd-intro-card {
+  background: linear-gradient(135deg, rgba(42,31,21,.92), rgba(22,14,9,.96));
+  border: 1.5px solid var(--bronze);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.4);
+  position: relative;
+  overflow: hidden;
+}
+.qd-intro-card::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 130px;
+  height: 130px;
+  background: radial-gradient(circle, rgba(214,163,53,.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.qd-intro-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.qd-intro-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.qd-intro-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #8b0000, #5a0000);
+  border: 1px solid #d6a335;
+  color: #ffd36a;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.qd-intro-title h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: #fff;
+  font-weight: 700;
+}
+.qd-btn-tieu-diem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #d5a55a, #8f6527);
+  color: #1a1109;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(213,165,90,.3);
+  transition: all .2s ease;
+}
+.qd-btn-tieu-diem:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+.qd-intro-desc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink2);
+}
+.qd-intro-desc b {
+  color: #ffd36a;
+}
+.qd-intro-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+.qd-tag {
+  background: rgba(18,13,9,.85);
+  border: 1px solid var(--line);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #e5d2b3;
+  font-weight: 500;
+}
+
+/* Quy tắc trong Section Intro */
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.rule-card {
+  background: #1c140d;
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  border-radius: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.rule-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2a1f15;
+  border: 1.5px solid var(--gold);
+  color: #ffd36a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+  flex: none;
+}
+.rule-body b {
+  display: block;
+  font-size: 13.5px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.rule-body p {
+  font-size: 12.5px;
+  color: var(--ink2);
+  line-height: 1.45;
+}
+.synergy-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.synergy-item {
+  background: rgba(14,9,6,.7);
+  border: 1px solid var(--line);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+.synergy-item b {
+  color: #ffd36a;
+  display: block;
+  margin-bottom: 2px;
+}
+
 /* Modals */
 .modal-overlay {
   position: fixed;
@@ -606,7 +760,31 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     </button>
   </div>
 
-  <!-- Thanh Điều Hướng 3 Phân Khu -->
+  <!-- Khối Giới Thiệu & Tiêu Điểm Tướng Nổi Bật -->
+  <div class="qd-intro-card">
+    <div class="qd-intro-top">
+      <div class="qd-intro-title">
+        <span class="qd-intro-badge">CỔ HUYỀN SỬ</span>
+        <h3>⚔️ Cờ Nhân Phẩm 30 Thần Tướng Việt</h3>
+      </div>
+      <a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank" rel="noopener" class="qd-btn-tieu-diem">
+        <span>★ Tiêu Điểm 30 Tướng</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l10-10M7 7h10v10"/></svg>
+      </a>
+    </div>
+    <p class="qd-intro-desc">
+      <b>Cờ Huyền Sử</b> là tựa game cờ tự động (Auto-Chess 2.5D) quy tụ <b>30 danh tướng huyền sử và lịch sử Việt Nam</b>. Thao lược trận pháp với <b>9 Tộc</b> & <b>7 Hệ</b> tương sinh tương khắc, thâu nạp hiền tài tại Chiêu Hiền Các và xuất quân viện binh xoay chuyển càn khôn!
+    </p>
+    <div class="qd-intro-tags">
+      <span class="qd-tag">🛡️ 9 Tộc Lịch Sử</span>
+      <span class="qd-tag">⚡ 7 Hệ Chiến Binh</span>
+      <span class="qd-tag">🎴 12 Nhân Duyên Thần Thông</span>
+      <span class="qd-tag">🪙 Tích Lũy Danh Vọng</span>
+      <span class="qd-tag">🎺 Viện Binh Quân Lương (Vòng 4)</span>
+    </div>
+  </div>
+
+  <!-- Thanh Điều Hướng 4 Phân Khu -->
   <div class="qd-nav">
     <button class="qd-nav-tab on" data-target="secChc">
       <span>🏛️</span> Chiêu Hiền Các (Cửa Hàng Mảnh)
@@ -616,6 +794,9 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     </button>
     <button class="qd-nav-tab" data-target="secDeck">
       <span>📜</span> Hành Trang Quân Lương (<span id="deckPtsNav">0</span>/10đ)
+    </button>
+    <button class="qd-nav-tab" data-target="secIntro">
+      <span>📖</span> Giới Thiệu & Tiêu Điểm
     </button>
   </div>
 
@@ -666,6 +847,130 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
       </div>
     </div>
     <div class="ql-grid" id="qlGrid"></div>
+  </div>
+
+  <!-- Phân Khu 4: Giới Thiệu & Tiêu Điểm Tướng -->
+  <div id="secIntro" class="qd-section" style="display:none;">
+    <div class="qd-sec-banner">
+      <span class="qd-banner-icon">📖</span>
+      <div class="qd-banner-content">
+        <b>Bách Thần Tiêu Điểm & Binh Pháp Trận Địa:</b>
+        Xem toàn bộ chiêu thức, hoạt ảnh chiến đấu và thông số sức mạnh của <b>30 danh tướng nước Việt</b>, cùng cách kích hoạt <b>9 Tộc</b>, <b>7 Hệ</b> và <b>12 Nhân Duyên</b> thần thông!
+      </div>
+    </div>
+
+    <!-- Nút Lớn Dẫn Sang Tiêu Điểm Tướng -->
+    <div style="background:linear-gradient(135deg,rgba(42,31,21,.9),rgba(26,17,11,.95));border:1.5px solid var(--gold);border-radius:14px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+      <div>
+        <h3 style="font-family:var(--serif);color:#ffd36a;font-size:18px;">★ TIÊU ĐIỂM 30 THẦN TƯỚNG VIỆT NAM</h3>
+        <p style="font-size:13px;color:var(--ink2);margin-top:2px;">Tra cứu chiêu thức từng vị tướng, hiệu ứng kỹ năng 3 cấp sao (★1, ★2, ★3) và bộ lọc Tộc/Hệ trực quan.</p>
+      </div>
+      <a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank" rel="noopener" class="qd-btn-tieu-diem" style="font-size:14px;padding:10px 18px;">
+        <span>📖 Mở Tiêu Điểm Tướng ›</span>
+      </a>
+    </div>
+
+    <!-- 9 Tộc & 7 Hệ -->
+    <div style="background:#1a120b;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;">
+      <h4 style="font-family:var(--serif);color:#fff;font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+        <span>🛡️</span> 9 TỘC & 7 HỆ CHIẾN BINH ĐẠI VIỆT
+      </h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <b style="color:#d5a55a;font-size:13px;display:block;margin-bottom:6px;">9 Tộc Lịch Sử:</b>
+          <div class="synergy-list" style="margin-top:0;">
+            <div class="synergy-item"><b>Ngư Tinh (ngu)</b> Chử Đồng Tử, Tiên Dung — Hồi phục sinh lực & tăng tốc đánh.</div>
+            <div class="synergy-item"><b>Âu Lạc (au)</b> Cao Lỗ, Lý Ông Trọng, An Dương Vương — Nỏ thần xuyên giáp.</div>
+            <div class="synergy-item"><b>Bách Việt (bach)</b> Mai Thúc Loan, Phùng Hưng, Trưng Nhị, Bà Triệu — Hộ giáp kiên cố.</div>
+            <div class="synergy-item"><b>Nhà Trần (tran)</b> Yết Kiêu, Dã Tượng, Trần Quốc Toản, Phạm Ngũ Lão, Trần Hưng Đạo — Hào khí Đông A.</div>
+            <div class="synergy-item"><b>Hậu Lê (le)</b> Lê Lai, Nguyễn Xí, Lê Lợi, Nguyễn Trãi — Bình Ngô sách lược, hồi phục mana.</div>
+            <div class="synergy-item"><b>Thần Thoại (than)</b> Thủy Tinh, Kim Quy, Thánh Gióng, Sơn Tinh, Lạc Long Quân, Âu Cơ — Uy lực long trời lở đất.</div>
+            <div class="synergy-item"><b>Nhà Lý (ly)</b> Lý Thường Kiệt — Nam quốc sơn hà sát thương diện rộng.</div>
+            <div class="synergy-item"><b>Tiền Ngô (tien)</b> Ngô Quyền — Cọc gỗ Bạch Đằng sát thương chí mạng.</div>
+            <div class="synergy-item"><b>Tây Sơn (tayson)</b> Bùi Thị Xuân, Trần Quang Diệu, Nguyễn Huệ — Tượng binh xung kích, bách chiến bách thắng.</div>
+          </div>
+        </div>
+        <div>
+          <b style="color:#4cb094;font-size:13px;display:block;margin-bottom:6px;">7 Hệ Chiến Binh:</b>
+          <div class="synergy-list" style="margin-top:0;">
+            <div class="synergy-item"><b>Pháp Sư (phap)</b> Chử Đồng Tử, Thủy Tinh, Lý Thường Kiệt, Âu Cơ — Khuếch đại sát thương phép toàn đội.</div>
+            <div class="synergy-item"><b>Xạ Thủ (xa)</b> Cao Lỗ, Nguyễn Xí, An Dương Vương, Bùi Thị Xuân — Bắn xa tăng sát thương chí mạng.</div>
+            <div class="synergy-item"><b>Đấu Sĩ (dau)</b> Mai Thúc Loan, Dã Tượng, Phùng Hưng, Phạm Ngũ Lão, Bà Triệu, Trần Quang Diệu, Lạc Long Quân, Nguyễn Huệ — Máu trâu càn quét.</div>
+            <div class="synergy-item"><b>Sát Thủ (sat)</b> Yết Kiêu, Ngô Quyền — Đột kích tuyến sau kết liễu chủ lực.</div>
+            <div class="synergy-item"><b>Hộ Vệ (ho)</b> Lê Lai, Lý Ông Trọng, Kim Quy, Sơn Tinh — Lá chắn bảo vệ đồng minh lân cận.</div>
+            <div class="synergy-item"><b>Tiên Phong (tien)</b> Trần Quốc Toản, Lê Lợi, Trần Hưng Đạo, Thánh Gióng — Càng đánh tốc độ càng tăng.</div>
+            <div class="synergy-item"><b>Trợ Thủ (tro)</b> Tiên Dung, Trưng Nhị, Nguyễn Trãi — Trị liệu và tăng giáp cho toàn quân.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 Quy Tắc Vàng Khi Giao Chiến -->
+    <div style="background:#1a120b;border:1px solid var(--line);border-radius:14px;padding:16px;">
+      <h4 style="font-family:var(--serif);color:#fff;font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+        <span>📜</span> 8 QUY TẮC VÀNG TRONG BINH PHÁP CỜ HUYỀN SỬ
+      </h4>
+      <p style="font-size:12.5px;color:var(--ink2);">Nắm vững các nguyên tắc cốt lõi để bách chiến bách thắng trên chiến trường 8 người:</p>
+
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-num">1</div>
+          <div class="rule-body">
+            <b>Thời Gian Chuẩn Bị 40s</b>
+            <p>Mỗi vòng đấu có 40 giây chuẩn bị để mua tướng, hợp sao và sắp đặt đội hình theo cấp linh thú.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">2</div>
+          <div class="rule-body">
+            <b>Giao Tranh Tự Động</b>
+            <p>Tướng tự động tấn công và tích lũy nộ khí (mana) để xuất kích chiêu thức; người cuối cùng còn máu là người thắng.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">3</div>
+          <div class="rule-body">
+            <b>Hợp Sao Uy Lực</b>
+            <p>Cứ 3 thẻ 1★ hợp nhất thành 1 thẻ 2★; 3 thẻ 2★ hợp nhất thành 1 thẻ 3★ với kích thước và thần thông tăng vọt.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">4</div>
+          <div class="rule-body">
+            <b>Kích Hoạt Nhân Duyên</b>
+            <p>Tướng cùng Tộc hoặc cùng Hệ kết hợp sẽ kích hoạt hào quang thần thông tương sinh tương trợ.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">5</div>
+          <div class="rule-body">
+            <b>Đánh Dã Quái Nhận Bảo Vật</b>
+            <p>Các vòng 1, 2, 3, 8, 15, 22 đánh dã quái và thủ lĩnh. Đắc thắng để nhận thêm tướng và cổ vật uy lực.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">6</div>
+          <div class="rule-body">
+            <b>Tích Lũy Lợi Tức Vàng</b>
+            <p>Mỗi 10 vàng tích lũy nhận +1 vàng lãi mỗi vòng (tối đa +5 vàng). Thắng hoặc thua liên tiếp cũng nhận thêm vàng.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">7</div>
+          <div class="rule-body">
+            <b>Viện Binh Quân Lương (Vòng 4)</b>
+            <p>Trang bị tối đa 10 điểm thẻ tướng tại Quân Doanh. Bắt đầu từ Vòng 4, nút ĐIỀU TƯỚNG sẽ xuất kích viện binh ra hàng chờ!</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">8</div>
+          <div class="rule-body">
+            <b>Tích Lũy Danh Vọng PvP</b>
+            <p>Thi đấu PvP 8 người tích lũy Danh Vọng để chiêu mộ mảnh tướng quý hiếm tại Chiêu Hiền Các!</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1474,7 +1779,7 @@ const CHS_QUANDOANH = {
         tabs.forEach(t => t.classList.remove('on'));
         tab.classList.add('on');
         const target = tab.dataset.target;
-        ['secChc', 'secCards', 'secDeck'].forEach(id => {
+        ['secChc', 'secCards', 'secDeck', 'secIntro'].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.style.display = (id === target) ? 'block' : 'none';
         });
