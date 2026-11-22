@@ -5671,8 +5671,8 @@ function endDrag(e,cancel){
   const tg=document.elementFromPoint(e.clientX,e.clientY),dz=tg&&tg.closest('[data-drop]');
   if(!dz)return;
   const kind=dz.dataset.drop;
-  if(kind==='sell'){const v=sellUnit(G,me(),d.k,d.i);if(v)toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;}
-  else{moveUnit(me(),{k:d.k,i:d.i},{k:kind,i:+dz.dataset.i});U.sel=null;U.peek=null;}
+  if(kind==='sell'){authSellUnit(d.k,d.i);}
+  else{authMoveUnit({k:d.k,i:d.i},{k:kind,i:+dz.dataset.i});}
   renderAll();
 }
 document.addEventListener('pointerup',e=>endDrag(e,false));
@@ -5688,11 +5688,65 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-unit]'))return;
   const dz=e.target.closest('.cell,.slot');
   if(dz&&U.sel){
-    const ok=moveUnit(me(),U.sel,{k:dz.dataset.drop,i:+dz.dataset.i});
-    if(!ok&&dz.dataset.drop==='board'&&boardCount(me())>=me().lvl)toast('Bàn đã đủ '+me().lvl+' tướng. Lên cấp để thêm chỗ.');
-    U.sel=null;U.peek=null;renderAll();return;
+    authMoveUnit(U.sel,{k:dz.dataset.drop,i:+dz.dataset.i});
+    return;
   }
 });
+
+
+// ==========================================
+// ACTION WRAPPERS (SERVER-AUTHORITATIVE IN PVP)
+// ==========================================
+function authBuyUnit(i) {
+  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+    CHS_ONLINE.socket.emit('chs:buy_unit', { slotIndex: i });
+    return;
+  }
+  const P = me(), h = P.shop[i]; if (!h) return;
+  if (P.gold < HERO[h].cost) { toast('Không đủ vàng'); return; }
+  if (!canAdd(P, h)) { toast('Hàng chờ đã đầy'); return; }
+  if (poolCount(G, h) <= 0) { toast('Đã hết bản sao của ' + HERO[h].name); P.shop[i] = null; renderAll(); return; }
+  buyUnit(G, P, i); flushLog(); renderAll();
+}
+
+function authSellUnit(kind, idx) {
+  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+    CHS_ONLINE.socket.emit('chs:sell_unit', { kind, index: idx });
+    U.sel = null; U.peek = null;
+    return;
+  }
+  const v = sellUnit(G, me(), kind, idx);
+  if (v) toast('Đã bán, +' + v + ' vàng');
+  U.sel = null; U.peek = null; renderAll();
+}
+
+function authMoveUnit(from, to) {
+  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+    CHS_ONLINE.socket.emit('chs:move_unit', { from, to });
+    U.sel = null; U.peek = null;
+    return true;
+  }
+  const ok = moveUnit(me(), from, to);
+  if (!ok && to.k === 'board' && boardCount(me()) >= me().lvl) toast('Bàn đã đủ ' + me().lvl + ' tướng. Lên cấp để thêm chỗ.');
+  U.sel = null; U.peek = null; renderAll();
+  return ok;
+}
+
+function authBuyXp() {
+  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+    CHS_ONLINE.socket.emit('chs:buy_xp');
+    return;
+  }
+  if (buyXp(me())) renderAll();
+}
+
+function authReroll() {
+  if (typeof CHS_ONLINE !== 'undefined' && CHS_ONLINE.isPvpActive && CHS_ONLINE.socket && CHS_ONLINE.socket.connected) {
+    CHS_ONLINE.socket.emit('chs:reroll_shop');
+    return;
+  }
+  if (reroll(G, me())) renderAll();
+}
 
 /* ---------- các nút ---------- */
 $('#cards').addEventListener('click',e=>{
@@ -5700,9 +5754,9 @@ $('#cards').addEventListener('click',e=>{
   const inf=e.target.closest('[data-info]');
   if(inf){U.sel=null;U.peek={type:'hero',h:inf.dataset.info,s:1};renderAll();return;}
   const c=e.target.closest('[data-buy]');if(!c)return;
-  doBuy(+c.dataset.buy);
+  authBuyUnit(+c.dataset.buy);
 });
-$('#cards').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset&&e.target.dataset.buy!==undefined){e.preventDefault();doBuy(+e.target.dataset.buy);}});
+$('#cards').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset&&e.target.dataset.buy!==undefined){e.preventDefault();authBuyUnit(+e.target.dataset.buy);}});
 function doBuy(i){
   const P=me(),h=P.shop[i];if(!h)return;
   if(P.gold<HERO[h].cost){toast('Không đủ vàng');return;}
@@ -5711,8 +5765,8 @@ function doBuy(i){
   buyUnit(G,P,i);flushLog();renderAll();
 }
 function flushLog(){const P=me();for(const l of P.log)toast('Gộp sao! '+HERO[l.h].name+' lên '+'\u2605'.repeat(l.s));P.log=[];}
-$('#rrl').onclick=()=>{if(reroll(G,me()))renderAll();};
-$('#bxp').onclick=()=>{if(buyXp(me())){renderAll();}};
+$('#rrl').onclick=()=>authReroll();
+$('#bxp').onclick=()=>authBuyXp();
 $('#auto').onclick=()=>{autoArrange(me());U.sel=null;U.peek=null;renderAll();};
 $('#help').onclick=()=>showHelp();
 $('#fxm').onclick=()=>{const ks=['full','lite','min'];fxKey=ks[(ks.indexOf(fxKey)+1)%3];FX=FXM[fxKey];store.set('chs_fx',fxKey);setFxLabel();toast('Hiệu ứng: '+FX.n+' (chỉ đổi hình ảnh, không đổi kết quả trận)');};
@@ -5757,7 +5811,7 @@ $('#peek').addEventListener('click',e=>{
   const ph=e.target.closest('[data-peek-hero]');
   if(ph){U.peek={type:'hero',h:ph.dataset.peekHero,s:1};renderAll();return;}
   if(e.target.closest('[data-closepeek]')){U.peek=null;U.sel=null;renderAll();}
-  else if(e.target.closest('[data-sell]')&&U.sel){const v=sellUnit(G,me(),U.sel.k,U.sel.i);toast('Đã bán, +'+v+' vàng');U.sel=null;U.peek=null;renderAll();}
+  else if(e.target.closest('[data-sell]')&&U.sel){authSellUnit(U.sel.k,U.sel.i);}
   else if(e.target.closest('[data-pstar]')&&U.peek&&U.peek.type==='hero'){U.peek.s=+e.target.closest('[data-pstar]').dataset.pstar;renderPeek();}
 });
 $('#spd').onclick=()=>{U.speed=U.speed===1?2:U.speed===2?3:1;$('#spd').textContent='\u00d7'+U.speed;document.documentElement.style.setProperty('--spd',U.speed);};
@@ -5942,8 +5996,8 @@ const _qtt=$('#qcTabTkn');if(_qtt)_qtt.onclick=()=>{qcMode='tkn';renderQC();};
 document.addEventListener('keydown',e=>{
   if(U.qcOpen&&(e.key==='Escape'||e.key==='Enter'||e.key===' ')){closeQC();e.preventDefault();return;}
   if($('#ov').classList.contains('show')||!G||U.phase!=='prep')return;
-  if(e.key==='d'||e.key==='D'){if(reroll(G,me()))renderAll();}
-  else if(e.key==='f'||e.key==='F'){if(buyXp(me()))renderAll();}
+  if(e.key==='d'||e.key==='D'){authReroll();}
+  else if(e.key==='f'||e.key==='F'){authBuyXp();}
   else if(e.key==='Enter'){readyGo(false);}
 });
 function readyGo(force){
@@ -6532,6 +6586,39 @@ const CHS_ONLINE = {
 
       this.socket.on('connect', () => {
         console.log('[CHS Socket] Kết nối máy chủ thành công!', this.socket.id);
+      });
+
+      // 1. Đồng bộ dữ liệu người chơi Authoritative từ Server (Chống Hack Tiền, XP, Cấp, Tướng)
+      this.socket.on('chs:sync_player_state', (data) => {
+        const P = me();
+        if (!P) return;
+        P.gold = data.gold;
+        P.lvl = data.lvl;
+        P.xp = data.xp;
+        P.hp = data.hp;
+        P.streak = data.streak;
+        P.lastWin = data.lastWin;
+        P.board = data.board;
+        P.bench = data.bench;
+        P.shop = data.shop;
+        if (data.round && G) G.round = data.round;
+        renderAll();
+      });
+
+      // 2. Nhận kết quả và sự kiện chiến đấu do Server mô phỏng (Chống Hack Sát Thương)
+      this.socket.on('chs:combat_start', (data) => {
+        console.log('[CHS Combat Auth] Bắt đầu trận chiến do Server điều phối:', data);
+        U.phase = 'battle';
+        arena.classList.add('battle');
+        const _bw = $('#boardwrap'); if (_bw) _bw.classList.add('battle');
+        const _br = $('#boardrow'); if (_br) _br.classList.add('battle');
+        const _bh = $('#bhud'); if (_bh) _bh.style.display = 'none';
+
+        if (data.opponent && !data.isPve) {
+          toast('⚔️ Giao tranh với: ' + data.opponent.name);
+        } else if (data.isPve) {
+          toast('👹 Giao tranh Dã Quái Tiền Tuyến!');
+        }
       });
 
       this.socket.on('chs:queue_status', (data) => {

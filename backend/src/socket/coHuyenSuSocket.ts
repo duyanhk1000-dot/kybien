@@ -1,9 +1,16 @@
+// @ts-nocheck
 import { Server, Socket } from 'socket.io';
 import { coHuyenSuService } from '../services/coHuyenSuService.js';
+import {
+  newGame, newPlayer, startRound, makeMatches, simMatch, applyRound,
+  buyUnit, sellUnit, moveUnit, buyXp, reroll, incomeOf,
+  traitCounts, tierOf, activeBonds, boardList, boardCount, poolCount,
+  HERO, TR, CS, BONDS, XPN, botPrep, mkUnitObj, addUnit, poolTake
+} from '../engine/coHuyenSuEngine.js';
 
-// ==========================================
-// THIẾT KẾ MATCHMAKING & PHÒNG ĐẤU 8 NGƯỜI PVP
-// ==========================================
+// ========================================================
+// SERVER-AUTHORITATIVE PVP ROOM & MATCHMAKING MANAGER
+// ========================================================
 
 export interface QueuedPlayer {
   socketId: string;
@@ -14,22 +21,11 @@ export interface QueuedPlayer {
   queuedAt: number;
 }
 
-export interface RoomPlayer {
-  id: string; // socketId or 'bot-xxx'
-  userId: number;
-  name: string;
-  avatar: string;
-  hp: number; // Máu khởi đầu: 100
-  alive: boolean;
-  isBot: boolean;
-  rankPlace?: number;
-  deck: Array<{ heroId: string; star: number }>;
-  reinforcementsDeployed: boolean;
-}
-
 export interface PvPRoom {
   id: string;
-  players: RoomPlayer[];
+  G: any; // Game state instance from coHuyenSuEngine
+  realPlayerSockets: Map<string, any>; // socketId -> PlayerState in G
+  socketToPlayerIndex: Map<string, number>;
   round: number;
   phase: 'prep' | 'battle';
   timer: number;
@@ -39,66 +35,83 @@ export interface PvPRoom {
 
 const queue: QueuedPlayer[] = [];
 const rooms = new Map<string, PvPRoom>();
-const playerToRoom = new Map<string, string>(); // socketId -> roomId
+const socketToRoomId = new Map<string, string>();
 
-const QUEUE_TIMEOUT_MS = 40000; // 40 giây timeout để tự thêm BOT
+const QUEUE_TIMEOUT_MS = 40000; // 40 giây timeout để tự động thêm Bot
+
 const BOT_NAMES = [
   'Đinh Tiên Hoàng', 'Trần Thủ Độ', 'Lê Thánh Tông', 'Lý Thái Tổ',
-  'Phan Đình Phùng', 'Hoàng Diệu', 'Võ Nguyên Giáp', 'Nguyễn Tri Phương',
-  'Nguyễn Chích', 'Lý Thường Kiệt', 'Bùi Thị Xuân', 'Trần Khánh Dư'
+  'Hoàng Diệu', 'Nguyễn Tri Phương', 'Lý Thường Kiệt', 'Bùi Thị Xuân',
+  'Nguyễn Chích', 'Phan Đình Phùng', 'Trần Khánh Dư', 'Võ Nguyên Giáp'
 ];
 const BOT_AVATARS = ['🐲', '🦅', '🐅', '🐘', '🐎', '⚔️', '🏹', '🛡️'];
 
 // ==========================================
-// HÀM TẠO BOT TỰ ĐỘNG
+// TẠO PHÒNG ĐẤU 8 NGƯỜI CHƠI (SERVER-AUTHORITATIVE)
 // ==========================================
-function generateBots(count: number): RoomPlayer[] {
-  const bots: RoomPlayer[] = [];
-  const shuffledNames = [...BOT_NAMES].sort(() => 0.5 - Math.random());
-  for (let i = 0; i < count; i++) {
-    const name = shuffledNames[i % shuffledNames.length];
-    const avatar = BOT_AVATARS[Math.floor(Math.random() * BOT_AVATARS.length)];
-    bots.push({
-      id: `bot-${Date.now()}-${i}`,
-      userId: -100 - i,
-      name: `${name} (Bot)`,
-      avatar,
-      hp: 100,
-      alive: true,
-      isBot: true,
-      deck: [
-        { heroId: 'caolo', star: Math.random() > 0.5 ? 2 : 1 },
-      ],
-      reinforcementsDeployed: false,
-    });
-  }
-  return bots;
-}
-
-// ==========================================
-// KHỞI ĐỘNG PHÒNG ĐẤU 8 NGƯỜI CHƠI
-// ==========================================
-function createPvPRoom(io: Server, realPlayers: QueuedPlayer[], bots: RoomPlayer[]) {
+function createPvPRoom(io: Server, realPlayers: QueuedPlayer[], botsNeeded: number) {
   const roomId = `room-chs-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
-  const roomPlayers: RoomPlayer[] = [
-    ...realPlayers.map(p => ({
-      id: p.socketId,
-      userId: p.userId,
-      name: p.name,
-      avatar: p.avatar,
-      hp: 100,
-      alive: true,
-      isBot: false,
-      deck: p.deck,
-      reinforcementsDeployed: false,
-    })),
-    ...bots,
-  ];
+  // 1. Khởi tạo đối tượng Game Authoritative
+  const G = newGame({ diff: 1 });
+  G.players = []; // Reset players để nạp đúng 8 slot
+
+  const realPlayerSockets = new Map<string, any>();
+  const socketToPlayerIndex = new Map<string, number>();
+
+  let playerIdx = 0;
+
+  // 2. Nạp người chơi thật vào G
+  for (const qp of realPlayers) {
+    const p = newPlayer(qp.name, true, playerIdx, qp.avatar);
+    p.socketId = qp.socketId;
+    p.userId = qp.userId;
+    p.deck = qp.deck || [{ heroId: 'caolo', star: 1 }];
+    p.reinforcementsDeployed = false;
+    p.isBot = false;
+
+    G.players.push(p);
+    realPlayerSockets.set(qp.socketId, p);
+    socketToPlayerIndex.set(qp.socketId, playerIdx);
+    socketToRoomId.set(qp.socketId, roomId);
+
+    const sock = io.sockets.sockets.get(qp.socketId);
+    if (sock) sock.join(roomId);
+
+    playerIdx++;
+  }
+
+  // 3. Nạp Bot vào các slot còn lại cho đủ 8 người
+  const shuffledBotNames = [...BOT_NAMES].sort(() => 0.5 - Math.random());
+  for (let b = 0; b < botsNeeded; b++) {
+    const botName = `${shuffledBotNames[b % shuffledBotNames.length]} (Bot)`;
+    const botAv = BOT_AVATARS[Math.floor(Math.random() * BOT_AVATARS.length)];
+    const bp = newPlayer(botName, false, playerIdx, botAv);
+    bp.isBot = true;
+    bp.deck = [{ heroId: 'caolo', star: Math.random() > 0.5 ? 2 : 1 }];
+    bp.reinforcementsDeployed = false;
+
+    G.players.push(bp);
+    playerIdx++;
+  }
+
+  // Khởi tạo tướng khởi đầu ngẫu nhiên cho tất cả các slot trong G
+  for (const p of G.players) {
+    p.board.fill(null);
+    p.bench.fill(null);
+    // Cho 1 tướng 1 sao ngẫu nhiên vào hàng chờ
+    const h1Pool = ['caolo', 'chudongtu', 'maithucloan', 'yetkieu', 'lelai', 'nguyenxi'];
+    const h1 = h1Pool[Math.floor(Math.random() * h1Pool.length)];
+    if (addUnit(p, mkUnitObj(h1, 1))) {
+      poolTake(G, h1);
+    }
+  }
 
   const room: PvPRoom = {
     id: roomId,
-    players: roomPlayers,
+    G,
+    realPlayerSockets,
+    socketToPlayerIndex,
     round: 1,
     phase: 'prep',
     timer: 35,
@@ -106,49 +119,42 @@ function createPvPRoom(io: Server, realPlayers: QueuedPlayer[], bots: RoomPlayer
   };
 
   rooms.set(roomId, room);
-
-  // Gán room cho các real players và join socket room
-  for (const p of realPlayers) {
-    playerToRoom.set(p.socketId, roomId);
-    const sock = io.sockets.sockets.get(p.socketId);
-    if (sock) {
-      sock.join(roomId);
-    }
-  }
-
-  console.log(`[CHS PvP] Tạo phòng ${roomId} thành công với ${realPlayers.length} người thật và ${bots.length} Bot!`);
+  console.log(`[CHS Server-Auth] Tạo phòng ${roomId} thành công với ${realPlayers.length} người thật và ${botsNeeded} Bot!`);
 
   // Báo cho client: Đã ghép trận thành công!
   io.to(roomId).emit('chs:match_found', {
     roomId,
     round: 1,
-    players: room.players.map(pl => ({
-      id: pl.id,
-      userId: pl.userId,
-      name: pl.name,
-      avatar: pl.avatar,
-      hp: pl.hp,
-      alive: pl.alive,
-      isBot: pl.isBot,
+    players: G.players.map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      avatar: p.av,
+      hp: p.hp,
+      alive: p.alive,
+      isBot: !!p.isBot,
     })),
   });
 
-  // Bắt đầu vòng chuẩn bị đầu tiên
-  startRound(io, room);
+  // Bắt đầu vòng 1 (Server chạy startRound)
+  startServerRound(io, room);
 }
 
 // ==========================================
-// VÒNG LẶP TRẬN ĐẤU (ROUND LOOP)
+// VÒNG CHUẨN BỊ TRÊN SERVER (AUTHORITATIVE)
 // ==========================================
-function startRound(io: Server, room: PvPRoom) {
+function startServerRound(io: Server, room: PvPRoom) {
+  const G = room.G;
   room.phase = 'prep';
-  room.timer = room.round === 1 ? 40 : 30;
+  room.timer = room.round === 1 ? 38 : 30;
+
+  // Server chạy startRound: cấp vàng, kinh nghiệm, roll shop cho từng người
+  startRound(G);
+  room.round = G.round;
 
   const isPve = room.round <= 3 || room.round === 8 || room.round === 15 || room.round === 22;
-
-  // Nếu đến Vòng 4 (Bắt đầu PvP), kích hoạt sự kiện Viện Binh Hành Quân
   const isReinforcementsRound = room.round === 4;
 
+  // Gửi thông báo bắt đầu vòng
   io.to(room.id).emit('chs:round_start', {
     round: room.round,
     phase: 'prep',
@@ -157,120 +163,218 @@ function startRound(io: Server, room: PvPRoom) {
     isReinforcementsRound,
   });
 
-  if (room.timerInterval) clearInterval(room.timerInterval);
+  // Gửi dữ liệu đồng bộ riêng cho từng người chơi thật
+  for (const [sockId, player] of room.realPlayerSockets.entries()) {
+    const sock = io.sockets.sockets.get(sockId);
+    if (sock) {
+      sendAuthoritativePlayerSync(sock, G, player);
+    }
+  }
 
+  // Đồng bộ danh sách 8 người chơi (HP, Level, Streaks)
+  broadcastPlayersSummary(io, room);
+
+  // Bộ đếm thời gian chuẩn bị
+  if (room.timerInterval) clearInterval(room.timerInterval);
   room.timerInterval = setInterval(() => {
     room.timer--;
 
     if (room.timer <= 0) {
       if (room.timerInterval) clearInterval(room.timerInterval);
-      startCombatPhase(io, room);
+      startServerCombatPhase(io, room);
     } else {
       io.to(room.id).emit('chs:timer_tick', { timer: room.timer, phase: room.phase });
     }
   }, 1000);
 }
 
-function startCombatPhase(io: Server, room: PvPRoom) {
+// ==========================================
+// GIAO TRANH MÔ PHỎNG TRÊN SERVER (ANTI-CHEAT COMBAT)
+// ==========================================
+function startServerCombatPhase(io: Server, room: PvPRoom) {
+  const G = room.G;
   room.phase = 'battle';
-  room.timer = 30; // 30s giao tranh tối đa
+  room.timer = 25; // Thời gian phát lại giao tranh
 
-  // Ghép cặp đối thủ cho các người chơi còn sống
-  const alivePlayers = room.players.filter(p => p.alive);
-  const shuffled = [...alivePlayers].sort(() => 0.5 - Math.random());
-  const pairings: Array<{ player1: string; player2: string }> = [];
-
-  for (let i = 0; i < shuffled.length; i += 2) {
-    if (i + 1 < shuffled.length) {
-      pairings.push({ player1: shuffled[i].id, player2: shuffled[i + 1].id });
-    } else {
-      // Số người lẻ -> đấu với bóng (ghost) của người đầu tiên
-      pairings.push({ player1: shuffled[i].id, player2: shuffled[0].id });
+  // 1. Tự động điều viện binh cho các người chơi quên bấm ở vòng 4+
+  if (room.round >= 4) {
+    for (const p of G.players) {
+      if (p.deck && !p.reinforcementsDeployed) {
+        deployPlayerReinforcements(G, p);
+      }
     }
   }
 
-  io.to(room.id).emit('chs:combat_start', {
-    round: room.round,
-    phase: 'battle',
-    pairings,
-  });
+  // 2. Chạy botPrep cho toàn bộ các Bot còn sống
+  for (const p of G.players) {
+    if (p.isBot && p.alive) {
+      botPrep(G, p);
+    }
+  }
 
-  // Mô phỏng kết quả cho các Bot sau 15 giây giao tranh
+  // 3. Ghép cặp giao tranh (Matches)
+  G.matches = makeMatches(G);
+
+  // 4. Server chạy mô phỏng giao tranh (simMatch) cho từng cặp đấu
+  const matchResults: Map<any, any> = new Map();
+  for (const m of G.matches) {
+    simMatch(G, m); // Tính toán và lưu m.res = { win0, surv, B }
+    matchResults.set(m.a, m);
+    if (m.b) matchResults.set(m.b, m);
+  }
+
+  // 5. Gửi sự kiện chiến đấu và chuỗi animation (B.ev) tới từng người chơi
+  for (const [sockId, player] of room.realPlayerSockets.entries()) {
+    const sock = io.sockets.sockets.get(sockId);
+    if (!sock) continue;
+
+    const m = matchResults.get(player);
+    if (!m) continue;
+
+    const isSideA = m.a === player;
+    const opponent = isSideA ? m.b : m.a;
+    const res = m.res || {};
+    const won = isSideA ? res.win0 : !res.win0;
+
+    sock.emit('chs:combat_start', {
+      round: room.round,
+      isPve: !!m.pve,
+      opponent: opponent ? {
+        id: opponent.id,
+        name: opponent.name,
+        avatar: opponent.av,
+        board: opponent.board,
+      } : null,
+      events: (res.B && res.B.ev) ? res.B.ev : [],
+      won,
+      surviving: res.surv || 0,
+    });
+  }
+
+  // 6. Sau khi phát lại giao tranh xong (18 giây), Server áp dụng kết quả
   setTimeout(() => {
-    for (const p of room.players) {
-      if (p.isBot && p.alive) {
-        // Bot mất ngẫu nhiên 0 đến 12 máu mỗi vòng
-        const dmg = Math.floor(Math.random() * 12);
-        p.hp = Math.max(0, p.hp - dmg);
-        if (p.hp <= 0 && p.alive) {
-          eliminatePlayer(io, room, p);
-        }
+    // Server gọi applyRound: trừ máu người thua, cộng chuỗi thắng/thua, loại người chết
+    applyRound(G);
+
+    // Kiểm tra những người chơi bị loại
+    for (const p of G.players) {
+      if (!p.alive && p.place && !p.rewardGiven) {
+        p.rewardGiven = true;
+        handlePlayerElimination(io, room, p);
       }
     }
-    // Gửi cập nhật bảng điểm HP của toàn bộ 8 người
-    io.to(room.id).emit('chs:players_sync', {
-      players: room.players.map(pl => ({
-        id: pl.id,
-        name: pl.name,
-        hp: pl.hp,
-        alive: pl.alive,
-        rankPlace: pl.rankPlace,
-      })),
-    });
-  }, 15000);
 
-  // Hết giờ giao tranh -> Chuyển sang vòng chuẩn bị tiếp theo
-  setTimeout(() => {
-    const remaining = room.players.filter(p => p.alive);
-    if (remaining.length <= 1) {
-      endMatch(io, room, remaining[0]);
+    // Đồng bộ lại HP & trạng thái sống còn của 8 người
+    broadcastPlayersSummary(io, room);
+
+    // Kiểm tra điều kiện kết thúc trận đấu (chỉ còn 1 người sống hoặc hết 70 vòng)
+    const alivePlayers = G.players.filter((p: any) => p.alive);
+    if (alivePlayers.length <= 1 || G.over) {
+      const winner = alivePlayers[0] || G.winner;
+      handleMatchEnded(io, room, winner);
     } else {
-      room.round++;
-      startRound(io, room);
+      // Tiếp tục sang vòng tiếp theo
+      startServerRound(io, room);
     }
-  }, 22000);
+  }, 18000);
 }
 
 // ==========================================
-// LOẠI NGƯỜI CHƠI & TRAO THƯỞNG
+// ĐỒNG BỘ DỮ LIỆU AUTHORITATIVE CHO TỪNG CLIENT
 // ==========================================
-async function eliminatePlayer(io: Server, room: PvPRoom, player: RoomPlayer) {
-  if (!player.alive) return;
-  player.alive = false;
+function sendAuthoritativePlayerSync(socket: Socket, G: any, player: any) {
+  const activeHeroes = player.board.filter(Boolean);
+  socket.emit('chs:sync_player_state', {
+    gold: player.gold,
+    lvl: player.lvl,
+    xp: player.xp,
+    hp: player.hp,
+    streak: player.streak,
+    lastWin: player.lastWin,
+    board: player.board,
+    bench: player.bench,
+    shop: player.shop,
+    synergies: traitCounts(activeHeroes),
+    bonds: activeBonds(activeHeroes),
+    boardCount: activeHeroes.length,
+    maxBoardUnits: player.lvl,
+    income: incomeOf(player, G.round),
+    round: G.round,
+  });
+}
 
-  const aliveCount = room.players.filter(p => p.alive).length;
-  player.rankPlace = aliveCount + 1; // Hạng 8, 7, ..., 2
+function broadcastPlayersSummary(io: Server, room: PvPRoom) {
+  io.to(room.id).emit('chs:players_sync', {
+    players: room.G.players.map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      avatar: p.av,
+      hp: p.hp,
+      alive: p.alive,
+      lvl: p.lvl,
+      streak: p.streak,
+      rankPlace: p.place,
+    })),
+  });
+}
 
+// ==========================================
+// ĐIỀU VIỆN BINH QUÂN LƯƠNG TRÊN SERVER
+// ==========================================
+function deployPlayerReinforcements(G: any, player: any): boolean {
+  if (player.reinforcementsDeployed) return false;
+  player.reinforcementsDeployed = true;
+
+  const deck = player.deck || [];
+  let placed = false;
+
+  for (const card of deck) {
+    const emptyBenchIdx = player.bench.findIndex((x: any) => x === null);
+    if (emptyBenchIdx >= 0) {
+      player.bench[emptyBenchIdx] = mkUnitObj(card.heroId, card.star);
+      placed = true;
+    }
+  }
+
+  return placed;
+}
+
+// ==========================================
+// XỬ LÝ LOẠI NGƯỜI CHƠI & TRAO THƯỞNG
+// ==========================================
+async function handlePlayerElimination(io: Server, room: PvPRoom, player: any) {
+  const place = player.place || 8;
   let rewardInfo = { rewardHb: 3, eloChange: -35 };
-  if (!player.isBot) {
+
+  if (!player.isBot && player.userId) {
     try {
-      rewardInfo = await coHuyenSuService.awardMatchRewards(player.userId, player.rankPlace);
+      rewardInfo = await coHuyenSuService.awardMatchRewards(player.userId, place);
     } catch (e) {
-      console.error(`[CHS PvP] Lỗi trao thưởng cho user ${player.userId}:`, e);
+      console.error(`[CHS Server] Lỗi trao thưởng cho user ${player.userId}:`, e);
     }
 
-    const sock = io.sockets.sockets.get(player.id);
+    const sock = io.sockets.sockets.get(player.socketId);
     if (sock) {
       sock.emit('chs:eliminated', {
-        rankPlace: player.rankPlace,
+        rankPlace: place,
         rewardHb: rewardInfo.rewardHb,
         eloChange: rewardInfo.eloChange,
       });
     }
   }
 
-  console.log(`[CHS PvP] Người chơi ${player.name} bị loại ở Hạng ${player.rankPlace}! Nhận ${rewardInfo.rewardHb} HB.`);
+  console.log(`[CHS Server] Người chơi ${player.name} bị loại ở Hạng ${place}! Thưởng: ${rewardInfo.rewardHb} HB.`);
 }
 
-async function endMatch(io: Server, room: PvPRoom, winner?: RoomPlayer) {
+async function handleMatchEnded(io: Server, room: PvPRoom, winner?: any) {
   if (room.timerInterval) clearInterval(room.timerInterval);
 
   if (winner) {
-    winner.rankPlace = 1;
-    if (!winner.isBot) {
+    winner.place = 1;
+    if (!winner.isBot && winner.userId) {
       try {
         const rew = await coHuyenSuService.awardMatchRewards(winner.userId, 1);
-        const sock = io.sockets.sockets.get(winner.id);
+        const sock = io.sockets.sockets.get(winner.socketId);
         if (sock) {
           sock.emit('chs:match_victory', {
             rankPlace: 1,
@@ -279,30 +383,30 @@ async function endMatch(io: Server, room: PvPRoom, winner?: RoomPlayer) {
           });
         }
       } catch (e) {
-        console.error(`[CHS PvP] Lỗi trao giải quán quân:`, e);
+        console.error(`[CHS Server] Lỗi trao thưởng quán quân:`, e);
       }
     }
   }
 
   io.to(room.id).emit('chs:match_ended', {
-    winner: winner ? { name: winner.name, avatar: winner.avatar } : null,
-    scoreboard: room.players.map(p => ({
+    winner: winner ? { name: winner.name, avatar: winner.av } : null,
+    scoreboard: room.G.players.map((p: any) => ({
       name: p.name,
-      rankPlace: p.rankPlace || 1,
-      isBot: p.isBot,
-    })).sort((a, b) => a.rankPlace - b.rankPlace),
+      rankPlace: p.place || 1,
+      isBot: !!p.isBot,
+    })).sort((a: any, b: any) => a.rankPlace - b.rankPlace),
   });
 
   // Dọn dẹp phòng
-  for (const p of room.players) {
-    playerToRoom.delete(p.id);
+  for (const [sockId] of room.realPlayerSockets.entries()) {
+    socketToRoomId.delete(sockId);
   }
   rooms.delete(room.id);
-  console.log(`[CHS PvP] Kết thúc trận đấu phòng ${room.id}!`);
+  console.log(`[CHS Server] Kết thúc phòng ${room.id}!`);
 }
 
 // ==========================================
-// SOCKET.IO EVENT HANDLERS
+// KHỞI ĐỘNG CÁC SỰ KIỆN SOCKET
 // ==========================================
 export function setupCoHuyenSuSocket(io: Server): void {
   // Bộ đếm Matchmaking hàng giây
@@ -313,24 +417,22 @@ export function setupCoHuyenSuSocket(io: Server): void {
     // 1. Nếu đủ 8 người thật ➔ Ghép ngay
     if (queue.length >= 8) {
       const matchGroup = queue.splice(0, 8);
-      createPvPRoom(io, matchGroup, []);
+      createPvPRoom(io, matchGroup, 0);
       return;
     }
 
-    // 2. Nếu có người chờ quá 40s (QUEUE_TIMEOUT_MS) ➔ Thêm Bot
+    // 2. Nếu có người chờ quá 40s (QUEUE_TIMEOUT_MS) ➔ Tự động bù Bot
     const oldest = queue[0];
     if (now - oldest.queuedAt >= QUEUE_TIMEOUT_MS) {
       const matchGroup = queue.splice(0, Math.min(8, queue.length));
       const botsNeeded = 8 - matchGroup.length;
-      const bots = generateBots(botsNeeded);
-      createPvPRoom(io, matchGroup, bots);
+      createPvPRoom(io, matchGroup, botsNeeded);
     }
   }, 1000);
 
   io.on('connection', (socket: Socket) => {
-    // 1. Vào hàng chờ ghép trận 8 người
-    socket.on('chs:join_queue', async (data: { userId?: number; name?: string; avatar?: string; deck?: Array<{ heroId: string; star: number }> }) => {
-      // Xóa khỏi queue cũ nếu có
+    // 1. Vào hàng chờ PvP
+    socket.on('chs:join_queue', (data: { userId?: number; name?: string; avatar?: string; deck?: Array<{ heroId: string; star: number }> }) => {
       const existingIdx = queue.findIndex(q => q.socketId === socket.id);
       if (existingIdx >= 0) queue.splice(existingIdx, 1);
 
@@ -339,23 +441,21 @@ export function setupCoHuyenSuSocket(io: Server): void {
       const avatar = data.avatar || '🐲';
       const deck = data.deck || [{ heroId: 'caolo', star: 1 }];
 
-      const playerEntry: QueuedPlayer = {
+      queue.push({
         socketId: socket.id,
         userId,
         name,
         avatar,
         deck,
         queuedAt: Date.now(),
-      };
+      });
 
-      queue.push(playerEntry);
       socket.emit('chs:queue_joined', {
-        queuedAt: playerEntry.queuedAt,
         timeoutSeconds: 40,
         currentInQueue: queue.length,
       });
 
-      console.log(`[CHS PvP] Người chơi ${name} (Socket ${socket.id}) vào hàng chờ. Tổng: ${queue.length}/8.`);
+      console.log(`[CHS Queue] ${name} vào hàng chờ. Tổng: ${queue.length}/8.`);
     });
 
     // 2. Hủy tìm trận
@@ -364,19 +464,113 @@ export function setupCoHuyenSuSocket(io: Server): void {
       if (idx >= 0) {
         queue.splice(idx, 1);
         socket.emit('chs:queue_cancelled');
-        console.log(`[CHS PvP] Socket ${socket.id} đã hủy tìm trận.`);
       }
     });
 
-    // 3. Người chơi bấm nút "ĐIỀU TƯỚNG" (Reinforcements) tại Vòng 4+
+    // 3. Mua tướng từ cửa hàng (SERVER THỰC THI & CHỐNG HACK TIỀN)
+    socket.on('chs:buy_unit', (data: { slotIndex: number }) => {
+      const roomId = socketToRoomId.get(socket.id);
+      if (!roomId) return;
+      const room = rooms.get(roomId);
+      if (!room || room.phase !== 'prep') return;
+
+      const player = room.realPlayerSockets.get(socket.id);
+      if (!player || !player.alive) return;
+
+      const success = buyUnit(room.G, player, data.slotIndex);
+      if (success) {
+        sendAuthoritativePlayerSync(socket, room.G, player);
+      } else {
+        socket.emit('chs:toast', { message: 'Không đủ vàng hoặc hàng chờ đã đầy!' });
+      }
+    });
+
+    // 4. Bán tướng (SERVER TÍNH TIỀN & TRẢ VÀO KHO POOL)
+    socket.on('chs:sell_unit', (data: { kind: 'board' | 'bench'; index: number }) => {
+      const roomId = socketToRoomId.get(socket.id);
+      if (!roomId) return;
+      const room = rooms.get(roomId);
+      if (!room || room.phase !== 'prep') return;
+
+      const player = room.realPlayerSockets.get(socket.id);
+      if (!player || !player.alive) return;
+
+      const earnedGold = sellUnit(room.G, player, data.kind, data.index);
+      if (earnedGold > 0) {
+        sendAuthoritativePlayerSync(socket, room.G, player);
+      }
+    });
+
+    // 5. Di chuyển / xếp cờ (SERVER KIỂM TRA SỐ LƯỢNG TƯỚNG TỐI ĐA = LEVEL)
+    socket.on('chs:move_unit', (data: { from: { kind: 'board' | 'bench'; index: number }; to: { kind: 'board' | 'bench'; index: number } }) => {
+      const roomId = socketToRoomId.get(socket.id);
+      if (!roomId) return;
+      const room = rooms.get(roomId);
+      if (!room || room.phase !== 'prep') return;
+
+      const player = room.realPlayerSockets.get(socket.id);
+      if (!player || !player.alive) return;
+
+      // Nếu kéo từ bench lên board: kiểm tra giới hạn cấp độ
+      if (data.from.kind === 'bench' && data.to.kind === 'board') {
+        const destUnit = player.board[data.to.index];
+        const currentBoardUnits = boardCount(player);
+        if (!destUnit && currentBoardUnits >= player.lvl) {
+          socket.emit('chs:toast', { message: `Cấp độ ${player.lvl} chỉ được đặt tối đa ${player.lvl} tướng trên bàn!` });
+          sendAuthoritativePlayerSync(socket, room.G, player);
+          return;
+        }
+      }
+
+      moveUnit(player, data.from, data.to);
+      sendAuthoritativePlayerSync(socket, room.G, player);
+    });
+
+    // 6. Mua kinh nghiệm (SERVER TRỪ 4 VÀNG & CỘNG 4 XP)
+    socket.on('chs:buy_xp', () => {
+      const roomId = socketToRoomId.get(socket.id);
+      if (!roomId) return;
+      const room = rooms.get(roomId);
+      if (!room || room.phase !== 'prep') return;
+
+      const player = room.realPlayerSockets.get(socket.id);
+      if (!player || !player.alive) return;
+
+      const success = buyXp(player);
+      if (success) {
+        sendAuthoritativePlayerSync(socket, room.G, player);
+      } else {
+        socket.emit('chs:toast', { message: 'Không đủ 4 vàng hoặc đã đạt cấp tối đa!' });
+      }
+    });
+
+    // 7. Làm mới cửa hàng (SERVER TRỪ 2 VÀNG & ROLL THEO TỈ LỆ LEVEL CỦA SERVER)
+    socket.on('chs:reroll_shop', () => {
+      const roomId = socketToRoomId.get(socket.id);
+      if (!roomId) return;
+      const room = rooms.get(roomId);
+      if (!room || room.phase !== 'prep') return;
+
+      const player = room.realPlayerSockets.get(socket.id);
+      if (!player || !player.alive) return;
+
+      const success = reroll(room.G, player);
+      if (success) {
+        sendAuthoritativePlayerSync(socket, room.G, player);
+      } else {
+        socket.emit('chs:toast', { message: 'Không đủ 2 vàng để làm mới cửa hàng!' });
+      }
+    });
+
+    // 8. Điều tướng Viện Binh tại Vòng 4+
     socket.on('chs:deploy_reinforcements', () => {
-      const roomId = playerToRoom.get(socket.id);
+      const roomId = socketToRoomId.get(socket.id);
       if (!roomId) return;
       const room = rooms.get(roomId);
       if (!room) return;
 
-      const player = room.players.find(p => p.id === socket.id);
-      if (!player) return;
+      const player = room.realPlayerSockets.get(socket.id);
+      if (!player || !player.alive) return;
 
       if (room.round < 4) {
         socket.emit('chs:toast', { message: 'Viện binh đang hành quân! Tối thiểu Vòng 4 mới đến nơi.' });
@@ -388,65 +582,30 @@ export function setupCoHuyenSuSocket(io: Server): void {
         return;
       }
 
-      player.reinforcementsDeployed = true;
+      deployPlayerReinforcements(room.G, player);
+      sendAuthoritativePlayerSync(socket, room.G, player);
 
-      // Trả danh sách thẻ tướng mang theo về cho client để xếp vào hàng chờ
-      socket.emit('chs:reinforcements_deployed', {
-        cards: player.deck,
-      });
-
-      // Thông báo cho toàn phòng biết người này đã điều quân
       io.to(room.id).emit('chs:room_event', {
         message: `${player.name} đã triệu hồi Viện Binh xuất trận!`,
       });
     });
 
-    // 4. Client báo cáo kết quả sát thương sau mỗi trận giao tranh
-    socket.on('chs:report_round_result', (data: { damageTaken: number }) => {
-      const roomId = playerToRoom.get(socket.id);
-      if (!roomId) return;
-      const room = rooms.get(roomId);
-      if (!room) return;
-
-      const player = room.players.find(p => p.id === socket.id);
-      if (!player || !player.alive) return;
-
-      const dmg = Math.max(0, data.damageTaken || 0);
-      player.hp = Math.max(0, player.hp - dmg);
-
-      if (player.hp <= 0) {
-        eliminatePlayer(io, room, player);
-      }
-
-      // Sync lại danh sách HP cho các người chơi trong phòng
-      io.to(room.id).emit('chs:players_sync', {
-        players: room.players.map(pl => ({
-          id: pl.id,
-          name: pl.name,
-          hp: pl.hp,
-          alive: pl.alive,
-          rankPlace: pl.rankPlace,
-        })),
-      });
-    });
-
-    // 5. Ngắt kết nối
+    // 9. Ngắt kết nối
     socket.on('disconnect', () => {
       const qIdx = queue.findIndex(q => q.socketId === socket.id);
       if (qIdx >= 0) queue.splice(qIdx, 1);
 
-      const roomId = playerToRoom.get(socket.id);
+      const roomId = socketToRoomId.get(socket.id);
       if (roomId) {
         const room = rooms.get(roomId);
         if (room) {
-          const player = room.players.find(p => p.id === socket.id);
+          const player = room.realPlayerSockets.get(socket.id);
           if (player && player.alive) {
-            // Xem như người chơi bỏ trận, trừ hết máu
             player.hp = 0;
-            eliminatePlayer(io, room, player);
+            player.alive = false;
           }
         }
-        playerToRoom.delete(socket.id);
+        socketToRoomId.delete(socket.id);
       }
     });
   });
