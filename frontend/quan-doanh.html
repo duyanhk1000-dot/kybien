@@ -726,7 +726,7 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
       <!-- Danh Vọng (Không có ELO) -->
       <div class="qd-stat-chip dv" title="Danh Vọng kiếm được từ các trận đấu — Dùng để chiêu mộ hiền tài">
-        <span style="font-size:20px;">🪙</span>
+        <img src="./img/fx/danh-vong.webp" alt="Danh Vọng" style="width:26px;height:26px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 6px rgba(241,196,15,0.5));" onerror="this.src='./img/danhvong.webp'">
         <div>
           <small>Danh Vọng</small>
           <b id="qdDanhVongVal">0 DV</b>
@@ -781,7 +781,7 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
       <span class="qd-tag">🛡️ 9 Tộc Lịch Sử</span>
       <span class="qd-tag">⚡ 7 Hệ Chiến Binh</span>
       <span class="qd-tag">🎴 12 Nhân Duyên Thần Thông</span>
-      <span class="qd-tag">🪙 Tích Lũy Danh Vọng</span>
+      <span class="qd-tag"><img src="./img/fx/danh-vong.webp" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;margin-right:4px;" onerror="this.src='./img/danhvong.webp'"> Tích Lũy Danh Vọng</span>
       <span class="qd-tag">🎺 Viện Binh Quân Lương (Vòng 4)</span>
     </div>
   </div>
@@ -872,36 +872,64 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
       </a>
     </div>
 
-    <!-- 9 Tộc & 7 Hệ -->
+    <!-- 6 Tộc & 5 Hệ Chuẩn Hóa -->
     <div style="background:#1a120b;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;">
       <h4 style="font-family:var(--serif);color:#fff;font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
-        <span>🛡️</span> 9 TỘC & 7 HỆ CHIẾN BINH ĐẠI VIỆT
+        <span>🛡️</span> 6 TỘC & 5 HỆ CHIẾN BINH ĐẠI VIỆT
       </h4>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
         <div>
-          <b style="color:#d5a55a;font-size:13px;display:block;margin-bottom:6px;">9 Tộc Lịch Sử:</b>
-          <div class="synergy-list" style="margin-top:0;">
-            <div class="synergy-item"><b>Ngư Tinh (ngu)</b> Chử Đồng Tử, Tiên Dung — Hồi phục sinh lực & tăng tốc đánh.</div>
-            <div class="synergy-item"><b>Âu Lạc (au)</b> Cao Lỗ, Lý Ông Trọng, An Dương Vương — Nỏ thần xuyên giáp.</div>
-            <div class="synergy-item"><b>Bách Việt (bach)</b> Mai Thúc Loan, Phùng Hưng, Trưng Nhị, Bà Triệu — Hộ giáp kiên cố.</div>
-            <div class="synergy-item"><b>Nhà Trần (tran)</b> Yết Kiêu, Dã Tượng, Trần Quốc Toản, Phạm Ngũ Lão, Trần Hưng Đạo — Hào khí Đông A.</div>
-            <div class="synergy-item"><b>Hậu Lê (le)</b> Lê Lai, Nguyễn Xí, Lê Lợi, Nguyễn Trãi — Bình Ngô sách lược, hồi phục mana.</div>
-            <div class="synergy-item"><b>Thần Thoại (than)</b> Thủy Tinh, Kim Quy, Thánh Gióng, Sơn Tinh, Lạc Long Quân, Âu Cơ — Uy lực long trời lở đất.</div>
-            <div class="synergy-item"><b>Nhà Lý (ly)</b> Lý Thường Kiệt — Nam quốc sơn hà sát thương diện rộng.</div>
-            <div class="synergy-item"><b>Tiền Ngô (tien)</b> Ngô Quyền — Cọc gỗ Bạch Đằng sát thương chí mạng.</div>
-            <div class="synergy-item"><b>Tây Sơn (tayson)</b> Bùi Thị Xuân, Trần Quang Diệu, Nguyễn Huệ — Tượng binh xung kích, bách chiến bách thắng.</div>
+          <b style="color:#d5a55a;font-size:13px;display:block;margin-bottom:8px;">6 Tộc Lịch Sử:</b>
+          <div class="synergy-list" style="margin-top:0;display:flex;flex-direction:column;gap:8px;">
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/hongbang.webp" alt="Hồng Bàng" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #e0a93b;" onerror="this.src='./img/trait/hongbang.png'">
+              <div><b style="color:#ffd36a;">Hồng Bàng:</b> Chử Đồng Tử, Tiên Dung, Thủy Tinh, Âu Cơ, Sơn Tinh, Lạc Long Quân — <span style="color:#d8c9a8;">Con Rồng cháu Tiên, tăng sát thương kỹ năng và nộ khởi đầu.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/aulac.webp" alt="Âu Lạc" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #8fbf7a;" onerror="this.src='./img/trait/aulac.png'">
+              <div><b style="color:#ffd36a;">Âu Lạc:</b> Cao Lỗ, Lý Ông Trọng, An Dương Vương, Kim Quy — <span style="color:#d8c9a8;">Thành Cổ Loa, nỏ thần Kim Quy, tăng giáp cho cả đội.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/khoinghia.webp" alt="Khởi Nghĩa" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #e0603f;" onerror="this.src='./img/trait/khoinghia.png'">
+              <div><b style="color:#ffd36a;">Khởi Nghĩa:</b> Mai Thúc Loan, Trưng Nhị, Phùng Hưng, Bà Triệu, Trưng Trắc, Ngô Quyền — <span style="color:#d8c9a8;">Đứng lên giành lại giang sơn, tăng tốc độ đánh toàn quân.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/lytran.webp" alt="Lý - Trần" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #5b8fdc;" onerror="this.src='./img/trait/lytran.png'">
+              <div><b style="color:#ffd36a;">Lý – Trần:</b> Yết Kiêu, Dã Tượng, Trần Quốc Toản, Phạm Ngũ Lão, Lý Thường Kiệt, Trần Hưng Đạo — <span style="color:#d8c9a8;">Hào khí Đông A, gia tăng sinh lực tối đa.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/lamson.webp" alt="Lam Sơn" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #4fb577;" onerror="this.src='./img/trait/lamson.png'">
+              <div><b style="color:#ffd36a;">Lam Sơn:</b> Lê Lai, Nguyễn Xí, Nguyễn Trãi, Lê Lợi — <span style="color:#d8c9a8;">Lam Sơn tụ nghĩa, gia tăng sức mạnh công kích vật lý cho cả đội.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/tayson.webp" alt="Tây Sơn" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #f08a3c;" onerror="this.src='./img/trait/tayson.png'">
+              <div><b style="color:#ffd36a;">Tây Sơn:</b> Trần Quang Diệu, Bùi Thị Xuân, Nguyễn Huệ — <span style="color:#d8c9a8;">Thần tốc Tây Sơn, tăng mạnh công kích và khả năng hút máu toàn phần.</span></div>
+            </div>
           </div>
         </div>
         <div>
-          <b style="color:#4cb094;font-size:13px;display:block;margin-bottom:6px;">7 Hệ Chiến Binh:</b>
-          <div class="synergy-list" style="margin-top:0;">
-            <div class="synergy-item"><b>Pháp Sư (phap)</b> Chử Đồng Tử, Thủy Tinh, Lý Thường Kiệt, Âu Cơ — Khuếch đại sát thương phép toàn đội.</div>
-            <div class="synergy-item"><b>Xạ Thủ (xa)</b> Cao Lỗ, Nguyễn Xí, An Dương Vương, Bùi Thị Xuân — Bắn xa tăng sát thương chí mạng.</div>
-            <div class="synergy-item"><b>Đấu Sĩ (dau)</b> Mai Thúc Loan, Dã Tượng, Phùng Hưng, Phạm Ngũ Lão, Bà Triệu, Trần Quang Diệu, Lạc Long Quân, Nguyễn Huệ — Máu trâu càn quét.</div>
-            <div class="synergy-item"><b>Sát Thủ (sat)</b> Yết Kiêu, Ngô Quyền — Đột kích tuyến sau kết liễu chủ lực.</div>
-            <div class="synergy-item"><b>Hộ Vệ (ho)</b> Lê Lai, Lý Ông Trọng, Kim Quy, Sơn Tinh — Lá chắn bảo vệ đồng minh lân cận.</div>
-            <div class="synergy-item"><b>Tiên Phong (tien)</b> Trần Quốc Toản, Lê Lợi, Trần Hưng Đạo, Thánh Gióng — Càng đánh tốc độ càng tăng.</div>
-            <div class="synergy-item"><b>Trợ Thủ (tro)</b> Tiên Dung, Trưng Nhị, Nguyễn Trãi — Trị liệu và tăng giáp cho toàn quân.</div>
+          <b style="color:#4cb094;font-size:13px;display:block;margin-bottom:8px;">5 Hệ Chiến Binh:</b>
+          <div class="synergy-list" style="margin-top:0;display:flex;flex-direction:column;gap:8px;">
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/chienbinh.webp" alt="Chiến Binh" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #ff7b54;" onerror="this.src='./img/trait/chienbinh.png'">
+              <div><b style="color:#5cf2cb;">Chiến Binh:</b> Dã Tượng, An Dương Vương, Lê Lợi, Trần Hưng Đạo, Nguyễn Huệ — <span style="color:#d8c9a8;">Tiền tuyến kiên cường, tăng mạnh máu và sát thương cận chiến.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/hove.webp" alt="Hộ Vệ" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #4a90e2;" onerror="this.src='./img/trait/hove.png'">
+              <div><b style="color:#5cf2cb;">Hộ Vệ:</b> Mai Thúc Loan, Lê Lai, Lý Ông Trọng, Âu Cơ, Kim Quy, Sơn Tinh — <span style="color:#d8c9a8;">Lá chắn thép hộ thể, tạo khiên ảo bảo vệ đồng đội xung quanh.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/cungno.webp" alt="Cung Nỏ" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #2ecc71;" onerror="this.src='./img/trait/cungno.png'">
+              <div><b style="color:#5cf2cb;">Cung Nỏ:</b> Cao Lỗ, Nguyễn Xí, Phạm Ngũ Lão, Trần Quang Diệu, Bùi Thị Xuân — <span style="color:#d8c9a8;">Tầm bắn xa, xạ tiễn xuyên giáp và đòn đánh chí mạng uy lực.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/thuatsi.webp" alt="Thuật Sĩ" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #9b59b6;" onerror="this.src='./img/trait/thuatsi.png'">
+              <div><b style="color:#5cf2cb;">Thuật Sĩ:</b> Chử Đồng Tử, Tiên Dung, Thủy Tinh, Lý Thường Kiệt, Nguyễn Trãi, Lạc Long Quân — <span style="color:#d8c9a8;">Khuấy đảo chiến trường bằng phép thuật và hồi phục mana.</span></div>
+            </div>
+            <div class="synergy-item" style="display:flex;align-items:flex-start;gap:8px;">
+              <img src="./img/trait/dukich.webp" alt="Du Kích" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #e67e22;" onerror="this.src='./img/trait/dukich.png'">
+              <div><b style="color:#5cf2cb;">Du Kích:</b> Yết Kiêu, Trưng Nhị, Trần Quốc Toản, Bà Triệu, Trưng Trắc, Ngô Quyền — <span style="color:#d8c9a8;">Cơ động biến hóa, đột kích chớp nhoáng ám sát tướng yếu máu.</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1196,13 +1224,86 @@ const CHS_QUANDOANH = {
       if (!this.state.userId) {
         this.state.userId = Math.floor(1000 + Math.random() * 9000);
       }
-    } catch(e) {}
+
+      // Đảm bảo tính toàn vẹn của cards
+      if (!Array.isArray(this.state.cards)) this.state.cards = [];
+      this.state.cards.forEach(c => {
+        if (!c.id) c.id = `c-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      });
+
+      // Đảm bảo deck chuẩn hóa theo cardId (hỗ trợ nhiều thẻ trùng tướng)
+      if (!Array.isArray(this.state.deck)) this.state.deck = [];
+      const assignedCardIds = new Set();
+      const updatedDeck = [];
+      for (const d of this.state.deck) {
+        if (d.cardId && this.state.cards.some(c => c.id === d.cardId)) {
+          assignedCardIds.add(d.cardId);
+          updatedDeck.push({ cardId: d.cardId, heroId: d.heroId, star: d.star });
+        } else {
+          // Khôi phục từ deck cũ (chưa có cardId)
+          const match = this.state.cards.find(c => c.heroId === d.heroId && c.star === d.star && !assignedCardIds.has(c.id));
+          if (match) {
+            assignedCardIds.add(match.id);
+            updatedDeck.push({ cardId: match.id, heroId: d.heroId, star: d.star });
+          }
+        }
+      }
+      this.state.deck = updatedDeck;
+
+      // Đồng bộ Danh Vọng từ backup key nếu có
+      const rawDv = localStorage.getItem('chs_quandoanh_dv');
+      if (rawDv !== null && !isNaN(parseInt(rawDv, 10))) {
+        this.state.danhVong = Math.max(this.state.danhVong || 0, parseInt(rawDv, 10));
+      }
+
+      // Đọc Danh Vọng nhận được từ Bàn Cờ qua URL (hỗ trợ Blogger / iframe / cross-page)
+      const sp = new URLSearchParams(window.location.search);
+      const urlGain = parseInt(sp.get('dv_gain') || sp.get('dv_add'), 10);
+      const urlSync = parseInt(sp.get('dv_sync') || sp.get('dv_total'), 10);
+      const mid = sp.get('mid');
+
+      let dvToastMsg = null;
+      if (!isNaN(urlGain) && urlGain > 0) {
+        const lastMid = localStorage.getItem('chs_last_processed_mid');
+        if (!mid || mid !== lastMid) {
+          if (mid) localStorage.setItem('chs_last_processed_mid', mid);
+          this.state.danhVong = (this.state.danhVong || 0) + urlGain;
+          if (!isNaN(urlSync) && urlSync > this.state.danhVong) {
+            this.state.danhVong = urlSync;
+          }
+          dvToastMsg = `🎉 Vinh quy bái tổ! Bạn đã nhận được +${urlGain} Danh Vọng từ trận cờ!`;
+          this.saveState();
+        }
+      } else if (!isNaN(urlSync) && urlSync > (this.state.danhVong || 0)) {
+        this.state.danhVong = urlSync;
+        this.saveState();
+      }
+
+      // Xóa params thưởng trên URL để tránh refresh cộng lặp
+      if (sp.has('dv_gain') || sp.has('dv_add') || sp.has('dv_sync') || sp.has('mid')) {
+        try {
+          const u = new URL(window.location.href);
+          u.searchParams.delete('dv_gain');
+          u.searchParams.delete('dv_add');
+          u.searchParams.delete('dv_sync');
+          u.searchParams.delete('mid');
+          window.history.replaceState({}, document.title, u.toString());
+        } catch(e) {}
+      }
+
+      if (dvToastMsg) {
+        setTimeout(() => toast(dvToastMsg), 350);
+      }
+    } catch(e) {
+      console.warn('Lỗi nạp state quân doanh:', e);
+    }
   },
 
   saveState() {
     try {
       localStorage.setItem('chs_quandoanh_state', JSON.stringify(this.state));
       localStorage.setItem('chs_quandoanh_deck', JSON.stringify(this.state.deck));
+      localStorage.setItem('chs_quandoanh_dv', String(this.state.danhVong || 0));
     } catch(e) {}
     this.updateHeaderUI();
   },
@@ -1286,6 +1387,20 @@ const CHS_QUANDOANH = {
     } catch(e) {}
 
     window.addEventListener('message', async (e) => {
+      if (e.data && e.data.type === 'KYBIEN_DV_SYNC') {
+        const dvVal = parseInt(e.data.danhVong, 10);
+        const dvGain = parseInt(e.data.dvGain, 10);
+        if (!isNaN(dvVal) && dvVal > (this.state.danhVong || 0)) {
+          this.state.danhVong = dvVal;
+          this.saveState();
+          this.updateHeaderUI();
+        } else if (!isNaN(dvGain) && dvGain > 0) {
+          this.state.danhVong = (this.state.danhVong || 0) + dvGain;
+          this.saveState();
+          this.updateHeaderUI();
+        }
+      }
+
       if (e.data && e.data.type === 'KYBIEN_AUTH_SYNC') {
         let hasNew = false;
         if (e.data.token) {
@@ -1638,7 +1753,7 @@ const CHS_QUANDOANH = {
             </div>
           </div>
           <div class="chc-slot-meta">
-            <span class="price">🪙 ${slot.priceDv} DV / mảnh</span>
+            <span class="price"><img src="./img/fx/danh-vong.webp" style="width:16px;height:16px;object-fit:contain;vertical-align:middle;margin-right:2px;" onerror="this.src='./img/danhvong.webp'"> ${slot.priceDv} DV / mảnh</span>
             <span class="limit">Còn: <b>${slot.remainingToday}/3</b> hôm nay</span>
           </div>
           <button class="chc-buy-btn" data-buy-slot="${slot.slotIndex}" ${isFull ? 'disabled' : ''}>
@@ -1761,40 +1876,38 @@ const CHS_QUANDOANH = {
   },
 
   cleanDeck() {
-    const pool = [...this.state.cards];
-    const nextDeck = [];
-    for (const d of this.state.deck) {
-      const idx = pool.findIndex(c => c.heroId === d.heroId && c.star === d.star);
-      if (idx >= 0) {
-        nextDeck.push(d);
-        pool.splice(idx, 1);
-      }
-    }
-    this.state.deck = nextDeck;
+    const validCardIds = new Set(this.state.cards.map(c => c.id));
+    this.state.deck = this.state.deck.filter(d => validCardIds.has(d.cardId));
   },
 
-  toggleDeck(heroId, star) {
-    const H = HERO_DATA[heroId];
+  toggleDeck(cardId, fallbackHeroId, fallbackStar) {
+    let card = this.state.cards.find(c => c.id === cardId);
+    if (!card && fallbackHeroId) {
+      card = this.state.cards.find(c => c.heroId === fallbackHeroId && c.star === (fallbackStar || 1));
+    }
+    if (!card) return;
+
+    const H = HERO_DATA[card.heroId];
     if (!H) return;
-    const pts = this.QUAN_LUONG_PTS[star] || 3;
-    const existIdx = this.state.deck.findIndex(d => d.heroId === heroId && d.star === star);
+    const pts = this.QUAN_LUONG_PTS[card.star] || 3;
+    const existIdx = this.state.deck.findIndex(d => d.cardId === card.id);
 
     if (existIdx >= 0) {
       this.state.deck.splice(existIdx, 1);
       this.saveState();
       this.renderDeck();
-      return toast(`Đã bỏ ${H.name} ${'★'.repeat(star)} khỏi Quân Lương.`);
+      return toast(`Đã bỏ ${H.name} ${'★'.repeat(card.star)} khỏi Quân Lương (-${pts}đ).`);
     }
 
     const curr = this.getDeckPts();
     if (curr + pts > this.MAX_QUAN_LUONG) {
-      return toast(`⚠️ Vượt quá 10 điểm Quân Lương! Hiện tại: ${curr}/10, thêm thẻ này tốn ${pts}đ. (Tối đa: 1 thẻ 3★ + 1 thẻ 1★ = 10đ, hoặc 2 thẻ 2★ = 10đ).`);
+      return toast(`⚠️ Vượt quá 10 điểm Quân Lương! Hiện tại: ${curr}/10, thêm thẻ này tốn ${pts}đ. (Tối đa: 1 thẻ 3★ + 1 thẻ 1★ = 10đ, hoặc 2 thẻ 2★ = 10đ, hoặc 3 thẻ 1★ = 9đ).`);
     }
 
-    this.state.deck.push({ heroId, star });
+    this.state.deck.push({ cardId: card.id, heroId: card.heroId, star: card.star });
     this.saveState();
     this.renderDeck();
-    toast(`Đã thêm ${H.name} ${'★'.repeat(star)} vào Quân Lương (${curr + pts}/10đ).`);
+    toast(`Đã thêm ${H.name} ${'★'.repeat(card.star)} vào Quân Lương (+${pts}đ, hiện có: ${curr + pts}/10đ).`);
   },
 
   renderDeck() {
@@ -1816,13 +1929,13 @@ const CHS_QUANDOANH = {
       const H = HERO_DATA[card.heroId];
       if (!H) continue;
       const cardPts = this.QUAN_LUONG_PTS[card.star] || 3;
-      const isEquipped = this.state.deck.some(d => d.heroId === card.heroId && d.star === card.star);
+      const isEquipped = this.state.deck.some(d => d.cardId === card.id);
       const avatarSrc = getAvatarUrl(card.heroId);
       const tokSrc = getAvatarTokUrl(card.heroId);
       const locSrc = getLocalAvatarUrl(card.heroId);
 
       html += `
-        <div class="ql-card-item ${isEquipped ? 'equipped' : ''}" data-deck-hero="${card.heroId}" data-deck-star="${card.star}">
+        <div class="ql-card-item ${isEquipped ? 'equipped' : ''}" data-deck-card-id="${card.id}" data-deck-hero="${card.heroId}" data-deck-star="${card.star}">
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:44px;height:44px;border-radius:10px;overflow:hidden;flex:none;border:1.5px solid var(--gold);background:#19110a;display:flex;align-items:center;justify-content:center;">
               <img src="${avatarSrc}" alt="${H.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;"
@@ -1991,8 +2104,14 @@ const CHS_QUANDOANH = {
     const qlGrid = document.getElementById('qlGrid');
     if (qlGrid) {
       qlGrid.onclick = (e) => {
-        const item = e.target.closest('[data-deck-hero]');
-        if (item) this.toggleDeck(item.dataset.deckHero, +item.dataset.deckStar);
+        const item = e.target.closest('[data-deck-card-id]') || e.target.closest('[data-deck-hero]');
+        if (item) {
+          if (item.dataset.deckCardId) {
+            this.toggleDeck(item.dataset.deckCardId);
+          } else {
+            this.toggleDeck(null, item.dataset.deckHero, +item.dataset.deckStar);
+          }
+        }
       };
     }
 
