@@ -67,6 +67,7 @@ export const config = {
     ? process.env.CLIENT_ORIGIN.split(',').map((item) => item.trim())
     : ['https://kybien.blogspot.com', 'http://localhost:3000', 'http://localhost:4000'],
   databaseUrl: process.env.DATABASE_URL,
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '592084710612-ienjipbogav48rfqgs2i3a9ac7tvifns.apps.googleusercontent.com',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
   blogger: {
     blogId: process.env.BLOGGER_BLOG_ID || '',

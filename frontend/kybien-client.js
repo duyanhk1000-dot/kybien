@@ -231,6 +231,64 @@
     }
   }
 
+  // Google Identity Services (1-Click Google Sign-In)
+  const GOOGLE_CLIENT_ID = '592084710612-ienjipbogav48rfqgs2i3a9ac7tvifns.apps.googleusercontent.com';
+
+  function ensureGoogleGsiScript(callback) {
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      if (typeof callback === 'function') callback();
+      return;
+    }
+    const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+    if (!existing) {
+      const s = document.createElement('script');
+      s.src = 'https://accounts.google.com/gsi/client';
+      s.async = true;
+      s.defer = true;
+      s.onload = () => { if (typeof callback === 'function') callback(); };
+      document.head.appendChild(s);
+    } else {
+      existing.addEventListener('load', () => { if (typeof callback === 'function') callback(); });
+    }
+  }
+
+  function initGoogleSignInButtons() {
+    ensureGoogleGsiScript(() => {
+      try {
+        if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: (res) => window.KybienAuth.handleGoogleCredential(res)
+        });
+
+        const hdrContainer = document.getElementById('hdr-google-btn');
+        if (hdrContainer) {
+          window.google.accounts.id.renderButton(hdrContainer, {
+            type: 'standard',
+            theme: 'filled_black',
+            size: 'medium',
+            text: 'signin_with',
+            shape: 'rectangular',
+            logo_alignment: 'left'
+          });
+        }
+
+        const prfContainer = document.getElementById('profile-google-btn');
+        if (prfContainer) {
+          window.google.accounts.id.renderButton(prfContainer, {
+            type: 'standard',
+            theme: 'filled_black',
+            size: 'large',
+            text: 'signin_with',
+            shape: 'pill'
+          });
+        }
+      } catch (e) {
+        console.warn('[Google Auth Init]', e);
+      }
+    });
+  }
+
   // Central Auth & Profile Session Manager
   window.KybienAuth = {
     cachedUser: null,
@@ -376,15 +434,44 @@
       }
     },
 
+    handleGoogleCredential: async function (response) {
+      if (!response || !response.credential) return;
+      if (this._authBusy) return;
+      this._authBusy = true;
+      this.setAuthButtonsDisabled(true);
+      showNetBanner('⏳ Đang đăng nhập tài khoản Google...', false);
+      try {
+        const res = await fetchWithTimeout(`${SERVER_URL}/api/auth/google`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credential: response.credential })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          this.setToken(data.token);
+          if (typeof window.checkAuthUI === 'function') window.checkAuthUI();
+          showNetBanner('🎉 Chào mừng kỳ thủ ' + (data.user?.username || '') + ' đăng nhập Google thành công!', false);
+        } else {
+          showNetBanner('⚠️ ' + (data.error || 'Đăng nhập Google thất bại!'), true);
+        }
+      } catch (err) {
+        showNetBanner('⚠️ Không thể kết nối máy chủ Kỳ Biến!', true);
+      } finally {
+        this._authBusy = false;
+        this.setAuthButtonsDisabled(false);
+      }
+    },
+
     renderGuestUI: function () {
       const headerElem = document.getElementById('kybien-header-profile');
       if (headerElem) {
         headerElem.innerHTML = `
           <div class="kybien-nav-auth" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-            <input type="text" id="hdr-auth-u" placeholder="Tên kỳ thủ" style="background: #1e130a; border: 1px solid #5a3d22; color: #fff; padding: 5px 8px; border-radius: 5px; font-size: 0.78rem; width: 110px; outline: none;" onkeydown="if(event.key==='Enter')window.KybienAuth.handleLogin()"/>
-            <input type="password" id="hdr-auth-p" placeholder="Mật khẩu" style="background: #1e130a; border: 1px solid #5a3d22; color: #fff; padding: 5px 8px; border-radius: 5px; font-size: 0.78rem; width: 100px; outline: none;" onkeydown="if(event.key==='Enter')window.KybienAuth.handleLogin()"/>
-            <button type="button" id="btn-kb-login" onclick="window.KybienAuth.handleLogin()" style="background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 5px 10px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Nhập</button>
-            <button type="button" id="btn-kb-register" onclick="window.KybienAuth.handleRegister()" style="background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; padding: 5px 9px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Ký</button>
+            <input type="text" id="hdr-auth-u" placeholder="Tên kỳ thủ" style="background: #1e130a; border: 1px solid #5a3d22; color: #fff; padding: 5px 8px; border-radius: 5px; font-size: 0.78rem; width: 100px; outline: none;" onkeydown="if(event.key==='Enter')window.KybienAuth.handleLogin()"/>
+            <input type="password" id="hdr-auth-p" placeholder="Mật khẩu" style="background: #1e130a; border: 1px solid #5a3d22; color: #fff; padding: 5px 8px; border-radius: 5px; font-size: 0.78rem; width: 90px; outline: none;" onkeydown="if(event.key==='Enter')window.KybienAuth.handleLogin()"/>
+            <button type="button" id="btn-kb-login" onclick="window.KybienAuth.handleLogin()" style="background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 5px 9px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Nhập</button>
+            <button type="button" id="btn-kb-register" onclick="window.KybienAuth.handleRegister()" style="background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; padding: 5px 8px; border-radius: 5px; font-weight: bold; font-size: 0.78rem; cursor: pointer;">Đăng Ký</button>
+            <div id="hdr-google-btn" style="display: inline-block; vertical-align: middle;"></div>
             <div id="hdr-auth-err" style="color: #ff6b6b; font-size: 0.72rem; font-weight: bold; width: 100%; display: none;"></div>
           </div>
         `;
@@ -399,11 +486,14 @@
           </div>
           <div style="text-align: center; padding: 15px 10px;">
             <p style="color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;">
-              Chư vị đang hành tẩu với danh xưng <strong>Vô Danh Lữ Khách</strong>.<br/>Đăng nhập ngay ở thanh trên để tích lũy Chiến Lực (ELO), thăng tiến Cảnh Giới &amp; lưu danh sử sách!
+              Chư vị đang hành tẩu với danh xưng <strong>Vô Danh Lữ Khách</strong>.<br/>Đăng nhập ngay ở thanh trên hoặc bằng tài khoản Google để tích lũy Chiến Lực (ELO), thăng tiến Cảnh Giới &amp; lưu danh sử sách!
             </p>
+            <div id="profile-google-btn" style="display:flex;justify-content:center;margin-top:10px;"></div>
           </div>
         `;
       }
+
+      initGoogleSignInButtons();
     },
 
     renderLoadingUI: function () {

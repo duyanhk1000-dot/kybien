@@ -6,6 +6,7 @@
 <title>Quân Doanh — Cờ Huyền Sử</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Spectral:wght@600;800&display=swap" rel="stylesheet">
+<script async defer src="https://accounts.google.com/gsi/client"></script>
 <style>
 :root {
   color-scheme: dark;
@@ -996,6 +997,14 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
       </div>
       <div id="modalAuthErr" style="color:#ff8577;font-size:12px;display:none;"></div>
       <button class="modal-btn primary" id="btnModalDoLogin" style="margin-top:4px;">🔑 Đăng Nhập Ngay</button>
+
+      <!-- Phân cách & Nút đăng nhập Google -->
+      <div style="display:flex;align-items:center;margin:4px 0 2px 0;gap:8px;">
+        <div style="flex:1;height:1px;background:var(--line);"></div>
+        <span style="font-size:11px;color:var(--ink2);">HOẶC</span>
+        <div style="flex:1;height:1px;background:var(--line);"></div>
+      </div>
+      <div id="modalGoogleBtn" style="display:flex;justify-content:center;min-height:40px;"></div>
     </div>
 
     <div style="font-size:12px;color:var(--ink2);">
@@ -1290,7 +1299,7 @@ const CHS_QUANDOANH = {
         }
         if (e.data.token && (!e.data.user || !e.data.user.username)) {
           try {
-            const res = await fetch('https://kybien-server.onrender.com/api/auth/me', {
+            const res = await fetch('https://kybien-backend.onrender.com/api/auth/me', {
               headers: { Authorization: `Bearer ${e.data.token}` }
             });
             if (res.ok) {
@@ -1340,7 +1349,7 @@ const CHS_QUANDOANH = {
     if (errEl) errEl.style.display = 'none';
 
     try {
-      const res = await fetch('https://kybien-server.onrender.com/api/auth/login', {
+      const res = await fetch('https://kybien-backend.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usernameOrEmail: u, password: p })
@@ -1380,6 +1389,93 @@ const CHS_QUANDOANH = {
       }
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = '🔑 Đăng Nhập Ngay'; }
+    }
+  },
+
+  initGoogleAuth() {
+    const renderBtn = () => {
+      const container = document.getElementById('modalGoogleBtn');
+      if (!container || !window.google || !window.google.accounts || !window.google.accounts.id) return;
+      try {
+        window.google.accounts.id.initialize({
+          client_id: '592084710612-ienjipbogav48rfqgs2i3a9ac7tvifns.apps.googleusercontent.com',
+          callback: (res) => this.handleGoogleCredential(res),
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+        container.innerHTML = '';
+        window.google.accounts.id.renderButton(container, {
+          type: 'standard',
+          theme: 'filled_black',
+          size: 'large',
+          text: 'signin_with',
+          shape: 'pill',
+          logo_alignment: 'left',
+          width: 260
+        });
+      } catch(e) {
+        console.warn('Lỗi render Google Sign-In trong Quân Doanh:', e);
+      }
+    };
+
+    if (window.google && window.google.accounts) {
+      renderBtn();
+    } else {
+      let tries = 0;
+      const timer = setInterval(() => {
+        tries++;
+        if (window.google && window.google.accounts) {
+          clearInterval(timer);
+          renderBtn();
+        } else if (tries > 20) {
+          clearInterval(timer);
+        }
+      }, 300);
+    }
+  },
+
+  async handleGoogleCredential(response) {
+    const errEl = document.getElementById('modalAuthErr');
+    if (errEl) errEl.style.display = 'none';
+    try {
+      toast('⏳ Đang xác thực tài khoản Google...');
+      const res = await fetch('https://kybien-backend.onrender.com/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: response.credential })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('kybien_jwt_token', data.token);
+        if (data.user && data.user.username) {
+          localStorage.setItem('kybien_username', data.user.username);
+          localStorage.setItem('kybien_user', JSON.stringify(data.user));
+        }
+        if (window.parent && window.parent !== window) {
+          try {
+            window.parent.postMessage({
+              type: 'KYBIEN_AUTH_SYNC',
+              token: data.token,
+              user: data.user
+            }, '*');
+          } catch(e) {}
+        }
+        this.updateAuthUI();
+        const m = document.getElementById('modalLoginRequired');
+        if (m) m.classList.remove('show');
+        toast(`🎉 Chào mừng kỳ thủ ${data.user?.display_name || data.user?.username || 'Google'} xuất trận!`);
+      } else {
+        if (errEl) {
+          errEl.textContent = data.error || 'Đăng nhập Google thất bại! Vui lòng thử lại.';
+          errEl.style.display = 'block';
+        }
+        toast('❌ Đăng nhập Google thất bại!');
+      }
+    } catch(err) {
+      if (errEl) {
+        errEl.textContent = 'Không thể kết nối máy chủ Kỳ Biến! Vui lòng thử lại.';
+        errEl.style.display = 'block';
+      }
     }
   },
 
@@ -1793,6 +1889,7 @@ const CHS_QUANDOANH = {
     if (!auth.isLoggedIn) {
       const m = document.getElementById('modalLoginRequired');
       if (m) m.classList.add('show');
+      this.initGoogleAuth();
       return;
     }
 
@@ -1904,6 +2001,7 @@ const CHS_QUANDOANH = {
       btnLogin.onclick = () => {
         const m = document.getElementById('modalLoginRequired');
         if (m) m.classList.add('show');
+        this.initGoogleAuth();
       };
     }
     const btnLClose = document.getElementById('btnLoginReqClose');
@@ -1933,6 +2031,9 @@ const CHS_QUANDOANH = {
     // Queue cancel
     const btnQCancel = document.getElementById('btnCancelQueue');
     if (btnQCancel) btnQCancel.onclick = () => this.cancelQueue();
+
+    // Google Sign-In setup
+    this.initGoogleAuth();
   }
 };
 

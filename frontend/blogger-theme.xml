@@ -77,9 +77,11 @@
   <!-- Google Fonts: Be Vietnam Pro & Noto Serif TC -->
   <link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Noto+Serif+TC:wght@600;700;900&amp;display=swap' rel='stylesheet'/>
   
+  <!-- Google Identity Services (Đăng Nhập Google 1-Click) -->
+  <script async='async' defer='defer' src='https://accounts.google.com/gsi/client'/>
   <!-- Socket.io Client & Ky Bien Core Scripts (Không chặn hiển thị với defer) -->
   <script defer='defer' src='https://cdn.socket.io/4.8.1/socket.io.min.js'/>
-  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.6'/>
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.7'/>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
