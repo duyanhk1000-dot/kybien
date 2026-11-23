@@ -36,7 +36,8 @@ button { font: inherit; color: inherit; cursor: pointer; border: none; }
 button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 .qd-container {
-  max-width: 1080px;
+  max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -713,8 +714,8 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     </div>
 
     <div class="qd-header-right">
-      <!-- Hồ sơ kỳ thủ -->
-      <div class="qd-profile-card">
+      <!-- Ẩn thông tin tài khoản trùng lặp (đã hiển thị ở Header chung của Blog) -->
+      <div class="qd-profile-card" style="display: none;">
         <div class="qd-avatar" id="qdAvatarTxt">K</div>
         <div class="qd-user-info">
           <b id="qdPlayerName">Kỳ Thủ Đại Việt</b>

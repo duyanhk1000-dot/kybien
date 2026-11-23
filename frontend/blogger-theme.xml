@@ -81,7 +81,7 @@
   <script async='async' defer='defer' src='https://accounts.google.com/gsi/client'/>
   <!-- Socket.io Client & Ky Bien Core Scripts (Không chặn hiển thị với defer) -->
   <script defer='defer' src='https://cdn.socket.io/4.8.1/socket.io.min.js'/>
-  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.2.7'/>
+  <script defer='defer' src='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/kybien-client.js?v=3.3.0'/>
 
   <b:skin><![CDATA[
     /* ===== RESET & BASE STYLES ===== */
@@ -671,6 +671,22 @@
 </head>
 <body>
 
+  <!-- Google Identity Services (GSI) Global Init -->
+  <div id='g_id_onload'
+       data-client_id='592084710612-ienjipbogav48rfqgs2i3a9ac7tvifns.apps.googleusercontent.com'
+       data-callback='handleGlobalGoogleCredential'
+       data-auto_prompt='false'>
+  </div>
+  <script>
+    function handleGlobalGoogleCredential(res) {
+      if (window.KybienAuth &amp;&amp; window.KybienAuth.handleGoogleCredential) {
+        window.KybienAuth.handleGoogleCredential(res);
+      } else {
+        window._pendingGoogleCredential = res;
+      }
+    }
+  </script>
+
   <!-- HEADER NAVBAR CÓ ICON TƯỚNG ĐỎ 帥 -->
   <header class='kybien-navbar'>
     <div class='nav-container'>
@@ -694,10 +710,15 @@
 
       <div id='kybien-header-profile'>
         <form class='kybien-nav-auth' id='kybien-header-login-form' onsubmit='if(window.KybienAuth)window.KybienAuth.handleLogin(); return false;'>
-          <label class='kybien-sr-only' for='hdr-auth-u'>Tên kỳ thủ</label>
-          <input autocomplete='username' id='hdr-auth-u' placeholder='Tên kỳ thủ' style='width: 110px;' type='text'/>
+          <!-- Nút Đăng nhập Google ở Header -->
+          <div id='hdr-google-btn' style='display: inline-flex; align-items: center; min-height: 32px;'>
+            <div class='g_id_signin' data-logo_alignment='left' data-shape='rectangular' data-size='medium' data-text='signin_with' data-theme='filled_black' data-type='standard' data-width='175'/>
+          </div>
+          <span style='color: #a8947d; font-size: 0.72rem; font-weight: bold; margin: 0 4px;'>HOẶC</span>
+          <label class='kybien-sr-only' for='hdr-auth-u'>Tên kỳ thủ (ID)</label>
+          <input autocomplete='username' id='hdr-auth-u' placeholder='Tên kỳ thủ' style='width: 105px;' type='text'/>
           <label class='kybien-sr-only' for='hdr-auth-p'>Mật khẩu</label>
-          <input autocomplete='current-password' id='hdr-auth-p' placeholder='Mật khẩu' style='width: 100px;' type='password'/>
+          <input autocomplete='current-password' id='hdr-auth-p' placeholder='Mật khẩu' style='width: 95px;' type='password'/>
           <button style='background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.78rem;' type='submit'>Đăng Nhập</button>
           <button onclick='if(window.KybienAuth)window.KybienAuth.handleRegister()' style='background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.78rem;' type='button'>Đăng Ký</button>
           <div id='hdr-auth-err' style='color: #ff6b6b; font-size: 0.72rem; font-weight: bold; width: 100%; display: none;'/>
@@ -1066,7 +1087,22 @@
                         <p style='color: #a8947d; font-size: 0.88rem; margin-bottom: 14px; line-height: 1.5;'>
                           Chư vị đang hành tẩu với danh xưng <strong>Vô Danh Lữ Khách</strong>.<br/>Đăng nhập tài khoản để tích lũy Chiến Lực (ELO), thăng tiến Cảnh Giới &amp; lưu danh sử sách!
                         </p>
-                        <a href='/p/arena.html' style='display: inline-block; background: linear-gradient(135deg, #8b0000, #500000); color: #fff; font-weight: bold; font-size: 0.85rem; padding: 8px 18px; border-radius: 6px; border: 1px solid #a83a1f;'>🔑 Đăng Nhập / Ghi Danh Nhập Trận &#10132;</a>
+                        <!-- Lựa chọn 1: Nút kết nối Google -->
+                        <div id='profile-google-btn' style='display:flex; justify-content:center; margin-bottom: 12px;'>
+                          <div class='g_id_signin' data-logo_alignment='left' data-shape='pill' data-size='large' data-text='signin_with' data-theme='filled_black' data-type='standard' data-width='250'/>
+                        </div>
+                        <div style='display:flex; align-items:center; gap:8px; margin: 10px 0;'>
+                          <div style='flex:1; height:1px; background:#5a3d22;'/>
+                          <span style='font-size:0.75rem; color:#a8947d; font-weight:600;'>HOẶC ĐĂNG NHẬP BẰNG ID TỰ TẠO</span>
+                          <div style='flex:1; height:1px; background:#5a3d22;'/>
+                        </div>
+                        <!-- Lựa chọn 2: ID & Mật khẩu tự tạo -->
+                        <div style='display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px;'>
+                          <input id='home-auth-u' placeholder='Tên tài khoản (ID)' style='background:#1e130a; border:1px solid #5a3d22; color:#fff; padding:6px 10px; border-radius:6px; font-size:0.82rem; width:130px; outline:none;' type='text'/>
+                          <input id='home-auth-p' placeholder='Mật khẩu' style='background:#1e130a; border:1px solid #5a3d22; color:#fff; padding:6px 10px; border-radius:6px; font-size:0.82rem; width:120px; outline:none;' type='password'/>
+                          <button onclick='if(window.KybienAuth)window.KybienAuth.handleHomeLogin()' style='background: linear-gradient(135deg, #a83a1f, #8b0000); color: #fff; border: 1px solid #f1c40f; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor:pointer;' type='button'>🔑 Đăng Nhập</button>
+                        </div>
+                        <div id='home-auth-err' style='color:#ff6b6b; font-size:0.75rem; margin-top:6px; display:none;'/>
                       </div>
                     </div>
                     
