@@ -2612,29 +2612,31 @@ for(const b of BONDS){b.emoji=b.emoji||b.ico;b.ico=bondIco(b.id);}
 Object.values(BOND_IMG).forEach(src=>{const im=new Image();im.src=src;});
 
 /* --- BẢO VẬT (RELIC MEDALLIONS) --- */
-const RELIC_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/relic/';
+const RELIC_LOCAL='./img/relic/';
+const RELIC_CDN='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/relic/';
 const RELIC_IMG={
-  trongdong: RELIC_BASE+'trongdong.webp',
-  guomthan: RELIC_BASE+'guomthan.webp',
-  nothan: RELIC_BASE+'nothan.webp',
-  non: RELIC_BASE+'non.webp',
-  giap: RELIC_BASE+'giap.webp',
-  banh: RELIC_BASE+'banh.webp',
-  hogom: RELIC_BASE+'hogom.webp',
-  trau: RELIC_BASE+'trau.webp',
-  ngoc: RELIC_BASE+'ngoc.webp'
+  trongdong: RELIC_LOCAL+'trongdong.webp',
+  guomthan: RELIC_LOCAL+'guomthan.webp',
+  nothan: RELIC_LOCAL+'nothan.webp',
+  non: RELIC_LOCAL+'non.webp',
+  giap: RELIC_LOCAL+'giap.webp',
+  banh: RELIC_LOCAL+'banh.webp',
+  hogom: RELIC_LOCAL+'hogom.webp',
+  trau: RELIC_LOCAL+'trau.webp',
+  ngoc: RELIC_LOCAL+'ngoc.webp'
 };
 function relicIco(id){
-  const img=RELIC_IMG[id];
+  const img=RELIC_IMG[id]||(RELIC_LOCAL+id+'.webp');
   const r=RELICS.find(x=>x.id===id);
   const em=(r&&r.emoji)||(r&&r.ico)||'👑';
-  return img ? '<img class="trico trico-relic trico-relic-'+id+'" draggable="false" src="'+img+'" alt="" onerror="if(!this._fb){this._fb=1;this.src=\'./img/relic/'+id+'.webp\';}else if(this._fb===1){this._fb=2;this.src=\'./img/relic/'+id+'.png\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">' : em;
+  return '<img class="trico trico-relic trico-relic-'+id+'" draggable="false" src="'+img+'" alt="'+(r?r.name:'')+'" onerror="if(!this._fb){this._fb=1;this.src=\'./img/relic/'+id+'.png\';}else if(this._fb===1){this._fb=2;this.src=\''+RELIC_CDN+id+'.webp\';}else if(this._fb===2){this._fb=3;this.src=\''+RELIC_CDN+id+'.png\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">';
 }
 for(const r of RELICS){r.emoji=r.emoji||r.ico;r.ico=relicIco(r.id);}
 Object.values(RELIC_IMG).forEach(src=>{const im=new Image();im.src=src;});
 
 /* --- BIỂU TƯỢNG KỲ THỦ (AVATAR MEDALLIONS) --- */
-const AVATAR_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/avatar/';
+const AVATAR_LOCAL='./img/avatar/';
+const AVATAR_CDN='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/avatar/';
 const AV_KEY_MAP={
   '🐲':'rong','rong':'rong',
   '🐯':'ho','ho':'ho',
@@ -2662,23 +2664,23 @@ const AVATAR_NAME={
   may:'Máy Đấu'
 };
 const AVATAR_IMG={
-  rong: AVATAR_BASE+'rong.webp',
-  ho: AVATAR_BASE+'ho.webp',
-  trau: AVATAR_BASE+'trau.webp',
-  phuong: AVATAR_BASE+'phuong.webp',
-  ran: AVATAR_BASE+'ran.webp',
-  daibang: AVATAR_BASE+'daibang.webp',
-  voi: AVATAR_BASE+'voi.webp',
-  huou: AVATAR_BASE+'huou.webp',
-  quai: AVATAR_BASE+'quai.webp',
-  bong: AVATAR_BASE+'bong.webp',
-  may: AVATAR_BASE+'may.webp'
+  rong: AVATAR_LOCAL+'rong.webp',
+  ho: AVATAR_LOCAL+'ho.webp',
+  trau: AVATAR_LOCAL+'trau.webp',
+  phuong: AVATAR_LOCAL+'phuong.webp',
+  ran: AVATAR_LOCAL+'ran.webp',
+  daibang: AVATAR_LOCAL+'daibang.webp',
+  voi: AVATAR_LOCAL+'voi.webp',
+  huou: AVATAR_LOCAL+'huou.webp',
+  quai: AVATAR_LOCAL+'quai.webp',
+  bong: AVATAR_LOCAL+'bong.webp',
+  may: AVATAR_LOCAL+'may.webp'
 };
 function avatarIco(key){
   const k=AV_KEY_MAP[key]||key;
-  const img=AVATAR_IMG[k];
+  const img=AVATAR_IMG[k]||(AVATAR_LOCAL+k+'.webp');
   const em=key;
-  return img ? '<img class="trico trico-av trico-av-'+k+'" draggable="false" src="'+img+'" alt="" onerror="if(!this._fb){this._fb=1;this.src=\'./img/avatar/'+k+'.webp\';}else if(this._fb===1){this._fb=2;this.src=\'./img/avatar/'+k+'.png\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">' : em;
+  return '<img class="trico trico-av trico-av-'+k+'" draggable="false" src="'+img+'" alt="'+(AVATAR_NAME[k]||'')+'" onerror="if(!this._fb){this._fb=1;this.src=\'./img/avatar/'+k+'.png\';}else if(this._fb===1){this._fb=2;this.src=\''+AVATAR_CDN+k+'.webp\';}else if(this._fb===2){this._fb=3;this.src=\''+AVATAR_CDN+k+'.png\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">';
 }
 Object.values(AVATAR_IMG).forEach(src=>{const im=new Image();im.src=src;});
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
