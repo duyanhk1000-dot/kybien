@@ -1492,7 +1492,7 @@ body.has-peek .slot .pu,
 <body>
 <div id="app">
   <header class="chs-top-bar" id="chsTopBar">
-    <button class="chs-top-btn" id="btnBackToCamp" onclick="goToCamp()" title="Quay về Quân Doanh">« 🏯 Quân Doanh</button>
+    <button class="chs-top-btn" id="btnBackToCamp" onclick="goToCamp()" title="Quay về Quân Doanh"><span class="chs-brand-seal" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:5px;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="./img/trait/quandoanh.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='./img/trait/tayson.webp'"></span> Quân Doanh</button>
     <div class="chs-brand"><span class="chs-brand-seal" style="width:24px;height:24px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:50%;overflow:hidden;border:1.5px solid #ffd36a;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/chienbinh.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='./img/trait/chienbinh.webp'"></span> <span>CỜ HUYỀN SỬ</span></div>
     <div class="chs-top-chip dv" id="bcDvChip" title="Danh Vọng kiếm được"><img src="./img/fx/danh-vong.webp" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-right:3px;" onerror="this.src='./img/danhvong.webp'"> <b id="bcDvVal">0</b> DV</div>
     <button class="chs-top-btn" id="btnBondsInGame" onclick="window.open('https://kybien.blogspot.com/p/tieu-diem-tuong.html', '_blank')"><span style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:5px;border-radius:50%;overflow:hidden;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/bond/laclongquan_auco.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='./img/bond/laclongquan_auco.webp'"></span> 12 Nhân Duyên</button>
@@ -2612,18 +2612,19 @@ for(const b of BONDS){b.emoji=b.emoji||b.ico;b.ico=bondIco(b.id);}
 Object.values(BOND_IMG).forEach(src=>{const im=new Image();im.src=src;});
 
 /* --- BẢO VẬT (RELIC MEDALLIONS) --- */
+const ASSET_VER='?v=3';
 const RELIC_LOCAL='./img/relic/';
 const RELIC_CDN='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/relic/';
 const RELIC_IMG={
-  trongdong: RELIC_LOCAL+'trongdong.webp',
-  guomthan: RELIC_LOCAL+'guomthan.webp',
-  nothan: RELIC_LOCAL+'nothan.webp',
-  non: RELIC_LOCAL+'non.webp',
-  giap: RELIC_LOCAL+'giap.webp',
-  banh: RELIC_LOCAL+'banh.webp',
-  hogom: RELIC_LOCAL+'hogom.webp',
-  trau: RELIC_LOCAL+'trau.webp',
-  ngoc: RELIC_LOCAL+'ngoc.webp'
+  trongdong: RELIC_LOCAL+'trongdong.webp'+ASSET_VER,
+  guomthan: RELIC_LOCAL+'guomthan.webp'+ASSET_VER,
+  nothan: RELIC_LOCAL+'nothan.webp'+ASSET_VER,
+  non: RELIC_LOCAL+'non.webp'+ASSET_VER,
+  giap: RELIC_LOCAL+'giap.webp'+ASSET_VER,
+  banh: RELIC_LOCAL+'banh.webp'+ASSET_VER,
+  hogom: RELIC_LOCAL+'hogom.webp'+ASSET_VER,
+  trau: RELIC_LOCAL+'trau.webp'+ASSET_VER,
+  ngoc: RELIC_LOCAL+'ngoc.webp'+ASSET_VER
 };
 function relicIco(id){
   const img=RELIC_IMG[id]||(RELIC_LOCAL+id+'.webp');
@@ -2659,22 +2660,22 @@ const AVATAR_NAME={
   daibang:'Đại Bàng',
   voi:'Chiến Tượng',
   huou:'Linh Hươu',
-  quai:'Dã Quái',
-  bong:'Bóng Ma',
-  may:'Máy Đấu'
+  quai:'Dã Quái Sa Trường',
+  bong:'Ảo Ảnh Chiến Tướng',
+  may:'Cơ Quan Thần Binh'
 };
 const AVATAR_IMG={
-  rong: AVATAR_LOCAL+'rong.webp',
-  ho: AVATAR_LOCAL+'ho.webp',
-  trau: AVATAR_LOCAL+'trau.webp',
-  phuong: AVATAR_LOCAL+'phuong.webp',
-  ran: AVATAR_LOCAL+'ran.webp',
-  daibang: AVATAR_LOCAL+'daibang.webp',
-  voi: AVATAR_LOCAL+'voi.webp',
-  huou: AVATAR_LOCAL+'huou.webp',
-  quai: AVATAR_LOCAL+'quai.webp',
-  bong: AVATAR_LOCAL+'bong.webp',
-  may: AVATAR_LOCAL+'may.webp'
+  rong: AVATAR_LOCAL+'rong.webp'+ASSET_VER,
+  ho: AVATAR_LOCAL+'ho.webp'+ASSET_VER,
+  trau: AVATAR_LOCAL+'trau.webp'+ASSET_VER,
+  phuong: AVATAR_LOCAL+'phuong.webp'+ASSET_VER,
+  ran: AVATAR_LOCAL+'ran.webp'+ASSET_VER,
+  daibang: AVATAR_LOCAL+'daibang.webp'+ASSET_VER,
+  voi: AVATAR_LOCAL+'voi.webp'+ASSET_VER,
+  huou: AVATAR_LOCAL+'huou.webp'+ASSET_VER,
+  quai: AVATAR_LOCAL+'quai.webp'+ASSET_VER,
+  bong: AVATAR_LOCAL+'bong.webp'+ASSET_VER,
+  may: AVATAR_LOCAL+'may.webp'+ASSET_VER
 };
 function avatarIco(key){
   const k=AV_KEY_MAP[key]||key;
@@ -6688,14 +6689,17 @@ function showStartBot(){
   let selAv=store.get('chs_av')||'rong';
   const ov=$('#ov');
   ov.innerHTML='<div class="dlg"><svg class="drumbg" viewBox="-100 -100 200 200">'+$('#drum').innerHTML.replace(/#d6a335/g,'#b3281d')+'</svg>'
-   +'<h1 style="font-size:26px;color:#ffd36a;">🤖 LUYỆN TẬP (ĐẤU VỚI BOT)</h1>'
-   +'<p style="margin-top:6px;font-size:13px;color:var(--ink2);">Thao luyện binh pháp và thử nghiệm phối hợp đội hình cùng 7 đối thủ máy. Tùy chỉnh độ khó và thời gian để tìm hiểu chiến thuật.</p>'
+   +'<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;">'
+   +'<span style="width:40px;height:40px;border-radius:50%;border:2px solid #ffd36a;overflow:hidden;box-shadow:0 0 12px rgba(241,196,15,0.5);display:inline-block;vertical-align:middle;flex:none;"><img src="./img/avatar/may.webp?v=3" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src=\'./img/trait/chienbinh.webp\'"></span>'
+   +'<h1 style="font-size:24px;color:#ffd36a;margin:0;font-family:var(--serif);letter-spacing:1px;">THAO LUYỆN SA TRƯỜNG</h1>'
+   +'</div>'
+   +'<p style="margin-top:4px;font-size:13px;color:var(--ink2);">Thao luyện binh pháp và dàn trận cùng các kỳ thủ sa trường. Tùy chỉnh độ khó và thời gian để tìm hiểu chiến thuật.</p>'
    +'<div class="row"><label>Độ khó máy</label><div class="seg" id="sd"><button data-v="0.6">Dễ</button><button data-v="1" class="on">Thường</button><button data-v="1.5">Khó</button></div></div>'
    +'<div class="row"><label>Thời gian chọn tướng</label><div class="seg" id="st"><button data-v="40" class="on">40 giây</button><button data-v="0">Không giới hạn</button></div></div>'
    +'<div class="row"><label>Biểu tượng kỳ thủ</label><div class="avp" id="sav">'+AV8.map(a=>'<button data-a="'+a+'" class="'+(a===selAv?'on':'')+'" title="'+(AVATAR_NAME[a]||a)+'">'+avatarIco(a)+'</button>').join('')+'</div></div>'
    +'<div style="display:flex;gap:10px;margin-top:14px;">'
-   +'<button class="go big-go" id="playBotStart" style="flex:2;">⚔️ Vào Trận Luyện Tập</button>'
-   +'<button class="go" id="btnBotBackCamp" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;" onclick="goToCamp()">« 🏯 Quân Doanh</button>'
+   +'<button class="go big-go" id="playBotStart" style="flex:2;display:flex;align-items:center;justify-content:center;gap:8px;"><span style="width:20px;height:20px;display:inline-block;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="./img/trait/chienbinh.webp" style="width:100%;height:100%;object-fit:cover;display:block;"></span> <span>Vào Trận Thao Luyện</span></button>'
+   +'<button class="go" id="btnBotBackCamp" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="goToCamp()"><span style="width:18px;height:18px;display:inline-block;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="./img/trait/tayson.webp" style="width:100%;height:100%;object-fit:cover;display:block;"></span> <span>Quân Doanh</span></button>'
    +'</div>'
    +'<p style="text-align:center;margin:10px 0 0"><a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank" rel="noopener">★ Tiêu điểm tướng — xem chiêu thức từng tướng</a></p>'+HOW+'</div>';
 
@@ -6743,7 +6747,7 @@ function showStartBot(){
       ov.className='ov';
       renderAll();
       beginRound();
-      toast(`🤖 Vào trận Luyện Tập (Độ khó: ${dv>=1.5?'Khó':dv>=1?'Thường':'Dễ'} · ${U.noTimer?'Không giới hạn giờ':'40s'})`);
+      toast(`⚔️ Vào trận Thao Luyện Sa Trường (Độ khó: ${dv>=1.5?'Khó':dv>=1?'Thường':'Dễ'} · ${U.noTimer?'Không giới hạn giờ':'40s'})`);
     };
   }
 }
@@ -7107,7 +7111,7 @@ const CHS_ONLINE = {
 
     renderAll();
     beginRound();
-    toast('🤖 Đã vào trận Luyện Tập (40s)! Viện binh Quân Lương sẵn sàng từ Vòng 4.');
+    toast('⚔️ Đã vào trận Thao Luyện Sa Trường (40s)! Viện binh Quân Lương sẵn sàng từ Vòng 4.');
   },
 
   startLocalMatchWithBots() {
