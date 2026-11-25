@@ -1492,8 +1492,8 @@ body.has-peek .slot .pu,
 <body>
 <div id="app">
   <header class="chs-top-bar" id="chsTopBar">
-    <button class="chs-top-btn" id="btnBackToCamp" onclick="goToCamp()" title="Quay về Quân Doanh"><span class="chs-brand-seal" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:5px;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="./img/trait/quandoanh.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='./img/trait/tayson.webp'"></span> Quân Doanh</button>
-    <div class="chs-brand"><span class="chs-brand-seal" style="width:24px;height:24px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:50%;overflow:hidden;border:1.5px solid #ffd36a;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/chienbinh.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='./img/trait/chienbinh.webp'"></span> <span>CỜ HUYỀN SỬ</span></div>
+    <button class="chs-top-btn" id="btnBackToCamp" onclick="goToCamp()" title="Quay về Quân Doanh"><span class="chs-brand-seal" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:5px;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="./img/trait/quandoanh.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src=\'./img/trait/tayson.webp\'"></span> Quân Doanh</button>
+    <div class="chs-brand"><span class="chs-brand-seal" style="width:24px;height:24px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:50%;overflow:hidden;border:1.5px solid #ffd36a;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/chienbinh.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src=\'./img/trait/chienbinh.webp\'"></span> <span>CỜ HUYỀN SỬ</span></div>
     <div class="chs-top-chip dv" id="bcDvChip" title="Danh Vọng kiếm được"><img src="./img/fx/danh-vong.webp" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-right:3px;" onerror="this.src='./img/danhvong.webp'"> <b id="bcDvVal">0</b> DV</div>
     <button class="chs-top-btn" id="btnBondsInGame" onclick="window.open('https://kybien.blogspot.com/p/tieu-diem-tuong.html', '_blank')"><span style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:5px;border-radius:50%;overflow:hidden;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/bond/laclongquan_auco.webp" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='./img/bond/laclongquan_auco.webp'"></span> 12 Nhân Duyên</button>
     <button class="chs-top-btn" id="topSfxBtn" title="Bật/Tắt âm thanh hiệu ứng (Phím M)" style="min-width:38px;padding:4px 8px;font-size:16px;">🔊</button>
@@ -2611,34 +2611,46 @@ function bondIco(id){
 for(const b of BONDS){b.emoji=b.emoji||b.ico;b.ico=bondIco(b.id);}
 Object.values(BOND_IMG).forEach(src=>{const im=new Image();im.src=src;});
 
-/* --- BẢO VẬT (RELIC MEDALLIONS) --- */
-const ASSET_VER='?v=3';
-const RELIC_LOCAL='./img/relic/';
-const RELIC_CDN='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/relic/';
-const RELIC_IMG={
-  trongdong: RELIC_LOCAL+'trongdong.webp'+ASSET_VER,
-  guomthan: RELIC_LOCAL+'guomthan.webp'+ASSET_VER,
-  nothan: RELIC_LOCAL+'nothan.webp'+ASSET_VER,
-  non: RELIC_LOCAL+'non.webp'+ASSET_VER,
-  giap: RELIC_LOCAL+'giap.webp'+ASSET_VER,
-  banh: RELIC_LOCAL+'banh.webp'+ASSET_VER,
-  hogom: RELIC_LOCAL+'hogom.webp'+ASSET_VER,
-  trau: RELIC_LOCAL+'trau.webp'+ASSET_VER,
-  ngoc: RELIC_LOCAL+'ngoc.webp'+ASSET_VER
-};
-function relicIco(id){
-  const img=RELIC_IMG[id]||(RELIC_LOCAL+id+'.webp');
-  const r=RELICS.find(x=>x.id===id);
-  const em=(r&&r.emoji)||(r&&r.ico)||'👑';
-  return '<img class="trico trico-relic trico-relic-'+id+'" draggable="false" src="'+img+'" alt="'+(r?r.name:'')+'" onerror="if(!this._fb){this._fb=1;this.src=\'./img/relic/'+id+'.png\';}else if(this._fb===1){this._fb=2;this.src=\''+RELIC_CDN+id+'.webp\';}else if(this._fb===2){this._fb=3;this.src=\''+RELIC_CDN+id+'.png\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">';
+/* --- HỆ THỐNG ASSET ĐA TẦNG (BẢO VẬT & AVATAR ĐÔNG SƠN) --- */
+const IS_LOCAL_ENV = typeof window !== 'undefined' && (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const LOCAL_IMG_BASE = (typeof window !== 'undefined' && window.location.pathname.includes('/frontend/')) ? './img/' : './frontend/img/';
+
+const RELIC_CDN = 'https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/relic/';
+const AVATAR_CDN = 'https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/avatar/';
+
+const RELIC_IDS = ['trongdong','guomthan','nothan','non','giap','banh','hogom','trau','ngoc'];
+
+function getRelicSrc(id, ext) {
+  ext = ext || 'webp';
+  return IS_LOCAL_ENV ? (LOCAL_IMG_BASE + 'relic/' + id + '.' + ext) : (RELIC_CDN + id + '.' + ext);
 }
-for(const r of RELICS){r.emoji=r.emoji||r.ico;r.ico=relicIco(r.id);}
-Object.values(RELIC_IMG).forEach(src=>{const im=new Image();im.src=src;});
+
+window.chsRelicErr = function(img, id) {
+  img._fb = (img._fb || 0) + 1;
+  if (img._fb === 1) {
+    img.src = img.src.includes('cdn.jsdelivr.net') ? (LOCAL_IMG_BASE + 'relic/' + id + '.webp') : (RELIC_CDN + id + '.webp');
+  } else if (img._fb === 2) {
+    img.src = RELIC_CDN + id + '.png';
+  } else if (img._fb === 3) {
+    img.src = LOCAL_IMG_BASE + 'relic/' + id + '.png';
+  } else {
+    img.onerror = null;
+    img.style.opacity = '0.7';
+  }
+};
+
+window.relicIco = relicIco;
+function relicIco(id){
+  const src = getRelicSrc(id, 'webp');
+  const r = RELICS.find(x => x.id === id);
+  const name = r ? r.name : '';
+  return '<img class="trico trico-relic trico-relic-' + id + '" draggable="false" src="' + src + '" alt="' + name + '" onerror="chsRelicErr(this,\'' + id + '\')">';
+}
+for (const r of RELICS) { r.emoji = r.emoji || r.ico; r.ico = relicIco(r.id); }
+RELIC_IDS.forEach(id => { const im = new Image(); im.src = getRelicSrc(id, 'webp'); });
 
 /* --- BIỂU TƯỢNG KỲ THỦ (AVATAR MEDALLIONS) --- */
-const AVATAR_LOCAL='./img/avatar/';
-const AVATAR_CDN='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/avatar/';
-const AV_KEY_MAP={
+const AV_KEY_MAP = {
   '🐲':'rong','rong':'rong',
   '🐯':'ho','ho':'ho',
   '🐃':'trau','trau':'trau',
@@ -2651,39 +2663,63 @@ const AV_KEY_MAP={
   '👻':'bong','bong':'bong',
   '🤖':'may','may':'may'
 };
-const AVATAR_NAME={
-  rong:'Rồng Thần',
-  ho:'Bạch Hổ',
-  trau:'Kim Ngưu',
-  phuong:'Chim Lạc',
-  ran:'Huyền Xà',
-  daibang:'Đại Bàng',
-  voi:'Chiến Tượng',
-  huou:'Linh Hươu',
-  quai:'Dã Quái Sa Trường',
-  bong:'Ảo Ảnh Chiến Tướng',
-  may:'Cơ Quan Thần Binh'
+
+const AVATAR_NAME = {
+  rong: 'Rồng Thần',
+  ho: 'Bạch Hổ',
+  trau: 'Kim Ngưu',
+  phuong: 'Chim Lạc',
+  ran: 'Huyền Xà',
+  daibang: 'Đại Bàng',
+  voi: 'Chiến Tượng',
+  huou: 'Linh Hươu',
+  quai: 'Dã Quái Sa Trường',
+  bong: 'Ảo Ảnh Chiến Tướng',
+  may: 'Cơ Quan Thần Binh'
 };
-const AVATAR_IMG={
-  rong: AVATAR_LOCAL+'rong.webp'+ASSET_VER,
-  ho: AVATAR_LOCAL+'ho.webp'+ASSET_VER,
-  trau: AVATAR_LOCAL+'trau.webp'+ASSET_VER,
-  phuong: AVATAR_LOCAL+'phuong.webp'+ASSET_VER,
-  ran: AVATAR_LOCAL+'ran.webp'+ASSET_VER,
-  daibang: AVATAR_LOCAL+'daibang.webp'+ASSET_VER,
-  voi: AVATAR_LOCAL+'voi.webp'+ASSET_VER,
-  huou: AVATAR_LOCAL+'huou.webp'+ASSET_VER,
-  quai: AVATAR_LOCAL+'quai.webp'+ASSET_VER,
-  bong: AVATAR_LOCAL+'bong.webp'+ASSET_VER,
-  may: AVATAR_LOCAL+'may.webp'+ASSET_VER
-};
-function avatarIco(key){
-  const k=AV_KEY_MAP[key]||key;
-  const img=AVATAR_IMG[k]||(AVATAR_LOCAL+k+'.webp');
-  const em=key;
-  return '<img class="trico trico-av trico-av-'+k+'" draggable="false" src="'+img+'" alt="'+(AVATAR_NAME[k]||'')+'" onerror="if(!this._fb){this._fb=1;this.src=\'./img/avatar/'+k+'.png\';}else if(this._fb===1){this._fb=2;this.src=\''+AVATAR_CDN+k+'.webp\';}else if(this._fb===2){this._fb=3;this.src=\''+AVATAR_CDN+k+'.png\';}else{this.onerror=null;this.style.display=\'none\';if(this.parentNode&&!this.parentNode.textContent.trim())this.parentNode.appendChild(document.createTextNode(\''+em+'\'));}">';
+
+function getAvatarSrc(key, ext) {
+  ext = ext || 'webp';
+  const k = AV_KEY_MAP[key] || key;
+  return IS_LOCAL_ENV ? (LOCAL_IMG_BASE + 'avatar/' + k + '.' + ext) : (AVATAR_CDN + k + '.' + ext);
 }
-Object.values(AVATAR_IMG).forEach(src=>{const im=new Image();im.src=src;});
+
+window.chsAvatarErr = function(img, key) {
+  const k = AV_KEY_MAP[key] || key;
+  img._fb = (img._fb || 0) + 1;
+  if (img._fb === 1) {
+    img.src = img.src.includes('cdn.jsdelivr.net') ? (LOCAL_IMG_BASE + 'avatar/' + k + '.webp') : (AVATAR_CDN + k + '.webp');
+  } else if (img._fb === 2) {
+    img.src = AVATAR_CDN + k + '.png';
+  } else if (img._fb === 3) {
+    img.src = LOCAL_IMG_BASE + 'avatar/' + k + '.png';
+  } else {
+    img.onerror = null;
+    img.style.opacity = '0.7';
+  }
+};
+
+window.avatarIco = avatarIco;
+function avatarIco(key){
+  const k = AV_KEY_MAP[key] || key;
+  const src = getAvatarSrc(k, 'webp');
+  const name = AVATAR_NAME[k] || '';
+  return '<img class="trico trico-av trico-av-' + k + '" draggable="false" src="' + src + '" alt="' + name + '" onerror="chsAvatarErr(this,\'' + k + '\')">';
+}
+
+// Auto-migrate legacy avatar emoji in storage
+try {
+  const curAv = store.get('chs_av');
+  if (curAv && AV_KEY_MAP[curAv] && AV_KEY_MAP[curAv] !== curAv) {
+    store.set('chs_av', AV_KEY_MAP[curAv]);
+  }
+  if (!curAv || !AV8.includes(store.get('chs_av'))) {
+    store.set('chs_av', 'rong');
+  }
+} catch(e) {}
+
+Object.keys(AVATAR_NAME).forEach(k => { const im = new Image(); im.src = getAvatarSrc(k, 'webp'); });
+
 const MON_BASE='https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/mon/';
 const MON_IMG={'Hồ Quái':MON_BASE+'ho-quai.webp?v=2','Mộc Quái':MON_BASE+'moc-quai.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai.webp?v=3','Hồ Tinh':MON_BASE+'ho-tinh.webp?v=2','Ngư Tinh':MON_BASE+'ngu-tinh.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh.webp?v=2'};
 const MON_SPRITES={'Ngư Tinh':MON_BASE+'ngu-tinh-sheet-128.webp?v=2','Ngư Quái':MON_BASE+'ngu-quai-sheet-128.webp?v=3','Mộc Quái':MON_BASE+'moc-quai-sheet-128.webp?v=2','Hồ Quái':MON_BASE+'ho-quai-sheet-128.webp?v=2','Hồ Tinh':MON_BASE+'ho-tinh-sheet-128.webp?v=2','Mộc Tinh':MON_BASE+'moc-tinh-sheet-128.webp?v=2'};
@@ -6698,8 +6734,8 @@ function showStartBot(){
    +'<div class="row"><label>Thời gian chọn tướng</label><div class="seg" id="st"><button data-v="40" class="on">40 giây</button><button data-v="0">Không giới hạn</button></div></div>'
    +'<div class="row"><label>Biểu tượng kỳ thủ</label><div class="avp" id="sav">'+AV8.map(a=>'<button data-a="'+a+'" class="'+(a===selAv?'on':'')+'" title="'+(AVATAR_NAME[a]||a)+'">'+avatarIco(a)+'</button>').join('')+'</div></div>'
    +'<div style="display:flex;gap:10px;margin-top:14px;">'
-   +'<button class="go big-go" id="playBotStart" style="flex:2;display:flex;align-items:center;justify-content:center;gap:8px;"><span style="width:20px;height:20px;display:inline-block;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="./img/trait/chienbinh.webp" style="width:100%;height:100%;object-fit:cover;display:block;"></span> <span>Vào Trận Thao Luyện</span></button>'
-   +'<button class="go" id="btnBotBackCamp" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="goToCamp()"><span style="width:18px;height:18px;display:inline-block;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="./img/trait/tayson.webp" style="width:100%;height:100%;object-fit:cover;display:block;"></span> <span>Quân Doanh</span></button>'
+   +'<button class="go big-go" id="playBotStart" style="flex:2;display:flex;align-items:center;justify-content:center;gap:8px;"><span style="width:20px;height:20px;display:inline-block;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/chienbinh.webp" style="width:100%;height:100%;object-fit:cover;display:block;"></span> <span>Vào Trận Thao Luyện</span></button>'
+   +'<button class="go" id="btnBotBackCamp" style="flex:1;background:#2a1f15;border:1px solid var(--line);color:#ffd36a;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="goToCamp()"><span style="width:18px;height:18px;display:inline-block;border-radius:50%;overflow:hidden;border:1px solid #ffd36a;"><img src="https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/frontend/img/trait/tayson.webp" style="width:100%;height:100%;object-fit:cover;display:block;"></span> <span>Quân Doanh</span></button>'
    +'</div>'
    +'<p style="text-align:center;margin:10px 0 0"><a href="https://kybien.blogspot.com/p/tieu-diem-tuong.html" target="_blank" rel="noopener">★ Tiêu điểm tướng — xem chiêu thức từng tướng</a></p>'+HOW+'</div>';
 
