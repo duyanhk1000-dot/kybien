@@ -2620,9 +2620,10 @@ const AVATAR_CDN = 'https://cdn.jsdelivr.net/gh/duyanhk1000-dot/kybien@main/fron
 
 const RELIC_IDS = ['trongdong','guomthan','nothan','non','giap','banh','hogom','trau','ngoc'];
 
+const ASSET_CACHE_BUST = '?v=20261125b';
 function getRelicSrc(id, ext) {
   ext = ext || 'webp';
-  return IS_LOCAL_ENV ? (LOCAL_IMG_BASE + 'relic/' + id + '.' + ext) : (RELIC_CDN + id + '.' + ext);
+  return IS_LOCAL_ENV ? (LOCAL_IMG_BASE + 'relic/' + id + '.' + ext) : (RELIC_CDN + id + '.' + ext + ASSET_CACHE_BUST);
 }
 
 window.chsRelicErr = function(img, id) {
@@ -2681,7 +2682,7 @@ const AVATAR_NAME = {
 function getAvatarSrc(key, ext) {
   ext = ext || 'webp';
   const k = AV_KEY_MAP[key] || key;
-  return IS_LOCAL_ENV ? (LOCAL_IMG_BASE + 'avatar/' + k + '.' + ext) : (AVATAR_CDN + k + '.' + ext);
+  return IS_LOCAL_ENV ? (LOCAL_IMG_BASE + 'avatar/' + k + '.' + ext) : (AVATAR_CDN + k + '.' + ext + ASSET_CACHE_BUST);
 }
 
 window.chsAvatarErr = function(img, key) {
